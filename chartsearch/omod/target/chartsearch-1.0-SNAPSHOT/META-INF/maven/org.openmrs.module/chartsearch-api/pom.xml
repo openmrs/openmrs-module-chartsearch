@@ -24,7 +24,30 @@
 		-->
 
 		
-		
+			<!-- Solr -->
+			<dependency>
+				<artifactId>solr-solrj</artifactId>
+				<groupId>org.apache.solr</groupId>
+				<version>4.3.1</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
+				<artifactId>solr-core</artifactId>
+				<groupId>org.apache.solr</groupId>
+				<version>4.3.1</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.5</version>
+			</dependency>
+
+			<!-- End Solr -->
 
 		<!-- Begin OpenMRS core -->
 			

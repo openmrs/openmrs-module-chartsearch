@@ -81,11 +81,11 @@ public class ChartSearchActivator extends BaseModuleActivator {
 			log.info(String.format("solr.solr.home: %s", solrHome));
 			
 			//If user has not setup solr config folder, set a default one
-			String configFolder = solrHome + File.separatorChar + "solrConf";
+			String configFolder = solrHome + File.separatorChar + "collection1" + File.separatorChar + "conf";
 			if (!new File(configFolder).exists()) {
-				URL url = OpenmrsClassLoader.getInstance().getResource("solrConf");
+				URL url = OpenmrsClassLoader.getInstance().getResource("collection1/conf");
 				File file = new File(url.getFile());
-				FileUtils.copyDirectoryToDirectory(file, new File(solrHome));
+				FileUtils.copyDirectoryToDirectory(file, new File(solrHome+File.separatorChar+"collection1"));
 				
 				setDataImportConnectionInfo(configFolder);
 			}
@@ -114,7 +114,7 @@ public class ChartSearchActivator extends BaseModuleActivator {
 		
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(OpenmrsClassLoader.getInstance().getResourceAsStream("solrConf/data-config.xml"));
+		Document doc = db.parse(OpenmrsClassLoader.getInstance().getResourceAsStream("collection1/conf/data-config.xml"));
 		Element node = (Element) doc.getElementsByTagName("dataSource").item(0);
 		
 		node.setAttribute("url", properties.getProperty("connection.url"));

@@ -26,6 +26,17 @@
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList</class>
 	</extension>
 	
+	<!-- Filter definitions -->
+	
+	<filter>
+		<filter-name>ChartSearchRequestFilter</filter-name> 
+		<filter-class>org.apache.solr.servlet.SolrDispatchFilter</filter-class> 
+	</filter>
+	<filter-mapping>
+		<filter-name>ChartSearchRequestFilter</filter-name> 
+		<url-pattern>/dataimport</url-pattern> 
+	</filter-mapping>
+	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 				

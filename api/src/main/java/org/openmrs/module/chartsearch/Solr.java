@@ -13,7 +13,7 @@ import org.openmrs.util.OpenmrsUtil;
 
 public class Solr {
 
-	private Solr solr;
+	private static Solr solr;
 	private SolrServer solrServer;
 
 	private Solr() {
@@ -21,12 +21,13 @@ public class Solr {
 	}
 
 	private void init() {
-		String solrHome = Context.getAdministrationService().getGlobalProperty(
-				"chartsearch.home",
-				new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
-						.getAbsolutePath());
-
+		//Get the solr home folder
+		String solrHome = Context.getAdministrationService().getGlobalProperty("chartsearch.home",
+		    new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch").getAbsolutePath());
+		
+		//Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", solrHome);
+		
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer;
 		try {
@@ -39,7 +40,7 @@ public class Solr {
 
 	}
 
-	public Solr getInstance() {
+	public static Solr getInstance() {
 		if (solr == null) {
 			solr = new Solr();
 			solr.init();

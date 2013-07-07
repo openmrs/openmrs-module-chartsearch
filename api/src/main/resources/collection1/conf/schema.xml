@@ -933,7 +933,7 @@
 		<field name="person_id" type="int" indexed="true" stored="true"
 			required="true" />
 		<field name="concept_id" type="int" indexed="true" stored="true"
-			required="true" />
+			required="false" />
 		<field name="encounter_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="order_id" type="int" indexed="true" stored="true"
@@ -941,7 +941,7 @@
 		<field name="obs_datetime" type="date" indexed="true" stored="true"
 			required="true" />
 		<field name="location_id" type="int" indexed="true" stored="true"
-			required="true" />
+			required="false" />
 		<field name="obs_group_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="accession_number" type="string" indexed="true"

@@ -78,6 +78,9 @@ public class ChartSearchActivator extends BaseModuleActivator {
 			
 			//Tell solr that this is our home folder
 			System.setProperty("solr.solr.home", solrHome);
+			
+			Solr.getInstance();
+			
 			log.info(String.format("solr.solr.home: %s", solrHome));
 			
 			//If user has not setup solr config folder, set a default one

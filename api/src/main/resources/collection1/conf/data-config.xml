@@ -8,7 +8,8 @@
 <entity name="obs"
 				query="
 			SELECT  
-					obs_id,  
+					uuid, 
+					obs_id, 
 					person_id,  
 					concept_id,  
 					encounter_id,  

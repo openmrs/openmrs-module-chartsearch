@@ -31,6 +31,9 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	private ThreadLocal<Stack<HashSet<OpenmrsObject>>> updates = new ThreadLocal<Stack<HashSet<OpenmrsObject>>>();
 	private ThreadLocal<Stack<HashSet<OpenmrsObject>>> deletes = new ThreadLocal<Stack<HashSet<OpenmrsObject>>>();
 
+	private HashSet<Object> addList = new HashSet<Object>();
+	private HashSet<Object> removeList = new HashSet<Object>();
+
 	protected Log log = LogFactory.getLog(getClass());
 
 	/**
@@ -55,6 +58,14 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 			Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
 		log.info("Chart Search Interceptor onFlushDirty");
+		if (isIndexable(entity)) {
+			if (isVoided(entity)) {
+				removeList.add(entity);
+			} else {
+				addList.add(entity);
+			}
+		}
+		
 		/*
 		 * if (isIndexable(entity)){
 		 * updates.get().peek().add((OpenmrsObject)entity); }
@@ -80,8 +91,12 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	public boolean onSave(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		log.info("Chart Search Interceptor onSave");
-		if (entity instanceof Obs) {
-			String uuid = ((Obs) entity).getUuid();
+		if (isIndexable(entity)) {
+			if (isVoided(entity)) {
+				removeList.add(entity);
+			} else {
+				addList.add(entity);
+			}
 		}
 		/*
 		 * if (isIndexable(entity)) { inserts.get().peek().add((OpenmrsObject)
@@ -95,25 +110,15 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 
 	@Override
 	public void postFlush(Iterator iterator) {
-		HashSet<Object> addList = new HashSet<Object>();
-		HashSet<Object> removeList = new HashSet<Object>();
 		while (iterator.hasNext()) {
 			Object entity = iterator.next();
-			if (isIndexable(entity)) {
+			/*if (isIndexable(entity)) {
 				if (isVoided(entity)) {
 					removeList.add(entity);
 				} else {
 					addList.add(entity);
 				}
-			}
-		}
-
-		for (Object object : addList) {
-			addToIndex(object);
-		}
-
-		for (Object object : removeList) {
-			removeFromIndex(object);
+			}*/
 		}
 		/*
 		 * try{ for (OpenmrsObject insert : inserts.get().peek()) {
@@ -123,6 +128,26 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		 * addToIndex(update); }} finally { inserts.get().pop();
 		 * inserts.remove(); updates.get().pop(); updates.remove(); }
 		 */
+	}
+
+	/**
+	 * @see org.hibernate.EmptyInterceptor#afterTransactionCompletion(org.hibernate.Transaction)
+	 */
+	@Override
+	public void afterTransactionCompletion(Transaction tx) {
+		try {
+			if (tx.wasCommitted()) {
+				for (Object object : addList) {
+					addToIndex(object);
+				}
+				for (Object object : removeList) {
+					removeFromIndex(object);
+				}
+			}
+		} finally {
+			addList.clear();
+			removeList.clear();
+		}
 	}
 
 	private boolean isIndexable(Object entity) {
@@ -135,16 +160,16 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	}
 
 	private void addToIndex(Object entity) {
+		if (!Solr.isStarted())
+			return;
 		Obs obs = ((Obs) entity);
 		try {
 			SolrServer server = Solr.getInstance().getServer();
+			
 			try {
 				SolrInputDocument document = new SolrInputDocument();
-				String toStr = obs.toString();
-				log.info("Obs.ToString(): " + toStr);
-				int id = obs.getId();
-				log.info("Obs.getId(): " + id);
-				document.addField("obs_id", id);
+				document.addField("uuid", obs.getUuid());
+				document.addField("obs_id", obs.getId());
 				document.addField("obs_datetime", obs.getObsDatetime());
 				document.addField("person_id", obs.getPersonId());
 				document.addField("concept_id", obs.getConcept().getId());
@@ -157,8 +182,8 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 				document.addField("value_numeric", obs.getValueNumeric());
 				document.addField("value_text", obs.getValueText());
 				try {
-					server.add(document);
-					server.commit();
+					server.add(document, 15000);
+					//server.commit();
 				} catch (SolrServerException e) {
 					// TODO Auto-generated catch block
 					log.error("Solr server add exception");
@@ -180,15 +205,17 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 			log.error("Solr server exception");
 			e.printStackTrace();
 		}
-		String name = Context.getAuthenticatedUser().getUsername();
 
 	}
 
 	private void removeFromIndex(Object entity) {
+		if (!Solr.isStarted())
+			return;
 		Obs obs = ((Obs) entity);
 		try {
 			SolrServer server = Solr.getInstance().getServer();
-			server.deleteById(obs.getId().toString());
+			server.deleteById(obs.getUuid().toString(), 15000);
+			//server.commit();
 		} catch (Exception e) {
 			log.error("Solr server exception");
 			e.printStackTrace();

@@ -79,7 +79,7 @@ public class ChartSearchActivator extends BaseModuleActivator {
 			//Tell solr that this is our home folder
 			System.setProperty("solr.solr.home", solrHome);
 			
-			Solr.getInstance();
+			Solr.startServer();
 			
 			log.info(String.format("solr.solr.home: %s", solrHome));
 			
@@ -110,6 +110,8 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 */
 	public void stopped() {
 		log.info("Chart Search Module stopped");
+		Solr.shutdownServer();
+		
 	}
 	
 	private void setDataImportConnectionInfo(String configFolder) throws Exception {

@@ -13,6 +13,8 @@ import org.openmrs.util.OpenmrsUtil;
 
 public class Solr {
 
+	private static boolean started;
+	
 	private static Log log = LogFactory.getLog(Solr.class);
 
 	private SolrServer solrServer;
@@ -21,6 +23,10 @@ public class Solr {
 
 	}
 
+	public static boolean isStarted(){
+		return started;
+	}
+	
 	private static class SolrEngineHolder {
 
 		private static Solr INSTANCE = null;
@@ -57,12 +63,31 @@ public class Solr {
 	 * @return OpenmrsClassLoader
 	 */
 	public static Solr getInstance() throws Exception {
-		if (SolrEngineHolder.INSTANCE == null) {
+		/*if (SolrEngineHolder.INSTANCE == null) {
 			SolrEngineHolder.INSTANCE = new Solr();
 			SolrEngineHolder.INSTANCE.init();
-		}
+		}*/
+		
 
 		return SolrEngineHolder.INSTANCE;
+	}
+	
+	public static void startServer(){
+		if (isStarted()) return;
+		
+		SolrEngineHolder.INSTANCE = new Solr();
+		SolrEngineHolder.INSTANCE.init();
+		started = true;
+		
+	}
+	
+	public static void shutdownServer(){
+		if (!isStarted()) return;
+		
+		SolrEngineHolder.INSTANCE.solrServer.shutdown();
+		SolrEngineHolder.INSTANCE.solrServer = null;
+		SolrEngineHolder.INSTANCE = null;
+		started = false;
 	}
 
 	/**

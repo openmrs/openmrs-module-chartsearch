@@ -78,6 +78,9 @@ public class ChartSearchActivator extends BaseModuleActivator {
 			
 			//Tell solr that this is our home folder
 			System.setProperty("solr.solr.home", solrHome);
+			
+			Solr.startServer();
+			
 			log.info(String.format("solr.solr.home: %s", solrHome));
 			
 			//If user has not setup solr config folder, set a default one
@@ -107,6 +110,8 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 */
 	public void stopped() {
 		log.info("Chart Search Module stopped");
+		Solr.shutdownServer();
+		
 	}
 	
 	private void setDataImportConnectionInfo(String configFolder) throws Exception {

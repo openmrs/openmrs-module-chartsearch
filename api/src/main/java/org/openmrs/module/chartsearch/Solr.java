@@ -13,45 +13,90 @@ import org.openmrs.util.OpenmrsUtil;
 
 public class Solr {
 
-	private Solr solr;
+	private static boolean started;
+	
+	private static Log log = LogFactory.getLog(Solr.class);
+
 	private SolrServer solrServer;
 
 	private Solr() {
 
 	}
 
-	private void init() {
-		String solrHome = Context.getAdministrationService().getGlobalProperty(
-				"chartsearch.home",
-				new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
-						.getAbsolutePath());
+	public static boolean isStarted(){
+		return started;
+	}
+	
+	private static class SolrEngineHolder {
 
-		System.setProperty("solr.solr.home", solrHome);
-		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
-		CoreContainer coreContainer;
+		private static Solr INSTANCE = null;
+	}
+
+	private void init() {
 		try {
-			coreContainer = initializer.initialize();
-			solrServer = new EmbeddedSolrServer(coreContainer, "");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+			String solrHome = Context.getAdministrationService()
+					.getGlobalProperty(
+							"chartsearch.home",
+							new File(OpenmrsUtil.getApplicationDataDirectory(),
+									"chartsearch").getAbsolutePath());
+
+			System.setProperty("solr.solr.home", solrHome);
+
+			CoreContainer.Initializer initializer = new CoreContainer.Initializer();
+			CoreContainer coreContainer;
+			try {
+				coreContainer = initializer.initialize();
+				solrServer = new EmbeddedSolrServer(coreContainer, "");
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (Exception e) {
+			log.error("Solr Home Exception");
 			e.printStackTrace();
 		}
-
 	}
 
-	public Solr getInstance() {
-		if (solr == null) {
-			solr = new Solr();
-			solr.init();
-		}
+	/**
+	 * Get the static/singular instance of the module class loader
+	 * 
+	 * @return OpenmrsClassLoader
+	 */
+	public static Solr getInstance() throws Exception {
+		/*if (SolrEngineHolder.INSTANCE == null) {
+			SolrEngineHolder.INSTANCE = new Solr();
+			SolrEngineHolder.INSTANCE.init();
+		}*/
+		
 
-		return solr;
+		return SolrEngineHolder.INSTANCE;
+	}
+	
+	public static void startServer(){
+		if (isStarted()) return;
+		
+		SolrEngineHolder.INSTANCE = new Solr();
+		SolrEngineHolder.INSTANCE.init();
+		started = true;
+		
+	}
+	
+	public static void shutdownServer(){
+		if (!isStarted()) return;
+		
+		SolrEngineHolder.INSTANCE.solrServer.shutdown();
+		SolrEngineHolder.INSTANCE.solrServer = null;
+		SolrEngineHolder.INSTANCE = null;
+		started = false;
 	}
 
+	/**
+	 * Gets an instance of the solr server
+	 * 
+	 * @return SolrServer
+	 */
 	public SolrServer getServer() {
 		return solrServer;
 	}
-
-	// public static
 
 }

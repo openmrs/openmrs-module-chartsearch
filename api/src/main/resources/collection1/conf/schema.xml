@@ -920,20 +920,63 @@
 			increase storage costs. default: a value that should be used if no value 
 			is specified when adding a document. -->
 
-		<field name="person_id" type="int" indexed="true" stored="true"
+		<!-- <field name="person_id" type="int" indexed="true" stored="true" required="true" 
+			/> <field name="gender" type="string" indexed="true" stored="true" /> <field 
+			name="birthdate" type="date" indexed="true" stored="true" /> <field name="country" 
+			type="text_general" indexed="true" stored="true" /> <field name="address1" 
+			type="text_general" indexed="true" stored="true" /> <field name="address2" 
+			type="text_general" indexed="true" stored="true" /> <field name="_version_" 
+			type="long" indexed="true" stored="true" /> -->
+
+		<field name="uuid" type="string" indexed="true" stored="true"
 			required="true" />
-		<field name="gender" type="string" indexed="true" stored="true" />
-		<field name="birthdate" type="date" indexed="true" stored="true" />
-		<field name="country" type="text_general" indexed="true" stored="true" />
-		<field name="address1" type="text_general" indexed="true"
-			stored="true" />
-		<field name="address2" type="text_general" indexed="true"
-			stored="true" />
+		<field name="obs_id" type="string" indexed="true" stored="true"
+			required="false" />
+		<field name="person_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="concept_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="encounter_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="order_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="obs_datetime" type="date" indexed="true" stored="true"
+			required="false" />
+		<field name="location_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="obs_group_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="accession_number" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="value_group_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="value_boolean" type="boolean" indexed="true"
+			stored="true" required="false" />
+		<field name="value_coded" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="value_coded_name_id" type="int" indexed="true"
+			stored="true" required="false" />
+		<field name="value_drug" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="value_datetime" type="date" indexed="true" stored="true"
+			required="false" />
+		<field name="value_numeric" type="double" indexed="true" stored="true"
+			required="false" />
+		<field name="value_modifier" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="value_text" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="comments" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="value_complex" type="text_general" indexed="true"
+			stored="true" required="false" />
+
+
 		<field name="_version_" type="long" indexed="true" stored="true" />
 		<!-- catchall field, containing all other searchable text fields (implemented 
 			via copyField further on in this schema -->
-		<!-- <field name="text" type="text_general" indexed="true" stored="false" 
-			multiValued="true"/> -->
+		<field name="text" type="text_general" indexed="true" stored="false"
+			multiValued="true" />
 
 		<!-- catchall text field that indexes tokens both normally and in reverse 
 			for efficient leading wildcard queries. -->
@@ -951,6 +994,8 @@
 			EXAMPLE: name="*_i" will match any field ending in _i (like myid_i, z_i) 
 			Longer patterns will be matched first. if equal size patterns both match, 
 			the first appearing in the schema will be used. -->
+
+
 		<dynamicField name="*_i" type="int" indexed="true"
 			stored="true" />
 		<dynamicField name="*_s" type="string" indexed="true"
@@ -1013,7 +1058,7 @@
 
 	<!-- Field to use to determine and enforce document uniqueness. Unless this 
 		field is marked with required="false", it will be a required field -->
-	<uniqueKey>person_id</uniqueKey>
+	<uniqueKey>uuid</uniqueKey>
 
 	<!-- field for the QueryParser to use when an explicit fieldname is absent 
 		DEPRECATED: specify "df" in your request handler instead. -->
@@ -1026,7 +1071,16 @@
 	<!-- copyField commands copy one field to another at the time a document 
 		is added to the index. It's used either to index the same field differently, 
 		or to add multiple fields to the same field for easier/faster searching. -->
-
+	<copyField source="value_group_id" dest="text" />
+	<copyField source="value_boolean" dest="text" />
+	<copyField source="value_coded" dest="text" />
+	<copyField source="value_coded_name_id" dest="text" />
+	<copyField source="value_drug" dest="text" />
+	<copyField source="value_datetime" dest="text" />
+	<copyField source="value_numeric" dest="text" />
+	<copyField source="value_text" dest="text" />
+	<copyField source="value_modifier" dest="text" />
+	<copyField source="value_complex" dest="text" />
 
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

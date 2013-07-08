@@ -33,6 +33,7 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 
 	private HashSet<Object> addList = new HashSet<Object>();
 	private HashSet<Object> removeList = new HashSet<Object>();
+	private HashSet<Object> loadList = new HashSet<Object>();
 
 	protected Log log = LogFactory.getLog(getClass());
 
@@ -50,6 +51,9 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	public void onDelete(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
 		log.info("Chart Search Interceptor onDelete");
+		if (isIndexable(entity)) {
+			removeList.add(entity);
+		}
 		// do nothing
 	}
 
@@ -65,25 +69,18 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 				addList.add(entity);
 			}
 		}
-		
-		/*
-		 * if (isIndexable(entity)){
-		 * updates.get().peek().add((OpenmrsObject)entity); }
-		 */
 		return false;
 	}
 
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
-		if (!isIndexable(entity)) {
-			return false;
+		log.info("Chart Search Interceptor onLoad");
+		if (isIndexable(entity)) {
+			Obs obs = ((Obs) entity);
+			loadList.add(entity);
 		}
 
-		log.info("Chart Search Interceptor onLoad");
-		// addToIndex(entity);
-
-		// do nothing
 		return false;
 	}
 
@@ -98,36 +95,11 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 				addList.add(entity);
 			}
 		}
-		/*
-		 * if (isIndexable(entity)) { inserts.get().peek().add((OpenmrsObject)
-		 * entity); }
-		 */
-		/*
-		 * if (!isIndexable(entity)) { return false; } addToIndex(entity);
-		 */
 		return false;
 	}
 
 	@Override
 	public void postFlush(Iterator iterator) {
-		while (iterator.hasNext()) {
-			Object entity = iterator.next();
-			/*if (isIndexable(entity)) {
-				if (isVoided(entity)) {
-					removeList.add(entity);
-				} else {
-					addList.add(entity);
-				}
-			}*/
-		}
-		/*
-		 * try{ for (OpenmrsObject insert : inserts.get().peek()) {
-		 * addToIndex(insert); }
-		 * 
-		 * for (OpenmrsObject update : updates.get().peek()) {
-		 * addToIndex(update); }} finally { inserts.get().pop();
-		 * inserts.remove(); updates.get().pop(); updates.remove(); }
-		 */
 	}
 
 	/**
@@ -137,6 +109,10 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	public void afterTransactionCompletion(Transaction tx) {
 		try {
 			if (tx.wasCommitted()) {
+				for (Object object : loadList) {
+					if (isVoided(object)) continue;
+					addList.add(object);
+				}
 				for (Object object : addList) {
 					addToIndex(object);
 				}
@@ -147,6 +123,7 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		} finally {
 			addList.clear();
 			removeList.clear();
+			loadList.clear();
 		}
 	}
 
@@ -165,7 +142,7 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		Obs obs = ((Obs) entity);
 		try {
 			SolrServer server = Solr.getInstance().getServer();
-			
+
 			try {
 				SolrInputDocument document = new SolrInputDocument();
 				document.addField("uuid", obs.getUuid());
@@ -183,14 +160,11 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 				document.addField("value_text", obs.getValueText());
 				try {
 					server.add(document, 15000);
-					//server.commit();
 				} catch (SolrServerException e) {
-					// TODO Auto-generated catch block
 					log.error("Solr server add exception");
 					log.error(e.getMessage(), e);
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					log.error("IO exception!");
 					log.error(e.getMessage(), e);
 					e.printStackTrace();
@@ -201,7 +175,6 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			log.error("Solr server exception");
 			e.printStackTrace();
 		}
@@ -215,7 +188,6 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		try {
 			SolrServer server = Solr.getInstance().getServer();
 			server.deleteById(obs.getUuid().toString(), 15000);
-			//server.commit();
 		} catch (Exception e) {
 			log.error("Solr server exception");
 			e.printStackTrace();

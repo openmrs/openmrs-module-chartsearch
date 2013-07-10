@@ -7,6 +7,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.core.CoreContainer;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsUtil;
@@ -97,6 +99,35 @@ public class Solr {
 	 */
 	public SolrServer getServer() {
 		return solrServer;
+	}
+	
+	public static void addToIndex(int obs_id) {
+		if (!isStarted())
+			return;
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set("qt", "/dataimport");
+		params.set("command", "full-import");
+		params.set("clean", false);
+		params.set("obs_id", obs_id);
+
+		QueryResponse response = null;
+		try {
+			response = getInstance().getServer().query(params);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void removeFromIndex(int obs_id) {
+		try {
+			getInstance().getServer()
+					.deleteById(((Integer) obs_id).toString(), 10000);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

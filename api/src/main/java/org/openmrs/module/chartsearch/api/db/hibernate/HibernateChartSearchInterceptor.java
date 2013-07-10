@@ -12,7 +12,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
@@ -26,20 +28,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 public class HibernateChartSearchInterceptor extends EmptyInterceptor {
-
-	private HashSet<Object> changes = new HashSet<Object>();
-	private ThreadLocal<Stack<HashSet<OpenmrsObject>>> updates = new ThreadLocal<Stack<HashSet<OpenmrsObject>>>();
-	private ThreadLocal<Stack<HashSet<OpenmrsObject>>> deletes = new ThreadLocal<Stack<HashSet<OpenmrsObject>>>();
-
+	
 	private HashSet<Object> addList = new HashSet<Object>();
 	private HashSet<Object> removeList = new HashSet<Object>();
 	private HashSet<Object> loadList = new HashSet<Object>();
 
 	protected Log log = LogFactory.getLog(getClass());
-
-	/**
-	 * 
-	 */
 
 	public HibernateChartSearchInterceptor() {
 		log.info("Instantiating Chart Search interceptor");
@@ -54,7 +48,6 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		if (isIndexable(entity)) {
 			removeList.add(entity);
 		}
-		// do nothing
 	}
 
 	@Override
@@ -110,14 +103,15 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		try {
 			if (tx.wasCommitted()) {
 				for (Object object : loadList) {
-					if (isVoided(object)) continue;
+					if (isVoided(object))
+						continue;
 					addList.add(object);
 				}
 				for (Object object : addList) {
-					addToIndex(object);
+					addToIndex(((OpenmrsObject)object).getId());
 				}
 				for (Object object : removeList) {
-					removeFromIndex(object);
+					removeFromIndex(((OpenmrsObject)object).getId());
 				}
 			}
 		} finally {
@@ -136,7 +130,36 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 		return (obs.isVoided());
 	}
 
-	private void addToIndex(Object entity) {
+	private void addToIndex(int obs_id) {
+		if (!Solr.isStarted())
+			return;
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set("qt", "/dataimport");
+		params.set("command", "full-import");
+		params.set("clean", false);
+		params.set("obs_id", obs_id);
+
+		QueryResponse response = null;
+		try {
+			response = Solr.getInstance().getServer().query(params);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void removeFromIndex(int obs_id) {
+		try {
+			Solr.getInstance().getServer()
+					.deleteById(((Integer) obs_id).toString(), 10000);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	private void addToIndexSimple(Object entity) {
 		if (!Solr.isStarted())
 			return;
 		Obs obs = ((Obs) entity);
@@ -181,7 +204,7 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 
 	}
 
-	private void removeFromIndex(Object entity) {
+	private void removeFromIndexSimple(Object entity) {
 		if (!Solr.isStarted())
 			return;
 		Obs obs = ((Obs) entity);

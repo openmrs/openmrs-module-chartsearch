@@ -1,44 +1,42 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <dataConfig>
-	<dataSource driver="com.mysql.jdbc.Driver" password="openmrs"
-		type="JdbcDataSource"
-		url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
-		user="openmrs" />
-	<document>
-<entity name="obs"
-				query="
-			SELECT  
-					uuid, 
-					obs_id, 
-					person_id,  
-					concept_id,  
-					encounter_id,  
-					order_id,  
-					obs_datetime,  
-					location_id,  
-					obs_group_id,  
-					accession_number,  
-					value_group_id,  
-					value_boolean,  
-					value_coded,  
-					value_coded_name_id,  
-					value_drug,  
-					value_datetime,  
-					value_numeric, 
-					value_modifier,  
-					value_text,
-					comments 
-					value_complex
-			FROM openmrs.obs
+	  <dataSource driver="com.mysql.jdbc.Driver" password="hm83C2NDl^6@" type="JdbcDataSource"
+               url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
+               user="openmrs_user"/>
+	  <document>
+      <entity name="obs"
+              query="
+			SELECT
+			  uuid,
+			  obs_id,
+			  person_id, 
+			  concept_id, 
+			  encounter_id, 
+			  order_id, 
+			  obs_datetime,    
+			  location_id,    
+			  obs_group_id,
+			  accession_number,
+			  value_group_id, 
+			  value_boolean,    
+			  value_coded,    
+			  value_coded_name_id,     
+			  value_drug,     
+			  value_datetime,     
+			  value_numeric,  
+			  value_modifier,      
+			  value_text,    
+			  comments,  
+			  value_complex  
+			  FROM openmrs.obs  
 			WHERE voided=0
+			AND obs_id=${dataimporter.request.obs_id}
 			LIMIT 10000">
 			</entity> 
-		<!-- <entity name="person" query="select person_id, gender, birthdate from person">
+		    <!-- <entity name="person" query="select person_id, gender, birthdate from person">
 			<entity name="person_address"
 				query="select country, address1, address2 from person_address where person_id='${person.person_id}' ">
 			</entity> 
 		</entity>-->
 	</document>
 </dataConfig>
-
-

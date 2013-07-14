@@ -30,7 +30,7 @@
 			  value_complex  
 			  FROM openmrs.obs  
 			WHERE voided=0
-			AND obs_id=${dataimporter.request.obs_id}
+			AND person_id=${dataimporter.request.personId}
 			LIMIT 10000">
 			</entity> 
 		    <!-- <entity name="person" query="select person_id, gender, birthdate from person">

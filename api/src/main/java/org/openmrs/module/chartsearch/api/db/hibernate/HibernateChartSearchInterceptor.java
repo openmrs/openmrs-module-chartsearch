@@ -68,11 +68,11 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 	@Override
 	public boolean onLoad(Object entity, Serializable id, Object[] state,
 			String[] propertyNames, Type[] types) {
-		log.info("Chart Search Interceptor onLoad");
+		/*log.info("Chart Search Interceptor onLoad");
 		if (isIndexable(entity)) {
 			Obs obs = ((Obs) entity);
 			loadList.add(entity);
-		}
+		}*/
 
 		return false;
 	}
@@ -108,10 +108,10 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 					addList.add(object);
 				}
 				for (Object object : addList) {
-					Solr.addToIndex(((OpenmrsObject)object).getId());
+					//Solr.addToIndex(((OpenmrsObject)object).());
 				}
 				for (Object object : removeList) {
-					Solr.removeFromIndex(((OpenmrsObject)object).getId());
+					Solr.removeFromIndex(((OpenmrsObject)object).getUuid());
 				}
 			}
 		} finally {

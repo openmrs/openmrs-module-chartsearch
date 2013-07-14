@@ -30,6 +30,12 @@
 		</class>
 	</extension>
 
+	<extension>
+		<point>org.openmrs.patientDashboardTab</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardChartSearchTab
+		</class>
+	</extension>
+
 	<!-- Filter definitions -->
 
 	<filter>

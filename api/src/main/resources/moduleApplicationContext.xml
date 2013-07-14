@@ -18,8 +18,8 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-	<bean id="chartSearchInterceptor" class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateChartSearchInterceptor" primary="true"/>	
-	
+	<!-- <bean id="chartSearchInterceptor" class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateChartSearchInterceptor" primary="true"/>	
+	 -->
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

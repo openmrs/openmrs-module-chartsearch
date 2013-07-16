@@ -28,6 +28,6 @@ public class PatientDashBoardChartSearchTabController extends PortletController 
 	@Override
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
 		Integer personId = (Integer) model.get("personId");
-		Solr.addToIndex(personId);
+		Solr.updateIndex(personId);
 	}
 }

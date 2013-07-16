@@ -77,7 +77,7 @@ public class ChartSearchActivator extends BaseModuleActivator {
 			    new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch").getAbsolutePath());
 			
 			//Tell solr that this is our home folder
-			//System.setProperty("solr.solr.home", solrHome);
+			System.setProperty("solr.solr.home", solrHome);
 			
 			Solr.startServer();
 			

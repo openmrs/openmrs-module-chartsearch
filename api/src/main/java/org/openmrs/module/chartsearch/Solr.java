@@ -2,6 +2,11 @@ package org.openmrs.module.chartsearch;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +18,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.core.CoreContainer;
 import org.openmrs.api.context.Context;
@@ -25,6 +31,8 @@ public class Solr {
 	private static Log log = LogFactory.getLog(Solr.class);
 
 	private static SolrServer solrServer;
+	
+	private final static int COMMIT_DELAY = 5000;
 
 	private Solr() {
 
@@ -42,46 +50,35 @@ public class Solr {
 	private void init() {
 		try {
 
-			String solrHome = Context.getAdministrationService()
-					.getGlobalProperty(
-							"chartsearch.home",
-							new File(OpenmrsUtil.getApplicationDataDirectory(),
-									"chartsearch").getAbsolutePath());
-
-			System.setProperty("solr.solr.home", solrHome);
-
-			/*
-			 * System.setProperty( "solr.solr.home",
-			 * "E:\\eclipse\\workspace\\openmrs\\chartsearch\\EmbeddedSolrTest\\src\\main\\resources"
-			 * );
-			 */
-			CoreContainer.Initializer initializer = new CoreContainer.Initializer();
-			CoreContainer coreContainer;
-			try {
-				coreContainer = initializer.initialize();
-				solrServer = new EmbeddedSolrServer(coreContainer, "");
-				// new HttpSolrServer("http://localhost:8983/solr");
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			solrServer = getSelectedServer();
 		} catch (Exception e) {
 			log.error("Solr Home Exception");
 			e.printStackTrace();
 		}
 	}
+	
+	private static SolrServer getSelectedServer(){
+		String solrHome = Context.getAdministrationService()
+				.getGlobalProperty(
+						"chartsearch.home",
+						new File(OpenmrsUtil.getApplicationDataDirectory(),
+								"chartsearch").getAbsolutePath());
 
-	/**
-	 * Get the static/singular instance of the module class loader
-	 * 
-	 * @return OpenmrsClassLoader
-	 */
+		System.setProperty("solr.solr.home", solrHome);
+		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
+		CoreContainer coreContainer;
+		try {
+			coreContainer = initializer.initialize();
+			return new EmbeddedSolrServer(coreContainer, "");			
+			 //new HttpSolrServer("http://localhost:8983/solr");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static Solr getInstance() throws Exception {
-		/*
-		 * if (SolrEngineHolder.INSTANCE == null) { SolrEngineHolder.INSTANCE =
-		 * new Solr(); SolrEngineHolder.INSTANCE.init(); }
-		 */
-
 		return SolrEngineHolder.INSTANCE;
 	}
 
@@ -114,9 +111,30 @@ public class Solr {
 		return solrServer;
 	}
 
-	public static void addToIndex(int personId) {
+	public static void updateIndex(int personId) {
 		if (!isStarted())
 			return;
+		
+		Date lastIndexTime = getLastIndexTime(personId);
+		if (lastIndexTime == null) {
+			fullImport(personId);
+			setLastIndexTime(personId);
+		} else {
+			deltaImport(personId, lastIndexTime);
+			setLastIndexTime(personId);
+		}
+	}
+
+	public static void removeFromIndex(String uuid) {
+		try {
+			getInstance().getServer().deleteById(uuid, COMMIT_DELAY);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	private static void fullImport(int personId) {
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		params.set("qt", "/dataimport");
 		params.set("command", "full-import");
@@ -126,18 +144,64 @@ public class Solr {
 		QueryResponse response = null;
 		try {
 			response = getInstance().getServer().query(params);
-			query();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (Exception e){
 			e.printStackTrace();
 		}
 	}
+	
+	private static void deltaImport(int personId, Date lastIndexTime) {
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set("qt", "/dataimport");
+		params.set("command", "delta-import");
+		params.set("clean", false);
 
-	public static void removeFromIndex(String uuid) {
+		params.set("personId", personId);
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		params.set("lastIndexTime", formatter.format(lastIndexTime));
+
+		QueryResponse response = null;
 		try {
-			getInstance().getServer().deleteById(uuid, 10000);
+			response = getInstance().getServer().query(params);
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	private static Date getLastIndexTime(int personId) {
+		SolrQuery query = new SolrQuery();
+		String queryString = String.format("uuid:%d", personId);
+		query.setQuery(queryString);
+		try {
+			QueryResponse response = getInstance().getServer().query(query);
+			if (response.getResults().isEmpty())
+				return null;
+			return (Date) response.getResults().get(0)
+					.getFieldValue("last_index_time");
+		} catch (SolrServerException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static void setLastIndexTime(int personId) {
+		SolrInputDocument document = new SolrInputDocument();
+		Date lastIndexTimeUnformatted = Calendar.getInstance().getTime();
+		document.addField("last_index_time", lastIndexTimeUnformatted);
+		//document.addField("person_id", personId);
+		document.addField("uuid", personId);
+		try {
+			getInstance().getServer().add(document, COMMIT_DELAY);
+		} catch (SolrServerException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -154,10 +218,10 @@ public class Solr {
 				log.info(solrDocument);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-	}
+	}	
+	
 
 }

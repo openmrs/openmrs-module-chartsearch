@@ -4,34 +4,20 @@
                url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
                user="openmrs_user"/>
 	  <document>
-      <entity name="obs"
-              query="
-			SELECT
-			  uuid,
-			  obs_id,
-			  person_id, 
-			  concept_id, 
-			  encounter_id, 
-			  order_id, 
-			  obs_datetime,    
-			  location_id,    
-			  obs_group_id,
-			  accession_number,
-			  value_group_id, 
-			  value_boolean,    
-			  value_coded,    
-			  value_coded_name_id,     
-			  value_drug,     
-			  value_datetime,     
-			  value_numeric,  
-			  value_modifier,      
-			  value_text,    
-			  comments,  
-			  value_complex  
-			  FROM openmrs.obs  
-			WHERE voided=0
-			AND person_id=${dataimporter.request.personId}
-			LIMIT 10000">
+            <entity name="obs"
+              query="SELECT  uuid,  obs_id,	  person_id,  concept_id,   encounter_id,  order_id,   obs_datetime,    
+			  location_id,  obs_group_id, accession_number,  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
+			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  comments,  value_complex  
+			  FROM openmrs.obs  WHERE person_id=${dataimporter.request.personId} AND voided=0"
+			  deltaImportQuery="SELECT  uuid,  obs_id,	  person_id,  concept_id,   encounter_id,  order_id,   obs_datetime,    
+			  location_id,  obs_group_id, accession_number,  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
+			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  comments,  value_complex  
+			  FROM openmrs.obs  WHERE uuid='${dih.delta.uuid}' AND voided=0"
+                deltaQuery="select uuid from openmrs.obs where person_id='${dataimporter.request.personId}'
+				AND date_created &gt; '${dataimporter.request.lastIndexTime}' AND voided=0"
+				deletedPkQuery="select uuid from openmrs.obs where person_id='${dataimporter.request.personId}'
+				AND voided=1 AND date_voided &gt; '${dataimporter.request.lastIndexTime}'"
+				>
 			</entity> 
 		    <!-- <entity name="person" query="select person_id, gender, birthdate from person">
 			<entity name="person_address"

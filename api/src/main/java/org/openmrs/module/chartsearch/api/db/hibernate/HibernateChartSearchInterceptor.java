@@ -21,7 +21,7 @@ import org.hibernate.type.Type;
 import org.openmrs.Obs;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.Solr;
+import org.openmrs.module.chartsearch.SolrUtil;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -111,7 +111,7 @@ public class HibernateChartSearchInterceptor extends EmptyInterceptor {
 					//Solr.addToIndex(((OpenmrsObject)object).());
 				}
 				for (Object object : removeList) {
-					Solr.removeFromIndex(((OpenmrsObject)object).getUuid());
+					SolrUtil.removeFromIndex(((OpenmrsObject)object).getUuid());
 				}
 			}
 		} finally {

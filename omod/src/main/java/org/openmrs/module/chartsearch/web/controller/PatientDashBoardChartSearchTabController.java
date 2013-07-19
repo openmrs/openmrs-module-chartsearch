@@ -17,7 +17,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openmrs.module.chartsearch.Solr;
+import org.openmrs.module.chartsearch.Indexer;
+import org.openmrs.module.chartsearch.SolrUtil;
 import org.openmrs.web.controller.PortletController;
 
 /**
@@ -25,9 +26,15 @@ import org.openmrs.web.controller.PortletController;
  */
 public class PatientDashBoardChartSearchTabController extends PortletController {
 	
+	Indexer indexer;
+	
+	public void setIndexer(Indexer indexer) {
+		this.indexer = indexer;
+	}
+
 	@Override
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
 		Integer personId = (Integer) model.get("personId");
-		Solr.updateIndex(personId);
+		indexer.indexPatiendData(personId);
 	}
 }

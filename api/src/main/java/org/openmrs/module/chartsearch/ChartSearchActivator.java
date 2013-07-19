@@ -40,6 +40,31 @@ import org.w3c.dom.Node;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
+ * 
+ * @startuml
+Actor User
+
+participant CSM
+participant Database
+participant DIH
+participant SOLR
+
+User -> CSM : open patient dashboard
+activate CSM 
+    CSM -> DIH: import data for selected patient
+deactivate CSM
+activate DIH        
+   	DIH -> Database : get changed data for selected patient
+    activate Database
+       	Database -> DIH : return changed data                
+    deactivate Database
+    DIH -> SOLR : update index
+deactivate DIH 
+activate SOLR
+deactivate SOLR
+    
+@enduml
+ * 
  */
 public class ChartSearchActivator extends BaseModuleActivator {
 	
@@ -70,32 +95,7 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {
-		log.info("Chart Search Module started");
-		try {
-			//Get the solr home folder
-			String solrHome = Context.getAdministrationService().getGlobalProperty("chartsearch.home",
-			    new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch").getAbsolutePath());
-			
-			//Tell solr that this is our home folder
-			System.setProperty("solr.solr.home", solrHome);
-			
-			Solr.startServer();
-			
-			log.info(String.format("solr.solr.home: %s", solrHome));
-			
-			//If user has not setup solr config folder, set a default one
-			String configFolder = solrHome + File.separatorChar + "collection1" + File.separatorChar + "conf";
-			if (!new File(configFolder).exists()) {
-				URL url = OpenmrsClassLoader.getInstance().getResource("collection1/conf");
-				File file = new File(url.getFile());
-				FileUtils.copyDirectoryToDirectory(file, new File(solrHome+File.separatorChar+"collection1"));
-				
-				setDataImportConnectionInfo(configFolder);
-			}
-		}
-		catch (Exception ex) {
-			log.error("Failed to copy Solr config folder", ex);
-		}
+		log.info("Chart Search Module started");		
 	}
 	
 	/**
@@ -109,39 +109,9 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 * @see BaseModuleActivator#stopped()
 	 */
 	public void stopped() {
-		log.info("Chart Search Module stopped");
-		Solr.shutdownServer();
-		
+		log.info("Chart Search Module stopped");		
 	}
 	
-	private void setDataImportConnectionInfo(String configFolder) throws Exception {
-		Properties properties = Context.getRuntimeProperties();
-		
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(OpenmrsClassLoader.getInstance().getResourceAsStream("collection1/conf/data-config.xml"));
-		Element node = (Element) doc.getElementsByTagName("dataSource").item(0);
-		
-		node.setAttribute("url", properties.getProperty("connection.url"));
-		node.setAttribute("user", properties.getProperty("connection.username"));
-		node.setAttribute("password", properties.getProperty("connection.password"));
-		
-		String xml = doc2String(doc);
-		File file = new File(configFolder + File.separatorChar + "data-config.xml");
-		FileUtils.writeStringToFile(file, xml, "UTF-8");
-	}
 	
-	public static String doc2String(Node doc) throws Exception {
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer = tFactory.newTransformer();
-		
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		
-		StringWriter outStream = new StringWriter();
-		DOMSource source = new DOMSource(doc);
-		StreamResult result = new StreamResult(outStream);
-		transformer.transform(source, result);
-		return outStream.getBuffer().toString();
-	}
 		
 }

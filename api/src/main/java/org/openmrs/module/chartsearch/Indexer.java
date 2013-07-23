@@ -27,13 +27,16 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.springframework.stereotype.Service;
 
 /**
  *
  */
+@Service
 public class Indexer {
 
 	private final SolrServer solrServer;
+	
 	private static Log log = LogFactory.getLog(Indexer.class);
 
 	private final static int COMMIT_DELAY = 5000;

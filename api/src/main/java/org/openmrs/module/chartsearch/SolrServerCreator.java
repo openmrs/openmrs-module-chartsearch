@@ -19,5 +19,6 @@ import org.apache.solr.client.solrj.SolrServer;
  * SolrServer factory
  */
 public abstract class SolrServerCreator {
-	public abstract SolrServer CreateSolrServer();
+	
+	public abstract SolrServer createSolrServer();
 }

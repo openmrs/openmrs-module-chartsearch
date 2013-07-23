@@ -15,6 +15,7 @@ package org.openmrs.module.chartsearch;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Properties;
@@ -30,10 +31,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log; 
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceInsertExecutor;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -66,6 +72,7 @@ deactivate SOLR
 @enduml
  * 
  */
+
 public class ChartSearchActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
@@ -94,7 +101,7 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	/**
 	 * @see BaseModuleActivator#started()
 	 */
-	public void started() {
+	public void started() {	
 		log.info("Chart Search Module started");		
 	}
 	

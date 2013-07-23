@@ -35,9 +35,12 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,12 +52,17 @@ import org.xml.sax.SAXException;
 public class EmbeddedSolrServerCreator extends SolrServerCreator {
 
 	private static Log log = LogFactory.getLog(EmbeddedSolrServerCreator.class);
+	
+	private SolrServer solrServer;
+	
+	@Autowired
+	@Qualifier("adminService")
+	private AdministrationService administrationService;
 
 	@Override
-	public SolrServer CreateSolrServer() {
-
+	public SolrServer createSolrServer() {		
 		// Get the solr home folder
-		String solrHome = Context.getAdministrationService().getGlobalProperty(
+		String solrHome = administrationService.getGlobalProperty(
 				"chartsearch.home",
 				new File(OpenmrsUtil.getApplicationDataDirectory(),
 						"chartsearch").getAbsolutePath());
@@ -86,12 +94,14 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		CoreContainer coreContainer;
 		try {
 			coreContainer = initializer.initialize();
-			return new EmbeddedSolrServer(coreContainer, "");
+			solrServer = new EmbeddedSolrServer(coreContainer, "");
+			return solrServer;
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
+		} finally {
 		}
+		
 	}
 
 	private void setDataImportConnectionInfo(String configFolder)
@@ -127,5 +137,6 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		transformer.transform(source, result);
 		return outStream.getBuffer().toString();
 	}
+
 
 }

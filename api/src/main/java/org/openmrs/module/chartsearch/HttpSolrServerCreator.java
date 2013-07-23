@@ -21,7 +21,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
  */
 public class HttpSolrServerCreator extends SolrServerCreator {
 	
-	private String solrHttpAddress;
+	private String solrHttpAddress = "http://localhost:8983/solr";
 
 	public String getSolrHttpAddress() {
 		return solrHttpAddress;
@@ -32,10 +32,10 @@ public class HttpSolrServerCreator extends SolrServerCreator {
 	}
 
 	/**
-	 * @see org.openmrs.module.chartsearch.SolrServerCreator#CreateSolrServer()
+	 * @see org.openmrs.module.chartsearch.SolrServerCreator#createSolrServer()
 	 */
 	@Override
-	public SolrServer CreateSolrServer() {
+	public SolrServer createSolrServer() {
 		return new HttpSolrServer(getSolrHttpAddress());
 	}
 

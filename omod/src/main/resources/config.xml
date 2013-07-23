@@ -38,7 +38,7 @@
 
 	<!-- Filter definitions -->
 
-	<filter>
+	<!-- <filter>
 		<filter-name>ChartSearchDataImportFilter</filter-name>
 		<filter-class>org.apache.solr.servlet.SolrDispatchFilter
 		</filter-class>
@@ -56,7 +56,7 @@
 	<filter-mapping>
 		<filter-name>ChartSearchSelectFilter</filter-name>
 		<url-pattern>/select</url-pattern>
-	</filter-mapping>
+	</filter-mapping> -->
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

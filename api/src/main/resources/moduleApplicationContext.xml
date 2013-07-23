@@ -18,8 +18,17 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-	<!-- <bean id="chartSearchInterceptor" class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateChartSearchInterceptor" primary="true"/>	
-	 -->
+	
+	<bean id="embeddedSolrServerCreator"
+		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator" ></bean>
+    <bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator" lazy-init="true"
+		factory-method="createSolrServer"></bean>
+	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer" lazy-init="true">
+		<constructor-arg ref="embeddedSolrServer" />
+	</bean> 
+	<!-- <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher">
+		<constructor-arg ref="embeddedSolrServer" />
+	</bean> -->
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -56,7 +65,8 @@
 		</property>
 	</bean>
 	
-	
-	
-	
+
+
+
+
 </beans>

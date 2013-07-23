@@ -21,9 +21,9 @@
 	
 	<bean id="embeddedSolrServerCreator"
 		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator" ></bean>
-    <bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator" lazy-init="true"
+    <bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator" lazy-init="false"
 		factory-method="createSolrServer"></bean>
-	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer" lazy-init="true">
+	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer" lazy-init="false">
 		<constructor-arg ref="embeddedSolrServer" />
 	</bean> 
 	<!-- <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher">

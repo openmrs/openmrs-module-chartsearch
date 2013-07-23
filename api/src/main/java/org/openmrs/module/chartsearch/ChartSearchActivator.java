@@ -76,6 +76,13 @@ deactivate SOLR
 public class ChartSearchActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
+	
+	@Autowired
+	private SolrManagement solrManagement;
+	
+	public void setSolrManagement(SolrManagement solrManagement){
+		this.solrManagement = solrManagement;
+	}
 		
 	/**
 	 * @see BaseModuleActivator#willRefreshContext()
@@ -116,7 +123,8 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 * @see BaseModuleActivator#stopped()
 	 */
 	public void stopped() {
-		log.info("Chart Search Module stopped");		
+		log.info("Chart Search Module stopped");
+		solrManagement.shutdown();
 	}
 	
 	

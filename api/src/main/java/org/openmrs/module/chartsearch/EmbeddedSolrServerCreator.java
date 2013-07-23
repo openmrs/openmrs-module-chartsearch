@@ -60,12 +60,14 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 	private AdministrationService administrationService;
 
 	@Override
-	public SolrServer createSolrServer() {		
+	public SolrServer createSolrServer() {	
+		
+		
 		// Get the solr home folder
-		String solrHome = administrationService.getGlobalProperty(
-				"chartsearch.home",
+		String solrHome = /*administrationService.getGlobalProperty(
+				"chartsearch.home",*/
 				new File(OpenmrsUtil.getApplicationDataDirectory(),
-						"chartsearch").getAbsolutePath());
+						"chartsearch").getAbsolutePath();
 
 		// Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", solrHome);

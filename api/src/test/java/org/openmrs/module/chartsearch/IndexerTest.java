@@ -11,21 +11,30 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch.api;
+package org.openmrs.module.chartsearch;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
-import org.openmrs.api.context.Context;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
- * Tests {@link ${ChartSearchService}}.
+ *
  */
-public class  ChartSearchServiceTest extends BaseModuleContextSensitiveTest {
-	
-	
+public class IndexerTest {
+
+	/**
+	 * Test method for {@link org.openmrs.module.chartsearch.Indexer#indexPatiendData(java.lang.Integer)}.
+	 */
 	@Test
-	public void shouldSetupContext() {
-		assertNotNull(Context.getService(ChartSearchService.class));
+	public void testIndexPatiendData() {
+
 	}
+
+	/**
+	 * Test method for {@link org.openmrs.module.chartsearch.Indexer#removeFromIndex(java.lang.String)}.
+	 */
+	@Test
+	public void testRemoveFromIndex() {
+	}
+
 }

@@ -19,21 +19,21 @@
 
 	<!-- Add here beans related to the API context -->
 
-	<bean id="embeddedSolrServerCreator"
+	<bean id="solrServerCreator"
 		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator"></bean>
-	<bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator"
+	<bean id="solrServer" factory-bean="solrServerCreator"
 		lazy-init="false" factory-method="createSolrServer"></bean>
 	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer"
 		lazy-init="false">
-		<constructor-arg ref="embeddedSolrServer" />
+		<constructor-arg ref="solrServer" />
 	</bean>
     <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
 		lazy-init="false">
-		<constructor-arg ref="embeddedSolrServer" />
+		<constructor-arg ref="solrServer" />
 	</bean>
 	<bean id="solrManagement" class="org.openmrs.module.chartsearch.SolrManagement">
 		<property name="solrServer">
-			<ref bean="embeddedSolrServer" />
+			<ref bean="solrServer" />
 		</property>
 	</bean>	
 	<!-- Services accessible via Context.getService() -->

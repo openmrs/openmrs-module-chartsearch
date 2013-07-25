@@ -27,6 +27,10 @@
 		lazy-init="false">
 		<constructor-arg ref="embeddedSolrServer" />
 	</bean>
+    <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
+		lazy-init="false">
+		<constructor-arg ref="embeddedSolrServer" />
+	</bean>
 	<bean id="solrManagement" class="org.openmrs.module.chartsearch.SolrManagement">
 		<property name="solrServer">
 			<ref bean="embeddedSolrServer" />

@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -34,16 +35,21 @@ public class Searcher {
 		this.solrServer = solrServer;
 	}
 	
-	/*
-	private void query() {
+	public String query() {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("*:*");
 		QueryResponse response;
-			response = solrServer.query(query);
-			SolrDocumentList list = response.getResults();
+			try {
+				response = solrServer.query(query);
+				return response.toString();
+			} catch (SolrServerException e) {
+				log.error("Error generated", e);
+			}
+			/*SolrDocumentList list = response.getResults();
 			for (SolrDocument solrDocument : list) {
-				log.info(solrDocument);			
+				log.info(solrDocument);*/
+			return "";			
 
-	}*/	
+	}
 
 }

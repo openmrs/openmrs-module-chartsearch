@@ -18,17 +18,20 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-	
+
 	<bean id="embeddedSolrServerCreator"
-		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator" ></bean>
-    <bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator" lazy-init="false"
-		factory-method="createSolrServer"></bean>
-	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer" lazy-init="false">
+		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator"></bean>
+	<bean id="embeddedSolrServer" factory-bean="embeddedSolrServerCreator"
+		lazy-init="false" factory-method="createSolrServer"></bean>
+	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer"
+		lazy-init="false">
 		<constructor-arg ref="embeddedSolrServer" />
-	</bean> 
-	<!-- <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher">
-		<constructor-arg ref="embeddedSolrServer" />
-	</bean> -->
+	</bean>
+	<bean id="solrManagement" class="org.openmrs.module.chartsearch.SolrManagement">
+		<property name="solrServer">
+			<ref bean="embeddedSolrServer" />
+		</property>
+	</bean>	
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -60,11 +63,11 @@
 		<property name="moduleService">
 			<list>
 				<value>${project.parent.groupId}.${project.parent.artifactId}.api.ChartSearchService</value>
-				<ref local="chartSearch"/>
+				<ref local="chartSearch" />
 			</list>
 		</property>
 	</bean>
-	
+
 
 
 

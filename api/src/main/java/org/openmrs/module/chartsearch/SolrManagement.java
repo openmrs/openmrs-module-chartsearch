@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Service
 public class SolrManagement {
 	
-	@Autowired
 	private SolrServer solrServer;
 	
 	public void setSolrServer(SolrServer solrServer){

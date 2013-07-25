@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -39,6 +40,7 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -75,15 +77,7 @@ deactivate SOLR
 
 public class ChartSearchActivator extends BaseModuleActivator {
 	
-	protected Log log = LogFactory.getLog(getClass());
-	
-	@Autowired
-	private SolrManagement solrManagement;
-	
-	public void setSolrManagement(SolrManagement solrManagement){
-		this.solrManagement = solrManagement;
-	}
-		
+	protected Log log = LogFactory.getLog(getClass());	
 	/**
 	 * @see BaseModuleActivator#willRefreshContext()
 	 */
@@ -109,7 +103,17 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {	
-		log.info("Chart Search Module started");		
+		log.info("Chart Search Module started");
+		SolrServer solrServer = getComponent(SolrServer.class);
+		try {
+			solrServer.ping();
+		} catch (SolrServerException e) {
+			// TODO Auto-generated catch block
+			log.error("Error generated", e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			log.error("Error generated", e);
+		}
 	}
 	
 	/**
@@ -124,7 +128,15 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 */
 	public void stopped() {
 		log.info("Chart Search Module stopped");
+		SolrManagement solrManagement = getComponent(SolrManagement.class);
 		solrManagement.shutdown();
+	}
+	
+	private <T> T getComponent(Class<T> clazz) {
+		List<T> list = Context.getRegisteredComponents(clazz);
+		if (list == null || list.size() == 0)
+			throw new RuntimeException("Cannot find component of " + clazz);
+		return list.get(0);
 	}
 	
 	

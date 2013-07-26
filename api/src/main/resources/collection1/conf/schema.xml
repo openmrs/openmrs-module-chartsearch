@@ -930,7 +930,7 @@
 
 		<field name="uuid" type="string" indexed="true" stored="true"
 			required="true" />
-		<field name="obs_id" type="string" indexed="true" stored="true"
+		<field name="obs_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="person_id" type="int" indexed="true" stored="true"
 			required="false" />

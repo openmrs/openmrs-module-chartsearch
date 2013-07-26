@@ -23,6 +23,10 @@
 	<!-- Annotation based controllers -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+		
+	<bean id="dwrChartSearchService" 
+	     class="org.openmrs.module.chartsearch.web.DWRChartSearchService">		
+	</bean>	
 
 	<context:component-scan base-package="org.openmrs.module.chartsearch.web.controller" />
 

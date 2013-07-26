@@ -104,16 +104,6 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 */
 	public void started() {	
 		log.info("Chart Search Module started");
-		SolrServer solrServer = getComponent(SolrServer.class);
-		try {
-			solrServer.ping();
-		} catch (SolrServerException e) {
-			// TODO Auto-generated catch block
-			log.error("Error generated", e);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			log.error("Error generated", e);
-		}
 	}
 	
 	/**

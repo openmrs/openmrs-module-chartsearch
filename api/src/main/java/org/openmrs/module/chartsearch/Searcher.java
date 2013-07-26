@@ -19,7 +19,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
@@ -33,6 +32,24 @@ public class Searcher {
 	
 	public Searcher(SolrServer solrServer) {
 		this.solrServer = solrServer;
+	}	
+	
+	public Long getDocumentListCount(Integer patientId, String searchText) throws Exception {
+		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		query.addFilterQuery(String.format("person_id:%d", patientId));
+		query.setRows(0); //Intentionally setting to this value such that we get the count very quickly.
+		QueryResponse response = solrServer.query(query);
+		return response.getResults().getNumFound();
+	}
+	
+	
+	public SolrDocumentList getDocumentList(Integer patientId, String searchText, Integer start, Integer length) throws Exception {
+		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		query.addFilterQuery(String.format("person_id:%d", patientId));
+		query.setStart(start);
+		query.setRows(length);
+		QueryResponse response = solrServer.query(query);
+		return response.getResults();
 	}
 	
 	public String query() {

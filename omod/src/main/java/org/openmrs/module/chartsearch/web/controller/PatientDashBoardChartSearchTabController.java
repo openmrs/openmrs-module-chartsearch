@@ -33,21 +33,15 @@ import org.springframework.stereotype.Controller;
 public class PatientDashBoardChartSearchTabController extends PortletController {
 
 	@Autowired
-	private Indexer indexer;
-	
-	@Autowired
-	private Searcher searcher;
+	private Indexer indexer;	
 
 	@Override
 	protected void populateModel(HttpServletRequest request,
 			Map<String, Object> model) {
 		
-		  String response = searcher.query();
-		
 		  Integer personId = (Integer) model.get("personId");
 		  indexer.indexPatiendData(personId);
 		  
-		  model.put("solrResponse", response);
 		 
 	}
 }

@@ -21,6 +21,15 @@
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.ChartSearchActivator
 	</activator>
+	
+	<dwr>
+		<allow>
+			<create creator="new" javascript="DWRChartSearchService">
+				<param name="class" value="${project.parent.groupId}.${project.parent.artifactId}.web.DWRChartSearchService"/>
+				<include method="findObsAndCount" />
+			</create>
+		</allow>
+	</dwr>
 
 
 	<!-- Adds link to admin page -->

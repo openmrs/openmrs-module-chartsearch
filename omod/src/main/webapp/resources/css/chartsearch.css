@@ -1,0 +1,29 @@
+#chartSearchResults {
+	width: 600px;
+	float: left;
+	margin: 0;
+}
+/*
+#chartSearchResults .box,
+#chartSearchResults  .boxHeader {
+	box-sizing: border-box;
+}*/
+
+#chartSearchDetails {
+	margin-left: 605px;
+	border: 1px solid;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+#chartSearchWrapper{
+	overflow: hidden;
+	position: relative;
+}
+
+#chartSearchWrapper div, .boxHeader {
+	box-sizing: border-box;
+}

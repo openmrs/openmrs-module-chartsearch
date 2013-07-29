@@ -70,6 +70,7 @@ public class Indexer {
 
 	}
 
+	//TODO rewrite & do more intuitive
 	private Date getLastIndexTime(int personId) throws SolrServerException {
 		SolrQuery query = new SolrQuery();
 		String queryString = String.format("uuid:%d", personId);

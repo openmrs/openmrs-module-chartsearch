@@ -10,19 +10,23 @@
 	var lastSearch;
 	$j(document).ready(function() {
 		new OpenmrsSearch("patientChartWidget", false, doObsSearch, doSelectionHandler, 
-				[{fieldName:"obsId", header:" "}, {fieldName:"obsDate", header:" "}],
+				[{fieldName:"conceptName", header:" "}, 
+				{fieldName:"obsDate", header:" "},
+				{fieldName:"value", header:" "},
+				{fieldName:"obsId", header:" "}],
 				{searchLabel: '',
                     searchPlaceholder:'',
 					//includeVoidedLabel: '<spring:message code="SearchResults.includeRetired" javaScriptEscape="true"/>', 
-					columnRenderers: [nameColumnRenderer, null], 
-					columnVisibility: [true, false],
+					columnRenderers: [nameColumnRenderer, linkColumnRenderer, null, null], 
+					columnVisibility: [true, true, false, false],
 					searchPhrase:'<request:parameter name="searchPhrase"/>',
 					showIncludeVerbose: false
 				});
 	});
 	
 	function doSelectionHandler(index, data) {
-		renderDetails(data);		
+		DWRChartSearchService.getDetails(data.obsId, renderDetails);
+		//renderDetails(data);		
 		//alert("admin/observations/obs.form?obsId=" + data.obsId + "&=searchPhrase=" + lastSearch);
 	}
 	
@@ -33,17 +37,30 @@
 		DWRChartSearchService.findObsAndCount(${model.patient.patientId}, text, opts.includeVoided, null, null, null, null, opts.start, opts.length, getMatchCount, resultHandler);
 	}
 	
-	//custom render, appends an arrow and preferredName it exists
 	function nameColumnRenderer(oObj){
-		if(oObj.aData[1] && $j.trim(oObj.aData[1]) != '')
-			return "<span>"+oObj.aData[0]+"</span><span class='otherHit'> &rArr; "+oObj.aData[1]+"</span>";
+		//if(oObj.aData[1] && $j.trim(oObj.aData[1]) != '')
+			//return "<span>"+oObj.aData[0]+"</span><span class='otherHit'> &rArr; "+oObj.aData[1]+"</span>";
+		//return "<span>"+oObj.aData[0]+"</span>";
 		
-		return "<span>"+oObj.aData[0]+"</span>";
+		return "<div>"+oObj.aData[0]+"</div><div style='font-weight: bold;'>"+oObj.aData[1]+"</div><div>"+oObj.aData[2]+"</div>";
+		//"<span>"+oObj.aData[2]+"</span>";
+	}
+	
+	function linkColumnRenderer(oObj){
+		return "<div><a href='admin/observations/obs.form?obsId=" + oObj.aData[3] + "&=searchPhrase=" + lastSearch + "'>Link</a></div>";
 	}
 	
 	function renderDetails(data){	
-		//todo method in DWRChartSearchService
-		jQuery("#chartSearchDetails").html(data.obsId + "<br/>" + data.obsDate);
+		//todo localization
+		jQuery("#chartSearchDetails").html("<div class='cs_details_title'>Observation date:</div>"
+										 + data.obsDate + "<br/>"
+										 + "<div class='cs_details_title'>Concept Name:</div>"
+										 + data.conceptName
+										 + "<div class='cs_details_title'>Value:</div>"
+										 + data.value
+										 + "<div class='cs_details_title'>Location:</div>"
+										 + data.location
+										 );
 	}
 	
 </script>

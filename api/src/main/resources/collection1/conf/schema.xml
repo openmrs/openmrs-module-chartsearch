@@ -934,42 +934,30 @@
 			required="false" />
 		<field name="person_id" type="int" indexed="true" stored="true"
 			required="false" />
-		<field name="concept_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="encounter_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="order_id" type="int" indexed="true" stored="true"
-			required="false" />
+		<field name="concept_name" type="text_general" indexed="true"
+			stored="true" required="false" />
 		<field name="obs_datetime" type="date" indexed="true" stored="true"
 			required="false" />
-		<field name="location_id" type="int" indexed="true" stored="true"
+		<field name="value_group_id" type="text_general" indexed="true" stored="false"
 			required="false" />
-		<field name="obs_group_id" type="int" indexed="true" stored="true"
+		<field name="value_boolean" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="value_coded" type="text_general" indexed="true" stored="false"
 			required="false" />
-		<field name="accession_number" type="string" indexed="true"
-			stored="true" required="false" />
-		<field name="value_group_id" type="int" indexed="true" stored="true"
+		<field name="value_coded_name_id" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="value_drug" type="text_general" indexed="true" stored="false"
 			required="false" />
-		<field name="value_boolean" type="boolean" indexed="true"
-			stored="true" required="false" />
-		<field name="value_coded" type="int" indexed="true" stored="true"
+		<field name="value_datetime" type="text_general" indexed="true" stored="false"
 			required="false" />
-		<field name="value_coded_name_id" type="int" indexed="true"
-			stored="true" required="false" />
-		<field name="value_drug" type="int" indexed="true" stored="true"
+		<field name="value_numeric" type="text_general" indexed="true" stored="false"
 			required="false" />
-		<field name="value_datetime" type="date" indexed="true" stored="true"
-			required="false" />
-		<field name="value_numeric" type="double" indexed="true" stored="true"
-			required="false" />
-		<field name="value_modifier" type="string" indexed="true"
-			stored="true" required="false" />
+		<field name="value_modifier" type="text_general" indexed="true"
+			stored="false" required="false" />
 		<field name="value_text" type="text_general" indexed="true"
-			stored="true" required="false" />
-		<field name="comments" type="text_general" indexed="true"
-			stored="true" required="false" />
+			stored="false" required="false" />
 		<field name="value_complex" type="text_general" indexed="true"
-			stored="true" required="false" />
+			stored="false" required="false" />
 		<field name="last_index_time" type="date" indexed="true" stored="true"
 			required="false" />
 
@@ -977,7 +965,7 @@
 		<field name="_version_" type="long" indexed="true" stored="true" />
 		<!-- catchall field, containing all other searchable text fields (implemented 
 			via copyField further on in this schema -->
-		<field name="value" type="text_general" indexed="true" stored=""
+		<field name="value" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
 
 		<!-- catchall text field that indexes tokens both normally and in reverse 
@@ -990,65 +978,6 @@
 		<!-- <field name="timestamp" type="date" indexed="true" stored="true" default="NOW" 
 			multiValued="false"/> -->
 
-		<!-- Dynamic field definitions. If a field name is not found, dynamicFields 
-			will be used if the name matches any of the patterns. RESTRICTION: the glob-like 
-			pattern in the name attribute must have a "*" only at the start or the end. 
-			EXAMPLE: name="*_i" will match any field ending in _i (like myid_i, z_i) 
-			Longer patterns will be matched first. if equal size patterns both match, 
-			the first appearing in the schema will be used. -->
-
-
-		<dynamicField name="*_i" type="int" indexed="true"
-			stored="true" />
-		<dynamicField name="*_s" type="string" indexed="true"
-			stored="true" />
-		<dynamicField name="*_l" type="long" indexed="true"
-			stored="true" />
-		<dynamicField name="*_t" type="text_general" indexed="true"
-			stored="true" />
-		<dynamicField name="*_txt" type="text_general" indexed="true"
-			stored="true" multiValued="true" />
-		<dynamicField name="*_en" type="text_en" indexed="true"
-			stored="true" multiValued="true" />
-		<dynamicField name="*_b" type="boolean" indexed="true"
-			stored="true" />
-		<dynamicField name="*_f" type="float" indexed="true"
-			stored="true" />
-		<dynamicField name="*_d" type="double" indexed="true"
-			stored="true" />
-
-		<!-- Type used to index the lat and lon components for the "location" FieldType -->
-		<dynamicField name="*_coordinate" type="tdouble" indexed="true"
-			stored="false" />
-
-		<dynamicField name="*_dt" type="date" indexed="true"
-			stored="true" />
-		<dynamicField name="*_p" type="location" indexed="true"
-			stored="true" />
-
-		<!-- some trie-coded dynamic fields for faster range queries -->
-		<dynamicField name="*_ti" type="tint" indexed="true"
-			stored="true" />
-		<dynamicField name="*_tl" type="tlong" indexed="true"
-			stored="true" />
-		<dynamicField name="*_tf" type="tfloat" indexed="true"
-			stored="true" />
-		<dynamicField name="*_td" type="tdouble" indexed="true"
-			stored="true" />
-		<dynamicField name="*_tdt" type="tdate" indexed="true"
-			stored="true" />
-
-		<dynamicField name="*_pi" type="pint" indexed="true"
-			stored="true" />
-		<dynamicField name="*_c" type="currency" indexed="true"
-			stored="true" />
-
-		<dynamicField name="ignored_*" type="ignored"
-			multiValued="true" />
-		<dynamicField name="attr_*" type="text_general" indexed="true"
-			stored="true" multiValued="true" />
-
-		<dynamicField name="random_*" type="random" />
 
 		<!-- uncomment the following to ignore any fields that don't already match 
 			an existing field name or dynamic field, rather than reporting them as an 

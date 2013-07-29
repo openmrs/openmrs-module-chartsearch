@@ -11,12 +11,14 @@
 
 #chartSearchDetails {
 	margin-left: 605px;
-	border: 1px solid;
+	border: 1px solid #1aac9b;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
+	padding: 20px;
+	font-size: 16px;	
 }
 
 #chartSearchWrapper{
@@ -26,4 +28,10 @@
 
 #chartSearchWrapper div, .boxHeader {
 	box-sizing: border-box;
+}
+
+.cs_details_title {
+	font-weight: bold;
+	color: blue;
+	margin: 20px 0 5px;
 }

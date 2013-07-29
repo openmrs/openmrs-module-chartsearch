@@ -52,22 +52,23 @@ import org.xml.sax.SAXException;
 public class EmbeddedSolrServerCreator extends SolrServerCreator {
 
 	private static Log log = LogFactory.getLog(EmbeddedSolrServerCreator.class);
-	
+
 	private SolrServer solrServer;
-	
+
 	@Autowired
 	@Qualifier("adminService")
 	private AdministrationService administrationService;
 
 	@Override
-	public SolrServer createSolrServer() {	
-		
-		
+	public SolrServer createSolrServer() {
+
 		// Get the solr home folder
-		String solrHome = /*administrationService.getGlobalProperty(
-				"chartsearch.home",*/
-				new File(OpenmrsUtil.getApplicationDataDirectory(),
-						"chartsearch").getAbsolutePath();
+		String solrHome = /*
+						 * administrationService.getGlobalProperty(
+						 * "chartsearch.home",
+						 */
+		new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
+				.getAbsolutePath();
 
 		// Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", solrHome);
@@ -77,21 +78,21 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		// If user has not setup solr config folder, set a default one
 		String configFolder = solrHome + File.separatorChar + "collection1"
 				+ File.separatorChar + "conf";
-		if (!new File(configFolder).exists()) {
-			URL url = OpenmrsClassLoader.getInstance().getResource(
-					"collection1/conf");
-			File file = new File(url.getFile());
-			try {
-				FileUtils.copyDirectoryToDirectory(file, new File(solrHome
-						+ File.separatorChar + "collection1"));
-				setDataImportConnectionInfo(configFolder);
-			} catch (IOException e) {
-				log.error("Failed to copy Solr config folder", e);
-			} catch (Exception e) {
-				log.error("Failed to set dataImport connection info", e);
-			}
-
+		// if (!new File(configFolder).exists()) {
+		URL url = OpenmrsClassLoader.getInstance().getResource(
+				"collection1/conf");
+		File file = new File(url.getFile());
+		try {
+			FileUtils.copyDirectoryToDirectory(file, new File(solrHome
+					+ File.separatorChar + "collection1"));
+			setDataImportConnectionInfo(configFolder);
+		} catch (IOException e) {
+			log.error("Failed to copy Solr config folder", e);
+		} catch (Exception e) {
+			log.error("Failed to set dataImport connection info", e);
 		}
+
+		// }
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer;
 		try {
@@ -103,7 +104,7 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 			return null;
 		} finally {
 		}
-		
+
 	}
 
 	private void setDataImportConnectionInfo(String configFolder)
@@ -139,6 +140,5 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		transformer.transform(source, result);
 		return outStream.getBuffer().toString();
 	}
-
 
 }

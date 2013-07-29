@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.Searcher;
@@ -98,11 +99,13 @@ public class DWRChartSearchService {
 				for (SolrDocument document : documents) {
 					Integer obsId = (Integer) document.get("obs_id");
 					Date date = (Date) document.get("obs_datetime");
-					String value = (String) document.get("value");						
+					String value = ((List<String>) document.get("value")).get(0);
+					String conceptName = (String) document.get("concept_name");
 					ObsListItem obsListItem = new ObsListItem();
 					obsListItem.setObsId(obsId);
 					obsListItem.setObsDate(date.toString());
 					obsListItem.setValue(value);
+					obsListItem.setConceptName(conceptName);
 					objectList.add(obsListItem);
 				}
 			}
@@ -125,7 +128,11 @@ public class DWRChartSearchService {
 		return objectList;
 	}
 
-
+	//TODO return custom DetailsItem
+	public ObsListItem getDetails(Integer id){
+		ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),  Context.getLocale());
+		return obs;
+	}
 	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);

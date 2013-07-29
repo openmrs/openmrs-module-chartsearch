@@ -5,18 +5,28 @@
                user="openmrs_user"/>
 	  <document>
             <entity name="obs"
-              query="SELECT  uuid,  obs_id,	  person_id,  concept_id,   encounter_id,  order_id,   obs_datetime,    
-			  location_id,  obs_group_id, accession_number,  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
-			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  comments,  value_complex  
-			  FROM openmrs.obs  WHERE person_id=${dataimporter.request.personId} AND voided=0"
-			  deltaImportQuery="SELECT  uuid,  obs_id,	  person_id,  concept_id,   encounter_id,  order_id,   obs_datetime,    
-			  location_id,  obs_group_id, accession_number,  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
-			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  comments,  value_complex  
-			  FROM openmrs.obs  WHERE uuid='${dih.delta.uuid}' AND voided=0"
-                deltaQuery="select uuid from openmrs.obs where person_id='${dataimporter.request.personId}'
-				AND date_created &gt; '${dataimporter.request.lastIndexTime}' AND voided=0"
-				deletedPkQuery="select uuid from openmrs.obs where person_id='${dataimporter.request.personId}'
-				AND voided=1 AND date_voided &gt; '${dataimporter.request.lastIndexTime}'"
+              query="SELECT  o.uuid,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
+			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
+			  FROM openmrs.obs o 
+			  inner join concept_name cn on cn.concept_id = o.concept_id
+			  WHERE person_id=${dataimporter.request.personId} AND o.voided=0 AND cn.voided=0"              
+			  deltaImportQuery="SELECT  o.uuid,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
+			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
+			  FROM openmrs.obs o 
+			  inner join concept_name cn on cn.concept_id = o.concept_id 
+			  FROM openmrs.obs  WHERE uuid='${dih.delta.uuid}' AND o.voided=0 AND cn.voided=0
+			  inner join concept_name cn on cn.concept_id = o.concept_id"
+                deltaQuery="select o.uuid from openmrs.obs o 
+				inner join concept_name cn on cn.concept_id = o.concept_id
+				where person_id='${dataimporter.request.personId}'
+				AND o.voided=0 AND cn.voided=0
+				AND o.date_created &gt; '${dataimporter.request.lastIndexTime}'"
+				deletedPkQuery="select o.uuid from openmrs.obs o 
+				inner join concept_name cn on cn.concept_id = o.concept_id
+				where person_id='${dataimporter.request.personId}'
+				AND (o.voided=1 OR cn.voided=1) AND o.date_voided &gt; '${dataimporter.request.lastIndexTime}'"
 				>
 			</entity> 
 		    <!-- <entity name="person" query="select person_id, gender, birthdate from person">

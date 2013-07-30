@@ -15,8 +15,7 @@
 				{fieldName:"highlights", header:" "},
 				{fieldName:"obsId", header:" "}],
 				{searchLabel: '',
-                    searchPlaceholder:'',
-					//includeVoidedLabel: '<spring:message code="SearchResults.includeRetired" javaScriptEscape="true"/>', 
+                    searchPlaceholder:'', 
 					columnRenderers: [nameColumnRenderer, linkColumnRenderer, null, null], 
 					columnVisibility: [true, true, false, false],
 					searchPhrase:'<request:parameter name="searchPhrase"/>',
@@ -26,8 +25,6 @@
 	
 	function doSelectionHandler(index, data) {
 		DWRChartSearchService.getDetails(data.obsId, renderDetails);
-		//renderDetails(data);		
-		//alert("admin/observations/obs.form?obsId=" + data.obsId + "&=searchPhrase=" + lastSearch);
 	}
 	
 	
@@ -38,12 +35,7 @@
 	}
 	
 	function nameColumnRenderer(oObj){
-		//if(oObj.aData[1] && $j.trim(oObj.aData[1]) != '')
-			//return "<span>"+oObj.aData[0]+"</span><span class='otherHit'> &rArr; "+oObj.aData[1]+"</span>";
-		//return "<span>"+oObj.aData[0]+"</span>";
-		
-		return "<div>"+oObj.aData[0]+"</div><div style='font-weight: bold;'>"+oObj.aData[1]+"</div><div>"+oObj.aData[2]+"</div>";
-		//"<span>"+oObj.aData[2]+"</span>";
+		return "<div>"+oObj.aData[0]+"</div><div style='font-style: italic;'>"+oObj.aData[1]+"</div><div>"+oObj.aData[2]+"</div>";
 	}
 	
 	function linkColumnRenderer(oObj){
@@ -52,15 +44,7 @@
 	
 	function renderDetails(data){	
 		//todo localization
-		jQuery("#chartSearchDetails").html("<div class='cs_details_title'>Observation date:</div>"
-										 + data.obsDate + "<br/>"
-										 + "<div class='cs_details_title'>Concept Name:</div>"
-										 + data.conceptName
-										 + "<div class='cs_details_title'>Value:</div>"
-										 + data.value
-										 + "<div class='cs_details_title'>Location:</div>"
-										 + data.location
-										 );
+		jQuery("#chartSearchDetails").html(data);
 	}
 	
 </script>

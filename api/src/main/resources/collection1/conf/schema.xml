@@ -934,8 +934,8 @@
 			required="false" />
 		<field name="person_id" type="int" indexed="true" stored="true"
 			required="false" />
-		<field name="concept_name" type="text_general" indexed="true"
-			stored="true" required="false" />
+		<field name="concept_name" type="string" indexed="true"
+			stored="false" required="false" />
 		<field name="obs_datetime" type="date" indexed="true" stored="true"
 			required="false" />
 		<field name="value_group_id" type="text_general" indexed="true" stored="false"
@@ -1012,6 +1012,7 @@
 	<copyField source="value_text" dest="value" />
 	<copyField source="value_modifier" dest="value" />
 	<copyField source="value_complex" dest="value" />
+	<copyField source="concept_name" dest="value" />
 
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

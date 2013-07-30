@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch.web;
+package org.openmrs.module.chartsearch.web.dwr;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -28,6 +28,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.Searcher;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.dwr.ObsListItem;
@@ -95,19 +96,8 @@ public class DWRChartSearchService {
 		
 		try {			
 			if (!StringUtils.isBlank(phrase)) {				
-				SolrDocumentList documents = searcher.getDocumentList(patientId, phrase, start, length);
-				for (SolrDocument document : documents) {
-					Integer obsId = (Integer) document.get("obs_id");
-					Date date = (Date) document.get("obs_datetime");
-					String value = ((List<String>) document.get("value")).get(0);
-					String conceptName = (String) document.get("concept_name");
-					ObsListItem obsListItem = new ObsListItem();
-					obsListItem.setObsId(obsId);
-					obsListItem.setObsDate(date.toString());
-					obsListItem.setValue(value);
-					obsListItem.setConceptName(conceptName);
-					objectList.add(obsListItem);
-				}
+				List<ChartListItem> items = searcher.getDocumentList(patientId, phrase, start, length);
+				objectList.addAll(items);
 			}
 			
 			if (objectList.size() < 1) {

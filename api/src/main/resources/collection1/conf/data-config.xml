@@ -28,11 +28,6 @@
 				where person_id='${dataimporter.request.personId}'
 				AND (o.voided=1 OR cn.voided=1) AND o.date_voided &gt; '${dataimporter.request.lastIndexTime}'"
 				>
-			</entity> 
-		    <!-- <entity name="person" query="select person_id, gender, birthdate from person">
-			<entity name="person_address"
-				query="select country, address1, address2 from person_address where person_id='${person.person_id}' ">
-			</entity> 
-		</entity>-->
+			</entity>
 	</document>
 </dataConfig>

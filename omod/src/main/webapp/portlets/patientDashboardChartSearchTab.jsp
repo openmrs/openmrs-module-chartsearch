@@ -12,7 +12,7 @@
 		new OpenmrsSearch("patientChartWidget", false, doObsSearch, doSelectionHandler, 
 				[{fieldName:"conceptName", header:" "}, 
 				{fieldName:"obsDate", header:" "},
-				{fieldName:"value", header:" "},
+				{fieldName:"highlights", header:" "},
 				{fieldName:"obsId", header:" "}],
 				{searchLabel: '',
                     searchPlaceholder:'',

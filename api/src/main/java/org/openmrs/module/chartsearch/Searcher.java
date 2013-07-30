@@ -13,12 +13,20 @@
  */
 package org.openmrs.module.chartsearch;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 
 /**
@@ -29,43 +37,77 @@ public class Searcher {
 	private static Log log = LogFactory.getLog(Searcher.class);
 
 	private final SolrServer solrServer;
-	
+
 	public Searcher(SolrServer solrServer) {
 		this.solrServer = solrServer;
-	}	
-	
-	public Long getDocumentListCount(Integer patientId, String searchText) throws Exception {
+	}
+
+	public Long getDocumentListCount(Integer patientId, String searchText)
+			throws Exception {
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
-		query.setRows(0); //Intentionally setting to this value such that we get the count very quickly.
+		query.setRows(0); // Intentionally setting to this value such that we
+							// get the count very quickly.
 		QueryResponse response = solrServer.query(query);
 		return response.getResults().getNumFound();
 	}
-	
-	
-	public SolrDocumentList getDocumentList(Integer patientId, String searchText, Integer start, Integer length) throws Exception {
+
+	public List<ChartListItem> getDocumentList(Integer patientId,
+			String searchText, Integer start, Integer length) throws Exception {
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
+		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
+		query.setParam("hl.fl", "concept_name, value");
 		QueryResponse response = solrServer.query(query);
-		return response.getResults();
+
+		Iterator<SolrDocument> iter = response.getResults().iterator();
+
+		List<ChartListItem> list = new ArrayList<ChartListItem>();
+		while (iter.hasNext()) {
+			SolrDocument document = iter.next();
+			String uuid = (String) document.get("uuid");
+			Integer obsId = (Integer) document.get("obs_id");
+			Date obsDate = (Date) document.get("obs_datetime");
+			String value = ((List<String>) document.get("value")).get(0);
+			String conceptName = (String) document.get("concept_name");
+
+			ChartListItem item = new ChartListItem();
+			item.setUuid(uuid);
+			item.setObsId(obsId);
+			item.setConceptName(conceptName);
+			item.setObsDate(obsDate.toString());
+			item.setValue(value);
+
+			if (response.getHighlighting().get(uuid) != null) {
+				List<String> highlights = response.getHighlighting().get(uuid)
+						.get("value");
+				if (highlights != null && !highlights.isEmpty()) {
+					item.setHighlights(new ArrayList<String>(highlights));
+				}
+			}
+			list.add(item);
+		}
+
+		return list;
 	}
-	
+
 	public String query() {
 		SolrQuery query = new SolrQuery();
 		query.setQuery("*:*");
 		QueryResponse response;
-			try {
-				response = solrServer.query(query);
-				return response.toString();
-			} catch (SolrServerException e) {
-				log.error("Error generated", e);
-			}
-			/*SolrDocumentList list = response.getResults();
-			for (SolrDocument solrDocument : list) {
-				log.info(solrDocument);*/
-			return "";			
+		try {
+			response = solrServer.query(query);
+			return response.toString();
+		} catch (SolrServerException e) {
+			log.error("Error generated", e);
+		}
+		/*
+		 * SolrDocumentList list = response.getResults(); for (SolrDocument
+		 * solrDocument : list) { log.info(solrDocument);
+		 */
+		return "";
 
 	}
 

@@ -25,7 +25,7 @@
 		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
 		
 	<bean id="dwrChartSearchService" 
-	     class="org.openmrs.module.chartsearch.web.DWRChartSearchService">		
+	     class="org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService">		
 	</bean>	
 
 	<context:component-scan base-package="org.openmrs.module.chartsearch.web.controller" />

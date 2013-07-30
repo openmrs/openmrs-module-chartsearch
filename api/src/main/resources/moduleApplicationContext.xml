@@ -20,7 +20,7 @@
 	<!-- Add here beans related to the API context -->
 
 	<bean id="solrServerCreator"
-		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator"></bean>
+		class="org.openmrs.module.chartsearch.HttpSolrServerCreator"></bean>
 	<bean id="solrServer" factory-bean="solrServerCreator"
 		lazy-init="false" factory-method="createSolrServer"></bean>
 	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer"

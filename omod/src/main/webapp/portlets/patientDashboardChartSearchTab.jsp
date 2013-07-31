@@ -3,13 +3,14 @@
 <openmrs:htmlInclude file="/dwr/interface/DWRChartSearchService.js"/>
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css"/>
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js"/>
-<openmrs:htmlInclude file="/scripts/jquery-ui/js/openmrsSearch.js" />
+<openmrs:htmlInclude file="/moduleResources/chartsearch/js/chartSearch.js"/>
+<!-- <openmrs:htmlInclude file="/scripts/jquery-ui/js/openmrsSearch.js" /> -->
 <openmrs:htmlInclude file="/moduleResources/chartsearch/css/chartsearch.css"/>
 
 <script type="text/javascript">
 	var lastSearch;
 	$j(document).ready(function() {
-		new OpenmrsSearch("patientChartWidget", false, doObsSearch, doSelectionHandler, 
+		new ChartSearch("patientChartWidget", false, doObsSearch, doSelectionHandler, 
 				[{fieldName:"conceptName", header:" "}, 
 				{fieldName:"obsDate", header:" "},
 				{fieldName:"highlights", header:" "},
@@ -17,6 +18,7 @@
 				{searchLabel: '',
                     searchPlaceholder:'', 
 					columnRenderers: [nameColumnRenderer, linkColumnRenderer, null, null], 
+					showSearchButton: true,
 					columnVisibility: [true, true, false, false],
 					searchPhrase:'<request:parameter name="searchPhrase"/>',
 					showIncludeVerbose: false

@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -44,6 +45,7 @@ public class Searcher {
 
 	public Long getDocumentListCount(Integer patientId, String searchText)
 			throws Exception {
+		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
@@ -54,6 +56,7 @@ public class Searcher {
 
 	public List<ChartListItem> getDocumentList(Integer patientId,
 			String searchText, Integer start, Integer length) throws Exception {
+		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
@@ -92,23 +95,4 @@ public class Searcher {
 
 		return list;
 	}
-
-	public String query() {
-		SolrQuery query = new SolrQuery();
-		query.setQuery("*:*");
-		QueryResponse response;
-		try {
-			response = solrServer.query(query);
-			return response.toString();
-		} catch (SolrServerException e) {
-			log.error("Error generated", e);
-		}
-		/*
-		 * SolrDocumentList list = response.getResults(); for (SolrDocument
-		 * solrDocument : list) { log.info(solrDocument);
-		 */
-		return "";
-
-	}
-
 }

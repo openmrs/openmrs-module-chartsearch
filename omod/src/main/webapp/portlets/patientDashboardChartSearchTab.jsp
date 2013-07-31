@@ -4,7 +4,6 @@
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/css/dataTables_jui.css"/>
 <openmrs:htmlInclude file="/scripts/jquery/dataTables/js/jquery.dataTables.min.js"/>
 <openmrs:htmlInclude file="/moduleResources/chartsearch/js/chartSearch.js"/>
-<!-- <openmrs:htmlInclude file="/scripts/jquery-ui/js/openmrsSearch.js" /> -->
 <openmrs:htmlInclude file="/moduleResources/chartsearch/css/chartsearch.css"/>
 
 <script type="text/javascript">
@@ -21,7 +20,8 @@
 					showSearchButton: true,
 					columnVisibility: [true, true, false, false],
 					searchPhrase:'<request:parameter name="searchPhrase"/>',
-					showIncludeVerbose: false
+					showIncludeVerbose: false,
+					doSearchWhenEmpty: true
 				});
 	});
 	
@@ -32,6 +32,7 @@
 	
 	//searchHandler
 	function doObsSearch(text, resultHandler, getMatchCount, opts) {
+		clearDetails();
 		lastSearch = text;
 		DWRChartSearchService.findObsAndCount(${model.patient.patientId}, text, opts.includeVoided, null, null, null, null, opts.start, opts.length, getMatchCount, resultHandler);
 	}
@@ -47,6 +48,10 @@
 	function renderDetails(data){	
 		//todo localization
 		jQuery("#chartSearchDetails").html(data);
+	}
+	
+	function clearDetails(){
+		jQuery("#chartSearchDetails").empty();
 	}
 	
 </script>

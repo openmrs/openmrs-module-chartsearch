@@ -51,32 +51,24 @@ public class DWRChartSearchService {
 		Vector<Object> objectList = new Vector<Object>();
 
 		try {
-			if (!StringUtils.isBlank(phrase)) {
-
-				long matchCount = 0;
-				if (getMatchCount) {
-					// get the count of matches
-					matchCount += searcher.getDocumentListCount(patientId,
-							phrase);
-				}
-
-				// if we have any matches or this isn't the first ajax call when
-				// the caller
-				// requests for the count
-				if (matchCount > 0 || !getMatchCount) {
-					objectList.addAll(findBatchOfObs(patientId, phrase,
-							includeRetired, includeClassNames,
-							excludeClassNames, includeDatatypeNames,
-							excludeDatatypeNames, start, length));
-				}
-
-				resultsMap.put("count", matchCount);
-				resultsMap.put("objectList", objectList);
-			} else {
-				resultsMap.put("count", 0);
-				objectList.add(Context.getMessageSourceService().getMessage(
-						"searchWidget.noMatchesFound"));
+			long matchCount = 0;
+			if (getMatchCount) {
+				// get the count of matches
+				matchCount += searcher.getDocumentListCount(patientId, phrase);
 			}
+
+			// if we have any matches or this isn't the first ajax call when
+			// the caller
+			// requests for the count
+			if (matchCount > 0 || !getMatchCount) {
+				objectList.addAll(findBatchOfObs(patientId, phrase,
+						includeRetired, includeClassNames, excludeClassNames,
+						includeDatatypeNames, excludeDatatypeNames, start,
+						length));
+			}
+
+			resultsMap.put("count", matchCount);
+			resultsMap.put("objectList", objectList);
 
 		} catch (Exception e) {
 			log.error("Error while searching for observations", e);
@@ -106,11 +98,9 @@ public class DWRChartSearchService {
 				.getAllowedLocales(); // getSearchLocales();
 
 		try {
-			if (!StringUtils.isBlank(phrase)) {
-				List<ChartListItem> items = searcher.getDocumentList(patientId,
-						phrase, start, length);
-				objectList.addAll(items);
-			}
+			List<ChartListItem> items = searcher.getDocumentList(patientId,
+					phrase, start, length);
+			objectList.addAll(items);
 
 			if (objectList.size() < 1) {
 				objectList.add(Context.getMessageSourceService().getMessage(
@@ -140,8 +130,8 @@ public class DWRChartSearchService {
 	public String getDetails(Integer id) {
 		ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
 				Context.getLocale());
-		
-		//TODO create renderer
+
+		// TODO create renderer
 		String result = "<div class='cs_details_title'>Observation date:</div>"
 				+ obs.getObsDate() + "<br/>"
 				+ "<div class='cs_details_title'>Concept Name:</div>"

@@ -35,3 +35,7 @@
 	color: blue;
 	margin: 20px 0 5px;
 }
+
+.cs-selected-row {
+	background: #BBEE00 !important;
+}

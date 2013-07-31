@@ -22,10 +22,11 @@
 					searchPhrase:'<request:parameter name="searchPhrase"/>',
 					showIncludeVerbose: false,
 					doSearchWhenEmpty: true
-				});
+				});		
 	});
 	
 	function doSelectionHandler(index, data) {
+		highlightSelectedRow(index);
 		DWRChartSearchService.getDetails(data.obsId, renderDetails);
 	}
 	
@@ -43,6 +44,16 @@
 	
 	function linkColumnRenderer(oObj){
 		return "<div><a href='admin/observations/obs.form?obsId=" + oObj.aData[3] + "&=searchPhrase=" + lastSearch + "'>Link</a></div>";
+	}
+	
+	function highlightSelectedRow(index){
+		var rows = $j("#openmrsSearchTable tr");
+		
+		rows.each(function(){
+			$j(this).removeClass("cs-selected-row");			
+		});
+		
+		$j("#openmrsSearchTable tr:hover").eq(0).addClass("cs-selected-row");
 	}
 	
 	function renderDetails(data){	

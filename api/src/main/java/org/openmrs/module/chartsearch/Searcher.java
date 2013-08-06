@@ -70,7 +70,7 @@ public class Searcher {
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
-			String uuid = (String) document.get("uuid");
+			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
 			String value = ((List<String>) document.get("value")).get(0);

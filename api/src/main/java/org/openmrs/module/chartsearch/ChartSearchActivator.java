@@ -20,6 +20,8 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,7 +38,14 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceInsertExecutor;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.context.Daemon;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.DaemonToken;
+import org.openmrs.module.DaemonTokenAware;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.scheduler.Task;
+import org.openmrs.scheduler.TaskDefinition;
+import org.openmrs.scheduler.timer.TimerSchedulerTask;
 import org.openmrs.util.OpenmrsClassLoader;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,35 +56,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped.
- * 
- * @startuml
-Actor User
-
-participant CSM
-participant Database
-participant DIH
-participant SOLR
-
-User -> CSM : open patient dashboard
-activate CSM 
-    CSM -> DIH: import data for selected patient
-deactivate CSM
-activate DIH        
-   	DIH -> Database : get changed data for selected patient
-    activate Database
-       	Database -> DIH : return changed data                
-    deactivate Database
-    DIH -> SOLR : update index
-deactivate DIH 
-activate SOLR
-deactivate SOLR
-    
-@enduml
- * 
+ * This class contains the logic that is run every time this module is either started or stopped. * 
  */
 
-public class ChartSearchActivator extends BaseModuleActivator {
+public class ChartSearchActivator extends BaseModuleActivator implements DaemonTokenAware{
+	private DaemonToken daemonToken;
 	
 	protected Log log = LogFactory.getLog(getClass());	
 	/**
@@ -104,6 +89,38 @@ public class ChartSearchActivator extends BaseModuleActivator {
 	 */
 	public void started() {	
 		log.info("Chart Search Module started");
+		/*Daemon.runInDaemonThread(new TimerSchedulerTask(new Task() {
+			
+			@Override
+			public void shutdown() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isExecuting() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public void initialize(TaskDefinition definition) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public TaskDefinition getTaskDefinition() {
+				TaskDefinition taskDefinition = new TaskDefinition(1, "IndexManagementTaskDefinition", "Task Definition for index management,");
+				taskDefinition.
+			}
+			
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+				
+			}
+		}), daemonToken);*/
 	}
 	
 	/**
@@ -127,6 +144,11 @@ public class ChartSearchActivator extends BaseModuleActivator {
 		if (list == null || list.size() == 0)
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
+	}
+
+	@Override
+	public void setDaemonToken(DaemonToken token) {
+		daemonToken = token;		
 	}
 	
 	

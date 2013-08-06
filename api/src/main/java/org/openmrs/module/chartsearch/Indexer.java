@@ -73,8 +73,8 @@ public class Indexer {
 	//TODO rewrite & do more intuitive
 	private Date getLastIndexTime(int personId) throws SolrServerException {
 		SolrQuery query = new SolrQuery();
-		String queryString = String.format("uuid:%d", personId);
-		query.setQuery(queryString);
+		String queryString = String.format("id:%d", personId);
+		query.setQuery(queryString).setFilterQueries("meta:true");
 		QueryResponse response = solrServer.query(query);
 		if (response.getResults().isEmpty())
 			return null;
@@ -89,7 +89,8 @@ public class Indexer {
 		Date lastIndexTimeUnformatted = Calendar.getInstance().getTime();
 		document.addField("last_index_time", lastIndexTimeUnformatted);
 		// document.addField("person_id", personId);
-		document.addField("uuid", personId);
+		document.addField("id", personId);
+		document.addField("meta", true);
 		solrServer.add(document, COMMIT_DELAY);
 
 	}

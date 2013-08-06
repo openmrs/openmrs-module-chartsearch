@@ -55,9 +55,9 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 
 	private SolrServer solrServer;
 
-	@Autowired
+	/*@Autowired
 	@Qualifier("adminService")
-	private AdministrationService administrationService;
+	private AdministrationService administrationService;*/
 
 	@Override
 	public SolrServer createSolrServer() {

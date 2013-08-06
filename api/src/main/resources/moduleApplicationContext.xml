@@ -36,6 +36,10 @@
 			<ref bean="solrServer" />
 		</property>
 	</bean>	
+	<bean id="indexManagement" class="org.openmrs.module.chartsearch.IndexManagement">
+	</bean>	
+	
+	
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -60,7 +64,8 @@
 		</property>
 		<property name="transactionAttributeSource">
 			<ref bean="transactionAttributeSource" />
-		</property>
+		</property>		
+		
 	</bean>
 
 	<bean parent="serviceContext">
@@ -70,6 +75,26 @@
 				<ref local="chartSearch" />
 			</list>
 		</property>
+	</bean>
+	
+	<bean id="clearIndexOldDataTask" class="org.openmrs.module.chartsearch.task.ClearIndexOldDataTask">
+		<property name="indexManagement">
+			<ref bean="indexManagement" />
+		</property>
+	</bean>
+	
+	<bean id="clearIndexOldDataTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="10000" /> <!-- delay 10 seconds -->
+	    <property name="period" value="20000" /> <!-- run every 20 seconds -->
+	    <property name="timerTask" ref="clearIndexOldDataTask"/>
+	</bean>
+	
+	<bean id="chartSearchTimerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+	    <property name="scheduledTimerTasks">
+	        <list>
+	            <ref bean="clearIndexOldDataTimerTask"/>	            
+	        </list>
+	    </property>
 	</bean>
 
 

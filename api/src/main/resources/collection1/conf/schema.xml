@@ -928,8 +928,10 @@
 			type="text_general" indexed="true" stored="true" /> <field name="_version_" 
 			type="long" indexed="true" stored="true" /> -->
 
-		<field name="uuid" type="string" indexed="true" stored="true"
+		<field name="id" type="string" indexed="true" stored="true"
 			required="true" />
+		<field name="meta" type="boolean" indexed="true" stored="false"
+			required="false" />	
 		<field name="obs_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="person_id" type="int" indexed="true" stored="true"
@@ -989,7 +991,7 @@
 
 	<!-- Field to use to determine and enforce document uniqueness. Unless this 
 		field is marked with required="false", it will be a required field -->
-	<uniqueKey>uuid</uniqueKey>
+	<uniqueKey>id</uniqueKey>
 
 	<!-- field for the QueryParser to use when an explicit fieldname is absent 
 		DEPRECATED: specify "df" in your request handler instead. -->

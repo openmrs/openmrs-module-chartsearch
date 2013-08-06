@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataConfig>
-	  <dataSource driver="com.mysql.jdbc.Driver" password="hm83C2NDl^6@" type="JdbcDataSource"
+	  <dataSource driver="com.mysql.jdbc.Driver" password="password" type="JdbcDataSource"
                url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
-               user="openmrs_user"/>
+               user="openmrs"/>
 	  <document>
             <entity name="obs"
-              query="SELECT  o.uuid,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+              query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
 			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
 			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
 			  FROM openmrs.obs o 
 			  inner join concept_name cn on cn.concept_id = o.concept_id
 			  WHERE person_id=${dataimporter.request.personId} AND o.voided=0 AND cn.voided=0"              
-			  deltaImportQuery="SELECT  o.uuid,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+			  deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
 			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
 			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
 			  FROM openmrs.obs o 
 			  inner join concept_name cn on cn.concept_id = o.concept_id 
-			  FROM openmrs.obs  WHERE uuid='${dih.delta.uuid}' AND o.voided=0 AND cn.voided=0
+			  FROM openmrs.obs  WHERE uuid='${dih.delta.id}' AND o.voided=0 AND cn.voided=0
 			  inner join concept_name cn on cn.concept_id = o.concept_id"
-                deltaQuery="select o.uuid from openmrs.obs o 
+                deltaQuery="select o.uuid as id from openmrs.obs o 
 				inner join concept_name cn on cn.concept_id = o.concept_id
 				where person_id='${dataimporter.request.personId}'
 				AND o.voided=0 AND cn.voided=0
 				AND o.date_created &gt; '${dataimporter.request.lastIndexTime}'"
-				deletedPkQuery="select o.uuid from openmrs.obs o 
+				deletedPkQuery="select o.uuid as id from openmrs.obs o 
 				inner join concept_name cn on cn.concept_id = o.concept_id
 				where person_id='${dataimporter.request.personId}'
 				AND (o.voided=1 OR cn.voided=1) AND o.date_voided &gt; '${dataimporter.request.lastIndexTime}'"
 				>
-			</entity>
+			</entity> 
 	</document>
 </dataConfig>

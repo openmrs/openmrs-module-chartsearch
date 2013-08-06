@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IndexManagement {
 	
-	private transient Log log = LogFactory.getLog(IndexManagement.class);
+	private static Log log = LogFactory.getLog(IndexManagement.class);
 	
 	public void clearIndexOldData(){
 		String message = "Clear Index";

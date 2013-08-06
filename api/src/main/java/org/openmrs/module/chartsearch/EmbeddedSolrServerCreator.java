@@ -91,8 +91,6 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		} catch (Exception e) {
 			log.error("Failed to set dataImport connection info", e);
 		}
-
-		// }
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer;
 		try {
@@ -102,7 +100,11 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
-		} finally {
+		} catch (Exception e){
+			e.printStackTrace();
+			return null;
+		} 
+		finally {
 		}
 
 	}

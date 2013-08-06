@@ -59,8 +59,7 @@ import org.w3c.dom.Node;
  * This class contains the logic that is run every time this module is either started or stopped. * 
  */
 
-public class ChartSearchActivator extends BaseModuleActivator implements DaemonTokenAware{
-	private DaemonToken daemonToken;
+public class ChartSearchActivator extends BaseModuleActivator{
 	
 	protected Log log = LogFactory.getLog(getClass());	
 	/**
@@ -88,39 +87,7 @@ public class ChartSearchActivator extends BaseModuleActivator implements DaemonT
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {	
-		log.info("Chart Search Module started");
-		/*Daemon.runInDaemonThread(new TimerSchedulerTask(new Task() {
-			
-			@Override
-			public void shutdown() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isExecuting() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public void initialize(TaskDefinition definition) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public TaskDefinition getTaskDefinition() {
-				TaskDefinition taskDefinition = new TaskDefinition(1, "IndexManagementTaskDefinition", "Task Definition for index management,");
-				taskDefinition.
-			}
-			
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-				
-			}
-		}), daemonToken);*/
+		log.info("Chart Search Module started");		
 	}
 	
 	/**
@@ -145,12 +112,6 @@ public class ChartSearchActivator extends BaseModuleActivator implements DaemonT
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
 	}
-
-	@Override
-	public void setDaemonToken(DaemonToken token) {
-		daemonToken = token;		
-	}
-	
 	
 		
 }

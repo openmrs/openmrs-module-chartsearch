@@ -40,8 +40,6 @@ import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceIns
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.BaseModuleActivator;
-import org.openmrs.module.DaemonToken;
-import org.openmrs.module.DaemonTokenAware;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.scheduler.Task;
 import org.openmrs.scheduler.TaskDefinition;

@@ -13,20 +13,57 @@
  */
 package org.openmrs.module.chartsearch;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
 
 /**
  *
  */
 public class IndexManagement {
-	
+
 	private static Log log = LogFactory.getLog(IndexManagement.class);
+	private SolrServer solrServer;
+	private final int PATIENTS_MAX_COUNT = 40;
 	
-	public void clearIndexOldData(){
-		String message = "Clear Index";
-		log.info(message);
+	public IndexManagement(SolrServer solrServer) {
+		this.solrServer = solrServer;
+	}
+
+	public void clearIndexOldData() {
+		/*SolrQuery query = new SolrQuery();
+		String queryString = "meta:true";
+		query.addSort("last_index_time", ORDER.asc);
+		query.setFields("id");
+		query.setRows(5);
+		QueryResponse response;
+		try {
+			response = solrServer.query(query);
+			if (response.getResults().isEmpty()) return;
+			List<Integer> personIds = Collections.emptyList();
+			Iterator<SolrDocument> iterator = response.getResults().iterator();
+			while (iterator.hasNext()) {
+				SolrDocument doc = iterator.next();
+				Integer personId = (Integer) doc.getFieldValue("id");
+				personIds.add(personId);
+			}
+		} catch (SolrServerException e) {
+			// TODO Auto-generated catch block
+			log.error("Error generated", e);
+		}*/
 		
+		
+
 	}
 
 }

@@ -19,27 +19,36 @@
 
 	<!-- Add here beans related to the API context -->
 
-	<bean id="solrServerCreator"
-		class="org.openmrs.module.chartsearch.EmbeddedSolrServerCreator"></bean>
-	<bean id="solrServer" factory-bean="solrServerCreator"
-		lazy-init="false" factory-method="createSolrServer"></bean>
+	<bean id="solrServerCreator" class="org.openmrs.module.chartsearch.HttpSolrServerCreator"></bean>
+	<bean id="solrServer" factory-bean="solrServerCreator" lazy-init="false"
+		factory-method="createSolrServer"></bean>
 	<bean id="indexer" class="org.openmrs.module.chartsearch.Indexer"
 		lazy-init="false">
 		<constructor-arg ref="solrServer" />
 	</bean>
-    <bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
+	<bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
 		lazy-init="false">
 		<constructor-arg ref="solrServer" />
 	</bean>
 	<bean id="solrManagement" class="org.openmrs.module.chartsearch.SolrManagement">
-		<property name="solrServer">
-			<ref bean="solrServer" />
-		</property>
-	</bean>	
+		<constructor-arg ref="solrServer" />
+	</bean>
 	<bean id="indexManagement" class="org.openmrs.module.chartsearch.IndexManagement">
-	</bean>	
-	
-	
+		<constructor-arg ref="solrServer" />
+	</bean>
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="25" />
+	</bean>
+
+	<bean id="dataImportTaskExecutor" class="org.openmrs.module.chartsearch.task.DataImportTaskExecutor">
+		<constructor-arg ref="taskExecutor" />
+		<constructor-arg ref="indexer" />
+	</bean>
+
+
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -64,8 +73,8 @@
 		</property>
 		<property name="transactionAttributeSource">
 			<ref bean="transactionAttributeSource" />
-		</property>		
-		
+		</property>
+
 	</bean>
 
 	<bean parent="serviceContext">
@@ -76,25 +85,26 @@
 			</list>
 		</property>
 	</bean>
-	
-	<bean id="clearIndexOldDataTask" class="org.openmrs.module.chartsearch.task.ClearIndexOldDataTask">
+
+	<bean id="clearIndexOldDataTask"
+		class="org.openmrs.module.chartsearch.task.ClearIndexOldDataTask">
 		<property name="indexManagement">
 			<ref bean="indexManagement" />
 		</property>
 	</bean>
-	
+
 	<bean id="clearIndexOldDataTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10000" /> <!-- delay 10 seconds -->
-	    <property name="period" value="20000" /> <!-- run every 20 seconds -->
-	    <property name="timerTask" ref="clearIndexOldDataTask"/>
+		<property name="period" value="20000" /> <!-- run every 20 seconds -->
+		<property name="timerTask" ref="clearIndexOldDataTask" />
 	</bean>
-	
+
 	<bean id="chartSearchTimerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
-	    <property name="scheduledTimerTasks">
-	        <list>
-	            <ref bean="clearIndexOldDataTimerTask"/>	            
-	        </list>
-	    </property>
+		<property name="scheduledTimerTasks">
+			<list>
+				<ref bean="clearIndexOldDataTimerTask" />
+			</list>
+		</property>
 	</bean>
 
 

@@ -45,7 +45,7 @@ public class Indexer {
 		this.solrServer = solrServer;
 	}
 
-	public void indexPatiendData(Integer personId) {
+	public void indexPatientData(Integer personId) {
 		Date lastIndexTime;
 		try {
 			lastIndexTime = getLastIndexTime(personId);
@@ -73,7 +73,7 @@ public class Indexer {
 	//TODO rewrite & do more intuitive
 	private Date getLastIndexTime(int personId) throws SolrServerException {
 		SolrQuery query = new SolrQuery();
-		String queryString = String.format("id:%d", personId);
+		String queryString = String.format("person_id:%d", personId);
 		query.setQuery(queryString).setFilterQueries("meta:true");
 		QueryResponse response = solrServer.query(query);
 		if (response.getResults().isEmpty())
@@ -91,6 +91,7 @@ public class Indexer {
 		// document.addField("person_id", personId);
 		document.addField("id", personId);
 		document.addField("meta", true);
+		document.addField("person_id", personId);
 		solrServer.add(document, COMMIT_DELAY);
 
 	}

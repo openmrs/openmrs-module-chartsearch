@@ -9,7 +9,7 @@ public class SolrManagement {
 	
 	private SolrServer solrServer;
 	
-	public void setSolrServer(SolrServer solrServer){
+	public SolrManagement(SolrServer solrServer){
 		this.solrServer = solrServer;
 	}
 	

@@ -13,13 +13,20 @@
  */
 package org.openmrs.module.chartsearch.task;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.openmrs.module.chartsearch.IndexManagement;
 import org.openmrs.module.chartsearch.Indexer;
+import org.openmrs.module.chartsearch.Indexer.DIHStatus;
 import org.springframework.core.task.TaskExecutor;
 
 /**
  *
  */
 public class DataImportTaskExecutor {
+	private static Log log = LogFactory.getLog(DataImportTaskExecutor.class);
+	
 	private class DataImportTask implements Runnable {
 		private int patientId;
 		
@@ -28,9 +35,19 @@ public class DataImportTaskExecutor {
 		}
 
 		public void run() {
-			indexer.indexPatientData(patientId);
+			try {
+				while (indexer.checkStatus() != Indexer.DIHStatus.IDLE) {
+					Thread.sleep(1000);					
+				}
+				indexer.indexPatientData(patientId);
+			} catch (SolrServerException e) {
+				// TODO Auto-generated catch block
+				log.error("Error generated", e);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				log.error("Error generated", e);
+			}			
 		}
-
 	}
 	
 	private TaskExecutor taskExecutor;	

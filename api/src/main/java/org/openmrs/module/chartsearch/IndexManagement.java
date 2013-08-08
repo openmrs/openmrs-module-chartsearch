@@ -33,7 +33,7 @@ import org.apache.solr.common.SolrDocument;
 public class IndexManagement {
 
 	private static Log log = LogFactory.getLog(IndexManagement.class);
-	private SolrServer solrServer;
+	private final SolrServer solrServer;
 	private final int PATIENTS_MAX_COUNT = 40;
 	
 	public IndexManagement(SolrServer solrServer) {

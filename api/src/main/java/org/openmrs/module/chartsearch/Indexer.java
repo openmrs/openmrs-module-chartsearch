@@ -27,6 +27,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Indexer {
 
-	public  enum DIHStatus {
+	public enum DIHStatus {
 		IDLE, BUSY
 	}
 
@@ -74,6 +75,18 @@ public class Indexer {
 
 	}
 
+	private boolean importIsEmpty() throws SolrServerException {
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set("qt", "/dataimport");
+		params.set("command", "status");
+
+		QueryResponse response = solrServer.query(params);
+		Integer totalRowsFetched = (Integer) ((NamedList<Object>) response
+				.getResponse().get("statusMessages")).get("Total Rows Fetched");
+		return totalRowsFetched == 0 ? false : true;
+
+	}
+
 	public DIHStatus checkStatus() throws SolrServerException {
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		params.set("qt", "/dataimport");
@@ -85,7 +98,8 @@ public class Indexer {
 			return DIHStatus.IDLE;
 		else if (status.equals("busy"))
 			return DIHStatus.BUSY;
-		else throw new SolrServerException("Wrong DIH status");
+		else
+			throw new SolrServerException("Wrong DIH status");
 
 	}
 
@@ -137,12 +151,6 @@ public class Indexer {
 		params.set("lastIndexTime", formatter.format(lastIndexTime));
 
 		solrServer.query(params);
-	}
-
-	public void removeFromIndex(String uuid) throws SolrServerException,
-			IOException {
-		solrServer.deleteById(uuid, COMMIT_DELAY);
-
 	}
 
 }

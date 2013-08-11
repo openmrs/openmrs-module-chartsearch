@@ -30,11 +30,5 @@ public class IndexerTest {
 
 	}
 
-	/**
-	 * Test method for {@link org.openmrs.module.chartsearch.Indexer#removeFromIndex(java.lang.String)}.
-	 */
-	@Test
-	public void testRemoveFromIndex() {
-	}
 
 }

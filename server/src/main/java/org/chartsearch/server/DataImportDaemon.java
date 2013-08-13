@@ -43,6 +43,7 @@ public class DataImportDaemon implements Runnable {
 				log.info(String.format(
 						"Daemon #{} taked from queue patient #{}", id,
 						patientInfo.getPatientId()));
+				
 			} catch (InterruptedException e) {
 				log.error("The thread #{} is interrupted", id);
 			}

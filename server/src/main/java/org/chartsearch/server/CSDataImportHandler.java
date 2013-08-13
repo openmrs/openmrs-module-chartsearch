@@ -18,6 +18,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,15 +52,15 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 
 	private static final Logger log = LoggerFactory
 			.getLogger(CSDataImportHandler.class);
-	private final BlockingQueue<PatientInfo> queue = new ArrayBlockingQueue<PatientInfo>(
-			10, true);
+	private final BlockingQueue<PatientInfo> queue = new LinkedBlockingQueue<PatientInfo>();			
 	private final ExecutorService executorService;
+	private final int THREADS_COUNT = 3;
 
 	public CSDataImportHandler() {
 		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(
 				"CSDataImport Daemon #%d").build();
-		executorService = Executors.newFixedThreadPool(3, factory);
-		for (int i = 0; i < 3; i++) {
+		executorService = Executors.newFixedThreadPool(THREADS_COUNT, factory);
+		for (int i = 0; i < THREADS_COUNT; i++) {
 			executorService.execute(new DataImportDaemon(queue, i));
 			log.info("Executed daemon #{}", i);
 		}

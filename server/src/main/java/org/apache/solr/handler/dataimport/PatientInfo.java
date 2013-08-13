@@ -11,9 +11,8 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.chartsearch.server;
+package org.apache.solr.handler.dataimport;
 
-import java.text.SimpleDateFormat;
 
 /**
  *
@@ -23,7 +22,7 @@ public final class PatientInfo {
 	private final Integer patientId;
 
 	public PatientInfo(Integer patientId) {
-		this.patientId = patientId;		
+		this.patientId = patientId;			
 	}
 	
 	public Integer getPatientId() {

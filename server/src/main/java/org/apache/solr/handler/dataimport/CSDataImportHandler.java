@@ -11,38 +11,23 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.chartsearch.server;
+package org.apache.solr.handler.dataimport;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 
-import org.apache.solr.common.SolrException;
-import org.apache.solr.common.params.CommonParams;
-import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.common.util.ContentStreamBase;
 import org.apache.solr.common.util.NamedList;
-import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
-import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.apache.solr.handler.dataimport.DataImporter;
-import org.apache.solr.handler.dataimport.SolrWriter;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
-import org.apache.solr.response.RawResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
@@ -119,15 +104,9 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 				"CSDataImport Daemon #%d").build();
 		executorService = Executors.newFixedThreadPool(THREADS_COUNT, factory);
 		for (int i = 0; i < THREADS_COUNT; i++) {			
-			try {
-				//First attempt. Using reflection to instantiating DataImporter
-				Constructor<DataImporter> constructor = DataImporter.class.getDeclaredConstructor(
-						SolrCore.class, String.class);
-				constructor.setAccessible(true);
-				DataImporter dataImporter = constructor.newInstance(core,
-						myName);
+			try {				
 				executorService.execute(new DataImportDaemon(queue, i,
-						dataImporter));
+						new DataImporter(core, myName)));
 				log.info("Executed daemon #{}", i);
 			} catch (Exception e){
 				log.error("Error in DataImporter instantiating", e);

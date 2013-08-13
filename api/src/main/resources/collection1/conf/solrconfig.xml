@@ -457,7 +457,7 @@
 	
 	
 	<requestHandler name="/csdataimport"
-		class="org.chartsearch.server.CSDataImportHandler">
+		class="org.apache.solr.handler.dataimport.CSDataImportHandler">
 	</requestHandler>
 
 	<!-- SearchHandler http://wiki.apache.org/solr/SearchHandler For processing 

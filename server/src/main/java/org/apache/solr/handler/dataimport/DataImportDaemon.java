@@ -11,12 +11,11 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.chartsearch.server;
+package org.apache.solr.handler.dataimport;
 
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.solr.handler.dataimport.DataImporter;
-import org.apache.solr.logging.log4j.Log4jInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

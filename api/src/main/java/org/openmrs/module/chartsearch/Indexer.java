@@ -35,11 +35,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class Indexer {
-
-	public enum DIHStatus {
-		IDLE, BUSY
-	}
-
 	private final SolrServer solrServer;
 
 	private static Log log = LogFactory.getLog(Indexer.class);
@@ -74,35 +69,6 @@ public class Indexer {
 		}
 
 	}
-
-	private boolean importIsEmpty() throws SolrServerException {
-		ModifiableSolrParams params = new ModifiableSolrParams();
-		params.set("qt", "/dataimport");
-		params.set("command", "status");
-
-		QueryResponse response = solrServer.query(params);
-		Integer totalRowsFetched = (Integer) ((NamedList<Object>) response
-				.getResponse().get("statusMessages")).get("Total Rows Fetched");
-		return totalRowsFetched == 0 ? false : true;
-
-	}
-
-	public DIHStatus checkStatus() throws SolrServerException {
-		ModifiableSolrParams params = new ModifiableSolrParams();
-		params.set("qt", "/dataimport");
-		params.set("command", "status");
-
-		QueryResponse response = solrServer.query(params);
-		String status = (String) response.getResponse().get("status");
-		if (status.equals("idle"))
-			return DIHStatus.IDLE;
-		else if (status.equals("busy"))
-			return DIHStatus.BUSY;
-		else
-			throw new SolrServerException("Wrong DIH status");
-
-	}
-
 	// TODO rewrite & do more intuitive
 	private Date getLastIndexTime(int personId) throws SolrServerException {
 		SolrQuery query = new SolrQuery();

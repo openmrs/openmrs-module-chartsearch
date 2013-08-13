@@ -22,7 +22,7 @@
 			<artifactId>${project.parent.artifactId}-server</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-
+ 
 
 		<!-- Solr -->
 		<dependency>

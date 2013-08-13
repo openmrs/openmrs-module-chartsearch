@@ -50,14 +50,16 @@
 	</extension>
 
 	<!-- Filter definitions -->
-
-	<!-- <filter> <filter-name>ChartSearchDataImportFilter</filter-name> <filter-class>org.apache.solr.servlet.SolrDispatchFilter 
-		</filter-class> </filter> <filter-mapping> <filter-name>ChartSearchDataImportFilter</filter-name> 
-		<url-pattern>/dataimport</url-pattern> </filter-mapping> <filter> <filter-name>ChartSearchSelectFilter</filter-name> 
-		<filter-class>org.apache.solr.servlet.SolrDispatchFilter </filter-class> 
-		</filter> <filter-mapping> <filter-name>ChartSearchSelectFilter</filter-name> 
-		<url-pattern>/select</url-pattern> </filter-mapping> -->
-
+	<filter>
+		<filter-name>SolrRequestFilter</filter-name> 
+		<filter-class>org.apache.solr.servlet.SolrDispatchFilter</filter-class> 
+	</filter>
+	<filter-mapping>
+		<filter-name>SolrRequestFilter</filter-name> 
+		<url-pattern>/dataimport</url-pattern> 
+		<url-pattern>/csdataimport</url-pattern> 
+	</filter-mapping>
+	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 

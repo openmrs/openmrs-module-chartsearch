@@ -15,6 +15,7 @@ package org.chartsearch.server;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.apache.solr.handler.dataimport.DataImporter;
 import org.apache.solr.logging.log4j.Log4jInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,13 @@ public class DataImportDaemon implements Runnable {
 			.getLogger(DataImportDaemon.class);
 	private final BlockingQueue<PatientInfo> queue;
 	private final int id;
+	private final DataImporter dataImporter;
 
-	public DataImportDaemon(BlockingQueue<PatientInfo> queue, int id) {
+	public DataImportDaemon(BlockingQueue<PatientInfo> queue, int id,
+			DataImporter dataImporter) {
 		this.queue = queue;
 		this.id = id;
+		this.dataImporter = dataImporter;
 	}
 
 	@Override
@@ -40,10 +44,14 @@ public class DataImportDaemon implements Runnable {
 		while (true) {
 			try {
 				PatientInfo patientInfo = queue.take();
-				log.info(String.format(
-						"Daemon #{} taked from queue patient #{}", id,
-						patientInfo.getPatientId()));
+				log.info("Daemon #{} taked from queue patient #{}", id,
+						patientInfo.getPatientId());
 				
+				//TODO
+				//Do some great stuff with selected patient
+				//Move from DataImportHandler.handleRequestBody()
+				//Use DataImporter
+
 			} catch (InterruptedException e) {
 				log.error("The thread #{} is interrupted", id);
 			}

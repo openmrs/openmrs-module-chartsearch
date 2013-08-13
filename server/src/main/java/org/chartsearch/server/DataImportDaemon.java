@@ -36,15 +36,15 @@ public class DataImportDaemon implements Runnable {
 
 	@Override
 	public void run() {
-		log.info(String.format("Daemon #%d is running", id));
+		log.info("Daemon #{} is running", id);
 		while (true) {
 			try {
 				PatientInfo patientInfo = queue.take();
 				log.info(String.format(
-						"Daemon #%d taked from queue patient #%d", id,
+						"Daemon #{} taked from queue patient #{}", id,
 						patientInfo.getPatientId()));
 			} catch (InterruptedException e) {
-				log.error("The thread #{0} is interrupted", id);
+				log.error("The thread #{} is interrupted", id);
 			}
 		}
 	}

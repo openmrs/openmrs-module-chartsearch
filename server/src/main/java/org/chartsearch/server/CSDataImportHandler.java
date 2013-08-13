@@ -28,6 +28,8 @@ import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.ContentStreamBase;
 import org.apache.solr.common.util.NamedList;
+import org.apache.solr.core.CloseHook;
+import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.apache.solr.handler.dataimport.DataImporter;
@@ -35,6 +37,7 @@ import org.apache.solr.handler.dataimport.SolrWriter;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.RawResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,24 +46,29 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 /**
  *
  */
-public class CSDataImportHandler extends RequestHandlerBase {
+public class CSDataImportHandler extends RequestHandlerBase implements
+		SolrCoreAware {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(CSDataImportHandler.class);
 	private final BlockingQueue<PatientInfo> queue = new ArrayBlockingQueue<PatientInfo>(
 			10, true);
+	private final ExecutorService executorService;
+
+	public CSDataImportHandler() {
+		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(
+				"CSDataImport Daemon #%d").build();
+		executorService = Executors.newFixedThreadPool(3, factory);
+		for (int i = 0; i < 3; i++) {
+			executorService.execute(new DataImportDaemon(queue, i));
+			log.info("Executed daemon #{}", i);
+		}
+	}
 
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
-		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(
-				"CSDataImport Daemon #%d").build();
 
-		ExecutorService executorService = Executors.newFixedThreadPool(3, factory);
-		for (int i = 0; i < 3; i++) {
-			executorService.execute(new DataImportDaemon(queue, i));
-			log.info("Executed daemon #{0}", i);
-		}
 	}
 
 	@Override
@@ -89,4 +97,21 @@ public class CSDataImportHandler extends RequestHandlerBase {
 		return null;
 	}
 
+	@Override
+	public void inform(SolrCore core) {
+		core.addCloseHook(new CloseHook() {
+			
+			@Override
+			public void preClose(SolrCore core) {
+				executorService.shutdownNow();
+				log.info("ExecutorService was shutdown");
+				
+			}
+			
+			@Override
+			public void postClose(SolrCore core) {
+				// TODO Auto-generated method stub				
+			}
+		});		
+	}
 }

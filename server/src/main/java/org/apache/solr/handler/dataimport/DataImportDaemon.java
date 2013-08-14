@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * 
  */
 public class DataImportDaemon implements Runnable {
 
@@ -36,7 +36,7 @@ public class DataImportDaemon implements Runnable {
 		this.id = id;
 		this.dataImporter = dataImporter;
 	}
-
+	
 	@Override
 	public void run() {
 		log.info("Daemon #{} is running", id);

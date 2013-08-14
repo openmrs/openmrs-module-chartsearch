@@ -17,14 +17,22 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-			<!-- Solr -->
+
+		<!-- Solr -->
+
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-test-framework</artifactId>
+			<version>${solrVersion}</version>
+		</dependency>
+
 		<dependency>
 			<artifactId>solr-solrj</artifactId>
 			<groupId>org.apache.solr</groupId>
-			<version>4.3.1</version>
+			<version>${solrVersion}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -32,7 +40,7 @@
 		<dependency>
 			<artifactId>solr-core</artifactId>
 			<groupId>org.apache.solr</groupId>
-			<version>4.3.1</version>
+			<version>${solrVersion}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -40,9 +48,27 @@
 		<dependency>
 			<groupId>org.apache.solr</groupId>
 			<artifactId>solr-dataimporthandler</artifactId>
-			<version>4.3.1</version>
+			<version>${solrVersion}</version>
 		</dependency>
+
 
 		<!-- End Solr -->
 	</dependencies>
+
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
 </project>

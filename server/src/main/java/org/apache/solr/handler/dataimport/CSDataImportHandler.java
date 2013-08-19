@@ -26,6 +26,7 @@ import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.DataImporter;
+import org.apache.solr.handler.dataimport.Custom.SolrQueryInfo;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
@@ -43,7 +44,7 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 
 	private static final Logger log = LoggerFactory
 			.getLogger(CSDataImportHandler.class);
-	private final BlockingQueue<PatientInfo> queue = new LinkedBlockingQueue<PatientInfo>();
+	private final BlockingQueue<SolrQueryInfo> queue = new LinkedBlockingQueue<SolrQueryInfo>();
 	private ExecutorService executorService;
 	private final int THREADS_COUNT = 3;
 
@@ -59,10 +60,9 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp)
 			throws Exception {
 
+		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
 		Integer patientId = params.getInt("patientId");
-		PatientInfo patientInfo = new PatientInfo(patientId);
-		queue.put(patientInfo);
 
 		rsp.add("patientId", patientId);
 		rsp.setHttpCaching(false);
@@ -103,12 +103,13 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(
 				"CSDataImport Daemon #%d").build();
 		executorService = Executors.newFixedThreadPool(THREADS_COUNT, factory);
-		for (int i = 0; i < THREADS_COUNT; i++) {			
-			try {				
+		for (int i = 0; i < THREADS_COUNT; i++) {
+			try {
+				String importerName = String.format("%s - #%d", myName, i);
 				executorService.execute(new DataImportDaemon(queue, i,
-						new DataImporter(core, myName)));
-				log.info("Executed daemon #{}", i);
-			} catch (Exception e){
+						new DataImporter(core, importerName), initArgs));
+				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
+			} catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
 			}
 

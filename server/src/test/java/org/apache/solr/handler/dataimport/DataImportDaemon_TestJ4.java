@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class DataImportDaemon_TestJ4 extends SolrTestCaseJ4 {
 
-	private DataImportDaemon dataImportDaemon;
+	/*private DataImportDaemon dataImportDaemon;
 	private BlockingQueue<PatientInfo> queue;
 	private ExecutorService executorService;
 
@@ -82,6 +82,6 @@ public class DataImportDaemon_TestJ4 extends SolrTestCaseJ4 {
 			log.error("Error generated", e);
 		}
 
-	}
+	}*/
 
 }

@@ -11,22 +11,30 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.apache.solr.handler.dataimport;
+package org.apache.solr.handler.dataimport.Custom;
 
+import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.response.SolrQueryResponse;
 
 /**
  *
  */
-public final class PatientInfo {
-
-	private final Integer patientId;
-
-	public PatientInfo(Integer patientId) {
-		this.patientId = patientId;			
-	}
+public final class SolrQueryInfo {
+	private final SolrQueryRequest request;
+	private final SolrQueryResponse response;
 	
-	public Integer getPatientId() {
-		return patientId;
+	public SolrQueryInfo(SolrQueryRequest request, SolrQueryResponse response){
+		this.request = request;
+		this.response = response;
 	}
+
+	public SolrQueryRequest getRequest() {
+		return request;
+	}
+
+	public SolrQueryResponse getResponse() {
+		return response;
+	}
+
 
 }

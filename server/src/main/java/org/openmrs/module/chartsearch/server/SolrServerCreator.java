@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch;
+package org.openmrs.module.chartsearch.server;
 
 import org.apache.solr.client.solrj.SolrServer;
 

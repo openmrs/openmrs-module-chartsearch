@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch;
+package org.openmrs.module.chartsearch.server;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -19,25 +19,21 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.common.util.NamedList;
-import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- *
- */
-@Service
+
 public class Indexer {
 	private final SolrServer solrServer;
 
-	private static Log log = LogFactory.getLog(Indexer.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(Indexer.class);
 
 	private final static int COMMIT_DELAY = 5000;
 
@@ -45,7 +41,7 @@ public class Indexer {
 		this.solrServer = solrServer;
 	}
 
-	public void indexPatientData(Integer personId) {
+	public void indexPatientData(Integer personId) {		
 		Date lastIndexTime;
 		try {
 			lastIndexTime = getLastIndexTime(personId);

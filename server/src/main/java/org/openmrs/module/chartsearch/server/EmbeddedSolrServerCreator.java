@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch;
+package org.openmrs.module.chartsearch.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,17 +30,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
-import org.openmrs.api.AdministrationService;
-import org.openmrs.api.context.Context;
-import org.openmrs.util.OpenmrsClassLoader;
-import org.openmrs.util.OpenmrsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -51,24 +45,37 @@ import org.xml.sax.SAXException;
  */
 public class EmbeddedSolrServerCreator extends SolrServerCreator {
 
-	private static Log log = LogFactory.getLog(EmbeddedSolrServerCreator.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(EmbeddedSolrServerCreator.class);
 
 	private SolrServer solrServer;
 
-	/*@Autowired
-	@Qualifier("adminService")
-	private AdministrationService administrationService;*/
+	private final String dbUrl;
+	private final String dbUser;
+	private final String dbPassword;
+	private final String solrHome;
+	
+
+	public EmbeddedSolrServerCreator(String solrHome, String dbUrl, String dbUser,
+			String dbPassword) {
+		this.solrHome = solrHome;
+		this.dbUrl = dbUrl;
+		this.dbUser = dbUser;
+		this.dbPassword = dbPassword;
+	}
 
 	@Override
 	public SolrServer createSolrServer() {
 
 		// Get the solr home folder
-		String solrHome = /*
-						 * administrationService.getGlobalProperty(
-						 * "chartsearch.home",
-						 */
-		new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
-				.getAbsolutePath();
+		// String solrHome =
+		/*
+		 * administrationService.getGlobalProperty( "chartsearch.home",
+		 */
+		/*
+		 * new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
+		 * .getAbsolutePath();
+		 */
 
 		// Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", solrHome);
@@ -79,8 +86,7 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		String configFolder = solrHome + File.separatorChar + "collection1"
 				+ File.separatorChar + "conf";
 		// if (!new File(configFolder).exists()) {
-		URL url = OpenmrsClassLoader.getInstance().getResource(
-				"collection1/conf");
+		URL url = getClass().getClassLoader().getResource("collection1/conf");
 		File file = new File(url.getFile());
 		try {
 			FileUtils.copyDirectoryToDirectory(file, new File(solrHome
@@ -100,29 +106,30 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
-		} catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		} 
-		finally {
+		} finally {
 		}
 
 	}
 
 	private void setDataImportConnectionInfo(String configFolder)
 			throws Exception {
-		Properties properties = Context.getRuntimeProperties();
-
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
-		Document doc = db.parse(OpenmrsClassLoader.getInstance()
+		Document doc = db.parse(getClass().getClassLoader()
 				.getResourceAsStream("collection1/conf/data-config.xml"));
 		Element node = (Element) doc.getElementsByTagName("dataSource").item(0);
 
-		node.setAttribute("url", properties.getProperty("connection.url"));
+		/*node.setAttribute("url", properties.getProperty("connection.url"));
 		node.setAttribute("user", properties.getProperty("connection.username"));
 		node.setAttribute("password",
-				properties.getProperty("connection.password"));
+				properties.getProperty("connection.password"));*/
+		
+		node.setAttribute("url", dbUrl);
+		node.setAttribute("user", dbUser);
+		node.setAttribute("password", dbPassword);
 
 		String xml = doc2String(doc);
 		File file = new File(configFolder + File.separatorChar

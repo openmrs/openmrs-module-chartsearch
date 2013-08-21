@@ -20,7 +20,7 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-			<!-- Solr -->
+		<!-- Solr -->
 		<dependency>
 			<artifactId>solr-solrj</artifactId>
 			<groupId>org.apache.solr</groupId>
@@ -45,4 +45,19 @@
 
 		<!-- End Solr -->
 	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
 </project>

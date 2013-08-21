@@ -13,30 +13,40 @@
  */
 package org.openmrs.module.chartsearch.server;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-
 /**
  *
  */
-public class HttpSolrServerCreator extends SolrServerCreator {
+public class EmbeddedSolrProperties {
 	
-	private final String solrHttpAddress;
-
-	public HttpSolrServerCreator(String solrHttpAddress){
-		this.solrHttpAddress = solrHttpAddress;		
-	}
+	private final String solrHome;
 	
-	public String getSolrHttpAddress(){
-		return solrHttpAddress;
-	}	
-
-	/**
-	 * @see org.openmrs.module.chartsearch.SolrServerCreator#createSolrServer()
-	 */
-	@Override
-	public SolrServer createSolrServer() {
-		return new HttpSolrServer(getSolrHttpAddress());
+	private final String dbUrl;
+	
+	private final String dbUser;
+	
+	private final String dbPassword;
+	
+	public EmbeddedSolrProperties(String solrHome, String dbUrl, String dbUser, String dbPassword) {
+		this.solrHome = solrHome;
+		this.dbUrl = dbUrl;
+		this.dbUser = dbUser;
+		this.dbPassword = dbPassword;
 	}
 
+	public String getSolrHome() {
+	    return solrHome;
+    }
+
+	public String getDbUrl() {
+	    return dbUrl;
+    }
+
+	public String getDbUser() {
+	    return dbUser;
+    }
+
+	public String getDbPassword() {
+	    return dbPassword;
+    }
+	
 }

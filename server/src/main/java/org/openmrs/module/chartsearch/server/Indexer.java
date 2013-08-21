@@ -35,7 +35,7 @@ public class Indexer {
 	private static final Logger log = LoggerFactory
 			.getLogger(Indexer.class);
 
-	private final static int COMMIT_DELAY = 5000;
+	private static final int COMMIT_DELAY = 5000;
 
 	public Indexer(SolrServer solrServer) {
 		this.solrServer = solrServer;
@@ -56,6 +56,7 @@ public class Indexer {
 		}
 		try {
 			setLastIndexTime(personId);
+			log.info("Last index time was setted to person #{}", personId);
 		} catch (SolrServerException e) {
 			// TODO Auto-generated catch block
 			log.error("Error generated", e);

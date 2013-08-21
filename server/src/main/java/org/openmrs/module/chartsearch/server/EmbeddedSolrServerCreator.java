@@ -18,11 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -38,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -50,46 +47,30 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 
 	private SolrServer solrServer;
 
-	private final String dbUrl;
-	private final String dbUser;
-	private final String dbPassword;
-	private final String solrHome;
+	private final EmbeddedSolrProperties properties;
 	
 
-	public EmbeddedSolrServerCreator(String solrHome, String dbUrl, String dbUser,
-			String dbPassword) {
-		this.solrHome = solrHome;
-		this.dbUrl = dbUrl;
-		this.dbUser = dbUser;
-		this.dbPassword = dbPassword;
+	public EmbeddedSolrServerCreator(EmbeddedSolrProperties properties) {
+		this.properties = properties;
 	}
 
 	@Override
 	public SolrServer createSolrServer() {
 
 		// Get the solr home folder
-		// String solrHome =
-		/*
-		 * administrationService.getGlobalProperty( "chartsearch.home",
-		 */
-		/*
-		 * new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch")
-		 * .getAbsolutePath();
-		 */
-
 		// Tell solr that this is our home folder
-		System.setProperty("solr.solr.home", solrHome);
+		System.setProperty("solr.solr.home", properties.getSolrHome());
 
-		log.info(String.format("solr.solr.home: %s", solrHome));
+		log.info(String.format("solr.solr.home: %s", properties.getSolrHome()));
 
 		// If user has not setup solr config folder, set a default one
-		String configFolder = solrHome + File.separatorChar + "collection1"
+		String configFolder = properties.getSolrHome() + File.separatorChar + "collection1"
 				+ File.separatorChar + "conf";
 		// if (!new File(configFolder).exists()) {
 		URL url = getClass().getClassLoader().getResource("collection1/conf");
 		File file = new File(url.getFile());
 		try {
-			FileUtils.copyDirectoryToDirectory(file, new File(solrHome
+			FileUtils.copyDirectoryToDirectory(file, new File(properties.getSolrHome()
 					+ File.separatorChar + "collection1"));
 			setDataImportConnectionInfo(configFolder);
 		} catch (IOException e) {
@@ -121,15 +102,10 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		Document doc = db.parse(getClass().getClassLoader()
 				.getResourceAsStream("collection1/conf/data-config.xml"));
 		Element node = (Element) doc.getElementsByTagName("dataSource").item(0);
-
-		/*node.setAttribute("url", properties.getProperty("connection.url"));
-		node.setAttribute("user", properties.getProperty("connection.username"));
-		node.setAttribute("password",
-				properties.getProperty("connection.password"));*/
 		
-		node.setAttribute("url", dbUrl);
-		node.setAttribute("user", dbUser);
-		node.setAttribute("password", dbPassword);
+		node.setAttribute("url", properties.getDbUrl());
+		node.setAttribute("user", properties.getDbUser());
+		node.setAttribute("password", properties.getDbPassword());
 
 		String xml = doc2String(doc);
 		File file = new File(configFolder + File.separatorChar

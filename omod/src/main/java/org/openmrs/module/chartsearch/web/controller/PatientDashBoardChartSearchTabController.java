@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
-import org.openmrs.module.chartsearch.Indexer;
+import org.openmrs.module.chartsearch.server.Indexer;
 import org.openmrs.module.chartsearch.Searcher;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.beans.factory.annotation.Autowired;

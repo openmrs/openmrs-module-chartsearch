@@ -18,24 +18,34 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
+	
+	<bean id="org.openmrs.module.chartsearch.SolrUtils" class="org.openmrs.module.chartsearch.SolrUtils">	
+	</bean>
+
+    <bean id="embeddedSolrProperties" class="org.openmrs.module.chartsearch.SolrUtils" lazy-init="false"
+		factory-method="getEmbeddedSolrProperties"></bean>
 
 	<bean id="solrServerCreator" class="org.openmrs.module.chartsearch.server.EmbeddedSolrServerCreator">
-	<constructor-arg  />
-	<!-- TODO add constructor args -->
+		<constructor-arg ref="embeddedSolrProperties" />	
 	</bean>
+	
 	<bean id="solrServer" factory-bean="solrServerCreator" lazy-init="false"
 		factory-method="createSolrServer"></bean>
+		
 	<bean id="indexer" class="org.openmrs.module.chartsearch.server.Indexer"
 		lazy-init="false">
 		<constructor-arg ref="solrServer" />
 	</bean>
+	
 	<bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
 		lazy-init="false">
 		<constructor-arg ref="solrServer" />
 	</bean>
-	<bean id="solrManagement" class="org.openmrs.module.chartsearch.SolrManagement">
+	
+	<bean id="solrManagement" class="org.openmrs.module.chartsearch.server.SolrManagement">
 		<constructor-arg ref="solrServer" />
 	</bean>
+	
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">

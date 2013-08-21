@@ -64,13 +64,14 @@ public class DataImportDaemon implements Runnable {
 	@Override
 	public void run() {
 		log.info("Daemon #{} is running", id);
-		while (true) {
+		while(!(Thread.currentThread().isInterrupted())){
 			try {
 				SolrQueryInfo info = queue.take();
 				handleRequest(info.getRequest(), info.getResponse());
 
 			} catch (InterruptedException e) {
-				log.error("The thread #{} is interrupted", id);
+				log.info("The thread #{} is interrupted", id);
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
@@ -116,23 +117,27 @@ public class DataImportDaemon implements Runnable {
 			UpdateRequestProcessor processor = processorChain.createProcessor(
 					req, rsp);
 			SolrResourceLoader loader = req.getCore().getResourceLoader();
+			
 			SolrWriter sw = getSolrWriter(processor, loader, requestParams, req);
-
-			if (requestParams.isDebug()) {
-				if (debugEnabled) {
-					importer.runCmd(requestParams, sw);
-					rsp.add("mode", "debug");
-					rsp.add("documents",
-							requestParams.getDebugInfo().debugDocuments);
-					if (requestParams.getDebugInfo().debugVerboseOutput != null) {
-						rsp.add("verbose-output",
-								requestParams.getDebugInfo().debugVerboseOutput);
+			try {
+				if (requestParams.isDebug()) {
+					if (debugEnabled) {
+						importer.runCmd(requestParams, sw);
+						rsp.add("mode", "debug");
+						rsp.add("documents",
+								requestParams.getDebugInfo().debugDocuments);
+						if (requestParams.getDebugInfo().debugVerboseOutput != null) {
+							rsp.add("verbose-output",
+									requestParams.getDebugInfo().debugVerboseOutput);
+						}
+					} else {
+						message = DataImporter.MSG.DEBUG_NOT_ENABLED;
 					}
 				} else {
-					message = DataImporter.MSG.DEBUG_NOT_ENABLED;
+					importer.runCmd(requestParams, sw);
 				}
-			} else {			
-				importer.runCmd(requestParams, sw);
+			} finally {
+				sw.close();
 			}
 			log.info("Import finished in the daemon {}", id);
 		} else if (DataImporter.RELOAD_CONF_CMD.equals(command)) {
@@ -149,8 +154,7 @@ public class DataImportDaemon implements Runnable {
 			}
 		}
 
-		
-		//TODO Do something visible for user with response
+		// TODO Do something visible for user with response
 		rsp.add("importResponse", message);
 		rsp.add("statusMessages", importer.getStatusMessages());
 

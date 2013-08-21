@@ -126,8 +126,8 @@ public class DWRChartSearchService {
 		return objectList;
 	}
 
-	// TODO return custom DetailsItem
-	public String getDetails(Integer id) {
+	// TODO replace with custom DetailsItem
+	public String getDetails(Integer id) {		
 		ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
 				Context.getLocale());
 

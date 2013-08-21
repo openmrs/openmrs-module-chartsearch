@@ -458,6 +458,9 @@
 	
 	<requestHandler name="/csdataimport"
 		class="org.apache.solr.handler.dataimport.CSDataImportHandler">
+		<lst name="defaults">
+			<str name="config">data-config.xml</str>
+		</lst>
 	</requestHandler>
 
 	<!-- SearchHandler http://wiki.apache.org/solr/SearchHandler For processing 

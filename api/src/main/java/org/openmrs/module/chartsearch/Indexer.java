@@ -97,7 +97,8 @@ public class Indexer {
 
 	private void fullImport(int personId) throws SolrServerException {
 		ModifiableSolrParams params = new ModifiableSolrParams();
-		params.set("qt", "/dataimport");
+		//TODO take path from config
+		params.set("qt", "/csdataimport");
 		params.set("command", "full-import");
 		params.set("clean", false);
 		params.set("personId", personId);
@@ -108,7 +109,7 @@ public class Indexer {
 	private void deltaImport(int personId, Date lastIndexTime)
 			throws SolrServerException {
 		ModifiableSolrParams params = new ModifiableSolrParams();
-		params.set("qt", "/dataimport");
+		params.set("qt", "/csdataimport");
 		params.set("command", "delta-import");
 		params.set("clean", false);
 

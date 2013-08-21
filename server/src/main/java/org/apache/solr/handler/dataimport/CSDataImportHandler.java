@@ -48,7 +48,7 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 	private ExecutorService executorService;
 	private final int THREADS_COUNT = 3;
 
-	private String myName = "dataimport";
+	private String myName = "csdataimport";
 
 	@Override
 	public void init(NamedList args) {
@@ -62,9 +62,9 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 
 		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
-		Integer patientId = params.getInt("patientId");
+		Integer personId = params.getInt("personId");
 
-		rsp.add("patientId", patientId);
+		rsp.add("personId", personId);
 		rsp.setHttpCaching(false);
 
 	}
@@ -105,7 +105,7 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 		executorService = Executors.newFixedThreadPool(THREADS_COUNT, factory);
 		for (int i = 0; i < THREADS_COUNT; i++) {
 			try {
-				String importerName = String.format("%s - #%d", myName, i);
+				String importerName = myName;//String.format("%s - #%d", myName, i);
 				executorService.execute(new DataImportDaemon(queue, i,
 						new DataImporter(core, importerName), initArgs));
 				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);

@@ -46,14 +46,19 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 			.getLogger(CSDataImportHandler.class);
 	private final BlockingQueue<SolrQueryInfo> queue = new LinkedBlockingQueue<SolrQueryInfo>();
 	private ExecutorService executorService;
-	private final int THREADS_COUNT = 3;
+	private final int DEFAULT_DAEMONS_COUNT = 3;
+	private int daemonsCount;
 
 	private String myName = "csdataimport";
 
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
-
+		daemonsCount = (Integer) args.get("daemonsCount");
+		if (initArgs != null) {
+			Object daemonsCountObject = initArgs.get("daemonsCount");
+			daemonsCount = daemonsCountObject != null ? Integer.parseInt(daemonsCountObject.toString()) : DEFAULT_DAEMONS_COUNT;
+		}
 	}
 
 	@Override
@@ -102,13 +107,15 @@ public class CSDataImportHandler extends RequestHandlerBase implements
 
 		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat(
 				"CSDataImport Daemon #%d").build();
-		executorService = Executors.newFixedThreadPool(THREADS_COUNT, factory);
-		for (int i = 0; i < THREADS_COUNT; i++) {
+		executorService = Executors.newFixedThreadPool(daemonsCount, factory);
+		for (int i = 0; i < daemonsCount; i++) {
 			try {
-				String importerName = myName;//String.format("%s - #%d", myName, i);
+				String importerName = myName;// String.format("%s - #%d",
+												// myName, i);
 				executorService.execute(new DataImportDaemon(queue, i,
 						new DataImporter(core, importerName), initArgs));
-				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
+				log.info("Executed daemon #{} with dataimporter #{}", i,
+						importerName);
 			} catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
 			}

@@ -76,6 +76,7 @@ public class DataImportDaemon implements Runnable {
 		}
 	}
 
+	/*	Simulate RequestHandlerBase handleRequestBody */
 	private void handleRequest(SolrQueryRequest req, SolrQueryResponse rsp) {
 		SolrParams params = req.getParams();
 		Integer patientId = params.getInt("personId");

@@ -457,7 +457,7 @@
 	
 	
 	<requestHandler name="/csdataimport"
-		class="org.apache.solr.handler.dataimport.CSDataImportHandler">
+		class="org.apache.solr.handler.dataimport.ChartSearchDataImportHandler">
 		<lst name="defaults">
 			<str name="config">data-config.xml</str>
 		</lst>

@@ -13,28 +13,22 @@
  */
 package org.apache.solr.handler.dataimport.custom;
 
-import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.response.SolrQueryResponse;
+import java.util.Date;
+
 
 /**
  *
  */
-public final class SolrQueryInfo {
-	private final SolrQueryRequest request;
-	private final SolrQueryResponse response;
+public class PatientInfo {	
 	
-	public SolrQueryInfo(SolrQueryRequest request, SolrQueryResponse response){
-		this.request = request;
-		this.response = response;
+	private final Date time;
+	
+	public PatientInfo(Date time) {
+		this.time = time;
+	}	
+	
+	public Date getTime() {
+		return time;
 	}
-
-	public SolrQueryRequest getRequest() {
-		return request;
-	}
-
-	public SolrQueryResponse getResponse() {
-		return response;
-	}
-
-
+	
 }

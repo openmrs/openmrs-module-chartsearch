@@ -18,10 +18,7 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-	
-	<bean id="org.openmrs.module.chartsearch.SolrUtils" class="org.openmrs.module.chartsearch.SolrUtils">	
-	</bean>
-
+		
     <bean id="embeddedSolrProperties" class="org.openmrs.module.chartsearch.SolrUtils" lazy-init="false"
 		factory-method="getEmbeddedSolrProperties"></bean>
 
@@ -30,11 +27,14 @@
 	</bean>
 	
 	<bean id="solrServer" factory-bean="solrServerCreator" lazy-init="false"
-		factory-method="createSolrServer"></bean>
+		factory-method="createSolrServer"></bean> 
 		
-	<bean id="indexer" class="org.openmrs.module.chartsearch.server.Indexer"
-		lazy-init="false">
+    <!--  <bean id="patientInfoHolder" class="org.openmrs.module.chartsearch.server.PatientInfoHolder">	
+	</bean>	
+		-->
+	<bean id="indexer" class="org.openmrs.module.chartsearch.server.Indexer">
 		<constructor-arg ref="solrServer" />
+		<!-- <constructor-arg ref="patientInfoHolder" /> -->
 	</bean>
 	
 	<bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"

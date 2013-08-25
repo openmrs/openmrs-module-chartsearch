@@ -20,14 +20,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 
+import org.apache.lucene.analysis.ja.util.CSVUtil;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.DataImporter;
+import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
+import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
+import org.apache.solr.handler.dataimport.custom.PatientInfoProviderFileImpl;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
+import org.apache.solr.internal.csv.CSVUtils;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
@@ -46,7 +51,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private final BlockingQueue<SolrQueryInfo> queue = new LinkedBlockingQueue<SolrQueryInfo>();
 	
-	private final PatientInfoHolder patientInfoHolder = new PatientInfoHolder();
+	private final PatientInfoCache cache = new PatientInfoCache(new PatientInfoProviderFileImpl());
+	
+	private final PatientInfoHolder patientInfoHolder = new PatientInfoHolder(cache);
 	
 	private ExecutorService executorService;
 	
@@ -68,8 +75,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	}
 	
 	@Override
-	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
-		
+	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {		
 		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
 		Integer personId = params.getInt("personId");

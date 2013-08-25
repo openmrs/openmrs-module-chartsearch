@@ -43,6 +43,13 @@
 			<version>4.3.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.supercsv</groupId>
+			<artifactId>super-csv</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+
+
 		<!-- End Solr -->
 	</dependencies>
 	<build>

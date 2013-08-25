@@ -15,8 +15,6 @@ package org.apache.solr.handler.dataimport.custom;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +25,16 @@ import org.slf4j.LoggerFactory;
 public class PatientInfoHolder {
 	
 	private static final Logger log = LoggerFactory.getLogger(PatientInfoHolder.class);
+	private final PatientInfoCache cache;
+		
+	public PatientInfoHolder(PatientInfoCache cache){
+		this.cache = cache;
+	}
 	
 	// TODO rewrite & do more intuitive
 	public Date getLastIndexTime(int patientId) {
-		if (PatientInfoCache.data.containsKey(patientId)) {
-			return PatientInfoCache.data.get(patientId).getTime();
+		if (cache.contains(patientId)) {
+			return cache.get(patientId).getTime();
 		} else {
 			return null;
 		}
@@ -40,15 +43,9 @@ public class PatientInfoHolder {
 	
 	public void setLastIndexTime(int patientId){
 		Date lastIndexTime = Calendar.getInstance().getTime();
-		PatientInfoCache.data.put(patientId, new PatientInfo(lastIndexTime));
+		cache.put(patientId, new PatientInfo(patientId, lastIndexTime));
 		log.info("Set last index time to: {}", lastIndexTime);
-		
-	}
-	
-	private static class PatientInfoCache {
-		
-		static Map<Integer, PatientInfo> data = new ConcurrentHashMap<Integer, PatientInfo>();
-		
+		cache.save();		
 	}
 	
 }

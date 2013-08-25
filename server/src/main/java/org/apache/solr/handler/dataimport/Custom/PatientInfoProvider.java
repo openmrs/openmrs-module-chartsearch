@@ -13,34 +13,17 @@
  */
 package org.apache.solr.handler.dataimport.custom;
 
-import java.util.Date;
-
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
-public class PatientInfo {	
-
-	private final Integer patientId;
-	private final Date lastIndexTime;
+public interface PatientInfoProvider {
 	
-	public PatientInfo(Integer patientId, Date lastIndexTime) {
-		this.patientId = patientId;
-		this.lastIndexTime = new Date(lastIndexTime.getTime());
-	}
+	public Map<Integer, PatientInfo> getData();
 	
-	public PatientInfo(Integer patientId, Long lastIndexTime) {
-		this.patientId = patientId;
-		this.lastIndexTime = new Date(lastIndexTime);
-	}	
-	
-	public Integer getPatientId() {
-	    return patientId;
-    }
-	
-	public Date getTime() {
-		return new Date(lastIndexTime.getTime());
-	}
-
+	public void updateData(Collection<PatientInfo> data);
 	
 }

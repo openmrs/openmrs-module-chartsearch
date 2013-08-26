@@ -48,17 +48,6 @@
 		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardChartSearchTab
 		</class>
 	</extension>
-
-	<!-- Filter definitions -->
-	<filter>
-		<filter-name>SolrRequestFilter</filter-name> 
-		<filter-class>org.apache.solr.servlet.SolrDispatchFilter</filter-class> 
-	</filter>
-	<filter-mapping>
-		<filter-name>SolrRequestFilter</filter-name> 
-		<url-pattern>/dataimport</url-pattern> 
-		<url-pattern>/csdataimport</url-pattern> 
-	</filter-mapping>
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

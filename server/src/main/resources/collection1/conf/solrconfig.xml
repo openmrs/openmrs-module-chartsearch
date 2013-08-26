@@ -462,7 +462,6 @@
 		<lst name="defaults">
 			<str name="config">data-config.xml</str>
 		</lst>
-		<int name="daemonsCount">4</int>
 	</requestHandler>
 
 	<!-- SearchHandler http://wiki.apache.org/solr/SearchHandler For processing 

@@ -8,37 +8,39 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
  * License for the specific language governing rights and limitations
  * under the License.
- *
+ *PATIENT_INFO_TIMEOUT
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
 package org.apache.solr.handler.dataimport;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 
-import org.apache.lucene.analysis.ja.util.CSVUtil;
+import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.DataImporter;
+import org.apache.solr.handler.dataimport.custom.ChartSearchDataImportProperties;
 import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
-import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
-import org.apache.solr.handler.dataimport.custom.PatientInfoProviderFileImpl;
+import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
-import org.apache.solr.internal.csv.CSVUtils;
 import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.update.UpdateHandler;
-import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,36 +56,27 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private final BlockingQueue<SolrQueryInfo> queue = new LinkedBlockingQueue<SolrQueryInfo>();
 	
-	private final PatientInfoCache cache = new PatientInfoCache(new PatientInfoProviderFileImpl());
+	private final PatientInfoCache cache = new PatientInfoCache(new PatientInfoProviderCSVImpl());
 	
 	private final PatientInfoHolder patientInfoHolder = new PatientInfoHolder(cache);
 	
 	private ExecutorService executorService;
 	
-	private final int DEFAULT_DAEMONS_COUNT = 3;
-	
-	private int daemonsCount;
+	private ChartSearchDataImportProperties chartSearchProperties;
 	
 	private String myName = "csdataimport";
-	
-	private IndexSizeManager indexSizeManager;
+
+	private ScheduledExecutorService patientInfoScheduledExecutorService;
+
+	private ScheduledExecutorService indexSizeManagerScheduledExecutorService;
 	
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
-		daemonsCount = (Integer) args.get("daemonsCount");
-		if (initArgs != null) {
-			Object daemonsCountObject = initArgs.get("daemonsCount");
-			daemonsCount = daemonsCountObject != null ? Integer.parseInt(daemonsCountObject.toString())
-			        : DEFAULT_DAEMONS_COUNT;
-		}
 	}
 	
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
-		if (req.getParams().getBool("ism", false)){
-			indexSizeManager.clearIndex();
-		}
 		
 		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
@@ -109,7 +102,6 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	@Override
 	public void inform(SolrCore core) {
 		
-		
 		// hack to get the name of this handler
 		for (Map.Entry<String, SolrRequestHandler> e : core.getRequestHandlers().entrySet()) {
 			SolrRequestHandler handler = e.getValue();
@@ -125,32 +117,23 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			}
 		}
 		
-		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("ChartSearchDataImport Daemon #%d").build();
-		executorService = Executors.newFixedThreadPool(daemonsCount, factory);
-		for (int i = 0; i < daemonsCount; i++) {
-			try {
-				String importerName = myName;// String.format("%s - #%d",
-				                             // myName, i);
-				executorService.execute(new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core, importerName), initArgs, patientInfoHolder)));
-				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
-			}
-			catch (Exception e) {
-				log.error("Error in DataImporter instantiating", e);
-			}
-			
-		}
+		chartSearchProperties = new ChartSearchDataImportProperties(myName, core.getResourceLoader().getConfigDir());
 		
+		runDataImportDaemons(core, chartSearchProperties.getDaemonsCount());
 		
-		UpdateHandler updateHandler = core.getUpdateHandler();
-		indexSizeManager = new IndexSizeManager(updateHandler); 
+		runScheduledIndexSizeManager(core, chartSearchProperties.getIndexMaxPatients(),
+		    chartSearchProperties.getIndexSizeManagerTimeout());
+		
+		runScheduledPatientInfoUpdates(core, chartSearchProperties.getPatientInfoTimeout());
 		
 		core.addCloseHook(new CloseHook() {
 			
 			@Override
 			public void preClose(SolrCore core) {
 				executorService.shutdownNow();
-				log.info("ExecutorService was shutdown");
-				
+				indexSizeManagerScheduledExecutorService.shutdownNow();
+				patientInfoScheduledExecutorService.shutdownNow();
+				log.info("ExecutorServices were shutdown");				
 			}
 			
 			@Override
@@ -158,5 +141,53 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				// TODO Auto-generated method stub
 			}
 		});
+	}
+	
+	private void runDataImportDaemons(SolrCore core, int daemonsCount) {
+		ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("ChartSearchDataImport Daemon #%d").build();
+		executorService = Executors.newFixedThreadPool(daemonsCount, factory);
+		for (int i = 0; i < daemonsCount; i++) {
+			try {
+				String importerName = myName;// String.format("%s - #%d",
+				                             // myName, i);
+				executorService.execute(new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
+				        importerName), initArgs, patientInfoHolder)));
+				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
+			}
+			catch (Exception e) {
+				log.error("Error in DataImporter instantiating", e);
+			}
+			
+		}
+	}
+	
+	private void runScheduledIndexSizeManager(SolrCore core, int indexMaxpatients, int timeout) {
+		UpdateHandler updateHandler = core.getUpdateHandler();
+		SolrQueryRequest request = new SolrQueryRequestBase(
+		                                                    core, new MapSolrParams(new HashMap<String, String>())) {};
+		final IndexSizeManager indexSizeManager = new IndexSizeManager(updateHandler, request, cache, indexMaxpatients);
+		
+		indexSizeManagerScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+		indexSizeManagerScheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+			
+			@Override
+			public void run() {
+				indexSizeManager.clearIndex();
+				
+			}
+		}, 10, timeout, TimeUnit.SECONDS);
+	}
+	
+	private void runScheduledPatientInfoUpdates(SolrCore core, int timeout) {
+		patientInfoScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+		patientInfoScheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+			
+			@Override
+			public void run() {
+				cache.save();
+				
+			}
+		}, 10, timeout, TimeUnit.SECONDS);
+		
 	}
 }

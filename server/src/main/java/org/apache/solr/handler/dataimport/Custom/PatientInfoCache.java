@@ -8,7 +8,7 @@ public class PatientInfoCache {
 	
 	private Map<Integer, PatientInfo> data = new ConcurrentHashMap<Integer, PatientInfo>();
 	
-	private PatientInfoProvider source;
+	private final PatientInfoProvider source;
 	
 	public PatientInfoCache(PatientInfoProvider source) {
 		this.source = source;
@@ -40,5 +40,9 @@ public class PatientInfoCache {
 	
 	public Boolean contains(Integer patientId) {
 		return data.containsKey(patientId);
+	}
+	
+	public void remove(Integer patientId){
+		data.remove(patientId);
 	}
 }

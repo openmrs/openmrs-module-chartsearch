@@ -13,7 +13,6 @@
  */
 package org.apache.solr.handler.dataimport.custom;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -37,7 +36,7 @@ import org.supercsv.prefs.CsvPreference;
 /**
  *
  */
-public class PatientInfoProviderFileImpl implements PatientInfoProvider {
+public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataImportHandler.class);
 	
@@ -48,7 +47,7 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 	 * @see org.apache.solr.handler.dataimport.custom.PatientInfoProvider#getData()
 	 */
 	@Override
-	public Map<Integer, PatientInfo> getData() {
+	public synchronized Map<Integer, PatientInfo> getData() {
 		ICsvMapReader mapReader = null;
 		try {
 			try {
@@ -105,7 +104,8 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 	 * @see org.apache.solr.handler.dataimport.custom.PatientInfoProvider#updateData(java.util.Map)
 	 */
 	@Override
-	public void updateData(Collection<PatientInfo> data) {
+	public synchronized void updateData(Collection<PatientInfo> data) {
+		
 		ICsvMapWriter mapWriter = null;
 		try {
 			mapWriter = new CsvMapWriter(new FileWriter(FILENAME), CsvPreference.STANDARD_PREFERENCE);
@@ -121,7 +121,7 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 			for (final PatientInfo patientInfo : data) {
 				final Map<String, Object> info = new HashMap<String, Object>();
 				info.put(header[0], patientInfo.getPatientId());
-				info.put(header[1], patientInfo.getTime().getTime());
+				info.put(header[1], patientInfo.getLastIndexTime().getTime());
 				mapWriter.write(info, header, processors);
 			}
 			log.info("Writing patient info data to file finished succesfully");

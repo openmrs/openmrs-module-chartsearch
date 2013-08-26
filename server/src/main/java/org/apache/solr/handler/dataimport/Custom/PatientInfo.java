@@ -38,9 +38,17 @@ public class PatientInfo {
 	    return patientId;
     }
 	
-	public Date getTime() {
+	public Date getLastIndexTime() {
 		return new Date(lastIndexTime.getTime());
 	}
+
+	@Override
+    public String toString() {
+	    return "PatientInfo [patientId=" + getPatientId() + ", lastIndexTime=" + getLastIndexTime() + "]";
+    }
+
+	
+	
 
 	
 }

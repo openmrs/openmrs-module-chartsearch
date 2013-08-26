@@ -31,21 +31,18 @@ public class PatientInfoHolder {
 		this.cache = cache;
 	}
 	
-	// TODO rewrite & do more intuitive
 	public Date getLastIndexTime(int patientId) {
 		if (cache.contains(patientId)) {
-			return cache.get(patientId).getTime();
+			return cache.get(patientId).getLastIndexTime();
 		} else {
 			return null;
-		}
-		
+		}		
 	}
 	
 	public void setLastIndexTime(int patientId){
 		Date lastIndexTime = Calendar.getInstance().getTime();
 		cache.put(patientId, new PatientInfo(patientId, lastIndexTime));
-		log.info("Set last index time to: {}", lastIndexTime);
-		cache.save();		
+		log.info("Set last index time to: {}", lastIndexTime);	
 	}
 	
 }

@@ -64,6 +64,7 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		log.info(String.format("solr.solr.home: %s", properties.getSolrHome()));
 
 		// If user has not setup solr config folder, set a default one
+		// TODO use solr functions to determine config folder
 		String configFolder = properties.getSolrHome() + File.separatorChar + "collection1"
 				+ File.separatorChar + "conf";
 		// if (!new File(configFolder).exists()) {

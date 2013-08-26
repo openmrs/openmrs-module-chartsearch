@@ -14,7 +14,6 @@
 package org.apache.solr.handler.dataimport.custom;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**

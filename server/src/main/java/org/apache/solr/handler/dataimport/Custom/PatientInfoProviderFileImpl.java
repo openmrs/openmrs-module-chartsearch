@@ -20,9 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.slf4j.Logger;
@@ -30,12 +28,8 @@ import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.constraint.Unique;
 import org.supercsv.cellprocessor.ift.CellProcessor;
-import org.supercsv.io.CsvBeanReader;
-import org.supercsv.io.CsvBeanWriter;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.CsvMapWriter;
-import org.supercsv.io.ICsvBeanReader;
-import org.supercsv.io.ICsvBeanWriter;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.io.ICsvMapWriter;
 import org.supercsv.prefs.CsvPreference;
@@ -47,6 +41,7 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 	
 	private static final Logger log = LoggerFactory.getLogger(DataImportHandler.class);
 	
+	//TODO change file location to solr home
 	private final String FILENAME = "PatientsInfo.data";
 	
 	/**
@@ -68,7 +63,7 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 				Map<String, Object> map;
 				while ((map = mapReader.read(header, processors)) != null) {
 					Integer patientId = Integer.parseInt((String) map.get("patientId"));
-					Long time = Long.parseLong((String) map.get("time"));
+					Long time = Long.parseLong((String) map.get("lastIndexTime"));
 					patientInfo = new PatientInfo(patientId, time);
 					log.info(String.format("lineNo=%s, rowNo=%s, customer=%s", mapReader.getLineNumber(),
 					    mapReader.getRowNumber(), patientInfo));
@@ -111,23 +106,23 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 	 */
 	@Override
 	public void updateData(Collection<PatientInfo> data) {
-		ICsvMapWriter beanWriter = null;
+		ICsvMapWriter mapWriter = null;
 		try {
-			beanWriter = new CsvMapWriter(new FileWriter(FILENAME), CsvPreference.STANDARD_PREFERENCE);
+			mapWriter = new CsvMapWriter(new FileWriter(FILENAME), CsvPreference.STANDARD_PREFERENCE);
 			
 			// the header elements are used to map the bean values to each column (names must match)
-			final String[] header = new String[] { "patientId", "time" };
+			final String[] header = new String[] { "patientId", "lastIndexTime" };
 			final CellProcessor[] processors = getProcessors();
 			
 			// write the header
-			beanWriter.writeHeader(header);
+			mapWriter.writeHeader(header);
 			
 			// write the beans
 			for (final PatientInfo patientInfo : data) {
 				final Map<String, Object> info = new HashMap<String, Object>();
 				info.put(header[0], patientInfo.getPatientId());
 				info.put(header[1], patientInfo.getTime().getTime());
-				beanWriter.write(info, header, processors);
+				mapWriter.write(info, header, processors);
 			}
 			log.info("Writing patient info data to file finished succesfully");
 			
@@ -137,9 +132,9 @@ public class PatientInfoProviderFileImpl implements PatientInfoProvider {
 			log.error("Error generated", e);
 		}
 		finally {
-			if (beanWriter != null) {
+			if (mapWriter != null) {
 				try {
-					beanWriter.close();
+					mapWriter.close();
 				}
 				catch (IOException e) {
 					// TODO Auto-generated catch block

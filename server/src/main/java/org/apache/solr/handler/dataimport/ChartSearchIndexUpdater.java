@@ -93,7 +93,6 @@ public class ChartSearchIndexUpdater {
 			UpdateRequestProcessorChain processorChain = req.getCore().getUpdateProcessingChain(
 			    params.get(UpdateParams.UPDATE_CHAIN));
 			UpdateRequestProcessor processor = processorChain.createProcessor(req, rsp);
-			SolrResourceLoader loader = req.getCore().getResourceLoader();
 			
 			SolrWriter sw = getSolrWriter(processor, req);
 			try {

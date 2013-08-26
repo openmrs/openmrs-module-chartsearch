@@ -45,6 +45,7 @@
 	 <lib dir="../../../dist/" regex="solr-dataimporthandler-.*\.jar" />
 	 <lib dir="../../../dist/" regex="mysql-connector-.*\.jar" />
 	 <lib dir="../../../dist/" regex="chartsearch-server-.*\.jar" />
+	 <lib dir="../../../dist/" regex="super-csv-.*\.jar" />
 
 	<!-- If a 'dir' option (with or without a regex) is used and nothing is 
 		found that matches, a warning will be logged. -->

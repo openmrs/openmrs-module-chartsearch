@@ -27,6 +27,7 @@ import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.DataImporter;
+import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
@@ -36,6 +37,8 @@ import org.apache.solr.internal.csv.CSVUtils;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
+import org.apache.solr.update.UpdateHandler;
+import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +66,8 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private String myName = "csdataimport";
 	
+	private IndexSizeManager indexSizeManager;
+	
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
@@ -75,7 +80,11 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	}
 	
 	@Override
-	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {		
+	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
+		if (req.getParams().getBool("ism", false)){
+			indexSizeManager.clearIndex();
+		}
+		
 		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
 		Integer personId = params.getInt("personId");
@@ -99,6 +108,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	@Override
 	public void inform(SolrCore core) {
+		
 		
 		// hack to get the name of this handler
 		for (Map.Entry<String, SolrRequestHandler> e : core.getRequestHandlers().entrySet()) {
@@ -129,6 +139,10 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			}
 			
 		}
+		
+		
+		UpdateHandler updateHandler = core.getUpdateHandler();
+		indexSizeManager = new IndexSizeManager(updateHandler); 
 		
 		core.addCloseHook(new CloseHook() {
 			

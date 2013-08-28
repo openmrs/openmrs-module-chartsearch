@@ -47,7 +47,7 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 	 * @see org.apache.solr.handler.dataimport.custom.PatientInfoProvider#getData()
 	 */
 	@Override
-	public synchronized Map<Integer, PatientInfo> getData() {
+	public  Map<Integer, PatientInfo> getData() {
 		ICsvMapReader mapReader = null;
 		try {
 			try {
@@ -104,7 +104,7 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 	 * @see org.apache.solr.handler.dataimport.custom.PatientInfoProvider#updateData(java.util.Map)
 	 */
 	@Override
-	public synchronized void updateData(Collection<PatientInfo> data) {
+	public void updateData(Collection<PatientInfo> data) {
 		
 		ICsvMapWriter mapWriter = null;
 		try {

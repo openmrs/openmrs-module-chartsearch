@@ -13,19 +13,10 @@
  */
 package org.openmrs.module.chartsearch.server;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +26,6 @@ public class Indexer {
 	
 	private static final Logger log = LoggerFactory.getLogger(Indexer.class);
 	
-	//TODO make configurable
-	private static final int COMMIT_DELAY = 5000;
 	
 	public Indexer(SolrServer solrServer) {
 		this.solrServer = solrServer;

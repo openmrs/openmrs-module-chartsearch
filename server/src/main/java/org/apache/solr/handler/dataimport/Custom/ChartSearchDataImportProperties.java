@@ -58,11 +58,6 @@ public class ChartSearchDataImportProperties {
 	
 	public void loadProperties(boolean force) {
 		try {
-			/*SolrResourceLoader loader = new SolrResourceLoader(null);
-			logger.info("Instance dir = " + loader.getInstanceDir());
-			
-			String configDir = loader.getConfigDir();
-			configDir = SolrResourceLoader.normalizeDir(configDir);*/
 			if (force || properties == null) {
 				properties = new Properties();
 				

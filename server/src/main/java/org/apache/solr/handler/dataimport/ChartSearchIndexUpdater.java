@@ -34,7 +34,7 @@ public class ChartSearchIndexUpdater {
 	
 	private final PatientInfoHolder patientInfoHolder;
 	
-	private boolean debugEnabled = true;
+	private boolean debugEnabled = true; 
 	
 	public ChartSearchIndexUpdater(DataImporter dataImporter, NamedList initArgs, PatientInfoHolder patientInfoHolder) {
 		this.importer = dataImporter;
@@ -42,7 +42,7 @@ public class ChartSearchIndexUpdater {
 		this.patientInfoHolder = patientInfoHolder;
 	}	
 	
-	/*	Simulate RequestHandlerBase handleRequestBody */
+	/*	Simulates RequestHandlerBase handleRequestBody */
 	public void handleRequest(SolrQueryRequest req, SolrQueryResponse rsp) {
 		SolrParams params = req.getParams();
 		Integer patientId = params.getInt("personId");

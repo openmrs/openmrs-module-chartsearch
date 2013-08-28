@@ -156,7 +156,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			}
 			catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
-			}
+			} 
 			
 		}
 	}

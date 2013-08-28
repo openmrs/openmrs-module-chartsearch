@@ -13,31 +13,10 @@
  */
 package org.apache.solr.handler.dataimport;
 
-import static org.apache.solr.handler.dataimport.DataImporter.IMPORT_CMD;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.common.params.UpdateParams;
-import org.apache.solr.common.util.ContentStream;
-import org.apache.solr.common.util.NamedList;
-import org.apache.solr.core.SolrResourceLoader;
-import org.apache.solr.handler.dataimport.DataImporter;
-import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
-import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.response.SolrQueryResponse;
-import org.apache.solr.update.processor.UpdateRequestProcessor;
-import org.apache.solr.update.processor.UpdateRequestProcessorChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -37,7 +37,7 @@ public class IndexSizeManager {
 	
 	private final UpdateHandler handler;
 	
-	private SolrQueryRequest req;
+	private final SolrQueryRequest req;
 	
 	private final PatientInfoCache cache;
 	
@@ -85,7 +85,7 @@ public class IndexSizeManager {
 				--deleteCount;
 				++deleteRealCount;
 				if (deleteCount == 0) {					
-					log.info("Index cleared, deleted %d patients", deleteRealCount);
+					log.info("Index cleared, deleted {} patients, {} patients in the index", deleteRealCount, cache.size());
 					cache.save();
 					return;
 				}

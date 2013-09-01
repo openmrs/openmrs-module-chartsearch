@@ -13,6 +13,7 @@
  */
 package org.apache.solr.handler.dataimport;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -34,6 +35,7 @@ import org.apache.solr.handler.dataimport.custom.ChartSearchDataImportProperties
 import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
+import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
 import org.apache.solr.request.SolrQueryRequest;
@@ -56,9 +58,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private final BlockingQueue<SolrQueryInfo> queue = new LinkedBlockingQueue<SolrQueryInfo>();
 	
-	private final PatientInfoCache cache = new PatientInfoCache(new PatientInfoProviderCSVImpl());
+	private PatientInfoCache cache;
 	
-	private final PatientInfoHolder patientInfoHolder = new PatientInfoHolder(cache);
+	private PatientInfoHolder patientInfoHolder;
 	
 	private ExecutorService executorService;
 	
@@ -116,6 +118,11 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				myName = myName.replaceAll("/", "_");
 			}
 		}
+		
+		String fileName = core.getResourceLoader().getDataDir() + File.separatorChar + "Patient information.data";
+		PatientInfoProvider provider = new PatientInfoProviderCSVImpl(fileName);
+		cache = new PatientInfoCache(provider);
+		patientInfoHolder = new PatientInfoHolder(cache);
 		
 		chartSearchProperties = new ChartSearchDataImportProperties(myName, core.getResourceLoader().getConfigDir());
 		

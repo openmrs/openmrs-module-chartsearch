@@ -41,7 +41,11 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 	private static final Logger log = LoggerFactory.getLogger(DataImportHandler.class);
 	
 	//TODO change file location to solr home
-	private final String FILENAME = "PatientsInfo.data";
+	private final String fileName ;
+	
+	public PatientInfoProviderCSVImpl(String fileName){
+		this.fileName = fileName;
+	}
 	
 	/**
 	 * @see org.apache.solr.handler.dataimport.custom.PatientInfoProvider#getData()
@@ -51,7 +55,7 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 		ICsvMapReader mapReader = null;
 		try {
 			try {
-				mapReader = new CsvMapReader(new FileReader(FILENAME), CsvPreference.STANDARD_PREFERENCE);
+				mapReader = new CsvMapReader(new FileReader(fileName), CsvPreference.STANDARD_PREFERENCE);
 				// the header elements are used to map the values to the bean (names must match)
 				final String[] header = mapReader.getHeader(true);
 				if (header == null) return null;
@@ -95,8 +99,8 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 			}
 		}
 		
-		log.error("Returned 0 entries, exception!");
-		return null;
+		log.info("Returned 0 entries");
+		return new HashMap<Integer, PatientInfo>();
 		
 	}
 	
@@ -108,7 +112,7 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 		
 		ICsvMapWriter mapWriter = null;
 		try {
-			mapWriter = new CsvMapWriter(new FileWriter(FILENAME), CsvPreference.STANDARD_PREFERENCE);
+			mapWriter = new CsvMapWriter(new FileWriter(fileName), CsvPreference.STANDARD_PREFERENCE);
 			
 			// the header elements are used to map the bean values to each column (names must match)
 			final String[] header = new String[] { "patientId", "lastIndexTime" };
@@ -153,7 +157,8 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 	 */
 	private static CellProcessor[] getProcessors() {
 		
-		final CellProcessor[] processors = new CellProcessor[] { new Unique(), // patientId (must be unique)
+		final CellProcessor[] processors = new CellProcessor[] {
+				new Unique(), // patientId (must be unique)
 		        new NotNull(), // last index time
 		};
 		

@@ -22,10 +22,17 @@ import java.util.Properties;
 
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.core.SolrResourceLoader;
+import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ChartSearchDataImportProperties {
+	
+	private static final Logger log = LoggerFactory.getLogger(ChartSearchDataImportProperties.class);
+	
+	enum IndexClearStrategies {
+		NO_ACTION, BASIC, NON_USAGE_TIME
+	}
 	
 	private Properties properties;
 	
@@ -37,6 +44,10 @@ public class ChartSearchDataImportProperties {
 	
 	public static final String INDEX_MAX_PATIENTS = "indexMaxPatients";
 	
+	public static final String INDEX_CLEAR_STRATEGY = "indexClearStrategy";
+	
+	private static final String PATIENT_MAX_NON_USAGE_TIME = "patientMaxNonUsageTime";
+	
 	private static final Logger logger = LoggerFactory.getLogger(ChartSearchDataImportProperties.class);
 	
 	private static final int DEFAULT_DAEMONS_COUNT = 3;
@@ -44,14 +55,17 @@ public class ChartSearchDataImportProperties {
 	private static final int DEFAULT_INDEX_SIZE_MANAGER_TIMEOUT = 30;
 	
 	private static final int DEFAULT_PATIENT_INFO_TIMEOUT = 20;
-
+	
 	private static final int DEFAULT_INDEX_MAX_PATIENTS = 100;
 	
-	private final String handlerName;
+	private static final int DEFAULT_PATIENT_MAX_NON_USAGE_TIME = 30; // seconds	
+	
+	private final String fileName;
+	
 	private final String configDir;
 	
-	public ChartSearchDataImportProperties(String handlerName, String configDir) {
-		this.handlerName = handlerName;
+	public ChartSearchDataImportProperties(String fileName, String configDir) {
+		this.fileName = fileName;
 		this.configDir = configDir;
 		loadProperties(true);
 	}
@@ -61,20 +75,20 @@ public class ChartSearchDataImportProperties {
 			if (force || properties == null) {
 				properties = new Properties();
 				
-				File dataImportProperties = new File(configDir, String.format("%s.properties", handlerName));
+				File dataImportProperties = new File(configDir, String.format("%s.properties", fileName));
 				
 				FileInputStream fis = new FileInputStream(dataImportProperties);
 				properties.load(fis);
 			}
 		}
 		catch (FileNotFoundException fnfe) {
-			logger.error(String.format("Error locating %s.properties file", handlerName), fnfe);
+			logger.error(String.format("Error locating %s.properties file", fileName), fnfe);
 		}
 		catch (IOException ioe) {
-			logger.error(String.format("Error reading %s.properties file", handlerName), ioe);
+			logger.error(String.format("Error reading %s.properties file", fileName), ioe);
 		}
 		catch (Exception e) {
-			logger.error(String.format("Error loading %s.properties file", handlerName), e);
+			logger.error(String.format("Error loading %s.properties file", fileName), e);
 		}
 	}
 	
@@ -83,46 +97,53 @@ public class ChartSearchDataImportProperties {
 	}
 	
 	public int getDaemonsCount() {
-		int daemonsCount;
-		try {
-			daemonsCount = Integer.parseInt(getProperty(DAEMONS_COUNT));
-		}
-		catch (NumberFormatException ex) {
-			daemonsCount = DEFAULT_DAEMONS_COUNT;
-		}
-		return daemonsCount;
+		return tryGetInteger(DAEMONS_COUNT, DEFAULT_DAEMONS_COUNT);
 	}
 	
 	public int getIndexSizeManagerTimeout() {
-		int timeout;
-		try {
-			timeout = Integer.parseInt(getProperty(INDEX_SIZE_MANAGER_TIMEOUT));
-		}
-		catch (NumberFormatException ex) {
-			timeout = DEFAULT_INDEX_SIZE_MANAGER_TIMEOUT;
-		}
-		return timeout;
+		return tryGetInteger(INDEX_SIZE_MANAGER_TIMEOUT, DEFAULT_INDEX_SIZE_MANAGER_TIMEOUT);
 	}
 	
 	public int getPatientInfoTimeout() {
-		int timeout;
-		try {
-			timeout = Integer.parseInt(getProperty(PATIENT_INFO_TIMEOUT));
-		}
-		catch (NumberFormatException ex) {
-			timeout = DEFAULT_PATIENT_INFO_TIMEOUT;
-		}
-		return timeout;
+		return tryGetInteger(PATIENT_INFO_TIMEOUT, DEFAULT_PATIENT_INFO_TIMEOUT);
 	}
 	
-	public int getIndexMaxPatients(){
-	  int maxPatients;
-    try {
-      maxPatients = Integer.parseInt(getProperty(INDEX_MAX_PATIENTS));
-    }
-    catch (NumberFormatException ex) {
-      maxPatients = DEFAULT_INDEX_MAX_PATIENTS;
-    }
-    return maxPatients;
+	public int getIndexMaxPatients() {
+		return tryGetInteger(INDEX_MAX_PATIENTS, DEFAULT_INDEX_MAX_PATIENTS);
+	}
+	
+	private int tryGetInteger(String propertyName, int defaultValue) {
+		try {
+			return Integer.parseInt(getProperty(propertyName));
+		}
+		catch (NumberFormatException ex) {
+			log.error("Failed to read Integer value from properties file", ex);
+			return defaultValue;
+		}
+	}
+	
+	public IndexClearStrategy getIndexClearStrategy() {
+		int strategyCode;
+		try {
+			strategyCode = Integer.parseInt(getProperty(INDEX_CLEAR_STRATEGY));
+			
+			if (strategyCode == IndexClearStrategies.BASIC.ordinal())
+				return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
+			else if (strategyCode == IndexClearStrategies.NO_ACTION.ordinal())
+				return new IndexClearStrategyNoActionImpl();
+			else if (strategyCode == IndexClearStrategies.NON_USAGE_TIME.ordinal())
+				return new IndexClearStrategyNonUsageTimeImpl(getPatientMaxNonUsageTime());
+			else
+				return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
+			
+		}
+		catch (NumberFormatException ex) {
+			log.error("Failed to read index clear strategy code from properties file", ex);
+			return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
+		}
+	}
+	
+	private int getPatientMaxNonUsageTime() {
+		return tryGetInteger(PATIENT_MAX_NON_USAGE_TIME, DEFAULT_PATIENT_MAX_NON_USAGE_TIME);
 	}
 }

@@ -51,6 +51,7 @@ public class PatientInfoCache {
 	
 	public synchronized void remove(Integer patientId) {
 		data.remove(patientId);
+		isDirty = true;
 	}
 
 	public int size() {

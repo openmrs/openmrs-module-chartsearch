@@ -14,17 +14,18 @@
 package org.apache.solr.handler.dataimport.custom;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.solr.common.params.MapSolrParams;
+import org.apache.solr.core.SolrCore;
 import org.apache.solr.request.SolrQueryRequest;
+import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.update.CommitUpdateCommand;
 import org.apache.solr.update.DeleteUpdateCommand;
 import org.apache.solr.update.UpdateHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,56 +41,42 @@ public class IndexSizeManager {
 	private final SolrQueryRequest req;
 	
 	private final PatientInfoCache cache;
+
+	private IndexClearStrategy strategy;
 	
-	private final int maxPatientsInIndex;
 	
-	public IndexSizeManager(UpdateHandler handler, SolrQueryRequest req, PatientInfoCache cache, int maxPatientsInIndex) {
-		this.handler = handler;
-		this.req = req;
+	public IndexSizeManager(SolrCore core, PatientInfoCache cache, IndexClearStrategy strategy) {
+		this.strategy = strategy;
+		this.handler = core.getUpdateHandler();;
+		this.req = new SolrQueryRequestBase(
+            core, new MapSolrParams(new HashMap<String, String>())) {};;
 		this.cache = cache;
-		this.maxPatientsInIndex = maxPatientsInIndex;
 	}
 	
 	public void clearIndex() {
 		synchronized (cache) {
 			
 			Map<Integer, PatientInfo> map = cache.getAll();
+			List<PatientInfo> patients = new LinkedList<PatientInfo>(map.values());
 			
-			int deleteCount = map.size() - maxPatientsInIndex;
+			List<PatientInfo> deletePatients = strategy.getPatientsToDelete(patients);	
 			
-			if (deleteCount <= 0)
+			if (deletePatients.size() == 0){
+				log.info("Nothing to clear");
 				return;
-			
-			List<PatientInfo> deletePatients = new LinkedList<PatientInfo>(map.values());
-			
-			Collections.sort(deletePatients, new Comparator<PatientInfo>() {
-				
-				@Override
-				public int compare(PatientInfo o1, PatientInfo o2) {
-					// TODO Auto-generated method stub
-					return o1.getLastIndexTime().compareTo(o2.getLastIndexTime());
-				}
-				
-			});
+			}
 			
 			CommitUpdateCommand commitCmd = new CommitUpdateCommand(req, true);
 			
-			int deleteRealCount = 0;
-			for (PatientInfo patientInfo : deletePatients) {
-				
+			for (PatientInfo patientInfo : deletePatients) {				
 				DeleteUpdateCommand delCmd = new DeleteUpdateCommand(req);
 				delCmd.query = String.format("person_id:%d", patientInfo.getPatientId());
 				
-				deletePatient(patientInfo, commitCmd, delCmd);
-				
-				--deleteCount;
-				++deleteRealCount;
-				if (deleteCount == 0) {					
-					log.info("Index cleared, deleted {} patients, {} patients in the index", deleteRealCount, cache.size());
-					cache.save();
-					return;
-				}
-			}
+				deletePatient(patientInfo, commitCmd, delCmd);				
+			}		
+			cache.save();
+			
+			log.info("Index cleared, deleted {} patients, {} patients left in the index", deletePatients.size(), cache.size());
 			
 		}
 		

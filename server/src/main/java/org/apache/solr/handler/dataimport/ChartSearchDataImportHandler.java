@@ -14,7 +14,6 @@
 package org.apache.solr.handler.dataimport;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -24,14 +23,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.solr.common.params.MapSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
-import org.apache.solr.handler.dataimport.DataImporter;
 import org.apache.solr.handler.dataimport.custom.ChartSearchDataImportProperties;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategy;
 import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
@@ -39,10 +37,8 @@ import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
 import org.apache.solr.request.SolrQueryRequest;
-import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
-import org.apache.solr.update.UpdateHandler;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,14 +120,15 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		cache = new PatientInfoCache(provider);
 		patientInfoHolder = new PatientInfoHolder(cache);
 		
-		chartSearchProperties = new ChartSearchDataImportProperties(myName, core.getResourceLoader().getConfigDir());
+		//cs.properties contains configuration
+		chartSearchProperties = new ChartSearchDataImportProperties("cs", core.getResourceLoader().getConfigDir());
 		
 		runDataImportDaemons(core, chartSearchProperties.getDaemonsCount());
 		
-		runScheduledIndexSizeManager(core, chartSearchProperties.getIndexMaxPatients(),
+		runScheduledIndexSizeManager(core, chartSearchProperties.getIndexClearStrategy(),
 		    chartSearchProperties.getIndexSizeManagerTimeout());
 		
-		runScheduledPatientInfoUpdates(core, chartSearchProperties.getPatientInfoTimeout());
+		runScheduledPatientInfoUpdates(chartSearchProperties.getPatientInfoTimeout());
 		
 		core.addCloseHook(new CloseHook() {
 			
@@ -155,8 +152,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		executorService = Executors.newFixedThreadPool(daemonsCount, factory);
 		for (int i = 0; i < daemonsCount; i++) {
 			try {
-				String importerName = myName;// String.format("%s - #%d",
-				                             // myName, i);
+				String importerName = myName;
 				executorService.execute(new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
 				        importerName), initArgs, patientInfoHolder)));
 				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
@@ -168,11 +164,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		}
 	}
 	
-	private void runScheduledIndexSizeManager(SolrCore core, int indexMaxpatients, int timeout) {
-		UpdateHandler updateHandler = core.getUpdateHandler();
-		SolrQueryRequest request = new SolrQueryRequestBase(
-		                                                    core, new MapSolrParams(new HashMap<String, String>())) {};
-		final IndexSizeManager indexSizeManager = new IndexSizeManager(updateHandler, request, cache, indexMaxpatients);
+	private void runScheduledIndexSizeManager(SolrCore core, IndexClearStrategy clearStrategy, int timeout) {
+		 
+		final IndexSizeManager indexSizeManager = new IndexSizeManager(core, cache, clearStrategy);
 		
 		indexSizeManagerScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 		indexSizeManagerScheduledExecutorService.scheduleAtFixedRate(new Runnable() {
@@ -185,7 +179,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		}, 10, timeout, TimeUnit.SECONDS);
 	}
 	
-	private void runScheduledPatientInfoUpdates(SolrCore core, int timeout) {
+	private void runScheduledPatientInfoUpdates(int timeout) {
 		patientInfoScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 		patientInfoScheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 			

@@ -58,20 +58,21 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		// If user has not setup solr config folder, set a default one
 		// TODO use solr functions to determine config folder
 		String configFolder = properties.getSolrHome() + File.separatorChar + "collection1" + File.separatorChar + "conf";
-		// if (!new File(configFolder).exists()) {
-		URL url = getClass().getClassLoader().getResource("collection1/conf");
-		File file = new File(url.getFile());
-		try {
-			FileUtils
-			        .copyDirectoryToDirectory(file, new File(properties.getSolrHome() + File.separatorChar + "collection1"));
-			setDataImportConnectionInfo(configFolder);
+		if (!new File(configFolder).exists()) {
+			URL url = getClass().getClassLoader().getResource("collection1/conf");
+			File file = new File(url.getFile());
+			try {
+				FileUtils.copyDirectoryToDirectory(file, new File(properties.getSolrHome() + File.separatorChar
+				        + "collection1"));
+				setDataImportConnectionInfo(configFolder);
+			}
+			catch (IOException e) {
+				log.error("Failed to copy Solr config folder", e);
+			}
+			catch (Exception e) {
+				log.error("Failed to set dataImport connection info", e);
+			}
 		}
-		catch (IOException e) {
-			log.error("Failed to copy Solr config folder", e);
-		}
-		catch (Exception e) {
-			log.error("Failed to set dataImport connection info", e);
-		}		
 		// Get the solr home folder
 		// Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", properties.getSolrHome());

@@ -18,34 +18,27 @@
   		    http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-		
-    <bean id="embeddedSolrProperties" class="org.openmrs.module.chartsearch.SolrUtils" lazy-init="false"
+
+	<bean id="embeddedSolrProperties" class="org.openmrs.module.chartsearch.SolrUtils"
 		factory-method="getEmbeddedSolrProperties"></bean>
 
-	<bean id="solrServerCreator" class="org.openmrs.module.chartsearch.server.EmbeddedSolrServerCreator">
-		<constructor-arg ref="embeddedSolrProperties" />	
-	</bean>
-	
-	<bean id="solrServer" factory-bean="solrServerCreator" lazy-init="false"
-		factory-method="createSolrServer"></bean> 
-		
-    <!--  <bean id="patientInfoHolder" class="org.openmrs.module.chartsearch.server.PatientInfoHolder">	
-	</bean>	
-		-->
+
+	<bean id="solrServer" class="org.openmrs.module.chartsearch.SolrServerFactory"
+		factory-method="getSolrServer"></bean>
+
 	<bean id="indexer" class="org.openmrs.module.chartsearch.server.Indexer">
 		<constructor-arg ref="solrServer" />
-		<!-- <constructor-arg ref="patientInfoHolder" /> -->
 	</bean>
-	
+
 	<bean id="searcher" class="org.openmrs.module.chartsearch.Searcher"
-		lazy-init="false">
+		lazy-init="true">
 		<constructor-arg ref="solrServer" />
 	</bean>
-	
+
 	<bean id="solrManagement" class="org.openmrs.module.chartsearch.server.SolrManagement">
 		<constructor-arg ref="solrServer" />
 	</bean>
-	
+
 	<!-- Services accessible via Context.getService() -->
 	<bean id="chartSearch"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -81,7 +74,7 @@
 				<ref local="chartSearch" />
 			</list>
 		</property>
-	</bean>	
+	</bean>
 
 
 

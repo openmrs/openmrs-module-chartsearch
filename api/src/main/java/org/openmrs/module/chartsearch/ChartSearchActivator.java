@@ -101,8 +101,8 @@ public class ChartSearchActivator extends BaseModuleActivator{
 	 */
 	public void stopped() {
 		log.info("Chart Search Module stopped");
-		SolrManagement solrManagement = getComponent(SolrManagement.class);
-		solrManagement.shutdown();
+		/*SolrManagement solrManagement = getComponent(SolrManagement.class);
+		solrManagement.shutdown();*/
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

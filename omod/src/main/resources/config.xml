@@ -51,37 +51,19 @@
 
 	<!-- Required Global Properties -->
 	<globalProperty>
-		<property>${project.parent.artifactId}.maxResultsDefault</property>
-		<defaultValue>50</defaultValue>
-		<description>The default max results limit if the user does not
-			provide a maximum when making the web service call.
+		<property>${project.parent.artifactId}.useDedicatedSolrServer</property>
+		<defaultValue>false</defaultValue>
+		<description>Use dedicated SOLR server instead of embedded SOLR (true, false). 
+		You will need to specify SOLR url. Requires module restart.
 		</description>
 	</globalProperty>
 	<globalProperty>
-		<property>${project.parent.artifactId}.maxResultsAbsolute</property>
-		<defaultValue>100</defaultValue>
-		<description>The absolute max results limit. If the client requests a
-			larger number of results, then will get an error
+		<property>${project.parent.artifactId}.httpSolrUrl</property>
+		<defaultValue>http://localhost</defaultValue>
+		<description>Url to HTTP SOLR. Uses only if 'Use Dedicated SOLR set to true'
 		</description>
 	</globalProperty>
-	<globalProperty>
-		<property>${project.parent.artifactId}.uriPrefix</property>
-		<description>The URI prefix through which clients consuming web
-			services will connect to the web application, should be of the form
-			http://{ipAddress}:{port}/{contextPath}
-		</description>
-	</globalProperty>
-	<globalProperty>
-		<property>${project.parent.artifactId}.allowedips</property>
-		<defaultValue></defaultValue>
-		<description>A comma-separate list of IP addresses that are allowed to
-			access the web services. An empty string allows everyone to access
-			all ws.
-			IPs can be declared with bit masks e.g. 10.0.0.0/30 matches
-			10.0.0.0 -
-			10.0.0.3 and 10.0.0.0/24 matches 10.0.0.0 - 10.0.0.255.
-		</description>
-	</globalProperty>
+	
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

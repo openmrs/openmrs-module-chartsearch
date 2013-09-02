@@ -13,10 +13,31 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.apache.solr.client.solrj.SolrServer;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.server.EmbeddedSolrServerCreator;
+import org.openmrs.module.chartsearch.server.HttpSolrServerCreator;
 
 /**
  *
  */
 public class SolrServerFactory {
 	
+	public static SolrServer getSolrServer() {
+		//if (Context.getAdministrationService() == null) throw new RuntimeException("123");
+		/*Boolean.parseBoolean(Context.getAdministrationService().getGlobalProperty(
+		    ChartSearchMainProperties.USE_DEDICATED_SOLR_SERVER));*/
+		Boolean useDedicatedSolrServer = Boolean.parseBoolean(Context.getAdministrationService().getGlobalProperty(
+		    ChartSearchMainProperties.USE_DEDICATED_SOLR_SERVER));
+		if (useDedicatedSolrServer){
+			String dedicatedSolrUrl = Context.getAdministrationService().getGlobalProperty(
+			    ChartSearchMainProperties.DEDICATED_SOLR_SERVER_URL);
+			return new HttpSolrServerCreator(dedicatedSolrUrl).createSolrServer();
+		}
+		else {
+			return new EmbeddedSolrServerCreator(SolrUtils.getEmbeddedSolrProperties()).createSolrServer();
+		}
+		//return new EmbeddedSolrServerCreator(SolrUtils.getEmbeddedSolrProperties()).createSolrServer();
+		
+	}
 }

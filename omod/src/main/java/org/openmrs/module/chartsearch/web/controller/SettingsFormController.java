@@ -21,7 +21,7 @@ import java.util.Set;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.RestConstants;
+import org.openmrs.module.chartsearch.ChartSearchGlobalProperties;
 import org.openmrs.web.WebConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -43,14 +43,14 @@ public class SettingsFormController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmission(@ModelAttribute("globalPropertiesModel") GlobalPropertiesModel globalPropertiesModel,
+	public String handleSubmission(@ModelAttribute("globalPropertiesModel") PropertiesModel propertiesModel,
 	        Errors errors, WebRequest request) {
-		globalPropertiesModel.validate(globalPropertiesModel, errors);
+		propertiesModel.validate(propertiesModel, errors);
 		if (errors.hasErrors())
 			return null; // show the form again
 			
 		AdministrationService administrationService = Context.getAdministrationService();
-		for (GlobalProperty p : globalPropertiesModel.getProperties()) {
+		for (GlobalProperty p : propertiesModel.getProperties()) {
 			administrationService.saveGlobalProperty(p);
 		}
 		
@@ -63,22 +63,20 @@ public class SettingsFormController {
 	 * @return
 	 */
 	@ModelAttribute("globalPropertiesModel")
-	public GlobalPropertiesModel getModel() {
+	public PropertiesModel getModel() {
 		List<GlobalProperty> editableProps = new ArrayList<GlobalProperty>();
 		
 		Set<String> props = new LinkedHashSet<String>();
-		props.add(RestConstants.URI_PREFIX_GLOBAL_PROPERTY_NAME);
-		props.add(RestConstants.ALLOWED_IPS_GLOBAL_PROPERTY_NAME);
-		props.add(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME);
-		props.add(RestConstants.MAX_RESULTS_ABSOLUTE_GLOBAL_PROPERTY_NAME);
+		props.add(ChartSearchGlobalProperties.USE_DEDICATED_SOLR_SERVER);
+		props.add(ChartSearchGlobalProperties.DEDICATED_SOLR_SERVER_URL);
 		
 		//remove the properties we dont want to edit
-		for (GlobalProperty gp : Context.getAdministrationService().getGlobalPropertiesByPrefix(RestConstants.MODULE_ID)) {
+		for (GlobalProperty gp : Context.getAdministrationService().getGlobalPropertiesByPrefix(ChartSearchGlobalProperties.MODULE_ID)) {
 			if (props.contains(gp.getProperty()))
 				editableProps.add(gp);
 		}
 		
-		return new GlobalPropertiesModel(editableProps);
+		return new PropertiesModel(editableProps);
 	}
 	
 	/**
@@ -86,14 +84,14 @@ public class SettingsFormController {
 	 * of global properties list so that spring can bind the properties of the objects in the list.
 	 * Also capable of validating itself
 	 */
-	public class GlobalPropertiesModel implements Validator {
+	public class PropertiesModel implements Validator {
 		
 		private List<GlobalProperty> properties;
 		
-		public GlobalPropertiesModel() {
+		public PropertiesModel() {
 		}
 		
-		public GlobalPropertiesModel(List<GlobalProperty> properties) {
+		public PropertiesModel(List<GlobalProperty> properties) {
 			this.properties = properties;
 		}
 		
@@ -111,18 +109,20 @@ public class SettingsFormController {
 		 */
 		@Override
 		public void validate(Object target, Errors errors) {
-			GlobalPropertiesModel model = (GlobalPropertiesModel) target;
+			//TODO validation
+			
+			/*PropertiesModel model = (PropertiesModel) target;
 			for (int i = 0; i < model.getProperties().size(); ++i) {
 				GlobalProperty gp = model.getProperties().get(i);
-				if (gp.getProperty().equals(RestConstants.URI_PREFIX_GLOBAL_PROPERTY_NAME)) {
-					// TODO validate legal uri prefix
-				} else if (gp.getProperty().equals(RestConstants.ALLOWED_IPS_GLOBAL_PROPERTY_NAME)) {
+				if (gp.getProperty().equals(ChartSearchGlobalProperties.DEDICATED_SOLR_SERVER_URL)) {
+					// TODO validate legal uri 
+				} else if (gp.getProperty().equals(ChartSearchGlobalProperties.USE_DEDICATED_SOLR_SERVER)) {
 					// TODO validate legal comma-separated IPv4 or IPv6 addresses, wildcards, etc
-				} else if (gp.getProperty().equals(RestConstants.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME)) {
+				} else if (gp.getProperty().equals(ChartSearchGlobalProperties.MAX_RESULTS_DEFAULT_GLOBAL_PROPERTY_NAME)) {
 					boolean okay = false;
 					try {
 						Integer maxResultsAbsoluteVal = Integer.valueOf(model.getProperty(
-						    RestConstants.MAX_RESULTS_ABSOLUTE_GLOBAL_PROPERTY_NAME).getPropertyValue());
+							ChartSearchGlobalProperties.MAX_RESULTS_ABSOLUTE_GLOBAL_PROPERTY_NAME).getPropertyValue());
 						if (Integer.valueOf(gp.getPropertyValue()) > 0
 						        && Integer.valueOf(gp.getPropertyValue()) <= maxResultsAbsoluteVal) {
 							okay = true;
@@ -130,19 +130,19 @@ public class SettingsFormController {
 					}
 					catch (Exception ex) {}
 					if (!okay)
-						errors.rejectValue("properties[" + i + "]", RestConstants.MODULE_ID
+						errors.rejectValue("properties[" + i + "]", ChartSearchGlobalProperties.MODULE_ID
 						        + ".maxResultsDefault.errorMessage");
-				} else if (gp.getProperty().equals(RestConstants.MAX_RESULTS_ABSOLUTE_GLOBAL_PROPERTY_NAME)) {
+				} else if (gp.getProperty().equals(ChartSearchGlobalProperties.MAX_RESULTS_ABSOLUTE_GLOBAL_PROPERTY_NAME)) {
 					boolean okay = false;
 					try {
 						okay = Integer.valueOf(gp.getPropertyValue()) > 0;
 					}
 					catch (Exception ex) {}
 					if (!okay)
-						errors.rejectValue("properties[" + i + "]", RestConstants.MODULE_ID
+						errors.rejectValue("properties[" + i + "]", ChartSearchGlobalProperties.MODULE_ID
 						        + ".maxResultsAbsolute.errorMessage");
 				}
-			}
+			}*/
 		}
 		
 		/**

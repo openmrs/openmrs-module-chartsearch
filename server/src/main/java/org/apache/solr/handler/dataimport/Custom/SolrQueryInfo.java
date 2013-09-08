@@ -23,6 +23,7 @@ public final class SolrQueryInfo {
 	private final SolrQueryRequest request;
 	private final SolrQueryResponse response;
 	
+	//TODO do not store response
 	public SolrQueryInfo(SolrQueryRequest request, SolrQueryResponse response){
 		this.request = request;
 		this.response = response;

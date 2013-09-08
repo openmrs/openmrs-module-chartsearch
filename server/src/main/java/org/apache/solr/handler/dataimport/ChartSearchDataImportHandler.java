@@ -14,6 +14,10 @@
 package org.apache.solr.handler.dataimport;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +28,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.solr.common.params.SolrParams;
+import org.apache.solr.common.util.ContentStream;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
@@ -40,6 +45,7 @@ import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.util.plugin.SolrCoreAware;
+import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,9 +69,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	private ChartSearchDataImportProperties chartSearchProperties;
 	
 	private String myName = "csdataimport";
-
+	
 	private ScheduledExecutorService patientInfoScheduledExecutorService;
-
+	
 	private ScheduledExecutorService indexSizeManagerScheduledExecutorService;
 	
 	@Override
@@ -74,13 +80,38 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	}
 	
 	@Override
-	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
+	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {		
 		
-		queue.put(new SolrQueryInfo(req, rsp));
 		SolrParams params = req.getParams();
-		Integer personId = params.getInt("personId");
 		
-		rsp.add("personId", personId);
+		ContentStream contentStream = null;
+		Iterable<ContentStream> streams = req.getContentStreams();
+		if (streams != null) {
+			for (ContentStream stream : streams) {
+				contentStream = stream;
+				break;
+			}
+		}
+		RequestInfo requestParams = new RequestInfo(getParamsMap(params), contentStream);
+	    String command = requestParams.getCommand();
+	    
+	    Integer personId = params.getInt("personId");		
+		if (personId != null){
+			rsp.add("personId", personId);
+		}
+		
+	    if (DataImporter.IMPORT_CMD.equals(command) 
+	    		|| DataImporter.FULL_IMPORT_CMD.equals(command) 
+	    		|| DataImporter.DELTA_IMPORT_CMD.equals(command)){
+	    	queue.put(new SolrQueryInfo(req, rsp));
+	    }
+	    else if (ConfigCommands.PATIENT_STATE.equals(command)){
+	    	if (personId != null){
+	    		//TODO Add patient state 
+	    		rsp.add("last indexed time", patientInfoHolder.getLastIndexTime(personId));
+	    	}
+	    }		
+		
 		rsp.setHttpCaching(false);
 		
 	}
@@ -116,6 +147,16 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		}
 		
 		String fileName = core.getResourceLoader().getDataDir() + File.separatorChar + "Patient information.data";
+		File patientInfoFile = new File(fileName);
+		if (!patientInfoFile.exists()) {
+			try {
+				patientInfoFile.createNewFile();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				log.error("Error creating patient information file", e);
+			}
+		}
 		PatientInfoProvider provider = new PatientInfoProviderCSVImpl(fileName);
 		cache = new PatientInfoCache(provider);
 		patientInfoHolder = new PatientInfoHolder(cache);
@@ -137,7 +178,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				executorService.shutdownNow();
 				indexSizeManagerScheduledExecutorService.shutdownNow();
 				patientInfoScheduledExecutorService.shutdownNow();
-				log.info("ExecutorServices were shutdown");				
+				log.info("ExecutorServices were shutdown");
 			}
 			
 			@Override
@@ -145,6 +186,22 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				// TODO Auto-generated method stub
 			}
 		});
+	}
+	
+	private Map<String, Object> getParamsMap(SolrParams params) {
+		Iterator<String> names = params.getParameterNamesIterator();
+		Map<String, Object> result = new HashMap<String, Object>();
+		while (names.hasNext()) {
+			String s = names.next();
+			String[] val = params.getParams(s);
+			if (val == null || val.length < 1)
+				continue;
+			if (val.length == 1)
+				result.put(s, val[0]);
+			else
+				result.put(s, Arrays.asList(val));
+		}
+		return result;
 	}
 	
 	private void runDataImportDaemons(SolrCore core, int daemonsCount) {
@@ -159,13 +216,13 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			}
 			catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
-			} 
+			}
 			
 		}
 	}
 	
 	private void runScheduledIndexSizeManager(SolrCore core, IndexClearStrategy clearStrategy, int timeout) {
-		 
+		
 		final IndexSizeManager indexSizeManager = new IndexSizeManager(core, cache, clearStrategy);
 		
 		indexSizeManagerScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
@@ -191,4 +248,5 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		}, 10, timeout, TimeUnit.SECONDS);
 		
 	}
+	
 }

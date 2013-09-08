@@ -79,6 +79,7 @@ public class ChartSearchIndexUpdater {
 		
 		String message = StringUtils.EMPTY;
 		
+		//TODO do only import
 		if (DataImporter.FULL_IMPORT_CMD.equals(command) || DataImporter.DELTA_IMPORT_CMD.equals(command)
 		        || IMPORT_CMD.equals(command)) {
 			

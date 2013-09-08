@@ -24,7 +24,11 @@
 
 	<bean id="solrServerCreator" class="org.openmrs.module.chartsearch.server.EmbeddedSolrServerCreator">
 		<constructor-arg ref="embeddedSolrProperties" />	
-	</bean>
+	</bean>  
+	
+	<!--  <bean id="solrServerCreator" class="org.openmrs.module.chartsearch.server.HttpSolrServerCreator">
+		<constructor-arg value="http://localhost:8983/solr"/>	
+	</bean>-->
 	
 	<bean id="solrServer" factory-bean="solrServerCreator" lazy-init="false"
 		factory-method="createSolrServer"></bean> 

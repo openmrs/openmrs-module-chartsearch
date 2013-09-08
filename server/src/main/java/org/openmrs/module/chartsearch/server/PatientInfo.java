@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.apache.solr.handler.dataimport.custom;
+package org.openmrs.module.chartsearch.server;
 
 import java.util.Date;
 

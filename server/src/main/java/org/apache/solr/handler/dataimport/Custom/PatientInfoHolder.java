@@ -16,6 +16,7 @@ package org.apache.solr.handler.dataimport.custom;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,4 +19,9 @@ package org.openmrs.module.chartsearch.server;
  */
 public class ConfigCommands {
 	public static final String PATIENT_STATE = "patient-state"; 
+	
+	
+	public class Labels {
+		public static final String PATIENT_LAST_INDEX_TIME = "last index time";		
+	}
 }

@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.openmrs.module.chartsearch.server.PatientInfo;
+
 
 /**
  *

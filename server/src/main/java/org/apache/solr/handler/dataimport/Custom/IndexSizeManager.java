@@ -26,6 +26,7 @@ import org.apache.solr.request.SolrQueryRequestBase;
 import org.apache.solr.update.CommitUpdateCommand;
 import org.apache.solr.update.DeleteUpdateCommand;
 import org.apache.solr.update.UpdateHandler;
+import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

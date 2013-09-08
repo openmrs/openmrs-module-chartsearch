@@ -108,7 +108,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	    else if (ConfigCommands.PATIENT_STATE.equals(command)){
 	    	if (personId != null){
 	    		//TODO Add patient state 
-	    		rsp.add("last indexed time", patientInfoHolder.getLastIndexTime(personId));
+	    		rsp.add(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME, patientInfoHolder.getLastIndexTime(personId));
 	    	}
 	    }		
 		

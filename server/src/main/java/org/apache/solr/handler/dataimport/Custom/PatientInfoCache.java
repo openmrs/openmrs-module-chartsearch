@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.openmrs.module.chartsearch.server.PatientInfo;
+
 public class PatientInfoCache {
 	
 	private Map<Integer, PatientInfo> data = new ConcurrentHashMap<Integer, PatientInfo>();

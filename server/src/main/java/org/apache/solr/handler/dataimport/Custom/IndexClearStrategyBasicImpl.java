@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.openmrs.module.chartsearch.server.PatientInfo;
+
 
 /**
  *

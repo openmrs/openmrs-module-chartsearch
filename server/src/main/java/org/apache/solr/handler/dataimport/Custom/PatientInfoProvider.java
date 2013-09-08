@@ -16,6 +16,8 @@ package org.apache.solr.handler.dataimport.custom;
 import java.util.Collection;
 import java.util.Map;
 
+import org.openmrs.module.chartsearch.server.PatientInfo;
+
 /**
  *
  */

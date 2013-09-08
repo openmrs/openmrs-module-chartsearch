@@ -14,8 +14,11 @@
 package org.openmrs.module.chartsearch.server;
 
 
+import java.util.Date;
+
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +67,25 @@ public class Indexer {
 			log.error(String.format("Tried to import patient #%d but failed", personId), ex);
 		}
 	}
+
+	public PatientInfo getPatientInfo(Integer patientId) {
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		//TODO take path from config
+		params.set("qt", "/csdataimport");
+		params.set("command", ConfigCommands.PATIENT_STATE);
+		params.set("personId", patientId);
+		
+		try {
+			QueryResponse response = solrServer.query(params);
+			Date lastIndexTime = (Date) response.getResponse().get(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME);
+			if (lastIndexTime == null) return null;
+			return new PatientInfo(patientId, lastIndexTime);
+		}
+		catch (SolrServerException ex){
+			log.error(String.format("Failed to get patient state for #%d", patientId), ex);
+			return null;
+		}
+    }
 	
 	/*private void fullImport(int personId) throws SolrServerException {
 		ModifiableSolrParams params = new ModifiableSolrParams();

@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.solr.handler.dataimport.DataImportHandler;
+import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.supercsv.cellprocessor.constraint.NotNull;

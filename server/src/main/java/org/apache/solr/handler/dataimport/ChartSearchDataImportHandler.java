@@ -33,13 +33,13 @@ import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
-import org.apache.solr.handler.dataimport.custom.ChartSearchDataImportProperties;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategy;
 import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
+import org.apache.solr.handler.dataimport.custom.SolrConfigParams;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
@@ -66,7 +66,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private ExecutorService executorService;
 	
-	private ChartSearchDataImportProperties chartSearchProperties;
+	private SolrConfigParams configParams;
 	
 	private String myName = "csdataimport";
 	
@@ -74,9 +74,23 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private ScheduledExecutorService indexSizeManagerScheduledExecutorService;
 	
+	private int daemonsCount;
+
+	private IndexClearStrategy indexClearStrategy;
+
+	private int indexSizemanagerTimeout;
+
+	private int patientInfoTimeout;
+	
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
+		configParams = new SolrConfigParams(defaults);
+		
+		daemonsCount = configParams.getDaemonsCount();
+		indexClearStrategy = configParams.getIndexClearStrategy();
+		indexSizemanagerTimeout = configParams.getIndexSizeManagerTimeout();
+		patientInfoTimeout = configParams.getPatientInfoTimeout();		
 	}
 	
 	@Override
@@ -162,14 +176,14 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		patientInfoHolder = new PatientInfoHolder(cache);
 		
 		//cs.properties contains configuration
-		chartSearchProperties = new ChartSearchDataImportProperties("cs", core.getResourceLoader().getConfigDir());
+		//chartSearchProperties = new SolrConfigParams("cs", core.getResourceLoader().getConfigDir());
 		
-		runDataImportDaemons(core, chartSearchProperties.getDaemonsCount());
+		runDataImportDaemons(core, daemonsCount);
 		
-		runScheduledIndexSizeManager(core, chartSearchProperties.getIndexClearStrategy(),
-		    chartSearchProperties.getIndexSizeManagerTimeout());
+		runScheduledIndexSizeManager(core, indexClearStrategy,
+		    indexSizemanagerTimeout);
 		
-		runScheduledPatientInfoUpdates(chartSearchProperties.getPatientInfoTimeout());
+		runScheduledPatientInfoUpdates(patientInfoTimeout);
 		
 		core.addCloseHook(new CloseHook() {
 			

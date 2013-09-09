@@ -20,21 +20,20 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.core.SolrResourceLoader;
 import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ChartSearchDataImportProperties {
+public class SolrConfigParams {
 	
-	private static final Logger log = LoggerFactory.getLogger(ChartSearchDataImportProperties.class);
+	private static final Logger log = LoggerFactory.getLogger(SolrConfigParams.class);
 	
-	enum IndexClearStrategies {
+	public enum IndexClearStrategies {
 		NO_ACTION, BASIC, NON_USAGE_TIME
 	}
-	
-	private Properties properties;
 	
 	public static final String DAEMONS_COUNT = "daemonsCount";
 	
@@ -46,54 +45,26 @@ public class ChartSearchDataImportProperties {
 	
 	public static final String INDEX_CLEAR_STRATEGY = "indexClearStrategy";
 	
-	private static final String PATIENT_MAX_NON_USAGE_TIME = "patientMaxNonUsageTime";
+	public static final String PATIENT_MAX_NON_USAGE_TIME = "patientMaxNonUsageTime";
 	
-	private static final Logger logger = LoggerFactory.getLogger(ChartSearchDataImportProperties.class);
+	public static final int DEFAULT_DAEMONS_COUNT = 3;
 	
-	private static final int DEFAULT_DAEMONS_COUNT = 3;
+	public static final int DEFAULT_INDEX_SIZE_MANAGER_TIMEOUT = 30;
 	
-	private static final int DEFAULT_INDEX_SIZE_MANAGER_TIMEOUT = 30;
+	public static final int DEFAULT_PATIENT_INFO_TIMEOUT = 20;
 	
-	private static final int DEFAULT_PATIENT_INFO_TIMEOUT = 20;
+	public static final int DEFAULT_INDEX_MAX_PATIENTS = 100;
 	
-	private static final int DEFAULT_INDEX_MAX_PATIENTS = 100;
+	public static final int DEFAULT_PATIENT_MAX_NON_USAGE_TIME = 30; // seconds	
 	
-	private static final int DEFAULT_PATIENT_MAX_NON_USAGE_TIME = 30; // seconds	
+	private SolrParams params;
 	
-	private final String fileName;
-	
-	private final String configDir;
-	
-	public ChartSearchDataImportProperties(String fileName, String configDir) {
-		this.fileName = fileName;
-		this.configDir = configDir;
-		loadProperties(true);
+	public SolrConfigParams(SolrParams params) {
+		this.params = params;
 	}
 	
-	public void loadProperties(boolean force) {
-		try {
-			if (force || properties == null) {
-				properties = new Properties();
-				
-				File dataImportProperties = new File(configDir, String.format("%s.properties", fileName));
-				
-				FileInputStream fis = new FileInputStream(dataImportProperties);
-				properties.load(fis);
-			}
-		}
-		catch (FileNotFoundException fnfe) {
-			logger.error(String.format("Error locating %s.properties file", fileName), fnfe);
-		}
-		catch (IOException ioe) {
-			logger.error(String.format("Error reading %s.properties file", fileName), ioe);
-		}
-		catch (Exception e) {
-			logger.error(String.format("Error loading %s.properties file", fileName), e);
-		}
-	}
-	
-	public String getProperty(String key) {
-		return properties.getProperty(key);
+	private String getProperty(String key) {
+		return params.get(key);
 	}
 	
 	public int getDaemonsCount() {
@@ -108,18 +79,8 @@ public class ChartSearchDataImportProperties {
 		return tryGetInteger(PATIENT_INFO_TIMEOUT, DEFAULT_PATIENT_INFO_TIMEOUT);
 	}
 	
-	public int getIndexMaxPatients() {
+	private int getIndexMaxPatients() {
 		return tryGetInteger(INDEX_MAX_PATIENTS, DEFAULT_INDEX_MAX_PATIENTS);
-	}
-	
-	private int tryGetInteger(String propertyName, int defaultValue) {
-		try {
-			return Integer.parseInt(getProperty(propertyName));
-		}
-		catch (NumberFormatException ex) {
-			log.error("Failed to read Integer value from properties file", ex);
-			return defaultValue;
-		}
 	}
 	
 	public IndexClearStrategy getIndexClearStrategy() {
@@ -140,6 +101,16 @@ public class ChartSearchDataImportProperties {
 		catch (NumberFormatException ex) {
 			log.error("Failed to read index clear strategy code from properties file", ex);
 			return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
+		}
+	}
+	
+	private int tryGetInteger(String propertyName, int defaultValue) {
+		try {
+			return Integer.parseInt(getProperty(propertyName));
+		}
+		catch (NumberFormatException ex) {
+			log.error("Failed to read Integer value from properties file", ex);
+			return defaultValue;
 		}
 	}
 	

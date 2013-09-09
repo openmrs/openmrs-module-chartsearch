@@ -461,6 +461,11 @@
 		class="org.apache.solr.handler.dataimport.ChartSearchDataImportHandler">
 		<lst name="defaults">
 			<str name="config">data-config.xml</str>
+			<int name="daemonsCount">7</int>
+			<int name="patientInfoTimeout">30</int>
+			<int name="indexSizeManagerTimeout">30</int>
+			<int name="indexClearStrategy">1</int>
+			<int name="indexMaxPatients">5</int>
 		</lst>
 	</requestHandler>
 

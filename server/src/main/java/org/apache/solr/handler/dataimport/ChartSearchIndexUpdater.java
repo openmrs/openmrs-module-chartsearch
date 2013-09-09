@@ -130,8 +130,8 @@ public class ChartSearchIndexUpdater {
 		}
 		
 		// TODO Do something visible for user with response
-		rsp.add("importResponse", message);
-		rsp.add("statusMessages", importer.getStatusMessages());
+		//rsp.add("importResponse", message);
+		//rsp.add("statusMessages", importer.getStatusMessages());
 		
 	}
 	

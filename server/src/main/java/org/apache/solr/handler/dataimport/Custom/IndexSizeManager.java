@@ -45,6 +45,8 @@ public class IndexSizeManager {
 
 	private IndexClearStrategy strategy;
 	
+	private int clearedPatientsCount = 0;
+	
 	
 	public IndexSizeManager(SolrCore core, PatientInfoCache cache, IndexClearStrategy strategy) {
 		this.strategy = strategy;
@@ -66,14 +68,15 @@ public class IndexSizeManager {
 				log.info("Nothing to clear");
 				return;
 			}
-			
+						
 			CommitUpdateCommand commitCmd = new CommitUpdateCommand(req, true);
 			
 			for (PatientInfo patientInfo : deletePatients) {				
 				DeleteUpdateCommand delCmd = new DeleteUpdateCommand(req);
 				delCmd.query = String.format("person_id:%d", patientInfo.getPatientId());
 				
-				deletePatient(patientInfo, delCmd);				
+				deletePatient(patientInfo, delCmd);
+				clearedPatientsCount++;
 			}
 			commitChanges(commitCmd);
 			
@@ -105,5 +108,9 @@ public class IndexSizeManager {
 	        log.error("Error generated", e);
         }
 	}
+
+	public int getClearedPatientsCount() {
+	    return clearedPatientsCount;
+    }
 	
 }

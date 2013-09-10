@@ -15,9 +15,12 @@ package org.apache.solr.handler.dataimport;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -74,9 +77,13 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private ScheduledExecutorService indexSizeManagerScheduledExecutorService;
 	
+	private List<DataImportDaemon> dataImportDaemons = new ArrayList<DataImportDaemon>(); 
+	
 	private int daemonsCount;
 
 	private IndexClearStrategy indexClearStrategy;
+	
+	private IndexSizeManager indexSizeManager;
 
 	private int indexSizemanagerTimeout;
 
@@ -124,6 +131,30 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	    		//TODO Add patient state 
 	    		rsp.add(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME, patientInfoHolder.getLastIndexTime(personId));
 	    	}
+	    }	
+	    else if (ConfigCommands.STATS.equals(command)){
+	    	List<Object> list = new ArrayList<Object>();
+	    	for (DataImportDaemon daemon : dataImportDaemons){
+	    		HashMap<String, Object> item = new HashMap<String, Object>();
+	    		
+	    		int id = daemon.getId();
+	            String status = daemon.getStatus();
+	            int successCount = daemon.getSuccessCount();
+	            int failCount = daemon.getFailCount();
+	            
+	            item.put(ConfigCommands.Labels.DAEMON_ID, id);
+	            item.put(ConfigCommands.Labels.DAEMON_STATUS, status);
+	            item.put(ConfigCommands.Labels.DAEMON_SUCCESS_COUNT, successCount);
+	            item.put(ConfigCommands.Labels.DAEMON_FAIL_COUNT, failCount);
+	            
+	            list.add(item);
+            }
+	    	String clearStrategy = indexClearStrategy.toString();	
+	    	int clearedPatientsCount = indexSizeManager.getClearedPatientsCount();
+	    	
+	    	rsp.add(ConfigCommands.Labels.DAEMONS_STATE, list);    	
+	    	rsp.add(ConfigCommands.Labels.CLEAR_STRATEGY, clearStrategy);
+	    	rsp.add(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT, clearedPatientsCount);
 	    }		
 		
 		rsp.setHttpCaching(false);
@@ -224,8 +255,10 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		for (int i = 0; i < daemonsCount; i++) {
 			try {
 				String importerName = myName;
-				executorService.execute(new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
-				        importerName), initArgs, patientInfoHolder)));
+				DataImportDaemon daemon = new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
+			        importerName), initArgs, patientInfoHolder));
+				dataImportDaemons.add(daemon);
+				executorService.execute(daemon);
 				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
 			}
 			catch (Exception e) {
@@ -237,7 +270,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private void runScheduledIndexSizeManager(SolrCore core, IndexClearStrategy clearStrategy, int timeout) {
 		
-		final IndexSizeManager indexSizeManager = new IndexSizeManager(core, cache, clearStrategy);
+		indexSizeManager = new IndexSizeManager(core, cache, clearStrategy);
 		
 		indexSizeManagerScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 		indexSizeManagerScheduledExecutorService.scheduleAtFixedRate(new Runnable() {

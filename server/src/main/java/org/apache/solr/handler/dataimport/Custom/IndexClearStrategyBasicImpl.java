@@ -64,4 +64,9 @@ public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 		return deletedPatients;
     }
 	
+	@Override
+	public String toString() {
+	    return "Basic Index Clear Strategy";
+	}
+	
 }

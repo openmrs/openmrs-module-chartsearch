@@ -33,6 +33,11 @@ public class DataImportDaemon implements Runnable {
 
 	private final ChartSearchIndexUpdater chartSearchIndexUpdater;
 	
+	SolrQueryInfo solrQueryInfo;
+	
+	int successCount = 0;
+	int failCount = 0;
+	
 	public DataImportDaemon(int id, BlockingQueue<SolrQueryInfo> queue, ChartSearchIndexUpdater chartSearchIndexUpdater) {
 		this.queue = queue;
 		this.id = id;
@@ -45,14 +50,50 @@ public class DataImportDaemon implements Runnable {
 		while (!(Thread.currentThread().isInterrupted())) {
 			try {
 				SolrQueryInfo info = queue.take();
-				chartSearchIndexUpdater.handleRequest(info.getRequest(), info.getResponse());				
+				chartSearchIndexUpdater.handleRequest(info.getRequest(), info.getResponse());
+				solrQueryInfo = info;
+				
+				//TODO check success of fail
+				successCount++;
 			}
 			catch (InterruptedException e) {
 				log.info("The thread #{} is interrupted", id);
 				Thread.currentThread().interrupt();
 			}
+			catch (Exception e){
+				log.error("Exception");
+			}
 		}
 	}
+
+	public String getStatus() {
+		if (solrQueryInfo == null) return "New";
+		return (String) solrQueryInfo.getResponse().getValues().get("status");
+		/*StringWriter writer = new StringWriter();
+		XMLWriter responseWriter = new XMLWriter(writer, solrQueryInfo.getRequest(), solrQueryInfo.getResponse());
+		try {
+	        responseWriter.writeResponse();
+        }
+        catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
+		return writer.toString();*/
+    }
+
+	public int getSuccessCount() {
+		//TODO add check success or fail
+	    return successCount;
+    }
+
+	public int getFailCount() {
+		//TODO add check success or fail
+	    return failCount;
+    }
+
+	public int getId() {
+	    return id;
+    }
 	
 	
 	

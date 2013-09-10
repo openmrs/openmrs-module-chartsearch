@@ -30,4 +30,8 @@ public class IndexClearStrategyNoActionImpl implements IndexClearStrategy{
 	    return Collections.emptyList();
     }
 	
+	@Override
+	public String toString() {
+	    return "No Action Index Clear Strategy";
+	}
 }

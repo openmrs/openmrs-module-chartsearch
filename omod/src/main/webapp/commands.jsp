@@ -20,14 +20,14 @@ $j(document).ready(function() {
 
 function getPatientInfo(){
 	DWRCommands.getPatientInfo($j("#patientId").val(), function(patientInfo) { 
-	var text;
-	if (!patientInfo) text="Patient is not in the index";
-	else {
-		var time = patientInfo.lastIndexTime.toString();
-		text = "Last indexed time: " + time;
-	}
-	$j("#patientInfoResult").text(text); 
-  });
+		var text;
+		if (!patientInfo) text="Patient is not in the index";
+		else {
+			var time = patientInfo.lastIndexTime.toString();
+			text = "Last indexed time: " + time;
+		}
+		$j("#patientInfoResult").text(text); 
+  	});
 }
 </script>
 

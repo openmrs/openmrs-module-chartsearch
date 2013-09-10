@@ -43,4 +43,9 @@ public class IndexClearStrategyNonUsageTimeImpl implements IndexClearStrategy {
 		return deletedPatients;
 	}
 	
+	@Override
+	public String toString() {
+	    return "Non Usage Time Index Clear Strategy";
+	}
+	
 }

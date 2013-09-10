@@ -30,14 +30,14 @@ public class IndexClearStrategyNonUsageTimeImpl implements IndexClearStrategy {
 	}
 	
 	@Override
-	public List<PatientInfo> getPatientsToDelete(Collection<PatientInfo> patients) {
+	public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
 		long nonUsageMaxStartTime = new Date().getTime() - (nonUsageMaxTime * 1000);
 		Date nonUsageMaxStartDate = new Date(nonUsageMaxStartTime);
 		
-		List<PatientInfo> deletedPatients = new LinkedList<PatientInfo>();
+		List<Integer> deletedPatients = new LinkedList<Integer>();
 		for (PatientInfo patientInfo : patients) {
 			if (patientInfo.getLastIndexTime().before(nonUsageMaxStartDate)) {
-				deletedPatients.add(patientInfo);
+				deletedPatients.add(patientInfo.getPatientId());
 			}
 		}
 		return deletedPatients;

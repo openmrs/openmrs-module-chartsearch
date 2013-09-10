@@ -42,56 +42,65 @@ public class IndexSizeManager {
 	private final SolrQueryRequest req;
 	
 	private final PatientInfoCache cache;
-
+	
 	private IndexClearStrategy strategy;
 	
 	private int clearedPatientsCount = 0;
 	
-	
 	public IndexSizeManager(SolrCore core, PatientInfoCache cache, IndexClearStrategy strategy) {
 		this.strategy = strategy;
-		this.handler = core.getUpdateHandler();;
+		this.handler = core.getUpdateHandler();
+		;
 		this.req = new SolrQueryRequestBase(
-            core, new MapSolrParams(new HashMap<String, String>())) {};;
+		                                    core, new MapSolrParams(new HashMap<String, String>())) {};
+		;
 		this.cache = cache;
 	}
 	
-	public void clearIndex() {
+	public void setIndexClearStrategy(IndexClearStrategy strategy) {
+		this.strategy = strategy;
+	}
+	
+	public void clearIndex(IndexClearStrategy strategy) {
 		synchronized (cache) {
 			
 			Map<Integer, PatientInfo> map = cache.getAll();
 			List<PatientInfo> patients = new LinkedList<PatientInfo>(map.values());
 			
-			List<PatientInfo> deletePatients = strategy.getPatientsToDelete(patients);	
+			List<Integer> deletePatients = strategy.getPatientsToDelete(patients);
 			
-			if (deletePatients.size() == 0){
+			if (deletePatients.size() == 0) {
 				log.info("Nothing to clear");
 				return;
 			}
-						
+			
 			CommitUpdateCommand commitCmd = new CommitUpdateCommand(req, true);
 			
-			for (PatientInfo patientInfo : deletePatients) {				
+			for (Integer id : deletePatients) {
 				DeleteUpdateCommand delCmd = new DeleteUpdateCommand(req);
-				delCmd.query = String.format("person_id:%d", patientInfo.getPatientId());
+				delCmd.query = String.format("person_id:%d", id);
 				
-				deletePatient(patientInfo, delCmd);
+				deletePatient(id, delCmd);
 				clearedPatientsCount++;
 			}
 			commitChanges(commitCmd);
 			
 			cache.save();
 			
-			log.info("Index cleared, deleted {} patients, {} patients left in the index", deletePatients.size(), cache.size());
+			log.info("Index cleared, deleted {} patients, {} patients left in the index", deletePatients.size(),
+			    cache.size());
 			
 		}
-		
 	}
 	
-	private void deletePatient(PatientInfo patientInfo, DeleteUpdateCommand delCmd) {
+	public void clearIndex() {
+		clearIndex(strategy);
+	}
+	
+	private void deletePatient(int id, DeleteUpdateCommand delCmd) {
 		try {
 			handler.deleteByQuery(delCmd);
-			cache.remove(patientInfo.getPatientId());
+			cache.remove(id);
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -99,18 +108,18 @@ public class IndexSizeManager {
 		}
 	}
 	
-	private void commitChanges(CommitUpdateCommand commitCmd){
+	private void commitChanges(CommitUpdateCommand commitCmd) {
 		try {
-	        handler.commit(commitCmd);
-        }
-        catch (IOException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
+			handler.commit(commitCmd);
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			log.error("Error generated", e);
+		}
 	}
-
+	
 	public int getClearedPatientsCount() {
-	    return clearedPatientsCount;
-    }
+		return clearedPatientsCount;
+	}
 	
 }

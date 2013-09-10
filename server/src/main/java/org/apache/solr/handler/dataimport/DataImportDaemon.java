@@ -17,6 +17,7 @@ package org.apache.solr.handler.dataimport;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
+import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +34,13 @@ public class DataImportDaemon implements Runnable {
 
 	private final ChartSearchIndexUpdater chartSearchIndexUpdater;
 	
-	SolrQueryInfo solrQueryInfo;
+	//private SolrQueryInfo solrQueryInfo;
 	
-	int successCount = 0;
-	int failCount = 0;
+	private int successCount = 0;
+	
+	private int failCount = 0;
+	
+	private String status; 
 	
 	public DataImportDaemon(int id, BlockingQueue<SolrQueryInfo> queue, ChartSearchIndexUpdater chartSearchIndexUpdater) {
 		this.queue = queue;
@@ -49,11 +53,13 @@ public class DataImportDaemon implements Runnable {
 		log.info("Daemon #{} is running", id);
 		while (!(Thread.currentThread().isInterrupted())) {
 			try {
+				status = ConfigCommands.Labels.IDLE;
 				SolrQueryInfo info = queue.take();
+				status = ConfigCommands.Labels.BUSY;
 				chartSearchIndexUpdater.handleRequest(info.getRequest(), info.getResponse());
-				solrQueryInfo = info;
+				//solrQueryInfo = info;
 				
-				//TODO check success of fail
+				//TODO check success or fail
 				successCount++;
 			}
 			catch (InterruptedException e) {
@@ -67,18 +73,7 @@ public class DataImportDaemon implements Runnable {
 	}
 
 	public String getStatus() {
-		if (solrQueryInfo == null) return "New";
-		return (String) solrQueryInfo.getResponse().getValues().get("status");
-		/*StringWriter writer = new StringWriter();
-		XMLWriter responseWriter = new XMLWriter(writer, solrQueryInfo.getRequest(), solrQueryInfo.getResponse());
-		try {
-	        responseWriter.writeResponse();
-        }
-        catch (IOException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
-		return writer.toString();*/
+		return status;
     }
 
 	public int getSuccessCount() {

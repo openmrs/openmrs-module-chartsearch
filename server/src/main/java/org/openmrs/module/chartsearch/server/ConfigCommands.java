@@ -19,7 +19,14 @@ package org.openmrs.module.chartsearch.server;
  */
 public class ConfigCommands {
 	public static final String PATIENT_STATE = "patient-state"; 
-	public static final String STATS = "stats"; 
+	
+	public static final String STATS = "stats";
+	
+	public static final String PRUNE = "prune";
+	public static final String PRUNE_IDS = "ids"; 
+	public static final String PRUNE_CLEAR_STRATEGY = "clear-strategy";  
+	public static final String PRUNE_MAX_PATIENTS = "max-patients";
+	public static final String PRUNE_AGO = "ago";    
 	
 	
 	public class Labels {
@@ -31,5 +38,7 @@ public class ConfigCommands {
 		public static final String DAEMON_SUCCESS_COUNT = "daemon success count";
 		public static final String DAEMON_FAIL_COUNT = "daemon fail count";
 		public static final String DAEMONS_STATE = "daemons state";
+		public static final String IDLE = "idle";
+		public static final String BUSY = "busy";
 	}
 }

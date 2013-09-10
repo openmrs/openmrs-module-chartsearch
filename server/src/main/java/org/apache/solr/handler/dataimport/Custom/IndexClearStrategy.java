@@ -7,5 +7,5 @@ import org.openmrs.module.chartsearch.server.PatientInfo;
 
 
 public interface IndexClearStrategy {
-	List<PatientInfo> getPatientsToDelete(Collection<PatientInfo> patients);	
+	List<Integer> getPatientsToDelete(Collection<PatientInfo> patients);	
 }

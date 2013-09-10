@@ -14,16 +14,7 @@
 
 package org.apache.solr.handler.dataimport.custom;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
-
 import org.apache.solr.common.params.SolrParams;
-import org.apache.solr.core.SolrCore;
-import org.apache.solr.core.SolrResourceLoader;
-import org.apache.solr.handler.dataimport.DataImportHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,11 +74,11 @@ public class SolrConfigParams {
 		return tryGetInteger(INDEX_MAX_PATIENTS, DEFAULT_INDEX_MAX_PATIENTS);
 	}
 	
-	public IndexClearStrategy getIndexClearStrategy() {
-		int strategyCode;
-		try {
-			strategyCode = Integer.parseInt(getProperty(INDEX_CLEAR_STRATEGY));
-			
+
+	
+	public IndexClearStrategy getIndexClearStrategy(int strategyCode){
+		//TODO Remove duplications
+		try {			
 			if (strategyCode == IndexClearStrategies.BASIC.ordinal())
 				return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
 			else if (strategyCode == IndexClearStrategies.NO_ACTION.ordinal())
@@ -102,6 +93,11 @@ public class SolrConfigParams {
 			log.error("Failed to read index clear strategy code from properties file", ex);
 			return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
 		}
+	}
+	
+	public IndexClearStrategy getIndexClearStrategy() {
+		int strategyCode = Integer.parseInt(getProperty(INDEX_CLEAR_STRATEGY));		
+		return getIndexClearStrategy(strategyCode);		
 	}
 	
 	private int tryGetInteger(String propertyName, int defaultValue) {

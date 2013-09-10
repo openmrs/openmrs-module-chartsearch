@@ -99,6 +99,7 @@ public class ChartSearchIndexUpdater {
 				if (requestParams.isDebug() && !debugEnabled) {
 					message = DataImporter.MSG.DEBUG_NOT_ENABLED;
 				} else {
+					
 					importer.runCmd(requestParams, sw);
 					patientInfoHolder.setLastIndexTime(patientId);
 					

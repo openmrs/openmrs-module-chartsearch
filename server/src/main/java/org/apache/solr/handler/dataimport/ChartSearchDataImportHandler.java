@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +36,10 @@ import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategy;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategyBasicImpl;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategyNoActionImpl;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategyNonUsageTimeImpl;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategyWithIdImpl;
 import org.apache.solr.handler.dataimport.custom.IndexSizeManager;
 import org.apache.solr.handler.dataimport.custom.PatientInfoCache;
 import org.apache.solr.handler.dataimport.custom.PatientInfoHolder;
@@ -44,6 +47,7 @@ import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
 import org.apache.solr.handler.dataimport.custom.SolrConfigParams;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
+import org.apache.solr.handler.dataimport.custom.SolrConfigParams.IndexClearStrategies;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
@@ -77,16 +81,16 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private ScheduledExecutorService indexSizeManagerScheduledExecutorService;
 	
-	private List<DataImportDaemon> dataImportDaemons = new ArrayList<DataImportDaemon>(); 
+	private List<DataImportDaemon> dataImportDaemons = new ArrayList<DataImportDaemon>();
 	
 	private int daemonsCount;
-
+	
 	private IndexClearStrategy indexClearStrategy;
 	
 	private IndexSizeManager indexSizeManager;
-
+	
 	private int indexSizemanagerTimeout;
-
+	
 	private int patientInfoTimeout;
 	
 	@Override
@@ -97,11 +101,11 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		daemonsCount = configParams.getDaemonsCount();
 		indexClearStrategy = configParams.getIndexClearStrategy();
 		indexSizemanagerTimeout = configParams.getIndexSizeManagerTimeout();
-		patientInfoTimeout = configParams.getPatientInfoTimeout();		
+		patientInfoTimeout = configParams.getPatientInfoTimeout();
 	}
 	
 	@Override
-	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {		
+	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 		
 		SolrParams params = req.getParams();
 		
@@ -114,51 +118,98 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			}
 		}
 		RequestInfo requestParams = new RequestInfo(getParamsMap(params), contentStream);
-	    String command = requestParams.getCommand();
-	    
-	    Integer personId = params.getInt("personId");		
-		if (personId != null){
+		String command = requestParams.getCommand();
+		
+		Integer personId = params.getInt("personId");
+		if (personId != null) {
 			rsp.add("personId", personId);
 		}
 		
-	    if (DataImporter.IMPORT_CMD.equals(command) 
-	    		|| DataImporter.FULL_IMPORT_CMD.equals(command) 
-	    		|| DataImporter.DELTA_IMPORT_CMD.equals(command)){
-	    	queue.put(new SolrQueryInfo(req, rsp));
-	    }
-	    else if (ConfigCommands.PATIENT_STATE.equals(command)){
-	    	if (personId != null){
-	    		//TODO Add patient state 
-	    		rsp.add(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME, patientInfoHolder.getLastIndexTime(personId));
-	    	}
-	    }	
-	    else if (ConfigCommands.STATS.equals(command)){
-	    	List<Object> list = new ArrayList<Object>();
-	    	for (DataImportDaemon daemon : dataImportDaemons){
-	    		HashMap<String, Object> item = new HashMap<String, Object>();
-	    		
-	    		int id = daemon.getId();
-	            String status = daemon.getStatus();
-	            int successCount = daemon.getSuccessCount();
-	            int failCount = daemon.getFailCount();
-	            
-	            item.put(ConfigCommands.Labels.DAEMON_ID, id);
-	            item.put(ConfigCommands.Labels.DAEMON_STATUS, status);
-	            item.put(ConfigCommands.Labels.DAEMON_SUCCESS_COUNT, successCount);
-	            item.put(ConfigCommands.Labels.DAEMON_FAIL_COUNT, failCount);
-	            
-	            list.add(item);
-            }
-	    	String clearStrategy = indexClearStrategy.toString();	
-	    	int clearedPatientsCount = indexSizeManager.getClearedPatientsCount();
-	    	
-	    	rsp.add(ConfigCommands.Labels.DAEMONS_STATE, list);    	
-	    	rsp.add(ConfigCommands.Labels.CLEAR_STRATEGY, clearStrategy);
-	    	rsp.add(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT, clearedPatientsCount);
-	    }		
+		if (DataImporter.IMPORT_CMD.equals(command) || DataImporter.FULL_IMPORT_CMD.equals(command)
+		        || DataImporter.DELTA_IMPORT_CMD.equals(command)) {
+			queue.put(new SolrQueryInfo(req, rsp));
+		} else if (ConfigCommands.PATIENT_STATE.equals(command)) {
+			handlePatientStateCommand(rsp, personId);
+		} else if (ConfigCommands.STATS.equals(command)) {
+			handleStatsCommand(rsp);
+		} else if (ConfigCommands.PRUNE.equals(command)) {
+			String idsByComma = params.get(ConfigCommands.PRUNE_IDS);
+			Integer strategyCode = params.getInt(ConfigCommands.PRUNE_CLEAR_STRATEGY);
+			Integer maxPatients = params.getInt(ConfigCommands.PRUNE_MAX_PATIENTS);
+			Integer ago = params.getInt(ConfigCommands.PRUNE_AGO);
+			handlePruneCommand(idsByComma, strategyCode, maxPatients, ago);
+		}
 		
 		rsp.setHttpCaching(false);
 		
+	}
+	
+	private void handlePruneCommand(String idsByComma, Integer strategyCode, Integer maxPatients, Integer ago) {
+		if (idsByComma != null) {
+			String[] idStrings = idsByComma.split(",");
+			List<Integer> ids = new ArrayList<Integer>();
+			for (String idString : idStrings) {
+				try {
+					int id = Integer.parseInt(idString);
+					ids.add(id);
+				}
+				catch (NumberFormatException e) {
+					log.error("Wrong id in request");
+				}
+			}
+			if (ids.size() != 0) {
+				IndexClearStrategy strategy = new IndexClearStrategyWithIdImpl(ids);
+				indexSizeManager.clearIndex(strategy);
+			}
+		} else {
+			if (strategyCode != null) {
+				//TODO Remove duplications
+				IndexClearStrategy strategy = null;
+				if (strategyCode == IndexClearStrategies.BASIC.ordinal()) {
+					if (maxPatients != null)
+						strategy = new IndexClearStrategyBasicImpl(maxPatients);
+				} else if (strategyCode == IndexClearStrategies.NO_ACTION.ordinal()) {
+					strategy = new IndexClearStrategyNoActionImpl();
+				} else if (strategyCode == IndexClearStrategies.NON_USAGE_TIME.ordinal()) {
+					if (ago != null)
+						strategy = new IndexClearStrategyNonUsageTimeImpl(ago);
+				}
+				if (strategy != null)
+					indexSizeManager.clearIndex(strategy);
+			}
+		}
+	}
+	
+	private void handleStatsCommand(SolrQueryResponse rsp) {
+		List<Object> list = new ArrayList<Object>();
+		for (DataImportDaemon daemon : dataImportDaemons) {
+			HashMap<String, Object> item = new HashMap<String, Object>();
+			
+			int id = daemon.getId();
+			String status = daemon.getStatus();
+			int successCount = daemon.getSuccessCount();
+			int failCount = daemon.getFailCount();
+			
+			item.put(ConfigCommands.Labels.DAEMON_ID, id);
+			item.put(ConfigCommands.Labels.DAEMON_STATUS, status);
+			item.put(ConfigCommands.Labels.DAEMON_SUCCESS_COUNT, successCount);
+			item.put(ConfigCommands.Labels.DAEMON_FAIL_COUNT, failCount);
+			
+			list.add(item);
+		}
+		String clearStrategy = indexClearStrategy.toString();
+		int clearedPatientsCount = indexSizeManager.getClearedPatientsCount();
+		
+		rsp.add(ConfigCommands.Labels.DAEMONS_STATE, list);
+		rsp.add(ConfigCommands.Labels.CLEAR_STRATEGY, clearStrategy);
+		rsp.add(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT, clearedPatientsCount);
+	}
+	
+	private void handlePatientStateCommand(SolrQueryResponse rsp, Integer personId) {
+		if (personId != null) {
+			//TODO Add patient state 
+			rsp.add(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME, patientInfoHolder.getLastIndexTime(personId));
+		}
 	}
 	
 	@Override
@@ -211,8 +262,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		
 		runDataImportDaemons(core, daemonsCount);
 		
-		runScheduledIndexSizeManager(core, indexClearStrategy,
-		    indexSizemanagerTimeout);
+		runScheduledIndexSizeManager(core, indexClearStrategy, indexSizemanagerTimeout);
 		
 		runScheduledPatientInfoUpdates(patientInfoTimeout);
 		
@@ -256,7 +306,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			try {
 				String importerName = myName;
 				DataImportDaemon daemon = new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
-			        importerName), initArgs, patientInfoHolder));
+				        importerName), initArgs, patientInfoHolder));
 				dataImportDaemons.add(daemon);
 				executorService.execute(daemon);
 				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);

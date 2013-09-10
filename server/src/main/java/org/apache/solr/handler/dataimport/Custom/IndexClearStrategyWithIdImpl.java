@@ -14,24 +14,29 @@
 package org.apache.solr.handler.dataimport.custom;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.openmrs.module.chartsearch.server.PatientInfo;
 
 
 /**
- *
+ * This clear strategy uses only on force prunes via commands
  */
-public class IndexClearStrategyNoActionImpl implements IndexClearStrategy{
+public class IndexClearStrategyWithIdImpl implements IndexClearStrategy{
+	
+    private List<Integer> ids;
+
+	public IndexClearStrategyWithIdImpl(List<Integer> ids) {
+		this.ids = ids; 
+    }
 
 	@Override
     public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
-	    return Collections.emptyList();
+	    return ids;
     }
 	
 	@Override
 	public String toString() {
-	    return "No Action Index Clear Strategy";
+	    return "Id Based Index Clear Strategy";
 	}
 }

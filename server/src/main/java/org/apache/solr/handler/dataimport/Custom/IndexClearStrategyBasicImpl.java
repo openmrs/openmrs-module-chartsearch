@@ -35,7 +35,7 @@ public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 	}
 
 	@Override
-    public List<PatientInfo> getPatientsToDelete(Collection<PatientInfo> patients) {
+    public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
 		int deleteCount = patients.size() - maxPatientsInIndex;
 		
 		if (deleteCount <= 0)
@@ -53,10 +53,10 @@ public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 			
 		});
 		
-		List<PatientInfo> deletedPatients = new LinkedList<PatientInfo>();
+		List<Integer> deletedPatients = new LinkedList<Integer>();
 		
 		for (PatientInfo patientInfo : sortedPatients) {
-			deletedPatients.add(patientInfo);
+			deletedPatients.add(patientInfo.getPatientId());
 	        --deleteCount;
 	        if (deleteCount == 0) break;
         }

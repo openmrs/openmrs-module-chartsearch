@@ -73,8 +73,10 @@ public class IndexSizeManager {
 				DeleteUpdateCommand delCmd = new DeleteUpdateCommand(req);
 				delCmd.query = String.format("person_id:%d", patientInfo.getPatientId());
 				
-				deletePatient(patientInfo, commitCmd, delCmd);				
-			}		
+				deletePatient(patientInfo, delCmd);				
+			}
+			commitChanges(commitCmd);
+			
 			cache.save();
 			
 			log.info("Index cleared, deleted {} patients, {} patients left in the index", deletePatients.size(), cache.size());
@@ -83,16 +85,25 @@ public class IndexSizeManager {
 		
 	}
 	
-	private void deletePatient(PatientInfo patientInfo, CommitUpdateCommand commitCmd, DeleteUpdateCommand delCmd) {
+	private void deletePatient(PatientInfo patientInfo, DeleteUpdateCommand delCmd) {
 		try {
 			handler.deleteByQuery(delCmd);
-			handler.commit(commitCmd);
 			cache.remove(patientInfo.getPatientId());
 		}
 		catch (IOException e) {
 			// TODO Auto-generated catch block
 			log.error("Error generated", e);
 		}
+	}
+	
+	private void commitChanges(CommitUpdateCommand commitCmd){
+		try {
+	        handler.commit(commitCmd);
+        }
+        catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
 	}
 	
 }

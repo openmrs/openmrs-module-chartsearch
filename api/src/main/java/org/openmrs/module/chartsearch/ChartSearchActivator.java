@@ -41,7 +41,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.Daemon;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.ModuleFactory;
-import org.openmrs.module.chartsearch.server.SolrManagement;
+import org.openmrs.module.chartsearch.solr.SolrManagement;
 import org.openmrs.scheduler.Task;
 import org.openmrs.scheduler.TaskDefinition;
 import org.openmrs.scheduler.timer.TimerSchedulerTask;

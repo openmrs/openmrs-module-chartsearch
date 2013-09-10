@@ -11,22 +11,17 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.chartsearch.api;
-
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
+package org.openmrs.module.chartsearch;
 
 /**
- * Tests {@link ${ChartSearchService}}.
+ *
  */
-public class  ChartSearchServiceTest extends BaseModuleContextSensitiveTest {
+public class ChartSearchMainProperties {
+	public static final String MODULE_ID = "chartsearch";
+	
+	public static final String USE_DEDICATED_SOLR_SERVER = MODULE_ID + ".useDedicatedSolrServer";
+	
+	public static final String DEDICATED_SOLR_SERVER_URL = MODULE_ID + ".httpSolrUrl";
 	
 	
-	@Test
-	public void shouldSetupContext() {
-		assertNotNull(Context.getService(ChartSearchService.class));
-	}
 }

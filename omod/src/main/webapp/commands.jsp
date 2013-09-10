@@ -8,7 +8,11 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
-<script>
+<h2>
+  <spring:message code="chartsearch.manage.commands.title" />
+</h2>
+
+<script type="text/javascript">
 
 $j(document).ready(function() {
 	$j('#patientInfoBtn').click(getPatientInfo);

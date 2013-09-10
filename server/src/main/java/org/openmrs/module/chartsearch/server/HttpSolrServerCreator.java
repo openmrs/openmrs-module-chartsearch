@@ -32,7 +32,7 @@ public class HttpSolrServerCreator extends SolrServerCreator {
 	}	
 
 	/**
-	 * @see org.openmrs.module.chartsearch.SolrServerCreator#createSolrServer()
+	 * @see org.openmrs.module.chartsearch.server.SolrServerCreator#createSolrServer()
 	 */
 	@Override
 	public SolrServer createSolrServer() {

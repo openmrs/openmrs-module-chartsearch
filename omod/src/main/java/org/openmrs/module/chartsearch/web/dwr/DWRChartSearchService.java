@@ -29,7 +29,7 @@ import org.openmrs.Obs;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
-import org.openmrs.module.chartsearch.Searcher;
+import org.openmrs.module.chartsearch.solr.Searcher;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.dwr.ObsListItem;
 

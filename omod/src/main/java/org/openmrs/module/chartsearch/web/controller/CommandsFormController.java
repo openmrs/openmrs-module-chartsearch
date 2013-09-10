@@ -15,8 +15,8 @@ package org.openmrs.module.chartsearch.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.chartsearch.server.Indexer;
 import org.openmrs.module.chartsearch.server.PatientInfo;
+import org.openmrs.module.chartsearch.solr.Indexer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,10 +29,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/module/chartsearch/commands")
 public class  CommandsFormController {
 	
-	protected final Log log = LogFactory.getLog(getClass());	
-
-	@Autowired
-	private Indexer indexer;	
+	protected final Log log = LogFactory.getLog(getClass());		
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void showForm() {

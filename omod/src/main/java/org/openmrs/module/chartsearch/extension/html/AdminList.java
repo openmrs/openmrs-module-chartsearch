@@ -44,9 +44,10 @@ public class AdminList extends AdministrationSectionExt {
 	 */
 	public Map<String, String> getLinks() {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
-		map.put("/module/chartsearch/manage.form", "chartsearch.manage");
-		map.put("/dataimport?command=status", "chartsearch.dataImportStatus");
-		map.put("/dataimport?command=full-import&clean=true", "chartsearch.importData");
+		map.put("/module/chartsearch/settings.form", "chartsearch.manage.settings");
+		map.put("/module/chartsearch/commands.form", "chartsearch.manage.commands");
+		/*map.put("/dataimport?command=status", "chartsearch.dataImportStatus");
+		map.put("/dataimport?command=full-import&clean=true", "chartsearch.importData");*/
 		
 		return map;
 	}

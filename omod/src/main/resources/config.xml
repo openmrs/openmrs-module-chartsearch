@@ -28,6 +28,8 @@
 				match="${project.parent.groupId}.${project.parent.artifactId}.ChartListItem" />
 			<convert converter="bean"
 				match="${project.parent.groupId}.${project.parent.artifactId}.server.PatientInfo" />
+			<convert converter="bean"
+				match="${project.parent.groupId}.${project.parent.artifactId}.server.StatisticsInfo" />
 			<create creator="new" javascript="DWRChartSearchService">
 				<param name="class"
 					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRChartSearchService" />
@@ -38,6 +40,7 @@
 				<param name="class"
 					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRCommands" />
 				<include method="getPatientInfo" />
+				<include method="getStatistics" />
 			</create>
 		</allow>
 	</dwr>

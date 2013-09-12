@@ -37,7 +37,7 @@ public class ConfigCommands {
 		public static final String DAEMON_STATUS = "daemon status";
 		public static final String DAEMON_SUCCESS_COUNT = "daemon success count";
 		public static final String DAEMON_FAIL_COUNT = "daemon fail count";
-		public static final String DAEMONS_STATE = "daemons state";
+		public static final String DAEMON_STATES = "daemon states";
 		public static final String IDLE = "idle";
 		public static final String BUSY = "busy";
 	}

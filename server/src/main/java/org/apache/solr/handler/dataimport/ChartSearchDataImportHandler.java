@@ -200,7 +200,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		String clearStrategy = indexClearStrategy.toString();
 		int clearedPatientsCount = indexSizeManager.getClearedPatientsCount();
 		
-		rsp.add(ConfigCommands.Labels.DAEMONS_STATE, list);
+		rsp.add(ConfigCommands.Labels.DAEMON_STATES, list);
 		rsp.add(ConfigCommands.Labels.CLEAR_STRATEGY, clearStrategy);
 		rsp.add(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT, clearedPatientsCount);
 	}

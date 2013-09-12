@@ -13,42 +13,31 @@
  */
 package org.openmrs.module.chartsearch.web.dwr;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
-import org.openmrs.Obs;
-import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.server.PatientInfo;
+import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.openmrs.module.chartsearch.solr.Indexer;
-import org.openmrs.module.chartsearch.solr.Searcher;
-import org.openmrs.util.OpenmrsUtil;
-import org.openmrs.web.dwr.ObsListItem;
 
 public class DWRCommands {
-
-	protected static final Log log = LogFactory
-			.getLog(DWRCommands.class);
-
+	
+	protected static final Log log = LogFactory.getLog(DWRCommands.class);
+	
 	private Indexer indexer = getComponent(Indexer.class);
-
-	public PatientInfo getPatientInfo(Integer patientId){
+	
+	public PatientInfo getPatientInfo(Integer patientId) {
 		PatientInfo info = indexer.getPatientInfo(patientId);
 		return info;
 	}
-
 	
-
+	public StatisticsInfo getStatistics() {
+		StatisticsInfo stats = indexer.getStatistics();
+		return stats;
+	}
+	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

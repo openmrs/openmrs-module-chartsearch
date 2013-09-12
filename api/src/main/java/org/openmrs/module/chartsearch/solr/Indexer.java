@@ -14,15 +14,20 @@
 package org.openmrs.module.chartsearch.solr;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.util.NamedList;
+import org.apache.zookeeper.data.Stat;
 import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.server.PatientInfo;
-import org.openmrs.module.chartsearch.server.ConfigCommands.Labels;
+import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +75,35 @@ public class Indexer {
 			QueryResponse response = solrServer.query(params);
 			Date lastIndexTime = (Date) response.getResponse().get(ConfigCommands.Labels.PATIENT_LAST_INDEX_TIME);
 			if (lastIndexTime == null) return null;
-			return new PatientInfo(patientId, lastIndexTime);
+			PatientInfo info = new PatientInfo(patientId, lastIndexTime);
+			return info;
 		}
 		catch (SolrServerException ex){
 			log.error(String.format("Failed to get patient state for #%d", patientId), ex);
 			return null;
 		}
+    }
+
+	public StatisticsInfo getStatistics() {
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		//TODO take path from config
+		params.set("qt", "/csdataimport");
+		params.set("command", ConfigCommands.STATS);
+		
+		try {
+			QueryResponse response = solrServer.query(params);
+			NamedList<Object> responseList = response.getResponse();
+			String clearStrategy = (String) responseList.get(ConfigCommands.Labels.CLEAR_STRATEGY);
+			int pruneCount = (Integer) responseList.get(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT);
+			List<HashMap<String, Object>> daemonStates = (ArrayList<HashMap<String, Object>>) responseList.get(ConfigCommands.Labels.DAEMON_STATES);
+			StatisticsInfo stats = new StatisticsInfo(clearStrategy, pruneCount, daemonStates);
+			return stats;
+		}
+		catch (SolrServerException ex){
+			log.error("Failed to get stats", ex);
+			return null;
+		}	    
     }	
 	
 }

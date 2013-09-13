@@ -38,6 +38,11 @@ public class DWRCommands {
 		return stats;
 	}
 	
+	public Integer clearIndex(String ids, Integer strategyCode, Integer maxPatients, Integer ago){
+		Integer pruneCount = indexer.clearIndex(ids, strategyCode, maxPatients, ago);
+		return pruneCount;
+	}
+	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

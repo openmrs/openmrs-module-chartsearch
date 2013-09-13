@@ -40,5 +40,6 @@ public class ConfigCommands {
 		public static final String DAEMON_STATES = "daemon states";
 		public static final String IDLE = "idle";
 		public static final String BUSY = "busy";
+		public static final String ERROR = "error";
 	}
 }

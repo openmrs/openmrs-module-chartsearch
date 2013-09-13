@@ -41,6 +41,7 @@
 					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRCommands" />
 				<include method="getPatientInfo" />
 				<include method="getStatistics" />
+				<include method="clearIndex" />
 			</create>
 		</allow>
 	</dwr>

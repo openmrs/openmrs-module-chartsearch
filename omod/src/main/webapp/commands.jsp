@@ -18,10 +18,10 @@ $j(document).ready(function() {
 	console.log("Document is ready");
 	$j('#patientInfoBtn').click(getPatientInfo);
 	$j('#statisticsBtn').click(getStatistics);
+	$j('#clearBtn').click(clearIndex);
 });
 
 function getPatientInfo(){
-	console.log("Begin getPatientInfo");
 	DWRCommands.getPatientInfo($j("#patientId").val(), function(patientInfo) { 
 		var text;
 		if (!patientInfo) text="Patient is not in the index";
@@ -31,26 +31,21 @@ function getPatientInfo(){
 		}
 		$j("#patientInfoResult").text(text); 
   	});	
-	console.log("End getPatientInfo");
 }
 
 function getStatistics(){
-	console.log("Begin getStatistics");
 	DWRCommands.getStatistics(function(stats) {
-		if (!stats) $j("#statisticsResult").text("Error getting statistics");		
+		if (!stats) $j("#statisticsResult").text("Error on getting statistics");		
 		else {
 			$j("#statisticsResult").empty();
 			var strategyName = stats.strategyName.toString();
-			console.log("Strategy: " + strategyName);
 			$j("<div/>", {
 				text: "Strategy: " + strategyName
 			}).appendTo("#statisticsResult");
-			var pruneCount = stats.pruneCount;
-			console.log("Prune count: " + pruneCount);			
+			var pruneCount = stats.pruneCount;		
 			$j("<div/>", {
 				text: "Prune patients count: " + pruneCount
 			}).appendTo("#statisticsResult");
-			console.log("Daemon States:" + stats.daemonStates);
 			$j("<div/>", {
 				id: "daemonStates",
 				text: "Daemon states:"
@@ -60,8 +55,6 @@ function getStatistics(){
 				var daemonStatus = stats.daemonStates[i]['daemon status'];
 				var daemonSuccessCount = stats.daemonStates[i]['daemon success count'];
 				var daemonFailCount = stats.daemonStates[i]['daemon fail count'];
-				console.log("Daemon State " + stats.daemonStates[i]['daemon id'] + " " + stats.daemonStates[i]['daemon status'] + " "
-					+ stats.daemonStates[i]['daemon success count'] + " " + stats.daemonStates[i]['daemon fail count']);
 				$j("<div/>", {
 					id: "daemonState" + i,
 					text: "Daemon Id: " + daemonId + ", " 
@@ -74,15 +67,24 @@ function getStatistics(){
 			}
 		}
   	});
-	console.log("End statistics");
 	
+}
+
+function clearIndex(){
+	DWRCommands.clearIndex($j("#patientIds").val(), $j("#clearStrategy").val(), $j("#maxPatients").val(), $j("#ago").val(), function(pruneCount) { 
+		console.log("Begin clearIndex");
+		console.log("pruneCount: " + pruneCount);
+		if (pruneCount == null) $j("#clearResult").text("Error on pruning patients");	
+		else $j("#clearResult").text("Sent request to delete " + pruneCount + " patient(s)");
+		console.log("End clearIndex");
+  	});
 }
 </script>
 
 <div class="boxHeader">Patient info (state and last index time)</div>
 <div class="box">
-	Patient id: <input type="text" name="patientId" id="patientId"/>
 	<input type="button" id="patientInfoBtn" value="Get patient info"/>
+	Patient id: <input type="text" name="patientId" id="patientId"/>
 	<br />
 	<span id="patientInfoResult"></span>
 </div>
@@ -91,5 +93,19 @@ function getStatistics(){
 	<input type="button" id="statisticsBtn" value="Get statistics"/>
 	<br />
 	<span id="statisticsResult"></span>
+</div>
+<div class="boxHeader">Clear index</div>
+<div class="box">
+	<input type="button" id="clearBtn" value="Clear index"/>
+	<br />
+	Patient ids: <input type="text" name="patientIds" id="patientIds"/>
+	<br />
+	Clear strategy: <input type="text" name="clearStrategy" id="clearStrategy"/>
+	<br />
+	Count of maximum patients to left: <input type="text" name="maxPatients" id="maxPatients"/>
+	<br />
+	Max time patient can store: <input type="text" name="ago" id="ago"/>
+	<br />
+	<span id="clearResult"></span>
 </div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

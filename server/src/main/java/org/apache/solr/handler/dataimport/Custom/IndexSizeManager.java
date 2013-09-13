@@ -61,8 +61,9 @@ public class IndexSizeManager {
 		this.strategy = strategy;
 	}
 	
-	public void clearIndex(IndexClearStrategy strategy) {
+	public int clearIndex(IndexClearStrategy strategy) {
 		synchronized (cache) {
+			int pruneCount = 0;
 			
 			Map<Integer, PatientInfo> map = cache.getAll();
 			List<PatientInfo> patients = new LinkedList<PatientInfo>(map.values());
@@ -71,7 +72,7 @@ public class IndexSizeManager {
 			
 			if (deletePatients.size() == 0) {
 				log.info("Nothing to clear");
-				return;
+				return 0;
 			}
 			
 			CommitUpdateCommand commitCmd = new CommitUpdateCommand(req, true);
@@ -81,14 +82,21 @@ public class IndexSizeManager {
 				delCmd.query = String.format("person_id:%d", id);
 				
 				deletePatient(id, delCmd);
+				
+				//Increment by one instead of adding deletePatients.size()
+				//in case of some troubleshoots (don't know what troubleshoots)
+				//TODO refactor
+				pruneCount++;
 				clearedPatientsCount++;
 			}
 			commitChanges(commitCmd);
 			
 			cache.save();
 			
-			log.info("Index cleared, deleted {} patients, {} patients left in the index", deletePatients.size(),
+			log.info("Index cleared, deleted {} patients, {} patients left in the index", pruneCount,
 			    cache.size());
+			
+			return pruneCount;
 			
 		}
 	}

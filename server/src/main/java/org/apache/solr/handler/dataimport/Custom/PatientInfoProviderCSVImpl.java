@@ -69,8 +69,6 @@ public class PatientInfoProviderCSVImpl implements PatientInfoProvider {
 					Integer patientId = Integer.parseInt((String) map.get("patientId"));
 					Long time = Long.parseLong((String) map.get("lastIndexTime"));
 					patientInfo = new PatientInfo(patientId, time);
-					log.info(String.format("lineNo=%s, rowNo=%s, customer=%s", mapReader.getLineNumber(),
-					    mapReader.getRowNumber(), patientInfo));
 					data.put(patientInfo.getPatientId(), patientInfo);
 				}
 				

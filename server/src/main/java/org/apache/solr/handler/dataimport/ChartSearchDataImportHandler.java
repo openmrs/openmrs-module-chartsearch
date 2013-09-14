@@ -208,6 +208,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		IndexClearStrategy strategy = null;
 		if (strategyName.equals(IndexClearStrategies.IDS.toString())) {
 			if (!StringUtils.isBlank(idsByComma)) {
+				idsByComma = idsByComma.replaceAll("\\s+","");
 				String[] idStrings = idsByComma.split(",");
 				List<Integer> ids = new ArrayList<Integer>();
 				for (String idString : idStrings) {

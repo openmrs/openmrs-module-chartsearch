@@ -13,11 +13,9 @@
  */
 package org.apache.solr.handler.dataimport;
 
-
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
-import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +29,8 @@ public class DataImportDaemon implements Runnable {
 	private final BlockingQueue<SolrQueryInfo> queue;
 	
 	private final int id;
-
+	
 	private final ChartSearchIndexUpdater chartSearchIndexUpdater;
-	
-	//private SolrQueryInfo solrQueryInfo;
-	
-	private int successCount = 0;
-	
-	private int failCount = 0;
-	
-	private String status; 
 	
 	public DataImportDaemon(int id, BlockingQueue<SolrQueryInfo> queue, ChartSearchIndexUpdater chartSearchIndexUpdater) {
 		this.queue = queue;
@@ -53,43 +43,27 @@ public class DataImportDaemon implements Runnable {
 		log.info("Daemon #{} is running", id);
 		while (!(Thread.currentThread().isInterrupted())) {
 			try {
-				status = ConfigCommands.Labels.IDLE;
 				SolrQueryInfo info = queue.take();
-				status = ConfigCommands.Labels.BUSY;
+				log.info("Import started in daemon #{}", id);
 				chartSearchIndexUpdater.handleRequest(info.getRequest(), info.getResponse());
-				//solrQueryInfo = info;
-				
-				//TODO check success or fail
-				successCount++;
+				log.info("Import finished in daemon #{}", id);				
 			}
 			catch (InterruptedException e) {
-				log.info("The thread #{} is interrupted", id);
+				log.info("The import daemon #{} is interrupted", id);
 				Thread.currentThread().interrupt();
 			}
-			catch (Exception e){
+			catch (Exception e) {
 				log.error("Exception");
 			}
 		}
 	}
-
-	public String getStatus() {
-		return status;
-    }
-
-	public int getSuccessCount() {
-		//TODO add check success or fail
-	    return successCount;
-    }
-
-	public int getFailCount() {
-		//TODO add check success or fail
-	    return failCount;
-    }
-
+	
 	public int getId() {
-	    return id;
-    }
+		return id;
+	}
 	
-	
+	public ChartSearchIndexUpdater getIndexUpdater() {
+		return chartSearchIndexUpdater;
+	}
 	
 }

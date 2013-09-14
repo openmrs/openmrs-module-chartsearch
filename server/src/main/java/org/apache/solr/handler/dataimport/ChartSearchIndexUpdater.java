@@ -20,6 +20,7 @@ import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.update.processor.UpdateRequestProcessor;
 import org.apache.solr.update.processor.UpdateRequestProcessorChain;
+import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,16 +34,26 @@ public class ChartSearchIndexUpdater {
 	
 	private final PatientInfoHolder patientInfoHolder;
 	
-	private boolean debugEnabled = true; 
+	private int successCount = 0;
+	
+	//Didn't implemented yet
+	private int failCount = 0;
+	
+	private String status = ConfigCommands.Labels.IDLE;
 	
 	public ChartSearchIndexUpdater(DataImporter dataImporter, NamedList initArgs, PatientInfoHolder patientInfoHolder) {
 		this.importer = dataImporter;
 		this.initArgs = initArgs;
 		this.patientInfoHolder = patientInfoHolder;
-	}	
+	}
 	
-	/*	Simulates RequestHandlerBase handleRequestBody */
+	/*	
+	 * Simulates RequestHandlerBase handleRequestBody
+	 * Do only import 
+	 */
 	public void handleRequest(SolrQueryRequest req, SolrQueryResponse rsp) {
+		status = ConfigCommands.Labels.BUSY;
+		
 		SolrParams params = req.getParams();
 		Integer patientId = params.getInt("personId");
 		
@@ -68,7 +79,6 @@ public class ChartSearchIndexUpdater {
 				paramsMap.put("lastIndexTime", lastIndexTime);
 				paramsMap.put("command", DataImporter.DELTA_IMPORT_CMD);
 			}
-			
 		}
 		
 		RequestInfo requestParams = new RequestInfo(paramsMap, contentStream);
@@ -77,9 +87,6 @@ public class ChartSearchIndexUpdater {
 		
 		String command = requestParams.getCommand();
 		
-		String message = StringUtils.EMPTY;
-		
-		//TODO do only import
 		if (DataImporter.FULL_IMPORT_CMD.equals(command) || DataImporter.DELTA_IMPORT_CMD.equals(command)
 		        || IMPORT_CMD.equals(command)) {
 			
@@ -96,49 +103,42 @@ public class ChartSearchIndexUpdater {
 			
 			SolrWriter sw = getSolrWriter(processor, req);
 			try {
-				if (requestParams.isDebug() && !debugEnabled) {
-					message = DataImporter.MSG.DEBUG_NOT_ENABLED;
-				} else {
-					
-					importer.runCmd(requestParams, sw);
-					patientInfoHolder.setLastIndexTime(patientId);
-					
-					if (requestParams.isDebug()) {
-						rsp.add("mode", "debug");
-						rsp.add("documents", requestParams.getDebugInfo().debugDocuments);
-						if (requestParams.getDebugInfo().debugVerboseOutput != null) {
-							rsp.add("verbose-output", requestParams.getDebugInfo().debugVerboseOutput);
-						}
-					}
-				}
+				importer.runCmd(requestParams, sw);
+				patientInfoHolder.setLastIndexTime(patientId);
 			}
 			finally {
 				sw.close();
 			}
 			log.info("Import finished in the daemon {}", Thread.currentThread().getName());
-		} else if (DataImporter.RELOAD_CONF_CMD.equals(command)) {
-			try {
-				if (importer.maybeReloadConfiguration(requestParams, defaultParams)) {
-					message = DataImporter.MSG.CONFIG_RELOADED;
-				} else {
-					message = DataImporter.MSG.CONFIG_NOT_RELOADED;
-				}
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				log.error("Error generated", e);
-			}
 		}
 		
-		// TODO Do something visible for user with response
-		//rsp.add("importResponse", message);
-		//rsp.add("statusMessages", importer.getStatusMessages());
+		status = ConfigCommands.Labels.IDLE;
+		successCount++;
 		
 	}
 	
-	private SolrWriter getSolrWriter(final UpdateRequestProcessor processor,  SolrQueryRequest req) {
+	public DataImporter getImporter() {
+		return importer;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public int getSuccessCount() {
+		//TODO add check success or fail
+		return successCount;
+	}
+	
+	public int getFailCount() {
+		//TODO add check success or fail
+		return failCount;
+	}
+	
+	private SolrWriter getSolrWriter(final UpdateRequestProcessor processor, SolrQueryRequest req) {
 		
-		return new SolrWriter(processor, req) {
+		return new SolrWriter(
+		                      processor, req) {
 			
 			@Override
 			public boolean upload(SolrInputDocument document) {
@@ -168,4 +168,5 @@ public class ChartSearchIndexUpdater {
 		}
 		return result;
 	}
+	
 }

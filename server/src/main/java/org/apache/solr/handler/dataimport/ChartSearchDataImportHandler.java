@@ -30,8 +30,11 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.common.params.CommonParams;
+import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.params.SolrParams;
 import org.apache.solr.common.util.ContentStream;
+import org.apache.solr.common.util.ContentStreamBase;
 import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
@@ -51,6 +54,7 @@ import org.apache.solr.handler.dataimport.custom.SolrConfigParams;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
+import org.apache.solr.response.RawResponseWriter;
 import org.apache.solr.response.SolrQueryResponse;
 import org.apache.solr.util.plugin.SolrCoreAware;
 import org.openmrs.module.chartsearch.server.ConfigCommands;
@@ -108,6 +112,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 		
+		rsp.setHttpCaching(false);
 		SolrParams params = req.getParams();
 		
 		ContentStream contentStream = null;
@@ -120,6 +125,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		}
 		RequestInfo requestParams = new RequestInfo(getParamsMap(params), contentStream);
 		String command = requestParams.getCommand();
+		NamedList defaultParams = (NamedList) initArgs.get("defaults");
 		
 		Integer personId = params.getInt("personId");
 		if (personId != null) {
@@ -129,7 +135,44 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		if (DataImporter.IMPORT_CMD.equals(command) || DataImporter.FULL_IMPORT_CMD.equals(command)
 		        || DataImporter.DELTA_IMPORT_CMD.equals(command)) {
 			queue.put(new SolrQueryInfo(req, rsp));
-		} else if (ConfigCommands.PATIENT_STATE.equals(command)) {
+			return;
+		}
+		if (DataImporter.SHOW_CONF_CMD.equals(command)) {
+			String dataConfigFile = params.get("config");
+			String dataConfig = params.get("dataConfig");
+			if (dataConfigFile != null) {
+				dataConfig = SolrWriter.getResourceAsString(req.getCore().getResourceLoader().openResource(dataConfigFile));
+			}
+			if (dataConfig == null) {
+				rsp.add("status", DataImporter.MSG.NO_CONFIG_FOUND);
+			} else {
+				// Modify incoming request params to add wt=raw
+				ModifiableSolrParams rawParams = new ModifiableSolrParams(req.getParams());
+				rawParams.set(CommonParams.WT, "raw");
+				req.setParams(rawParams);
+				ContentStreamBase content = new ContentStreamBase.StringStream(dataConfig);
+				rsp.add(RawResponseWriter.CONTENT, content);
+			}
+			return;
+		}
+		
+		if (DataImporter.RELOAD_CONF_CMD.equals(command)) {
+			List<String> messages = new ArrayList<String>();
+			for (DataImportDaemon daemon : dataImportDaemons) {
+				DataImporter importer = daemon.getIndexUpdater().getImporter();
+				String message;
+				if (importer.maybeReloadConfiguration(requestParams, defaultParams)) {
+					message = String.format("Daemon %d: %s", daemon.getId(), DataImporter.MSG.CONFIG_RELOADED);
+				} else {
+					message = String.format("Daemon %d: %s", daemon.getId(), DataImporter.MSG.CONFIG_NOT_RELOADED);
+				}
+				messages.add(message);
+			}
+			rsp.add("importResponse", messages);			
+			return;
+		}
+		
+		if (ConfigCommands.PATIENT_STATE.equals(command)) {
 			handlePatientStateCommand(rsp, personId);
 		} else if (ConfigCommands.STATS.equals(command)) {
 			handleStatsCommand(rsp);
@@ -139,9 +182,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			Integer maxPatients = params.getInt(ConfigCommands.PRUNE_MAX_PATIENTS);
 			Integer ago = params.getInt(ConfigCommands.PRUNE_AGO);
 			handlePruneCommand(rsp, strategy, idsByComma, maxPatients, ago);
-		}
-		
-		rsp.setHttpCaching(false);
+		} 
 		
 	}
 	
@@ -170,17 +211,17 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 					strategy = new IndexClearStrategyWithIdImpl(ids);
 				}
 			}
-		} else if (strategyName.equals(IndexClearStrategies.BASIC.toString())) {
+		} else if (strategyName.toUpperCase().equals(IndexClearStrategies.BASIC.toString().toUpperCase())) {
 			if (maxPatients != null)
 				strategy = new IndexClearStrategyBasicImpl(maxPatients);
-		} else if (strategyName.equals(IndexClearStrategies.NO_ACTION.toString())) {
+		} else if (strategyName.toUpperCase().equals(IndexClearStrategies.NO_ACTION.toString().toUpperCase())) {
 			strategy = new IndexClearStrategyNoActionImpl();
-		} else if (strategyName.equals(IndexClearStrategies.NON_USAGE_TIME.toString())) {
+		} else if (strategyName.toUpperCase().equals(IndexClearStrategies.NON_USAGE_TIME.toString().toUpperCase())) {
 			if (ago != null)
 				strategy = new IndexClearStrategyNonUsageTimeImpl(ago);
 		}
 		
-		if (strategy == null){
+		if (strategy == null) {
 			String errorText = "Couldn't create IndexClearStrategy";
 			rsp.add(ConfigCommands.Labels.ERROR, errorText);
 			log.error(errorText);
@@ -198,9 +239,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			HashMap<String, Object> item = new HashMap<String, Object>();
 			
 			int id = daemon.getId();
-			String status = daemon.getStatus();
-			int successCount = daemon.getSuccessCount();
-			int failCount = daemon.getFailCount();
+			String status = daemon.getIndexUpdater().getStatus();
+			int successCount = daemon.getIndexUpdater().getSuccessCount();
+			int failCount = daemon.getIndexUpdater().getFailCount();
 			
 			item.put(ConfigCommands.Labels.DAEMON_ID, id);
 			item.put(ConfigCommands.Labels.DAEMON_STATUS, status);
@@ -227,13 +268,13 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	@Override
 	public String getDescription() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 	
 	@Override
 	public String getSource() {
 		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 	
 	@Override
@@ -317,8 +358,9 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		for (int i = 0; i < daemonsCount; i++) {
 			try {
 				String importerName = myName;
-				DataImportDaemon daemon = new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(new DataImporter(core,
-				        importerName), initArgs, patientInfoHolder));
+				DataImporter importer = new DataImporter(core, importerName);
+				DataImportDaemon daemon = new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(importer, initArgs,
+				        patientInfoHolder));
 				dataImportDaemons.add(daemon);
 				executorService.execute(daemon);
 				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);

@@ -43,8 +43,8 @@ public class DWRCommands {
 		return pruneCount;
 	}
 	
-	public String startDaemon(){
-		String status = indexService.startDaemon();
+	public String changeDaemonsCount(int count){
+		String status = indexService.changeDaemonsCount(count);
 		return status;
 	}
 	

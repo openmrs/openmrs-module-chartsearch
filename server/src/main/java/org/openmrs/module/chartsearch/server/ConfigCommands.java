@@ -28,7 +28,8 @@ public class ConfigCommands {
 	public static final String PRUNE_MAX_PATIENTS = "max-patients";
 	public static final String PRUNE_AGO = "ago";
 
-	public static final String START_DAEMON = "start-daemon";    
+	public static final String SHANGE_DAEMONS_COUNT = "change-daemons-count";
+	public static final String DAEMONS_COUNT = "daemons-count";   
 	
 	
 	public class Labels {

@@ -3,7 +3,7 @@ $j(document).ready(function() {
 	$j('#patientInfoBtn').click(getPatientInfo);
 	$j('#statisticsBtn').click(getStatistics);
 	$j('#clearBtn').click(clearIndex);
-	$j('#startDaemonBtn').click(startDaemon);
+	$j('#startDaemonBtn').click(changeDaemonsCount);
 });
 
 function getPatientInfo() {
@@ -72,11 +72,11 @@ function clearIndex() {
 			});
 }
 
-function startDaemon() {
-	DWRCommands.startDaemon(function(status) {	
+function changeDaemonsCount() {
+	DWRCommands.changeDaemonsCount($j("#daemonsCount").val(), function(status) {	
 		var text;
 		if (!status)
-			text = "Failure on starting new daemon";
+			text = "Failed to change daemons count";
 		else {
 			text = status;
 		}

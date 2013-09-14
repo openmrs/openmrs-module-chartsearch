@@ -184,17 +184,19 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			Integer maxPatients = params.getInt(ConfigCommands.PRUNE_MAX_PATIENTS);
 			Integer ago = params.getInt(ConfigCommands.PRUNE_AGO);
 			handlePruneCommand(rsp, strategy, idsByComma, maxPatients, ago);
-		} else if (ConfigCommands.START_DAEMON.equals(command)) {
-			if (core != null) {
-				handleStartDaemonCommand(rsp);
+		} else if (ConfigCommands.SHANGE_DAEMONS_COUNT.equals(command)) {
+			Integer count = params.getInt(ConfigCommands.DAEMONS_COUNT);
+			if (core != null && count != null) {				
+				handleChangeDaemonsCountCommand(rsp, count);
 			}
 		}
 	}
 	
-	private void handleStartDaemonCommand(SolrQueryResponse rsp) {
+	private void handleChangeDaemonsCountCommand(SolrQueryResponse rsp, Integer count) {
 		executorService.shutdownNow();
 		dataImportDaemons.clear();
-		runDataImportDaemons(core, ++daemonsCount);
+		runDataImportDaemons(core, count);
+		this.daemonsCount = count;
 		rsp.add("status", "Daemon successfully started. Daemons count: " + daemonsCount);
 	}
 	
@@ -405,6 +407,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				
 			}
 		}, 10, timeout, TimeUnit.SECONDS);
+		
 	}
 	
 	private void runScheduledPatientInfoUpdates(int timeout) {

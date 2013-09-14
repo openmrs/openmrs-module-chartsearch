@@ -147,12 +147,13 @@ public class IndexService {
 		}
 	}
 	
-	public String startDaemon() {
+	public String changeDaemonsCount(int count) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
-		params.set("command", ConfigCommands.START_DAEMON);
+		params.set("command", ConfigCommands.SHANGE_DAEMONS_COUNT);
+		params.set(ConfigCommands.DAEMONS_COUNT, count);
 		
 		try {
 			QueryResponse response = solrServer.query(params);
@@ -160,7 +161,7 @@ public class IndexService {
 			return status;
 		}
 		catch (SolrServerException ex) {
-			log.error("Failed to start daemon");
+			log.error("Failed to change daemons count.");
 			return StringUtils.EMPTY;
 		}
 	}

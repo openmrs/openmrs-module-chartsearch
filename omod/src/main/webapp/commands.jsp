@@ -60,7 +60,13 @@
 </div>
 <div class="boxHeader">Daemon management</div>
 <div class="box">
-	<input type="button" id="startDaemonBtn" value="Start new daemon" /> <br />
+	<input type="button" id="startDaemonBtn" value="Change daemons count" />
+	<table>
+		<tr>
+			<td>Daemons count:</td>
+			<td><input type="text" name="daemonsCount" id="daemonsCount" /></td>
+		</tr>
+	</table>	
 	<span id="daemonsManagementResult"></span>
 </div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

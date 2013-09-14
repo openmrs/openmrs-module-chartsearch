@@ -6,7 +6,6 @@
 
 <%@ include file="/WEB-INF/template/header.jsp"%>
 
-
 <openmrs:htmlInclude file="/moduleResources/chartsearch/js/commands.js"/>
 
 <%@ include file="template/localHeader.jsp"%>
@@ -44,7 +43,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Patient ids:</td>
+			<td>Patient ids (separated by comma):</td>
 			<td><input type="text" name="patientIds" id="patientIds" /></td>
 		</tr>
 		<tr>

@@ -26,7 +26,7 @@
 	  <bean id="solrServer" class="org.openmrs.module.chartsearch.solr.SolrServerFactory" 
 		factory-method="getSolrServer"></bean>-->
 
-	<bean id="indexer" class="org.openmrs.module.chartsearch.solr.Indexer" >
+	<bean id="indexer" class="org.openmrs.module.chartsearch.solr.IndexService" >
 		<!--  <constructor-arg ref="solrServer" />-->
 	</bean>
 

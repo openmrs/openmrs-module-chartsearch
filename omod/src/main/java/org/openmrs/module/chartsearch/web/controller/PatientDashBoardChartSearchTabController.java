@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
-import org.openmrs.module.chartsearch.solr.Indexer;
+import org.openmrs.module.chartsearch.solr.IndexService;
 import org.openmrs.module.chartsearch.solr.Searcher;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +33,14 @@ import org.springframework.stereotype.Controller;
 public class PatientDashBoardChartSearchTabController extends PortletController {
 
 	@Autowired
-	private Indexer indexer;	
+	private IndexService indexService;	
 
 	@Override
 	protected void populateModel(HttpServletRequest request,
 			Map<String, Object> model) {
 		
 		  Integer personId = (Integer) model.get("personId");
-		  indexer.indexPatientData(personId);
+		  indexService.indexPatientData(personId);
 		  
 		 
 	}

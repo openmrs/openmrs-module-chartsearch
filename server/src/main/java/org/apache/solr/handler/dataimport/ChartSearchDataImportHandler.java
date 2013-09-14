@@ -98,6 +98,8 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private int patientInfoTimeout;
 	
+	private SolrCore core;
+	
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
@@ -168,7 +170,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				}
 				messages.add(message);
 			}
-			rsp.add("importResponse", messages);			
+			rsp.add("importResponse", messages);
 			return;
 		}
 		
@@ -182,8 +184,18 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			Integer maxPatients = params.getInt(ConfigCommands.PRUNE_MAX_PATIENTS);
 			Integer ago = params.getInt(ConfigCommands.PRUNE_AGO);
 			handlePruneCommand(rsp, strategy, idsByComma, maxPatients, ago);
-		} 
-		
+		} else if (ConfigCommands.START_DAEMON.equals(command)) {
+			if (core != null) {
+				handleStartDaemonCommand(rsp);
+			}
+		}
+	}
+	
+	private void handleStartDaemonCommand(SolrQueryResponse rsp) {
+		executorService.shutdownNow();
+		dataImportDaemons.clear();
+		runDataImportDaemons(core, ++daemonsCount);
+		rsp.add("status", "Daemon successfully started. Daemons count: " + daemonsCount);
 	}
 	
 	private void handlePruneCommand(SolrQueryResponse rsp, String strategyName, String idsByComma, Integer maxPatients,
@@ -280,6 +292,8 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	@Override
 	public void inform(SolrCore core) {
 		
+		this.core = core;
+		
 		// hack to get the name of this handler
 		for (Map.Entry<String, SolrRequestHandler> e : core.getRequestHandlers().entrySet()) {
 			SolrRequestHandler handler = e.getValue();
@@ -309,9 +323,6 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		PatientInfoProvider provider = new PatientInfoProviderCSVImpl(fileName);
 		cache = new PatientInfoCache(provider);
 		patientInfoHolder = new PatientInfoHolder(cache);
-		
-		//cs.properties contains configuration
-		//chartSearchProperties = new SolrConfigParams("cs", core.getResourceLoader().getConfigDir());
 		
 		runDataImportDaemons(core, daemonsCount);
 		
@@ -357,19 +368,28 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		executorService = Executors.newFixedThreadPool(daemonsCount, factory);
 		for (int i = 0; i < daemonsCount; i++) {
 			try {
-				String importerName = myName;
-				DataImporter importer = new DataImporter(core, importerName);
-				DataImportDaemon daemon = new DataImportDaemon(i, queue, new ChartSearchIndexUpdater(importer, initArgs,
-				        patientInfoHolder));
-				dataImportDaemons.add(daemon);
-				executorService.execute(daemon);
-				log.info("Executed daemon #{} with dataimporter #{}", i, importerName);
+				startImportDaemon(i, core);
 			}
 			catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
 			}
 			
 		}
+	}
+	
+	private void startImportDaemon(int id, SolrCore core) {
+		DataImportDaemon daemon = createDateImportDaemon(id, core);
+		dataImportDaemons.add(daemon);
+		executorService.execute(daemon);
+		log.info("Executed daemon #{}", id);
+	}
+	
+	private DataImportDaemon createDateImportDaemon(int id, SolrCore core) {
+		String importerName = myName;
+		DataImporter importer = new DataImporter(core, importerName);
+		DataImportDaemon daemon = new DataImportDaemon(id, queue, new ChartSearchIndexUpdater(importer, initArgs,
+		        patientInfoHolder));
+		return daemon;
 	}
 	
 	private void runScheduledIndexSizeManager(SolrCore core, IndexClearStrategy clearStrategy, int timeout) {

@@ -58,4 +58,9 @@
 	</table>
 	<span id="clearResult"></span>
 </div>
+<div class="boxHeader">Daemon management</div>
+<div class="box">
+	<input type="button" id="startDaemonBtn" value="Start new daemon" /> <br />
+	<span id="daemonsManagementResult"></span>
+</div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

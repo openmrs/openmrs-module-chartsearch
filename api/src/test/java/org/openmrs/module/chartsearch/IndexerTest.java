@@ -23,7 +23,7 @@ import org.junit.Test;
 public class IndexerTest {
 
 	/**
-	 * Test method for {@link org.openmrs.module.chartsearch.solr.Indexer#indexPatientData(java.lang.Integer)}.
+	 * Test method for {@link org.openmrs.module.chartsearch.solr.IndexService#indexPatientData(java.lang.Integer)}.
 	 */
 	@Test
 	public void testIndexPatiendData() {

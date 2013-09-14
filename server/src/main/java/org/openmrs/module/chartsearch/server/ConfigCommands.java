@@ -26,7 +26,9 @@ public class ConfigCommands {
 	public static final String PRUNE_IDS = "ids"; 
 	public static final String PRUNE_CLEAR_STRATEGY = "clear-strategy";  
 	public static final String PRUNE_MAX_PATIENTS = "max-patients";
-	public static final String PRUNE_AGO = "ago";    
+	public static final String PRUNE_AGO = "ago";
+
+	public static final String START_DAEMON = "start-daemon";    
 	
 	
 	public class Labels {

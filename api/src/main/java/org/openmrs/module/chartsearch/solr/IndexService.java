@@ -31,14 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO rename, make service
-public class Indexer {
+public class IndexService {	
 	
-	//private final SolrServer solrServer;
+	private static final Logger log = LoggerFactory.getLogger(IndexService.class);
 	
-	private static final Logger log = LoggerFactory.getLogger(Indexer.class);
-	
-	public Indexer() {
-		//this.solrServer = SolrSingleton.getInstance().getServer();
+	public IndexService() {
 	}
 	
 	public void indexPatientData(Integer personId) {
@@ -114,7 +111,7 @@ public class Indexer {
 	}
 	
 	/* 
-	 * TODO refactor, breaks CQS (Command Query Separation)
+	 * TODO refactor, violates  CQS (Command Query Separation)
 	 * @return null if something going wrong
 	 */
 	public Integer clearIndex(String strategy, String ids, Integer maxPatients, Integer ago) {
@@ -147,6 +144,24 @@ public class Indexer {
 			    "Failed to prune patients\nStrategy: %s\nPatient ids: %s\nMax Patients: %d\nAgo: %d", strategy, ids, 
 			    maxPatients, ago), ex);
 			return null;
+		}
+	}
+	
+	public String startDaemon() {
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		//TODO take path from config
+		params.set("qt", "/csdataimport");
+		params.set("command", ConfigCommands.START_DAEMON);
+		
+		try {
+			QueryResponse response = solrServer.query(params);
+			String status = (String) response.getResponse().get("status");
+			return status;
+		}
+		catch (SolrServerException ex) {
+			log.error("Failed to start daemon");
+			return StringUtils.EMPTY;
 		}
 	}
 	

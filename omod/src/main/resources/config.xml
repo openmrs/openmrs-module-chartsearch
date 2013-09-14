@@ -42,6 +42,7 @@
 				<include method="getPatientInfo" />
 				<include method="getStatistics" />
 				<include method="clearIndex" />
+				<include method="startDaemon" />
 			</create>
 		</allow>
 	</dwr>

@@ -3,6 +3,7 @@ $j(document).ready(function() {
 	$j('#patientInfoBtn').click(getPatientInfo);
 	$j('#statisticsBtn').click(getStatistics);
 	$j('#clearBtn').click(clearIndex);
+	$j('#startDaemonBtn').click(startDaemon);
 });
 
 function getPatientInfo() {
@@ -49,11 +50,6 @@ function getStatistics() {
 									text : "Daemon Id: " + daemonId + ", "
 											+ "Status:" + daemonStatus + ", "
 											+ "Processed:" + daemonSuccessCount
-								// TODO Fail doesn't implemented
-								/*
-								 * + "Success:" + daemonSuccessCount + ", " +
-								 * "Fail:"+ daemonFailCount
-								 */
 								}).appendTo("#daemonStates");
 					}
 				}
@@ -74,4 +70,16 @@ function clearIndex() {
 									+ " patient(s)");
 				console.log("End clearIndex");
 			});
+}
+
+function startDaemon() {
+	DWRCommands.startDaemon(function(status) {	
+		var text;
+		if (!status)
+			text = "Failure on starting new daemon";
+		else {
+			text = status;
+		}
+		$j("#daemonsManagementResult").text(text);
+	});
 }

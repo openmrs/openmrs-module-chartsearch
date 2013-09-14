@@ -36,6 +36,7 @@ import org.apache.solr.common.util.NamedList;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.handler.RequestHandlerBase;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategy;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategyBasicImpl;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategyNoActionImpl;
@@ -48,7 +49,6 @@ import org.apache.solr.handler.dataimport.custom.PatientInfoProvider;
 import org.apache.solr.handler.dataimport.custom.PatientInfoProviderCSVImpl;
 import org.apache.solr.handler.dataimport.custom.SolrConfigParams;
 import org.apache.solr.handler.dataimport.custom.SolrQueryInfo;
-import org.apache.solr.handler.dataimport.custom.SolrConfigParams.IndexClearStrategies;
 import org.apache.solr.request.SolrQueryRequest;
 import org.apache.solr.request.SolrRequestHandler;
 import org.apache.solr.response.SolrQueryResponse;
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
- *
+ * TODO refactor! too many responsibilities
  */
 public class ChartSearchDataImportHandler extends RequestHandlerBase implements SolrCoreAware {
 	
@@ -134,54 +134,60 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		} else if (ConfigCommands.STATS.equals(command)) {
 			handleStatsCommand(rsp);
 		} else if (ConfigCommands.PRUNE.equals(command)) {
+			String strategy = params.get(ConfigCommands.PRUNE_CLEAR_STRATEGY);
 			String idsByComma = params.get(ConfigCommands.PRUNE_IDS);
-			Integer strategyCode = params.getInt(ConfigCommands.PRUNE_CLEAR_STRATEGY);
 			Integer maxPatients = params.getInt(ConfigCommands.PRUNE_MAX_PATIENTS);
 			Integer ago = params.getInt(ConfigCommands.PRUNE_AGO);
-			handlePruneCommand(rsp, idsByComma, strategyCode, maxPatients, ago);
+			handlePruneCommand(rsp, strategy, idsByComma, maxPatients, ago);
 		}
 		
 		rsp.setHttpCaching(false);
 		
 	}
 	
-	private void handlePruneCommand(SolrQueryResponse rsp, String idsByComma, Integer strategyCode, Integer maxPatients, Integer ago) {
+	private void handlePruneCommand(SolrQueryResponse rsp, String strategyName, String idsByComma, Integer maxPatients,
+	                                Integer ago) {
 		int pruneCount = 0;
-		if (!StringUtils.isBlank(idsByComma)) {
-			String[] idStrings = idsByComma.split(",");
-			List<Integer> ids = new ArrayList<Integer>();
-			for (String idString : idStrings) {
-				try {
-					int id = Integer.parseInt(idString);
-					ids.add(id);
+		
+		//TODO Remove duplications
+		IndexClearStrategy strategy = null;
+		if (strategyName.equals(IndexClearStrategies.IDS.toString())) {
+			if (!StringUtils.isBlank(idsByComma)) {
+				String[] idStrings = idsByComma.split(",");
+				List<Integer> ids = new ArrayList<Integer>();
+				for (String idString : idStrings) {
+					try {
+						int id = Integer.parseInt(idString);
+						ids.add(id);
+					}
+					catch (NumberFormatException e) {
+						String errorText = "Wrong id in request";
+						rsp.add(ConfigCommands.Labels.ERROR, errorText);
+						log.error(errorText);
+					}
 				}
-				catch (NumberFormatException e) {
-					String errorText = "Wrong id in request";
-					rsp.add(ConfigCommands.Labels.ERROR, errorText);
-					log.error(errorText);					
+				if (ids.size() != 0) {
+					strategy = new IndexClearStrategyWithIdImpl(ids);
 				}
 			}
-			if (ids.size() != 0) {
-				IndexClearStrategy strategy = new IndexClearStrategyWithIdImpl(ids);
-				pruneCount = indexSizeManager.clearIndex(strategy);
-			}
-		} else {
-			if (strategyCode != null) {
-				//TODO Remove duplications
-				IndexClearStrategy strategy = null;
-				if (strategyCode == IndexClearStrategies.BASIC.ordinal()) {
-					if (maxPatients != null)
-						strategy = new IndexClearStrategyBasicImpl(maxPatients);
-				} else if (strategyCode == IndexClearStrategies.NO_ACTION.ordinal()) {
-					strategy = new IndexClearStrategyNoActionImpl();
-				} else if (strategyCode == IndexClearStrategies.NON_USAGE_TIME.ordinal()) {
-					if (ago != null)
-						strategy = new IndexClearStrategyNonUsageTimeImpl(ago);
-				}
-				if (strategy != null)
-					pruneCount = indexSizeManager.clearIndex(strategy);
-			}
+		} else if (strategyName.equals(IndexClearStrategies.BASIC.toString())) {
+			if (maxPatients != null)
+				strategy = new IndexClearStrategyBasicImpl(maxPatients);
+		} else if (strategyName.equals(IndexClearStrategies.NO_ACTION.toString())) {
+			strategy = new IndexClearStrategyNoActionImpl();
+		} else if (strategyName.equals(IndexClearStrategies.NON_USAGE_TIME.toString())) {
+			if (ago != null)
+				strategy = new IndexClearStrategyNonUsageTimeImpl(ago);
 		}
+		
+		if (strategy == null){
+			String errorText = "Couldn't create IndexClearStrategy";
+			rsp.add(ConfigCommands.Labels.ERROR, errorText);
+			log.error(errorText);
+		}
+		
+		if (strategy != null)
+			pruneCount = indexSizeManager.clearIndex(strategy);
 		
 		rsp.add(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT, pruneCount);
 	}

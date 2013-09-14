@@ -38,8 +38,8 @@ public class DWRCommands {
 		return stats;
 	}
 	
-	public Integer clearIndex(String ids, Integer strategyCode, Integer maxPatients, Integer ago){
-		Integer pruneCount = indexer.clearIndex(ids, strategyCode, maxPatients, ago);
+	public Integer clearIndex(String strategy, String ids, Integer maxPatients, Integer ago){
+		Integer pruneCount = indexer.clearIndex(strategy, ids, maxPatients, ago);
 		return pruneCount;
 	}
 	

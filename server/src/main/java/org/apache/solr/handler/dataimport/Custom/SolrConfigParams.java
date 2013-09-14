@@ -22,10 +22,6 @@ public class SolrConfigParams {
 	
 	private static final Logger log = LoggerFactory.getLogger(SolrConfigParams.class);
 	
-	public enum IndexClearStrategies {
-		NO_ACTION, BASIC, NON_USAGE_TIME
-	}
-	
 	public static final String DAEMONS_COUNT = "daemonsCount";
 	
 	public static final String INDEX_SIZE_MANAGER_TIMEOUT = "indexSizeManagerTimeout";

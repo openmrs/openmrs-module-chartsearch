@@ -13,12 +13,14 @@
  */
 package org.openmrs.module.chartsearch.web.controller;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.chartsearch.server.PatientInfo;
-import org.openmrs.module.chartsearch.solr.Indexer;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -32,7 +34,12 @@ public class  CommandsFormController {
 	protected final Log log = LogFactory.getLog(getClass());		
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void showForm() {
+	public void showForm(ModelMap map) {
+		Map<IndexClearStrategies,String> clearStrategy = new LinkedHashMap<IndexClearStrategies,String>();
+		clearStrategy.put(IndexClearStrategies.IDS, "By patient ids");
+		clearStrategy.put(IndexClearStrategies.BASIC, "By max patients in index");
+		clearStrategy.put(IndexClearStrategies.NON_USAGE_TIME, "By max non usage time");
+		map.put("clearStrategies", clearStrategy);
 	}
 	
 	

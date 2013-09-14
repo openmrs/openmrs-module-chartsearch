@@ -117,30 +117,34 @@ public class Indexer {
 	 * TODO refactor, breaks CQS (Command Query Separation)
 	 * @return null if something going wrong
 	 */
-	public Integer clearIndex(String ids, Integer strategyCode, Integer maxPatients, Integer ago) {
+	public Integer clearIndex(String strategy, String ids, Integer maxPatients, Integer ago) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
 		params.set("command", ConfigCommands.PRUNE);
-		if (!StringUtils.isBlank(ids)) params.set(ConfigCommands.PRUNE_IDS, ids);
-		if (strategyCode != null) params.set(ConfigCommands.PRUNE_CLEAR_STRATEGY, strategyCode);
-		if(maxPatients != null) params.set(ConfigCommands.PRUNE_MAX_PATIENTS, maxPatients);
-		if (ago != null) params.set(ConfigCommands.PRUNE_AGO, ago);
+		params.set(ConfigCommands.PRUNE_CLEAR_STRATEGY, strategy);
+		if (!StringUtils.isBlank(ids))
+			params.set(ConfigCommands.PRUNE_IDS, ids);
+		if (maxPatients != null)
+			params.set(ConfigCommands.PRUNE_MAX_PATIENTS, maxPatients);
+		if (ago != null)
+			params.set(ConfigCommands.PRUNE_AGO, ago);
 		
 		try {
 			QueryResponse response = solrServer.query(params);
 			NamedList<Object> responseList = response.getResponse();
 			
 			//TODO somehow return an error message
-			if (responseList.get(ConfigCommands.Labels.ERROR) != null) return null;
+			if (responseList.get(ConfigCommands.Labels.ERROR) != null)
+				return null;
 			
 			Integer pruneCount = (Integer) response.getResponse().get(ConfigCommands.Labels.CLEARED_PATIENTS_COUNT);
 			return pruneCount;
 		}
 		catch (SolrServerException ex) {
 			log.error(String.format(
-			    "Failed to prune patients\nPatient ids: %d\nStrategyCode: %d\nMax Patients: %d\nAgo: %d", ids, strategyCode,
+			    "Failed to prune patients\nStrategy: %s\nPatient ids: %s\nMax Patients: %d\nAgo: %d", strategy, ids, 
 			    maxPatients, ago), ex);
 			return null;
 		}

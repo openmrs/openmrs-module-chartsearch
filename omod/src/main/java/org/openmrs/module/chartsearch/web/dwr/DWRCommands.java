@@ -20,31 +20,31 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
-import org.openmrs.module.chartsearch.solr.IndexService;
+import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 
 public class DWRCommands {
 	
 	protected static final Log log = LogFactory.getLog(DWRCommands.class);
 	
-	private IndexService indexService = getComponent(IndexService.class);
+	private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
 	
 	public PatientInfo getPatientInfo(Integer patientId) {
-		PatientInfo info = indexService.getPatientInfo(patientId);
+		PatientInfo info = chartSearchIndexer.getPatientInfo(patientId);
 		return info;
 	}
 	
 	public StatisticsInfo getStatistics() {
-		StatisticsInfo stats = indexService.getStatistics();
+		StatisticsInfo stats = chartSearchIndexer.getStatistics();
 		return stats;
 	}
 	
 	public Integer clearIndex(String strategy, String ids, Integer maxPatients, Integer ago){
-		Integer pruneCount = indexService.clearIndex(strategy, ids, maxPatients, ago);
+		Integer pruneCount = chartSearchIndexer.clearIndex(strategy, ids, maxPatients, ago);
 		return pruneCount;
 	}
 	
 	public String changeDaemonsCount(int count){
-		String status = indexService.changeDaemonsCount(count);
+		String status = chartSearchIndexer.changeDaemonsCount(count);
 		return status;
 	}
 	

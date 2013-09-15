@@ -31,11 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO rename, make service
-public class IndexService {	
+public class ChartSearchIndexer {	
 	
-	private static final Logger log = LoggerFactory.getLogger(IndexService.class);
+	private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
 	
-	public IndexService() {
+	public ChartSearchIndexer() {
 	}
 	
 	public void indexPatientData(Integer personId) {

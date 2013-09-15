@@ -63,19 +63,27 @@
 
 	<!-- Required Global Properties -->
 	<globalProperty>
-		<property>${project.parent.artifactId}.useDedicatedSolrServer</property>
+		<property>${project.parent.artifactId}.useDedicatedSolrServer
+		</property>
 		<defaultValue>false</defaultValue>
-		<description>Use dedicated SOLR server instead of embedded SOLR (true, false). 
-		You will need to specify SOLR url. Requires module restart.
+		<description>Use dedicated SOLR server instead of embedded SOLR (true,
+			false).
+			You will need to specify SOLR url. Requires module restart.
 		</description>
 	</globalProperty>
 	<globalProperty>
 		<property>${project.parent.artifactId}.httpSolrUrl</property>
 		<defaultValue>http://localhost</defaultValue>
-		<description>Url to HTTP SOLR. Uses only if 'Use Dedicated SOLR set to true'
+		<description>Url to HTTP SOLR. Uses only if 'Use Dedicated SOLR set to
+			true'
 		</description>
 	</globalProperty>
-	
+
+	<privilege>
+		<name>Run Chart Search commands</name>
+		<description>Ability to run Solr commands</description>
+	</privilege>
+
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

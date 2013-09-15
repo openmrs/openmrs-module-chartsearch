@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
-import org.openmrs.module.chartsearch.solr.Searcher;
+import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.dwr.ObsListItem;
 
@@ -33,7 +33,7 @@ public class DWRChartSearchService {
 	protected static final Log log = LogFactory
 			.getLog(DWRChartSearchService.class);
 
-	private Searcher searcher = getComponent(Searcher.class);
+	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 
 	public Map<String, Object> findObsAndCount(Integer patientId,
 			String phrase, boolean includeRetired,

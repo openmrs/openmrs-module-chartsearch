@@ -2,7 +2,7 @@
 
 <openmrs:htmlInclude file="/dwr/interface/DWRCommands.js" />
 
-<%-- <openmrs:require privilege="Manage Global Properties" otherwise="/login.htm" redirect="/module/webservices/rest/settings.form" />--%>
+<openmrs:require privilege="Run Chart Search commands" otherwise="/login.htm" redirect="/module/chartsearch/commands.form" />
 
 <%@ include file="/WEB-INF/template/header.jsp"%>
 

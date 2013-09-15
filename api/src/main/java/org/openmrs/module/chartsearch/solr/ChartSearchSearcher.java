@@ -30,13 +30,13 @@ import org.openmrs.module.chartsearch.ChartListItem;
 /**
  *
  */
-public class Searcher {
+public class ChartSearchSearcher {
 
-	private static Log log = LogFactory.getLog(Searcher.class);
+	private static Log log = LogFactory.getLog(ChartSearchSearcher.class);
 
 	//private final SolrServer solrServer;
 
-	public Searcher() {
+	public ChartSearchSearcher() {
 		//this.solrServer = SolrSingleton.getInstance().getServer();
 	}
 

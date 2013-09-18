@@ -14,6 +14,7 @@
 package org.openmrs.module.chartsearch.extension.html;
 
 import org.openmrs.module.web.extension.PatientDashboardTabExt;
+import org.openmrs.util.PrivilegeConstants;
 
 /**
  *
@@ -35,7 +36,7 @@ public class PatientDashboardChartSearchTab extends PatientDashboardTabExt {
 	@Override
 	public String getRequiredPrivilege() {
 		// TODO Auto-generated method stub
-		return null;
+		return "Patient Dashboard - View Chart Search Section";
 	}
 
 	/**

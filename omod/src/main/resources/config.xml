@@ -78,11 +78,17 @@
 			true'
 		</description>
 	</globalProperty>
-
 	<privilege>
 		<name>Run Chart Search commands</name>
 		<description>Ability to run Solr commands</description>
 	</privilege>
+	<privilege>
+		<name>
+			Patient Dashboard - View Chart Search Section
+		</name>
+		<description>Ability view Chart Search Section in Patient Dashboard</description>
+	</privilege>
+
 
 
 	<!-- Maps hibernate file's, if present -->

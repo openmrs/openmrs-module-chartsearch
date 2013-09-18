@@ -7,7 +7,10 @@
 .idea/
 
 ### Maven ###
-target/
+/api/target
+/server/target
+omod/target/*
+!omod/target/chartsearch-1.0-SNAPSHOT.omod
 #############
 
 ### Eclipse ###

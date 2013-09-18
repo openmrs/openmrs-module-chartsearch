@@ -197,7 +197,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		dataImportDaemons.clear();
 		runDataImportDaemons(core, count);
 		this.daemonsCount = count;
-		rsp.add("status", "Daemon successfully started. Daemons count: " + daemonsCount);
+		rsp.add("daemonsCount", daemonsCount);
 	}
 	
 	private void handlePruneCommand(SolrQueryResponse rsp, String strategyName, String idsByComma, Integer maxPatients,

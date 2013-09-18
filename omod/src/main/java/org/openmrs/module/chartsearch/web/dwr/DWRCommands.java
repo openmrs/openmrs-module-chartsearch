@@ -43,9 +43,9 @@ public class DWRCommands {
 		return pruneCount;
 	}
 	
-	public String changeDaemonsCount(int count){
-		String status = chartSearchIndexer.changeDaemonsCount(count);
-		return status;
+	public int changeDaemonsCount(int count){
+		int daemonsCount = chartSearchIndexer.changeDaemonsCount(count);
+		return daemonsCount;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

@@ -73,12 +73,12 @@ function clearIndex() {
 }
 
 function changeDaemonsCount() {
-	DWRCommands.changeDaemonsCount($j("#daemonsCount").val(), function(status) {	
+	DWRCommands.changeDaemonsCount($j("#daemonsCount").val(), function(daemonsCount) {	
 		var text;
-		if (!status)
+		if (daemonsCount < 0)
 			text = "Failed to change daemons count";
 		else {
-			text = status;
+			text = "Daemons count successfully changes. New daemons count: " + daemonsCount;
 		}
 		$j("#daemonsManagementResult").text(text);
 	});

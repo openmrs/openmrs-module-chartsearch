@@ -147,7 +147,11 @@ public class ChartSearchIndexer {
 		}
 	}
 	
-	public String changeDaemonsCount(int count) {
+	/*
+	 * TODO refactor, violates  CQS (Command Query Separation)
+	 * do not return string
+	 */
+	public int changeDaemonsCount(int count) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
@@ -157,12 +161,14 @@ public class ChartSearchIndexer {
 		
 		try {
 			QueryResponse response = solrServer.query(params);
-			String status = (String) response.getResponse().get("status");
-			return status;
+			int daemonsCount = (Integer) response.getResponse().get("daemonsCount");
+			return daemonsCount;
 		}
 		catch (SolrServerException ex) {
 			log.error("Failed to change daemons count.");
-			return StringUtils.EMPTY;
+			
+			//todo do not use exception code!
+			return -1;
 		}
 	}
 	

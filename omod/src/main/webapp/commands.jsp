@@ -14,7 +14,7 @@
 	<spring:message code="chartsearch.manage.commands.title" />
 </h2>
 
-<div class="boxHeader">Patient info (state and last index time)</div>
+<div class="boxHeader">Patient info (last index time)</div>
 <div class="box">
 	<input type="button" id="patientInfoBtn" value="Get patient info" />
 	<table>

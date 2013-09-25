@@ -59,9 +59,9 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		// TODO use solr functions to determine config folder
 		String configFolder = properties.getSolrHome() + File.separatorChar + "collection1" + File.separatorChar + "conf";
 		if (!new File(configFolder).exists()) {
-			URL url = getClass().getClassLoader().getResource("collection1/conf");
-			File file = new File(url.getFile());
+			URL url = getClass().getClassLoader().getResource("collection1/conf");		
 			try {
+				File file = new File(url.toURI());
 				FileUtils.copyDirectoryToDirectory(file, new File(properties.getSolrHome() + File.separatorChar
 				        + "collection1"));
 				setDataImportConnectionInfo(configFolder);

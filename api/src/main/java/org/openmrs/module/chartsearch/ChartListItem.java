@@ -14,17 +14,10 @@
 package org.openmrs.module.chartsearch;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Obs;
-import org.openmrs.util.Format;
-import org.openmrs.util.Format.FORMAT_TYPE;
 
 public class ChartListItem {
 	

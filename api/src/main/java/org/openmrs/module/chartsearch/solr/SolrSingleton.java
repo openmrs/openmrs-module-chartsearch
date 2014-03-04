@@ -33,6 +33,7 @@ public class SolrSingleton {
 	}
 	
 	private void init() {
+		log.info("Solr server first init !");
 		solrServer = SolrServerFactory.getSolrServer();
 	}
 	

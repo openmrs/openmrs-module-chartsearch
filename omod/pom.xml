@@ -29,6 +29,12 @@
 		
 		<!-- End OpenMRS modules -->
 
+		<!-- new ui module -->
+		
+		<dependency>
+		    <groupId>org.openmrs.module</groupId>
+		    <artifactId>uiframework-api</artifactId>
+		</dependency>
 
 		<!-- Begin OpenMRS core -->
 

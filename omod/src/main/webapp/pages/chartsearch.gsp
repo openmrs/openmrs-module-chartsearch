@@ -1,5 +1,10 @@
 <%
- ui.decorateWith("appui", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage")
 %>
 
-<h2>yo!</h2>
+<h2>Chart Search Page</h2>
+
+<div>Welcome</div>
+
+${ ui.includeFragment("chartsearch", "searchBox") }
+${ ui.includeFragment("chartsearch", "resultBox") }

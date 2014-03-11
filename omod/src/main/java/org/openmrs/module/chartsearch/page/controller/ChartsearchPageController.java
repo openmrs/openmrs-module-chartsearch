@@ -35,7 +35,7 @@ public class ChartsearchPageController {
             lst.add("personID is "+ patient.toString());
             SearchAPI.setResults(lst);
         }
-           chartSearchIndexer.indexPatientData(patient);
+        //   chartSearchIndexer.indexPatientData(patient);
         //log.info("indexed successfully");
     }
 

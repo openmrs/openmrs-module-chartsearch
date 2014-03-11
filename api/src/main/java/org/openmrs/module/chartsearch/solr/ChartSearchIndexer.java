@@ -40,10 +40,6 @@ public class ChartSearchIndexer {
 	}
 	
 	public void indexPatientData(Integer personId) {
-		doImport(personId);
-	}
-	
-	private void doImport(int personId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
         if(solrServer==null){
             log.error(String.format("SOLR SERVER IS NULL!"));

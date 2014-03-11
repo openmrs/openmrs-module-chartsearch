@@ -31,7 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO rename, make service
-public class ChartSearchIndexer {	
+public class ChartSearchIndexer {
+
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
 	
@@ -44,6 +45,9 @@ public class ChartSearchIndexer {
 	
 	private void doImport(int personId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+        if(solrServer==null){
+            log.error(String.format("SOLR SERVER IS NULL!"));
+        }
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
@@ -64,6 +68,9 @@ public class ChartSearchIndexer {
 	 */
 	public PatientInfo getPatientInfo(Integer patientId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+        if(solrServer==null){
+            log.error(String.format("SOLR SERVER IS NULL!"));
+        }
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
@@ -89,7 +96,11 @@ public class ChartSearchIndexer {
 	 */
 	public StatisticsInfo getStatistics() {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+
 		ModifiableSolrParams params = new ModifiableSolrParams();
+        if(solrServer==null){
+            log.error(String.format("SOLR SERVER IS NULL!"));
+        }
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
 		params.set("command", ConfigCommands.STATS);
@@ -116,6 +127,9 @@ public class ChartSearchIndexer {
 	 */
 	public Integer clearIndex(String strategy, String ids, Integer maxPatients, Integer ago) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+        if(solrServer==null){
+            log.error(String.format("SOLR SERVER IS NULL!"));
+        }
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");
@@ -153,6 +167,9 @@ public class ChartSearchIndexer {
 	 */
 	public int changeDaemonsCount(int count) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+        if(solrServer==null){
+            log.error(String.format("SOLR SERVER IS NULL!"));
+        }
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
 		params.set("qt", "/csdataimport");

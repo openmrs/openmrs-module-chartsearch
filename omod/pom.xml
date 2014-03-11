@@ -80,6 +80,12 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>appui-omod</artifactId>
+            <version>${appuiVersion}</version>
+            <scope>provided</scope>
+        </dependency>
 		<!-- End OpenMRS core -->
 
 	</dependencies>

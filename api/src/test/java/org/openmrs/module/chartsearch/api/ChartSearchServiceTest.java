@@ -13,10 +13,10 @@
  */
 package org.openmrs.module.chartsearch.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.UserContext;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**

@@ -39,10 +39,6 @@ public class ChartSearchIndexer {
 	}
 	
 	public void indexPatientData(Integer personId) {
-		doImport(personId);
-	}
-	
-	private void doImport(int personId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config

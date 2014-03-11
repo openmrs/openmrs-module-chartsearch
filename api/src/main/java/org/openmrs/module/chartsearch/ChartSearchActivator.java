@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
 
 /**
@@ -54,7 +55,9 @@ public class ChartSearchActivator extends BaseModuleActivator{
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {	
-		log.info("Chart Search Module started");		
+		log.info("Chart Search Module started");	
+		ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
+		chartSearchIndexer.getStatistics();
 	}
 	
 	/**

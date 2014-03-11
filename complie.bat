@@ -1,2 +1,2 @@
-cd C:\Users\orhe\Downloads\openmrs-module-chartsearch-master
+cd C:\Users\orhe\Documents\GitHub\ChartSearch
 mvn install -DskipTests

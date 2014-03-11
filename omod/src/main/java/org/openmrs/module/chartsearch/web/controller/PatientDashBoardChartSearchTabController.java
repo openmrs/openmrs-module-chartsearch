@@ -13,10 +13,12 @@
  */
 package org.openmrs.module.chartsearch.web.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,13 @@ public class PatientDashBoardChartSearchTabController extends PortletController 
 			Map<String, Object> model) {
 		
 		  Integer personId = (Integer) model.get("personId");
-		  chartSearchIndexer.indexPatientData(personId);
-		  
-		 
+		  chartSearchIndexer.indexPatientData(personId);	 
+	}
+	
+	private <T> T getComponent(Class<T> clazz) {
+		List<T> list = Context.getRegisteredComponents(clazz);
+		if (list == null || list.size() == 0)
+			throw new RuntimeException("Cannot find component of " + clazz);
+		return list.get(0);
 	}
 }

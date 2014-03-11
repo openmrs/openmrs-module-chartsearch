@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class  ChartSearchManageController {
-
+	
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	@RequestMapping(value = "/module/chartsearch/manage", method = RequestMethod.GET)

@@ -15,20 +15,49 @@ package org.openmrs.module.chartsearch;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.server.ConfigCommands;
+import org.openmrs.module.chartsearch.server.PatientInfo;
+import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
+import org.openmrs.module.chartsearch.solr.SolrManagement;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
  *
  */
-public class IndexerTest {
+public class IndexerTest extends BaseModuleContextSensitiveTest{
 
+	
+	ChartSearchIndexer indexer;
+	
 	/**
 	 * Test method for {@link org.openmrs.module.chartsearch.solr.ChartSearchIndexer#indexPatientData(java.lang.Integer)}.
 	 */
 	@Test
 	public void testIndexPatiendData() {
+		indexer.clearIndex("patientIds" , "28", 0, 0);
+		indexer.indexPatientData(28);
+		PatientInfo pi = indexer.getPatientInfo(28);
+		assertNotNull(pi);
+		assertEquals(pi.getPatientId().intValue(), 28);
+		System.out.println("################################" + pi.getLastIndexTime());
 
 	}
+	
+	@Before
+    public void setUp() {
+		indexer = new ChartSearchIndexer();
+    }
+ 
+    @After
+    public void tearDown() {
+        SolrManagement  management = new SolrManagement();
+        management.shutdown();
+    }
+	
 
 
 }

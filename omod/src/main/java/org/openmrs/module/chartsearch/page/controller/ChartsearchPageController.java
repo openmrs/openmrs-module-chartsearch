@@ -10,16 +10,21 @@ import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
+
+
+
 
 public class ChartsearchPageController {
 
     private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
 
-     @Autowired
-    private ChartSearchIndexer chartSearchIndexer;
+
+    //private ChartSearchIndexer chartSearchIndexer;
 
     public void controller(PageModel model, UiSessionContext sessionContext, @RequestParam("patientId") Integer patient) {
         //model.addAttribute("user", sessionContext.getCurrentUser());
@@ -35,7 +40,7 @@ public class ChartsearchPageController {
             lst.add("personID is "+ patient.toString());
             SearchAPI.setResults(lst);
         }
-        //   chartSearchIndexer.indexPatientData(patient);
+          ChartSearchIndexer.indexPatientDataStatic(patient); //added a static ,not autowired method. watch out for that.
         //log.info("indexed successfully");
     }
 

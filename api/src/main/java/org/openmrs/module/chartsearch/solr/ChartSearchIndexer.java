@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 //TODO rename, make service
-public class ChartSearchIndexer {	
+public class ChartSearchIndexer {
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
 	
@@ -54,6 +54,23 @@ public class ChartSearchIndexer {
 			log.error(String.format("Tried to import patient #%d but failed", personId), ex);
 		}
 	}
+
+    public static void indexPatientDataStatic(Integer personId) {
+        SolrServer solrServer = SolrSingleton.getInstance().getServer();
+        ModifiableSolrParams params = new ModifiableSolrParams();
+        //TODO take path from config
+        params.set("qt", "/csdataimport");
+        params.set("command", "import");
+        params.set("clean", false);
+        params.set("personId", personId);
+
+        try {
+            solrServer.query(params);
+        }
+        catch (SolrServerException ex) {
+            log.error(String.format("Tried to import patient #%d but failed", personId), ex);
+        }
+    }
 	
 	/* 
 	 * @return null if something going wrong

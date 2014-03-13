@@ -55,22 +55,7 @@ public class ChartSearchIndexer {
 		}
 	}
 
-    public static void indexPatientDataStatic(Integer personId) {
-        SolrServer solrServer = SolrSingleton.getInstance().getServer();
-        ModifiableSolrParams params = new ModifiableSolrParams();
-        //TODO take path from config
-        params.set("qt", "/csdataimport");
-        params.set("command", "import");
-        params.set("clean", false);
-        params.set("personId", personId);
 
-        try {
-            solrServer.query(params);
-        }
-        catch (SolrServerException ex) {
-            log.error(String.format("Tried to import patient #%d but failed", personId), ex);
-        }
-    }
 	
 	/* 
 	 * @return null if something going wrong

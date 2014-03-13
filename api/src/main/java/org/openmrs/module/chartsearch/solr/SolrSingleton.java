@@ -20,15 +20,15 @@ import org.slf4j.LoggerFactory;
 public class SolrSingleton {
 	
 	private static final Logger log = LoggerFactory.getLogger(SolrSingleton.class);
-	
+
 	private SolrServer solrServer;
-	
+
 	private SolrSingleton() {
-		
+
 	}
 	
 	private static class SolrEngineHolder {
-		
+
 		private static SolrSingleton INSTANCE = null;
 	}
 	
@@ -42,7 +42,7 @@ public class SolrSingleton {
 			SolrEngineHolder.INSTANCE = new SolrSingleton();
 			SolrEngineHolder.INSTANCE.init();
 		}
-		
+
 		return SolrEngineHolder.INSTANCE;
 	}
 	

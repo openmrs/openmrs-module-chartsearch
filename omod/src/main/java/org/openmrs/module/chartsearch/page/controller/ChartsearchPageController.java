@@ -6,8 +6,10 @@ package org.openmrs.module.chartsearch.page.controller;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
+import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,24 +29,19 @@ public class ChartsearchPageController {
 
 
     private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
+    private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 
     public void controller(PageModel model, UiSessionContext sessionContext, @RequestParam("patientId") Integer patient) {
         //model.addAttribute("user", sessionContext.getCurrentUser());
     	
         model.addAttribute("patientID_from_get", patient);
-        log.info("getting :" + patient);
+        log.info("getting patient ID :" + patient);
         log.info("trying to index a patient");
-        ArrayList<String> lst = new ArrayList<String>();
-        if (patient == null) {
-            lst.add("PersonID is null");
-            SearchAPI.setResults(lst);
-        }
-        else {
-            lst.add("personID is "+ patient.toString());
-            SearchAPI.setResults(lst);
-        }
+      //  ArrayList<String> lst = new ArrayList<String>();
+
         
         chartSearchIndexer.indexPatientData(patient);
+        log.info("indexed patient");
         //log.info("indexed successfully");
     }
     

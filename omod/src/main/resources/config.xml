@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module configVersion="1.2">
+
+	<!-- Module Properties -->
+	<id>${project.parent.artifactId}</id>
+	<name>${project.parent.name}</name>
+	<version>${project.parent.version}</version>
+	<package>${project.parent.groupId}.${project.parent.artifactId}
+	</package>
+	<author>Zhaslan Doschanov</author>
+	<description>
+		${project.parent.description}
+	</description>
+	<updateURL>https://modules.openmrs.org/modules/download/${project.parent.artifactId}/update.rdf
+	</updateURL>
+	<require_version>${openMRSVersion}</require_version>
+	<!-- / Module Properties -->
+
+	
+	<require_modules>
+	    <require_module>
+	        org.openmrs.module.uiframework
+	    </require_module>
+
+        <require_module version="${uicommonsVersion}">
+                    org.openmrs.module.uicommons
+                </require_module>
+
+                <require_module version="${appuiVersion}">
+                    org.openmrs.module.appui
+                </require_module>
+
+                <require_module version="${appframeworkVersion}">
+                    org.openmrs.module.appframework
+               </require_module>
+
+            </require_modules>
+
+
+
+	<!-- Module Activator -->
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.ChartSearchActivator
+	</activator>
+
+	<dwr>
+		<allow>
+			<convert converter="bean"
+				match="${project.parent.groupId}.${project.parent.artifactId}.ChartListItem" />
+			<convert converter="bean"
+				match="${project.parent.groupId}.${project.parent.artifactId}.server.PatientInfo" />
+			<convert converter="bean"
+				match="${project.parent.groupId}.${project.parent.artifactId}.server.StatisticsInfo" />
+			<create creator="new" javascript="DWRChartSearchService">
+				<param name="class"
+					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRChartSearchService" />
+				<include method="findObsAndCount" />
+				<include method="getDetails" />
+			</create>
+			<create creator="new" javascript="DWRCommands">
+				<param name="class"
+					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRCommands" />
+				<include method="getPatientInfo" />
+				<include method="getStatistics" />
+				<include method="clearIndex" />
+				<include method="changeDaemonsCount" />
+			</create>
+		</allow>
+	</dwr>
+
+
+	<!-- Adds link to admin page -->
+	<extension>
+		<point>org.openmrs.admin.list</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.AdminList
+		</class>
+	</extension>
+
+	<extension>
+		<point>org.openmrs.patientDashboardTab</point>
+		<class>${project.parent.groupId}.${project.parent.artifactId}.extension.html.PatientDashboardChartSearchTab
+		</class>
+	</extension>
+
+	<!-- Required Global Properties -->
+	<globalProperty>
+		<property>${project.parent.artifactId}.useDedicatedSolrServer
+		</property>
+		<defaultValue>false</defaultValue>
+		<description>Use dedicated SOLR server instead of embedded SOLR (true,
+			false).
+			You will need to specify SOLR url. Requires module restart.
+		</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.httpSolrUrl</property>
+		<defaultValue>http://localhost</defaultValue>
+		<description>Url to HTTP SOLR. Uses only if 'Use Dedicated SOLR set to
+			true'
+		</description>
+	</globalProperty>
+	<privilege>
+		<name>Run Chart Search commands</name>
+		<description>Ability to run Solr commands</description>
+	</privilege>
+	<privilege>
+		<name>
+			Patient Dashboard - View Chart Search Section
+		</name>
+		<description>Ability view Chart Search Section in Patient Dashboard</description>
+	</privilege>
+
+
+
+	<!-- Maps hibernate file's, if present -->
+	<mappingFiles>
+
+		ChartSearch.hbm.xml
+
+	</mappingFiles>
+
+	<!-- Internationalization -->
+	<!-- All message codes should start with ${project.parent.artifactId}. -->
+	<messages>
+		<lang>en</lang>
+		<file>messages.properties</file>
+	</messages>
+	<messages>
+		<lang>fr</lang>
+		<file>messages_fr.properties</file>
+	</messages>
+	<messages>
+		<lang>es</lang>
+		<file>messages_es.properties</file>
+	</messages>
+	<!-- /Internationalization -->
+
+</module>
+

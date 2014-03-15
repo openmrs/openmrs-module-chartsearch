@@ -44,7 +44,7 @@ public class ChartsearchPageController {
             SearchAPI.setResults(lst);
         }
         
-        chartSearchIndexer.indexPatientData(patient); 
+        chartSearchIndexer.indexPatientData(patient);
         //log.info("indexed successfully");
     }
     

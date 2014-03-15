@@ -78,6 +78,8 @@ public class DWRChartSearchService {
 		return resultsMap;
 	}
 
+
+
 	public List<Object> findBatchOfObs(Integer patientId, String phrase,
 			boolean includeRetired, List<String> includeClassNames,
 			List<String> excludeClassNames, List<String> includeDatatypeNames,

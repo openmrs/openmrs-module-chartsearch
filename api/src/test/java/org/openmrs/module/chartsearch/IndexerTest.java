@@ -27,6 +27,7 @@ import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
+import org.openmrs.module.chartsearch.solr.SolrSearch;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -35,26 +36,23 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 public class IndexerTest extends BaseModuleContextSensitiveTest{
 
 	
-	ChartSearchIndexer indexer;
-
-	ChartSearchSearcher searcher;
+	SolrSearch solr;
 	
 	/**
 	 * Test method for {@link org.openmrs.module.chartsearch.solr.ChartSearchIndexer#indexPatientData(java.lang.Integer)}.
 	 */
 	@Test
 	public void testIndexPatiendData() {
-	/*
-		int patientID = 28;
-		indexer.clearIndex(IndexClearStrategies.IDS.toString() , patientID+"", 0, 0);
-		indexer.indexPatientData(patientID);
+	
+		int patientID = 14;
+		solr.indexPatientData(patientID);
 
-		PatientInfo pi = indexer.getPatientInfo(patientID);
-		//assertNotNull(pi);
-		//assertEquals(pi.getPatientId().intValue(), patientID);
+		PatientInfo pi = solr.getPatientInfo(patientID);
+		assertNotNull(pi);
+		assertEquals(pi.getPatientId().intValue(), patientID);
 		List<ChartListItem> a;
 		try {
-			a = searcher.getDocumentList(patientID, "120.0", 0, 10);
+			a = solr.search(patientID, "120.0", 0, 10);
 			if(!a.isEmpty()){
 				System.out.println(a.get(0).getValue());
 			}
@@ -63,15 +61,12 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		*/
+				
 	}
 	
 	@Before
     public void setUp() {
-		indexer = new ChartSearchIndexer();
-		
-		searcher = new ChartSearchSearcher();
+		solr = new SolrSearch();
     }
  
     @After

@@ -55,7 +55,8 @@ public class ChartSearchActivator extends BaseModuleActivator{
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {	
-		log.info("Chart Search Module started");	
+		log.info("Chart Search Module started");
+		
 		ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
 		chartSearchIndexer.getStatistics();
 	}

@@ -13,11 +13,13 @@ public class ResultBoxFragmentController {
 	public void controller(FragmentModel fragmentModel) {
         SearchAPI searchAPI =SearchAPI.getInstance();
        ArrayList<String> resultList = new ArrayList<String>();
+
        /* for(ChartListItem item : searchAPI.getResults()){
             resultList.add("Date: " + item.getObsDate()+ " concept Name : " + item.getConceptName()+" Value: "+ item.getValue()+
                     " Uuid: "+ item.getUuid()+ " Highlights "+ item.getHighlights() + " Obs ID: " + item.getObsId());
         }*/
         resultList.add(GeneratingJson.generateJson());
+        searchAPI.clearResults();
 		fragmentModel.addAttribute("resultList",   resultList);
 	}
 	

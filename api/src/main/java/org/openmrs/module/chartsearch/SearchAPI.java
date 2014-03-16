@@ -1,6 +1,5 @@
 package org.openmrs.module.chartsearch;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SearchAPI {
@@ -55,6 +54,10 @@ public class SearchAPI {
 	public void setResults(List<ChartListItem> results) {
 		SearchAPI.resultList = results;
 	}
+
+    public void clearResults() {
+        SearchAPI.resultList.clear();
+    }
 
 
 

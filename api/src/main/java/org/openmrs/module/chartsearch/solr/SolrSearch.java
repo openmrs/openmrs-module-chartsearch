@@ -3,6 +3,7 @@ package org.openmrs.module.chartsearch.solr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
@@ -17,6 +18,10 @@ public class SolrSearch {
 	public SolrSearch() {
 		indexer  = new ChartSearchIndexer();
 		searcher = new ChartSearchSearcher();
+	}
+	
+	public void initiateServer(){
+		SolrSingleton.getInstance().getServer();
 	}
 	
 	public void indexPatientData(Integer personId) {

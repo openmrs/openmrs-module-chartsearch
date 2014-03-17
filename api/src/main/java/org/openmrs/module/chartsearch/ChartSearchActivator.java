@@ -22,6 +22,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
+import org.openmrs.module.chartsearch.solr.SolrSearch;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped. * 
@@ -57,8 +58,8 @@ public class ChartSearchActivator extends BaseModuleActivator{
 	public void started() {	
 		log.info("Chart Search Module started");
 		
-		ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
-		chartSearchIndexer.getStatistics();
+		ChartSearchIndexer indexer = getComponent(ChartSearchIndexer.class);
+		indexer.getStatistics();
 	}
 	
 	/**

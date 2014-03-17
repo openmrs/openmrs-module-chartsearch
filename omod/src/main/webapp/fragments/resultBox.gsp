@@ -1,7 +1,7 @@
 <div>
     <ul>
 
-        <% prevLocations.each{ %>
+        <% resultList.each{ %>
         <li>${ it }</li>
         <% } %>
 

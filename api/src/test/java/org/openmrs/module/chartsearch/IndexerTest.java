@@ -45,16 +45,16 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 	public void testIndexPatiendData() {
 	
 		int patientID = 14;
+		solr.initiateServer();
 		solr.indexPatientData(patientID);
 
 		PatientInfo pi = solr.getPatientInfo(patientID);
 		assertNotNull(pi);
 		assertEquals(pi.getPatientId().intValue(), patientID);
-		List<ChartListItem> a;
 		try {
-			a = solr.search(patientID, "120.0", 0, 10);
-			if(!a.isEmpty()){
-				System.out.println(a.get(0).getValue());
+			List<ChartListItem> obs = solr.search(patientID, "blood", 0, 10);
+			for (ChartListItem item : obs) {
+				System.out.println(item.getConceptName());
 			}
 			
 		} catch (Exception e) {

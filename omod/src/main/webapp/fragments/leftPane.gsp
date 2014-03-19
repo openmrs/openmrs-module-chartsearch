@@ -1,7 +1,7 @@
 <% ui.includeJavascript("chartsearch", "jQAllRangeSliders-min.js") %>
 <% ui.includeCss("chartsearch", "iThing.css") %>
 
-<div class="container">
+
 <div class="left_side_form_panel">
 <div class="form_header">Search Box</div>
 
@@ -372,7 +372,6 @@
     </div>
 </div>
 <!-- end providers -->
-</div>
 </div>
 
 <script>

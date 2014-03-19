@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.junit.After;
 import org.junit.Before;
@@ -43,11 +44,12 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 	 */
 	@Test
 	public void testIndexPatiendData() {
-	
+
 		int patientID = 14;
 		solr.initiateServer();
 		solr.indexPatientData(patientID);
-
+		solr.search(patientID, "111", 0, 10);
+		
 		PatientInfo pi = solr.getPatientInfo(patientID);
 		assertNotNull(pi);
 		assertEquals(pi.getPatientId().intValue(), patientID);

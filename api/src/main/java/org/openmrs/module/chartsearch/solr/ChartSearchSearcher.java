@@ -45,6 +45,10 @@ public class ChartSearchSearcher {
 			throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
+		if (StringUtils.isNumeric(searchText)){
+			searchText = searchText + ".*" + " || " + searchText;
+		}
+		
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
@@ -58,6 +62,9 @@ public class ChartSearchSearcher {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
+		if (StringUtils.isNumeric(searchText)){
+			searchText = searchText + ".*" + " || " + searchText;
+		}
 		
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		

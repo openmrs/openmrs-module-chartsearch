@@ -12,12 +12,11 @@ import org.openmrs.module.chartsearch.server.StatisticsInfo;
 
 public class SolrSearch {
 	
-	private ChartSearchIndexer indexer;
-	private ChartSearchSearcher searcher;
+	private ChartSearchIndexer indexer = getComponent(ChartSearchIndexer.class);
+	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 	
 	public SolrSearch() {
-		indexer  = new ChartSearchIndexer();
-		searcher = new ChartSearchSearcher();
+
 	}
 	
 	public void initiateServer(){

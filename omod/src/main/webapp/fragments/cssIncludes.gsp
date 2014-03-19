@@ -1,8 +1,36 @@
 <style type="text/css">
+.search_container
+{
+    width: 100%;
+}
+.resultBox_container
+{
+    border-right: 1px solid black;
+    width: 30%;
+    float: left;
+}
+.result_conainer
+{
+    background: #ebf1f6; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ebf1f6 0%, #abd3ee 50%, #89c3eb 51%, #d5ebfb 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebf1f6), color-stop(50%,#abd3ee), color-stop(51%,#89c3eb), color-stop(100%,#d5ebfb)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebf1f6', endColorstr='#d5ebfb',GradientType=0 ); /* IE6-9 */
+    margin-bottom: 2px;
+    height: 50px;
+}
+.result_body
+{
+    font-weight: bold;
+}
 .left_side_form_panel
 {
     border-right: 1px solid black;
     width: 30%;
+    float: left;
 }
 .form_button
 {

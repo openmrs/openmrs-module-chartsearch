@@ -7,3 +7,9 @@
        </form>
    </fieldset>
 </div>
+
+<ul>
+    <% resultList.each{ %>
+    <li>${ it }</li>
+    <% } %>
+</ul>

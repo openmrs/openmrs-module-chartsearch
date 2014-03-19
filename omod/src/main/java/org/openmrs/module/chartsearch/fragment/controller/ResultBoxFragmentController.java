@@ -3,7 +3,7 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 
 import org.openmrs.module.chartsearch.SearchAPI;
-import org.openmrs.module.chartsearch.solr.GeneratingJson;
+import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;

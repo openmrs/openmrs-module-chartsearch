@@ -1,9 +1,7 @@
-package org.openmrs.module.chartsearch.solr;
+package org.openmrs.module.chartsearch;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.openmrs.module.chartsearch.ChartListItem;
-import org.openmrs.module.chartsearch.SearchAPI;
 
 /**
  * Created by Eli on 16/03/14.
@@ -21,9 +19,9 @@ public class GeneratingJson {
         for(ChartListItem item : searchAPI.getResults()){
             observation = new JSONObject();
             observation.put("date",item.getObsDate());
-            //observation.put("concept_name",item.getConceptName());
-            observation.put("concept_name","Temp concept name");
+            observation.put("concept_name",item.getConceptName());
             observation.put("value",item.getValue());
+            observation.put("location", item.getLocation());
             //json.put("observation", observation);
             //observation.put("locations",item.());   TODO
             arr_of_obs.add(observation);

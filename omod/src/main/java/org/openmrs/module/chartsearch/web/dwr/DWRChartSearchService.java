@@ -13,12 +13,6 @@
  */
 package org.openmrs.module.chartsearch.web.dwr;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
@@ -27,6 +21,8 @@ import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.dwr.ObsListItem;
+
+import java.util.*;
 
 public class DWRChartSearchService {
 
@@ -138,6 +134,20 @@ public class DWRChartSearchService {
 				+ obs.getLocation();
 		return result;
 	}
+
+    public static ChartListItem getObservationDetails(Integer id) {
+        ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
+                Context.getLocale());
+
+        // TODO create renderer
+        ChartListItem item = new ChartListItem();
+        item.setConceptName(obs.getConceptName());
+        item.setLocation(obs.getLocation());
+        item.setValue(obs.getValue());
+        item.setObsDate(obs.getObsDate());
+         
+        return item;
+    }
 
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);

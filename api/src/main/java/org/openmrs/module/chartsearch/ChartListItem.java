@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.chartsearch;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChartListItem {
 	
@@ -42,6 +42,8 @@ public class ChartListItem {
 	private String obsDate = "";
 	
 	private String value = "";
+
+    private String location ="";
 	
 	public ChartListItem() {
 	}	
@@ -94,6 +96,10 @@ public class ChartListItem {
 		this.highlights = highlights;
 	}
 	
-	
+	public void setLocation(String location){
+        this.location = location;
+    }
+
+    public String getLocation(){return location;}
 	
 }

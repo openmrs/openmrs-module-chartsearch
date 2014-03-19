@@ -28,26 +28,21 @@ public class LeftPaneFragmentController
     /*
     *   //TODO - Eli please fill it
     *   Function post
-    *   @param model -
-    *   @param searchPhrase with @BindParams
-    *   patient
-    *   @return ?
+    *   @param model -the model of the page
+    *   @param searchPhrase is the phrase we want to search
+    *   @param patient - requests the patient's id
+    *   @return redirection to the same page with the same patient's id.
      */
     public String post(PageModel model, @BindParams SearchPhrase searchPhrase ,@RequestParam("patientId") Integer patient)
     {
         SearchAPI searchAPI =SearchAPI.getInstance();
-        model.addAttribute("patientID_from_get", patient);
-        // TODO - fix comments formatting ELI
-        //SearchAPI.setSearchPhrase(searchPhrase);
-        //SearchAPI.search();
-        //List<String> temp = new ArrayList<String>();
-        //temp.add(searchPhrase.getPhrase());
-        Integer length = Integer.valueOf(999999999);
-        Integer start = Integer.valueOf(0);
+        model.addAttribute("patientID_from_get", patient); //get patient
+        Integer length = Integer.valueOf(999999999); //amount of obs we want - all of them
+        Integer start = Integer.valueOf(0);//starting from first obs.
         List<ChartListItem> items = new ArrayList<ChartListItem>();
         try
         {
-            items = searcher.getDocumentList(patient, searchPhrase.getPhrase(), start, length);
+            items = searcher.getDocumentList(patient, searchPhrase.getPhrase(), start, length); //searching for the phrase.
         }
         catch (Exception e)
         {
@@ -61,12 +56,12 @@ public class LeftPaneFragmentController
             items.add(itemsIsNull);
         }
         List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
-        for(ChartListItem observation : items)
+        for(ChartListItem observation : items) //loop to get full details about observations.
         {
             ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(observation.getObsId());
             updatedItems.add(updatedObservation);
         }
-        searchAPI.setResults(updatedItems);
+        searchAPI.setResults(updatedItems); //setting results to show.
         return "redirect:chartsearch/chartsearch.page?patientId=" + patient;
     }
 

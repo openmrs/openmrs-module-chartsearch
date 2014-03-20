@@ -5,13 +5,13 @@
                user="openmrs"/>
 	  <document>
             <entity name="obs"
-              query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+              query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn.name as concept_name,   
 			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
 			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
 			  FROM openmrs.obs o 
 			  inner join concept_name cn on cn.concept_id = o.concept_id
 			  WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn.voided=0"              
-			  deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
+			  deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn.name as concept_name,   
 			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
 			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
 			  FROM openmrs.obs o 

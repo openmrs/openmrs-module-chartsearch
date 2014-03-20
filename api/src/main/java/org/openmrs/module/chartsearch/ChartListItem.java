@@ -25,7 +25,16 @@ public class ChartListItem {
 	
 	private Integer obsId;
 	
+	private Integer obsGroupId;
+	
 	private String uuid;
+	
+	private ArrayList<String> highlights = new ArrayList<String>();
+
+	private String conceptName = "";
+		
+	private String obsDate = "";
+	
 	
 	public String getUuid() {
 		return uuid;
@@ -34,13 +43,7 @@ public class ChartListItem {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
-	
-	private ArrayList<String> highlights = new ArrayList<String>();
 
-	private String conceptName = "";
-		
-	private String obsDate = "";
-	
 	private String value = "";
 	
 	public ChartListItem() {
@@ -92,6 +95,14 @@ public class ChartListItem {
 
 	public void setHighlights(ArrayList<String> highlights) {
 		this.highlights = highlights;
+	}
+
+	public Integer getObsGroupId() {
+		return obsGroupId;
+	}
+
+	public void setObsGroupId(Integer obsGroupId) {
+		this.obsGroupId = obsGroupId;
 	}
 	
 	

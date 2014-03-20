@@ -24,7 +24,7 @@ public class SolrSearch {
 	}
 	
 	public void indexPatientData(Integer personId) {
-		indexer.clearIndex(IndexClearStrategies.IDS.toString(), personId+"", 0, 0);
+		//indexer.clearIndex(IndexClearStrategies.IDS.toString(), personId+"", 0, 0);
 		indexer.indexPatientData(personId);
 	}
 	

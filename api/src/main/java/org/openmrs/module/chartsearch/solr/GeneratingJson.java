@@ -21,8 +21,8 @@ public class GeneratingJson {
         for(ChartListItem item : searchAPI.getResults()){
             observation = new JSONObject();
             observation.put("date",item.getObsDate());
-            //observation.put("concept_name",item.getConceptName());
-            observation.put("concept_name","Temp concept name");
+            observation.put("obsGroupId",item.getObsGroupId());
+            observation.put("concept_name",item.getConceptName());
             observation.put("value",item.getValue());
             //json.put("observation", observation);
             //observation.put("locations",item.());   TODO

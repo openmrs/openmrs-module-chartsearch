@@ -17,7 +17,7 @@ public class GeneratingJson {
             obs = new JSONObject();
 
             obs.put("date",item.getObsDate());
-            obs.put("concept name", item.getConceptName());
+            obs.put("concept_name", item.getConceptName());
             obs.put("value", item.getValue());
             obs.put("location", item.getLocation());
             //TODO add locations, add not only observations. 

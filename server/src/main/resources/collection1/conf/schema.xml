@@ -885,7 +885,7 @@
 		<field name="person_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="concept_name" type="string" indexed="true"
-			stored="false" required="false" />
+			stored="true" required="false" />
 		<field name="obs_datetime" type="date" indexed="true" stored="true"
 			required="false" />
 		<field name="value_group_id" type="text_general" indexed="true" stored="false"
@@ -899,6 +899,8 @@
 		<field name="value_drug" type="text_general" indexed="true" stored="false"
 			required="false" />
 		<field name="value_datetime" type="text_general" indexed="true" stored="false"
+			required="false" />
+		<field name="obs_group_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="value_numeric" type="text_general" indexed="true" stored="false"
 			required="false" />
@@ -915,6 +917,7 @@
 			via copyField further on in this schema -->
 		<field name="value" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
+			
 
 		<!-- catchall text field that indexes tokens both normally and in reverse 
 			for efficient leading wildcard queries. -->
@@ -961,7 +964,7 @@
 	<copyField source="value_modifier" dest="value" />
 	<copyField source="value_complex" dest="value" />
 	<copyField source="concept_name" dest="value" />
-
+	
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 
 		the dynamic field syntax. copyField also supports a maxChars to copy setting. -->

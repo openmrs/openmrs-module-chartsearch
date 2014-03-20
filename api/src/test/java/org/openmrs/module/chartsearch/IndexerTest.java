@@ -48,7 +48,6 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 		int patientID = 14;
 		solr.initiateServer();
 		solr.indexPatientData(patientID);
-		solr.search(patientID, "111", 0, 10);
 		
 		PatientInfo pi = solr.getPatientInfo(patientID);
 		assertNotNull(pi);
@@ -74,7 +73,7 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
     @After
     public void tearDown() {
         SolrManagement  management = new SolrManagement();
-        management.shutdown();
+       // management.shutdown();
     }
 	
 

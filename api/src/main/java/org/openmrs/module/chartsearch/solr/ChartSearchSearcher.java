@@ -21,11 +21,13 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.lucene.search.FilteredQuery;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.hibernate.engine.query.FilterQueryPlan;
 import org.openmrs.module.chartsearch.ChartListItem;
 
 /**
@@ -67,7 +69,6 @@ public class ChartSearchSearcher {
 		}
 		
 		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
-		
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
@@ -85,14 +86,17 @@ public class ChartSearchSearcher {
 			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
+			Integer obsGroupId = (Integer) document.get("obs_group_id");
 			String value = ((List<String>) document.get("value")).get(0);
 			String conceptName = (String) document.get("concept_name");
+
 
 			ChartListItem item = new ChartListItem();
 			item.setUuid(uuid);
 			item.setObsId(obsId);
 			item.setConceptName(conceptName);
 			item.setObsDate(obsDate.toString());
+			item.setObsGroupId(obsGroupId);
 			item.setValue(value);
 
 			if (response.getHighlighting().get(uuid) != null) {

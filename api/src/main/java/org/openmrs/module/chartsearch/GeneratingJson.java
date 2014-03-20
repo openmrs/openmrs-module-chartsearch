@@ -9,51 +9,20 @@ import net.sf.json.JSONObject;
 
 public class GeneratingJson {
     public static String generateJson(){
-        JSONObject json = new JSONObject();
         SearchAPI searchAPI =SearchAPI.getInstance();
-        //switchCase - obs
-
-        JSONObject observation;
-        //JSONObject observations = new JSONObject();
+        JSONObject jsonToReturn = new JSONObject();  //returning this object
         JSONArray arr_of_obs = new JSONArray();
-        for(ChartListItem item : searchAPI.getResults()){
-            observation = new JSONObject();
-            observation.put("date",item.getObsDate());
-            observation.put("concept_name",item.getConceptName());
-            observation.put("value",item.getValue());
-            observation.put("location", item.getLocation());
-            //json.put("observation", observation);
-            //observation.put("locations",item.());   TODO
-            arr_of_obs.add(observation);
+        for(ChartListItem item : searchAPI.getResults()){ //foreach item from the search we populate the json
+            arr_of_obs.add(item.getObsDate());
+            arr_of_obs.add(item.getConceptName());
+            arr_of_obs.add(item.getValue());
+            arr_of_obs.add(item.getLocation());
+            //TODO add locations, add not only observations.
+            jsonToReturn.put("observations", arr_of_obs); //add the array to the json
+
         }
-        return arr_of_obs.toString();
+
+        return jsonToReturn.toString();
     }
 
-
-   /* public static void main(String[] args) throws Exception {
-observations = [{
-"date":"14.14.14",
-"concept_name":"name",
-"value":"val",
-"locations":"locasdmkad",
-},...]
-
-        JSONObject json = new JSONObject();
-
-        // Put a simple element
-        json.put( "aircraft", "A320");
-
-        // Add a JSON Object
-        JSONObject pilot = new JSONObject();
-        pilot.put( "firstName", "John");
-        pilot.put( "lastName", "Adams");
-        json.put( "pilot", pilot);
-
-        // Accumulate values in an array
-        json.accumulate("passenger", "George Washington");
-        json.accumulate("passenger", "Thomas Jefferson");
-
-        // Passing a number to toString() adds indentation
-        System.out.println( "JSON: " + json.toString(2) );
-    }*/
 }

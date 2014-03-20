@@ -3,7 +3,7 @@
 </div>
 
 <script>
-    var resultJSON = <% resultList.each{ %> ${ it } <% } %>;
+    var resultJSON ='<% resultList.each{ %> ${ it } <% } %>';
     var jsonAfterParse = JSON.parse(resultJSON);
     var resultText = viewsFactory.result_row({
         head: "direct_contact_wrap",

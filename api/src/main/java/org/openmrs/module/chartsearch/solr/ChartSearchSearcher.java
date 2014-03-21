@@ -87,7 +87,12 @@ public class ChartSearchSearcher {
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
 			Integer obsGroupId = (Integer) document.get("obs_group_id");
-			String value = ((List<String>) document.get("value")).get(0);
+			List<String> values = ((List<String>) document.get("value"));
+			String value;
+			if (values != null)
+				value = values.get(0);
+			else
+				value = "";
 			String conceptName = (String) document.get("concept_name");
 
 

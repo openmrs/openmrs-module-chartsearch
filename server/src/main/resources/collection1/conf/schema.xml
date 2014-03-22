@@ -907,6 +907,8 @@
 			via copyField further on in this schema -->
 		<field name="value" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
+		<field name="text" type="text_general" indexed="true" stored="true" 
+			multiValued="true"/>
 
 			
 
@@ -949,7 +951,13 @@
 	<copyField source="value_datetime" 	dest="value" />
 	<copyField source="value_numeric" 	dest="value" />
 	<copyField source="value_text" 		dest="value" />
-	<copyField source="concept_name" 	dest="value" />
+	
+	<copyField source="value_boolean" 	dest="text" />
+	<copyField source="coded" 			dest="text" />
+	<copyField source="value_datetime" 	dest="text" />
+	<copyField source="value_numeric" 	dest="text" />
+	<copyField source="value_text" 		dest="text" />
+	<copyField source="concept_name" 	dest="text" />
 	
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

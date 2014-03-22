@@ -23,18 +23,15 @@ public class ChartListItem {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	private Integer obsId;
-	
-	private Integer obsGroupId;
-	
 	private String uuid;
-	
+	private Integer obsId;
+	private Integer obsGroupId;
+	private String obsDate = "";
+	private String conceptName = "";
+	private String value = "";
 	private ArrayList<String> highlights = new ArrayList<String>();
 
-	private String conceptName = "";
-		
-	private String obsDate = "";
-	
+
 	
 	public String getUuid() {
 		return uuid;
@@ -44,8 +41,6 @@ public class ChartListItem {
 		this.uuid = uuid;
 	}
 
-	private String value = "";
-	
 	public ChartListItem() {
 	}	
 	

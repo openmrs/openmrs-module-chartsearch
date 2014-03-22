@@ -51,7 +51,7 @@ public class ChartSearchSearcher {
 			searchText = searchText + ".*" + " || " + searchText;
 		}
 		
-		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
 							// get the count very quickly.
@@ -68,12 +68,12 @@ public class ChartSearchSearcher {
 			searchText = searchText + ".*" + " || " + searchText;
 		}
 		
-		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
-		query.setParam("hl.fl", "concept_name, value");
+		query.setParam("hl.fl", "text");
 		
 		
 		QueryResponse response = solrServer.query(query);
@@ -88,13 +88,17 @@ public class ChartSearchSearcher {
 			Date obsDate = (Date) document.get("obs_datetime");
 			Integer obsGroupId = (Integer) document.get("obs_group_id");
 			List<String> values = ((List<String>) document.get("value"));
+				
 			String value;
-			if (values != null)
+			if (values != null){
 				value = values.get(0);
+				for (String v : values) {
+					//System.out.println("value: " + v);
+				}
+			}
 			else
 				value = "";
 			String conceptName = (String) document.get("concept_name");
-
 
 			ChartListItem item = new ChartListItem();
 			item.setUuid(uuid);
@@ -106,7 +110,7 @@ public class ChartSearchSearcher {
 
 			if (response.getHighlighting().get(uuid) != null) {
 				List<String> highlights = response.getHighlighting().get(uuid)
-						.get("value");
+						.get("text");
 				if (highlights != null && !highlights.isEmpty()) {
 					item.setHighlights(new ArrayList<String>(highlights));
 				}

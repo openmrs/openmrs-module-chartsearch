@@ -8,15 +8,15 @@
               query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
 			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text
 			  FROM openmrs.obs o 
-			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en') as cn1 on cn1.concept_id = o.concept_id 
-			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en') as cn2 on cn2.concept_id = o.value_coded 
+			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1 on cn1.concept_id = o.concept_id 
+			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded 
 			  WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn1.voided=0"  
 			    
 			  deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
 			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text
 			  FROM openmrs.obs o 
-			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en') as cn1  on cn1.concept_id = o.concept_id 
-			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en') as cn2 on cn2.concept_id = o.value_coded 
+			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1  on cn1.concept_id = o.concept_id 
+			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded 
 			  FROM openmrs.obs  WHERE uuid='${dih.delta.id}' AND o.voided=0 AND cn1.voided=0
 			  inner join concept_name cn1 on cn1.concept_id = o.concept_id"
 			            		  

@@ -64,11 +64,7 @@ public class ChartSearchSearcher {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		if (StringUtils.isNumeric(searchText)){
-			searchText = searchText + ".*" + " || " + searchText;
-		}
-		
-		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
+		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);

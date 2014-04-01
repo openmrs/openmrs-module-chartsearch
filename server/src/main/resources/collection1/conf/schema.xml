@@ -901,7 +901,17 @@
 		<field name="value_text" type="text_general" indexed="true"
 			stored="false" required="false" />
 
-
+		 <field name="form_uuid" type="string" indexed="true" stored="true"
+			required="false" />
+		<field name="form_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="form_name" type="text_general" indexed="true" stored="true"
+			required="false" />
+		<field name="encounter_type_name" type="text_general" indexed="true" stored="true"
+			required="false" />	
+		<field name="date_created" type="date" indexed="true" stored="true"
+			required="false" />
+			
 		<field name="_version_" type="long" indexed="true" stored="true" />
 		<!-- catchall field, containing all other searchable text fields (implemented 
 			via copyField further on in this schema -->

@@ -21,7 +21,7 @@ import java.util.List;
 
 public class ChartListItem {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Log log = LogFactory.getLog(getClass());
 	
 	private String uuid;
 	private Integer obsId;

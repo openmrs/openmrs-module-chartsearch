@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class IndexSizeManager {
 	
-	public static Logger log = LoggerFactory.getLogger(IndexSizeManager.class);
+	private static Logger log = LoggerFactory.getLogger(IndexSizeManager.class);
 	
 	private final UpdateHandler handler;
 	

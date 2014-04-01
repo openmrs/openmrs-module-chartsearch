@@ -74,6 +74,7 @@ public class ChartSearchSearcher {
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
 		query.setParam("hl.fl", "text");
+
 		
 		
 		QueryResponse response = solrServer.query(query);
@@ -92,9 +93,6 @@ public class ChartSearchSearcher {
 			String value;
 			if (values != null){
 				value = values.get(0);
-				for (String v : values) {
-					//System.out.println("value: " + v);
-				}
 			}
 			else
 				value = "";

@@ -21,7 +21,7 @@ import org.apache.commons.logging.LogFactory;
 
 public class ChartListItem {
 	
-	protected final Log log = LogFactory.getLog(getClass());
+	private final Log log = LogFactory.getLog(getClass());
 	
 	private String uuid;
 	private Integer obsId;

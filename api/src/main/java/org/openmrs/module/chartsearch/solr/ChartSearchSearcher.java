@@ -21,13 +21,10 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.lucene.search.FilteredQuery;
-import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import org.hibernate.engine.query.FilterQueryPlan;
 import org.openmrs.module.chartsearch.ChartListItem;
 
 /**
@@ -52,7 +49,7 @@ public class ChartSearchSearcher {
 		}
 		
 		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
-		query.addFilterQuery(String.format("person_id:%d", patientId));
+		//query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
 							// get the count very quickly.
 		QueryResponse response = solrServer.query(query);
@@ -62,14 +59,14 @@ public class ChartSearchSearcher {
 	public List<ChartListItem> getDocumentList(Integer patientId,
 			String searchText, Integer start, Integer length) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
-		
+		// TODO Move to Eli's code
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
 		if (StringUtils.isNumeric(searchText)){
 			searchText = searchText + ".*" + " || " + searchText;
 		}
 		
 		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
-		query.addFilterQuery(String.format("person_id:%d", patientId));
+		//query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
@@ -84,18 +81,20 @@ public class ChartSearchSearcher {
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
+			if(document.get("form_id") !=null){
+				log.info("###################################");
+				log.info(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+				continue;
+			}
 			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
 			Integer obsGroupId = (Integer) document.get("obs_group_id");
 			List<String> values = ((List<String>) document.get("value"));
 				
-			String value;
-			if (values != null){
-				value = values.get(0);
-			}
-			else
-				value = "";
+			String value = "";
+			if (values != null){ value = values.get(0); }
+
 			String conceptName = (String) document.get("concept_name");
 
 			ChartListItem item = new ChartListItem();

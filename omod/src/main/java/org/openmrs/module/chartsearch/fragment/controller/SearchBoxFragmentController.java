@@ -12,7 +12,6 @@ import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
-import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;

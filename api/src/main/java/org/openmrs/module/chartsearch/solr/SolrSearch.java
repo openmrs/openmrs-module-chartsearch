@@ -3,8 +3,6 @@ package org.openmrs.module.chartsearch.solr;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.server.PatientInfo;

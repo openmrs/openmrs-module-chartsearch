@@ -901,8 +901,6 @@
 		<field name="value_text" type="text_general" indexed="true"
 			stored="false" required="false" />
 
-		 <field name="form_uuid" type="string" indexed="true" stored="true"
-			required="false" />
 		<field name="form_id" type="int" indexed="true" stored="true"
 			required="false" />
 		<field name="form_name" type="text_general" indexed="true" stored="true"
@@ -968,6 +966,9 @@
 	<copyField source="value_numeric" 	dest="text" />
 	<copyField source="value_text" 		dest="text" />
 	<copyField source="concept_name" 	dest="text" />
+	
+	<copyField source="encounter_type_name" 		dest="text" />
+	<copyField source="form_name" 	dest="text" />
 	
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

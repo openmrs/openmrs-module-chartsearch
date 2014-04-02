@@ -13,24 +13,15 @@
  */
 package org.openmrs.module.chartsearch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-<<<<<<< HEAD
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
-=======
->>>>>>> merge from solr search
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
-import org.openmrs.module.chartsearch.solr.SolrSearch;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**

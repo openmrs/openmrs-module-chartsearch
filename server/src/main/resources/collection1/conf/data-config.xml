@@ -31,24 +31,24 @@
 				>
 			</entity> 
  		  <entity name="forms"
-              query="SELECT f.uuid as form_uuid, form_id, f.name as form_name, date_created, et.name as encounter_type_name
+              query="SELECT f.uuid as id, form_id, f.name as form_name, f.date_created, et.name as encounter_type_name
 				FROM openmrs.form f 
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type 
 				WHERE f.retired = 0" 
-			    
-			  deltaImportQuery="SELECT f.uuid as form_uuid, form_id, f.name as form_name, date_created, et.name as encounter_type_name
+
+			  deltaImportQuery="SELECT f.uuid as id, form_id, f.name as form_name, f.date_created, et.name as encounter_type_name
 				FROM openmrs.form f 
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				WHERE f.uuid='${dih.delta.id}' AND f.retired = 0"
 				
-				deltaQuery="select f.uuid as form_uuid from openmrs.form f
+				deltaQuery="select f.uuid as id from openmrs.form f
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				where f.retired = 0
 				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'"
-				deletedPkQuery="select f.uuid as form_uuid from openmrs.form f
+				deletedPkQuery="select f.uuid as id from openmrs.form f
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				where f.retired = 0
-				AND f.date_voided &gt; '${dataimporter.request.lastIndexTime}'"
+				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'"
 				>
 			</entity> 
 	</document>

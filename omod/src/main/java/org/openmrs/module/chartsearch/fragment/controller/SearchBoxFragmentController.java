@@ -4,6 +4,9 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.SearchAPI;
@@ -13,9 +16,6 @@ import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SearchBoxFragmentController {
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);

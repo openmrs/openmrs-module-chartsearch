@@ -13,15 +13,12 @@
  */
 package org.openmrs.module.chartsearch;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChartListItem {
 	
-	private final Log log = LogFactory.getLog(getClass());
+	//private final Log log = LogFactory.getLog(getClass());
 	
 	private String uuid;
 	private Integer obsId;

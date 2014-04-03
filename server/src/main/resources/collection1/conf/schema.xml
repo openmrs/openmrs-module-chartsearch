@@ -910,6 +910,20 @@
 		<field name="date_created" type="date" indexed="true" stored="true"
 			required="false" />
 			
+		<field name="encounter_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="patient_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="e_form_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="encounter_type" type="text_general" indexed="true" stored="true"
+			required="false" />	
+		<field name="encounter_datetime" type="date" indexed="true" stored="true"
+			required="false" />
+		<field name="visit_id" type="int" indexed="true" stored="true"
+			required="false" />
+
+			
 		<field name="_version_" type="long" indexed="true" stored="true" />
 		<!-- catchall field, containing all other searchable text fields (implemented 
 			via copyField further on in this schema -->
@@ -967,8 +981,6 @@
 	<copyField source="value_text" 		dest="text" />
 	<copyField source="concept_name" 	dest="text" />
 	
-	<copyField source="encounter_type_name" 		dest="text" />
-	<copyField source="form_name" 	dest="text" />
 	
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

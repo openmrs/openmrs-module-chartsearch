@@ -49,7 +49,7 @@ public class ChartSearchSearcher {
 		}
 		
 		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
-		//query.addFilterQuery(String.format("person_id:%d", patientId));
+		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
 							// get the count very quickly.
 		QueryResponse response = solrServer.query(query);
@@ -66,7 +66,7 @@ public class ChartSearchSearcher {
 		}
 		
 		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
-		//query.addFilterQuery(String.format("person_id:%d", patientId));
+		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
@@ -81,11 +81,7 @@ public class ChartSearchSearcher {
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
-			if(document.get("form_id") !=null){
-				log.info("###################################");
-				log.info(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
-				continue;
-			}
+
 			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
@@ -113,6 +109,30 @@ public class ChartSearchSearcher {
 				}
 			}
 			list.add(item);
+		}
+
+		// forms
+		System.out.println("Forms:");
+		SolrQuery query2 = new SolrQuery(String.format("form_name:%s", searchText));
+		QueryResponse response2 = solrServer.query(query2);
+		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
+
+		while (iter2.hasNext()) {
+			SolrDocument document = iter2.next();
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+		}
+		
+
+		// Encounters
+		System.out.println("Encounters:");
+		SolrQuery query3 = new SolrQuery(String.format("encounter_type:%s", searchText));
+		query3.addFilterQuery(String.format("patient_id:%d", patientId));
+		QueryResponse response3 = solrServer.query(query3);
+		Iterator<SolrDocument> iter3 = response3.getResults().iterator();
+
+		while (iter3.hasNext()) {
+			SolrDocument document = iter3.next();
+			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
 		}
 
 		return list;

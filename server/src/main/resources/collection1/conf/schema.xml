@@ -876,52 +876,34 @@
 			increase storage costs. default: a value that should be used if no value 
 			is specified when adding a document. -->
 
-		<field name="id" type="string" indexed="true" stored="true"
-			required="true" />
-		<field name="meta" type="boolean" indexed="true" stored="false"
-			required="false" />	
-		<field name="obs_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="person_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="concept_name" type="string" indexed="true" stored="true" 
-			required="false" />
-		<field name="obs_datetime" type="date" indexed="true" stored="true"
-			required="false" />
-		<field name="value_boolean" type="text_general" indexed="true"
-			stored="false" required="false" />
-		<field name="value_datetime" type="text_general" indexed="true" stored="false"
-			required="false" />
-		<field name="obs_group_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="value_numeric" type="text_general" indexed="true" stored="false"
-			required="false" />
-		<field name="coded" type="string" indexed="true" stored="false"
-			required="false" />
-		<field name="value_text" type="text_general" indexed="true"
-			stored="false" required="false" />
+		<field name="id" type="string" indexed="true" stored="true"		required="true" />
+		
+		<!-- obs  -->
+		<field name="meta" type="boolean" indexed="true" stored="false"		required="false" />	
+		<field name="obs_id" type="int" indexed="true" stored="true"		required="false" />
+		<field name="person_id" type="int" indexed="true" stored="true"		required="false" />
+		<field name="concept_name" type="string" indexed="true" stored="true" 	required="false" />
+		<field name="obs_datetime" type="date" indexed="true" stored="true"		required="false" />
+		<field name="value_boolean" type="text_general" indexed="true"	stored="false" required="false" />
+		<field name="value_datetime" type="text_general" indexed="true" stored="false"	required="false" />
+		<field name="obs_group_id" type="int" indexed="true" stored="true"		required="false" />
+		<field name="value_numeric" type="text_general" indexed="true" stored="false"	required="false" />
+		<field name="coded" type="string" indexed="true" stored="false"		required="false" />
+		<field name="value_text" type="text_general" indexed="true"	stored="false" required="false" />
 
-		<field name="form_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="form_name" type="text_general" indexed="true" stored="true"
-			required="false" />
-		<field name="encounter_type_name" type="text_general" indexed="true" stored="true"
-			required="false" />	
-		<field name="date_created" type="date" indexed="true" stored="true"
-			required="false" />
+		<!-- forms  -->
+		<field name="form_id" type="int" indexed="true" stored="true"	required="false" />
+		<field name="form_name" type="text_general" indexed="true" stored="true"	required="false" />
+		<field name="encounter_type_name" type="text_general" indexed="true" stored="true"	required="false" />	
+		<field name="date_created" type="date" indexed="true" stored="true"		required="false" />
 			
-		<field name="encounter_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="patient_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="e_form_id" type="int" indexed="true" stored="true"
-			required="false" />
-		<field name="encounter_type" type="text_general" indexed="true" stored="true"
-			required="false" />	
-		<field name="encounter_datetime" type="date" indexed="true" stored="true"
-			required="false" />
-		<field name="visit_id" type="int" indexed="true" stored="true"
-			required="false" />
+		<!-- encounters  -->
+		<field name="encounter_id" type="int" indexed="true" stored="true"	required="false" />
+		<field name="patient_id" type="int" indexed="true" stored="true"	required="false" />
+		<field name="e_form_id" type="int" indexed="true" stored="true"		required="false" />
+		<field name="encounter_type" type="text_general" indexed="true" stored="true"	required="false" />	
+		<field name="encounter_datetime" type="date" indexed="true" stored="true"		required="false" />
+		<field name="visit_id" type="int" indexed="true" stored="true"		required="false" />
 
 			
 		<field name="_version_" type="long" indexed="true" stored="true" />

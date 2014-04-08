@@ -26,6 +26,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 
 /**
  *
@@ -93,7 +94,7 @@ public class ChartSearchSearcher {
 
 			String conceptName = (String) document.get("concept_name");
 
-			ChartListItem item = new ChartListItem();
+			ObsItem item = new ObsItem();
 			item.setUuid(uuid);
 			item.setObsId(obsId);
 			item.setConceptName(conceptName);
@@ -111,18 +112,7 @@ public class ChartSearchSearcher {
 			list.add(item);
 		}
 
-		// forms
-		System.out.println("Forms:");
-		SolrQuery query2 = new SolrQuery(String.format("form_name:%s", searchText));
-		QueryResponse response2 = solrServer.query(query2);
-		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
-
-		while (iter2.hasNext()) {
-			SolrDocument document = iter2.next();
-			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
-		}
 		
-
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:%s", searchText));
@@ -134,7 +124,18 @@ public class ChartSearchSearcher {
 			SolrDocument document = iter3.next();
 			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
 		}
+		
+		// forms
+		System.out.println("Forms:");
+		SolrQuery query2 = new SolrQuery(String.format("form_name:%s", searchText));
+		QueryResponse response2 = solrServer.query(query2);
+		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
 
+		while (iter2.hasNext()) {
+			SolrDocument document = iter2.next();
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+		}
+		
 		return list;
 	}
 }

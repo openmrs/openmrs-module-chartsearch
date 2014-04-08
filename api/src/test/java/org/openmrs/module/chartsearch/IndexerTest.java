@@ -50,7 +50,7 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 		try {
 			List<ChartListItem> obs = solr.search(patientID, "blood", 0, 10);
 			for (ChartListItem item : obs) {
-				System.out.println(item.getConceptName());
+				System.out.println(((ObsItem) item).getConceptName());
 			}
 			
 		} catch (Exception e) {

@@ -41,9 +41,18 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 		indexer.indexPatientData(28);
 		PatientInfo pi = indexer.getPatientInfo(28);
 		assertNotNull(pi);
-		assertEquals(pi.getPatientId().intValue(), 28);
-		System.out.println("################################" + pi.getLastIndexTime());
-
+		assertEquals(pi.getPatientId().intValue(), patientID);
+		try {
+			List<ChartListItem> obs = solr.search(patientID, "blood", 0, 10);
+			for (ChartListItem item : obs) {
+				System.out.println(((ObsItem) item).getConceptName());
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
 	}
 	
 	@Before

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
@@ -47,7 +48,7 @@ public class SearchBoxFragmentController {
         }
         if(items == null){
            items = new ArrayList<ChartListItem>();
-            ChartListItem itemsIsNull = new ChartListItem();
+           ObsItem itemsIsNull = new ObsItem();
             itemsIsNull.setConceptName("items list returned from search is null");
             items.add(itemsIsNull);
 

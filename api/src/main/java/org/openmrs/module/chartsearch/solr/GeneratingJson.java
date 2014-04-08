@@ -3,6 +3,7 @@ package org.openmrs.module.chartsearch.solr;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 
 /**
@@ -20,10 +21,10 @@ public class GeneratingJson {
         JSONArray arr_of_obs = new JSONArray();
         for(ChartListItem item : searchAPI.getResults()){
             observation = new JSONObject();
-            observation.put("date",item.getObsDate());
-            observation.put("obsGroupId",item.getObsGroupId());
-            observation.put("concept_name",item.getConceptName());
-            observation.put("value",item.getValue());
+            observation.put("date",((ObsItem) item).getObsDate());
+            observation.put("obsGroupId",((ObsItem) item).getObsGroupId());
+            observation.put("concept_name",((ObsItem) item).getConceptName());
+            observation.put("value",((ObsItem) item).getValue());
             //json.put("observation", observation);
             //observation.put("locations",item.());   TODO
             arr_of_obs.add(observation);

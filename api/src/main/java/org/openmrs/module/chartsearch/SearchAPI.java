@@ -16,7 +16,6 @@ public class SearchAPI {
 
 	private SearchAPI(){
 		resultList = new ArrayList<ChartListItem>();
-		ObsItem noData = new ObsItem();
 	}
 
 	/*private SearchAPI(String searchPhrase){

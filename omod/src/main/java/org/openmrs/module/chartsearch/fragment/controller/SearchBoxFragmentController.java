@@ -37,7 +37,7 @@ public class SearchBoxFragmentController {
 		//SearchAPI.search();
 		//List<String> temp = new ArrayList<String>();
 		//temp.add(searchPhrase.getPhrase());
-        Integer length = Integer.valueOf(999999999);
+        Integer length = Integer.valueOf(100);
         Integer start = Integer.valueOf(0);
         List<ChartListItem> items = new ArrayList<ChartListItem>();
 

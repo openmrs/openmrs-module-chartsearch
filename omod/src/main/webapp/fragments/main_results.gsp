@@ -32,6 +32,8 @@
     <div class="base_results">
         ${ ui.includeFragment("chartsearch", "base_results") }
     </div>
-    <div class="detailed_results"></div>
+    <div class="detailed_results">
+        ${ ui.includeFragment("chartsearch", "detailed_results") }
+    </div>
     <div class="chart_serach_clear"></div>
 </div>

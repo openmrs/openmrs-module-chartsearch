@@ -15,5 +15,5 @@
         });
     }
 
-    document.getElementById('result_main_box').innerHTML += resultText;
+/*    document.getElementById('result_main_box').innerHTML += resultText;*/
 </script>

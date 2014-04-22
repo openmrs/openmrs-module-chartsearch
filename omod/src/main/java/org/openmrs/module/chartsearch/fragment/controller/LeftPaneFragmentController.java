@@ -65,6 +65,7 @@ public class LeftPaneFragmentController
         List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
         for(ChartListItem observation : items) //loop to get full details about observations.
         {
+
             ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(observation.getObsId());
             updatedItems.add(updatedObservation);
         }

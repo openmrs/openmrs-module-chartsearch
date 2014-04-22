@@ -12,4 +12,5 @@ ${ ui.includeFragment("chartsearch", "cssIncludes") }
     ${ ui.includeFragment("chartsearch", "leftPane") }
     ${ ui.includeFragment("chartsearch", "resultBox") }
     <div style="clear:both;"></div>
+    
 </div>

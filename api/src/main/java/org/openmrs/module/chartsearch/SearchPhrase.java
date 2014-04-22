@@ -12,6 +12,9 @@ public class SearchPhrase {
 	}
 
 	public String getPhrase() {
+        if(phrase==null) {
+            return "";
+        }
 		return phrase;
 	}
 

@@ -6,8 +6,8 @@
 <div class="form_header">Search Box</div>
 
 <form class="simple-form-ui" id="searchbox" method="POST">
-    <input class="form_input" type="text" placeholder="type a word to search">
-    <input type="submit" class="button" value="${ ui.message("general.save") }"/>
+    ${ ui.includeFragment("uicommons", "field/text", [label:ui.message("chartsearch.searchBox"), formFieldName:"phrase"]) }
+    <input type="submit" class="button" value="search"/>
     <!-- <div class="form_button" id="send_button">search</div> -->
 </form>
 

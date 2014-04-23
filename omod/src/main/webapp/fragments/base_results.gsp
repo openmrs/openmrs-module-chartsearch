@@ -20,6 +20,7 @@
     }
     .obsgroup_wrap:hover {
         background-color: #d6d6d6;
+        cursor: pointer;
     }
     .obsgroup_title {
         margin: 0;
@@ -52,142 +53,7 @@
 
 <div class="results_box_container">
     <h3 class="border_bottom">Results: </h3>
-    <div class="results_table_wrap">
-        <div class="obsgroup_wrap">
-            <div class="obsgroup_first_row">
-                <h3 class="obsgroup_title">objgroup title</h3>
-                <span class="obsgroup_date">12, May, 2014</span>
-                <div class="chart_serach_clear"></div>
-            </div>
-            <div class="obsgroup_rows">
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-            </div>
-        </div>
-        <div class="obsgroup_wrap">
-            <div class="obsgroup_first_row">
-                <h3 class="obsgroup_title">objgroup title</h3>
-                <span class="obsgroup_date">12, May, 2014</span>
-                <div class="chart_serach_clear"></div>
-            </div>
-            <div class="obsgroup_rows">
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-            </div>
-        </div>
-        <div class="obsgroup_wrap">
-            <div class="obsgroup_first_row">
-                <h3 class="obsgroup_title">objgroup title</h3>
-                <span class="obsgroup_date">12, May, 2014</span>
-                <div class="chart_serach_clear"></div>
-            </div>
-            <div class="obsgroup_rows">
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-            </div>
-        </div>
-        <div class="obsgroup_wrap">
-            <div class="obsgroup_first_row">
-                <h3 class="obsgroup_title">objgroup title</h3>
-                <span class="obsgroup_date">12, May, 2014</span>
-                <div class="chart_serach_clear"></div>
-            </div>
-            <div class="obsgroup_rows">
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-                <div class="obsgroup_row">
-                    <div class="obsgroup_row_first_section inline">HIV</div>
-                    <div class="obsgroup_row_sec_section inline">4.7 PJ</div>
-                    <div class="obsgroup_row_trd_section inline">(2.3 - 5.4)</div>
-                </div>
-            </div>
-        </div>
+    <div class="results_table_wrap" id="obsgroups_results">
+
     </div>
 </div>

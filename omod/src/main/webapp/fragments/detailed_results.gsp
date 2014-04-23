@@ -34,7 +34,8 @@
     }
 </style>
 <div class="detailed_results_container">
-    <div class="obsgroup_view">
+    <div class="obsgroup_view" id="obsgroup_view">
+        <!--
         <h3 class="chartserach_center">Obsgroup name</h3>
         <div class="obsgroup_all_wrapper">
             <div class="obsgroup_item_row">
@@ -86,5 +87,7 @@
                 <div class="obsgroup_item_frth inline">121</div>
             </div>
         </div>
+        -->
     </div>
+
 </div>

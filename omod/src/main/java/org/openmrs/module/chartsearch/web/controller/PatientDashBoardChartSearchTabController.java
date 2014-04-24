@@ -13,14 +13,11 @@
  */
 package org.openmrs.module.chartsearch.web.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.beans.factory.annotation.Autowired;

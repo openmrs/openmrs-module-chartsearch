@@ -35,8 +35,18 @@
                 </label>
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
-                        <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="Search for.." size="40">
+                        <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="Search for..." size="40">
                         <input type="submit" class="button inline chart_search_form_button" value="search"/>
+
+
+                        <form class="simple-form-ui" id="searchbox" method="POST">
+                            ${ ui.includeFragment("uicommons", "field/text", [label:ui.message("chartsearch.searchBox"), formFieldName:"phrase"]) }
+                            <input type="submit" class="button" value="search"/>
+                            <!-- <div class="form_button" id="send_button">search</div> -->
+                        </form>
+
+
+
                     </div>
                 </div>
             </form>

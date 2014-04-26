@@ -5,46 +5,26 @@ import java.util.List;
 public class SearchAPI {
 	//private static String searchPhrase;
 	private static List<ChartListItem> resultList;
-    private static SearchAPI instanse;
+    private static SearchAPI instance;
 
     public static SearchAPI getInstance(){
-        if(instanse == null){
-            instanse = new SearchAPI();
+        if(instance == null){
+            instance = new SearchAPI();
         }
-        return instanse;
+        return instance;
     }
 
 	private SearchAPI(){
 		resultList = new ArrayList<ChartListItem>();
 	}
 
-	/*private SearchAPI(String searchPhrase){
-		SearchAPI.setSearchPhrase(searchPhrase);
-	}*/
 
-/*	public static void search(){
-		//todo
-		List<ChartListItem> temp = new ArrayList<ChartListItem>();
-		temp.add(getSearchPhrase());
-		showResults(temp);
-	}*/
 
 	public List<ChartListItem> showResults(List<ChartListItem> results){
 		setResults(results);
 		return results;
 	}
 
-
-	/*public String getSearchPhrase() {
-		return searchPhrase;
-	}*/
-
-/*	public static void setSearchPhrase(String searchPhrase) {
-		if(searchPhrase == null)
-            SearchAPI.searchPhrase ="default search phrase";
-		else
-			SearchAPI.searchPhrase = searchPhrase;
-	}*/
 
 	public List<ChartListItem> getResults() {
 		return resultList;

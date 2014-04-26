@@ -18,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.util.OpenmrsUtil;
 import org.openmrs.web.dwr.ObsListItem;
@@ -118,7 +119,7 @@ public class DWRChartSearchService {
 	}
 
 	// TODO replace with custom DetailsItem
-	public String getDetails(Integer id) {		
+	public String getDetails(Integer id) {
 		ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
 				Context.getLocale());
 
@@ -132,15 +133,13 @@ public class DWRChartSearchService {
 				+ obs.getLocation();
 		return result;
 	}
-<<<<<<< HEAD
 
-=======
- public static ChartListItem getObservationDetails(Integer id) {
+    public static ChartListItem getObservationDetails(Integer id) {
         ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
                 Context.getLocale());
 
         // TODO create renderer
-        ChartListItem item = new ChartListItem();
+        ObsItem item = new ObsItem();
         item.setConceptName(obs.getConceptName());
         item.setLocation(obs.getLocation());
         item.setValue(obs.getValue());
@@ -150,7 +149,8 @@ public class DWRChartSearchService {
 
         return item;
     }
->>>>>>> Json is working (not tested yet for obs groups) (should work only for obs.)
+
+
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

@@ -4,8 +4,12 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
@@ -25,18 +29,18 @@ public class SearchBoxFragmentController {
 
 	public void get() {
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	public String post(PageModel model, @BindParams SearchPhrase searchPhrase ,@RequestParam("patientId") Integer patient) {
 
         SearchAPI searchAPI =SearchAPI.getInstance();
         model.addAttribute("patientID_from_get", patient);
 
-        Integer length = Integer.valueOf(999999999);
+        Integer length = Integer.valueOf(10);
         Integer start = Integer.valueOf(0);
 
         List<ChartListItem> items = new ArrayList<ChartListItem>();
@@ -56,19 +60,13 @@ public class SearchBoxFragmentController {
         }
         if(items == null){
            items = new ArrayList<ChartListItem>();
-            ChartListItem itemsIsNull = new ChartListItem();
+           ObsItem itemsIsNull = new ObsItem();
             itemsIsNull.setConceptName("items list returned from search is null");
             items.add(itemsIsNull);
 
         }
-        List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
 
-        for(ChartListItem observation : items){
-            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(observation.getObsId());
-            updatedItems.add(updatedObservation);
-        }
-
-        searchAPI.setResults(updatedItems);
+        searchAPI.setResults(items);
 
 
 		return "redirect:chartsearch/chartsearch.page?patientId=" + patient;
@@ -81,9 +79,9 @@ public class SearchBoxFragmentController {
             throw new RuntimeException("Cannot find component of " + clazz);
         return list.get(0);
     }
-	
-	
-	
-	
-	
+
+
+
+
+
 }

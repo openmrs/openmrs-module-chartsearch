@@ -41,44 +41,53 @@ import org.w3c.dom.Node;
  *
  */
 public class EmbeddedSolrServerCreator extends SolrServerCreator {
-	
+
 	private static final Logger log = LoggerFactory.getLogger(EmbeddedSolrServerCreator.class);
-	
+
 	private SolrServer solrServer;
-	
+
 	private final EmbeddedSolrProperties properties;
-	
+
 	public EmbeddedSolrServerCreator(EmbeddedSolrProperties properties) {
 		this.properties = properties;
 	}
-	
+
 	@Override
 	public SolrServer createSolrServer() {
-		
+
 		// If user has not setup solr config folder, set a default one
 		// TODO use solr functions to determine config folder
-		String configFolder = properties.getSolrHome() + File.separatorChar + "collection1" + File.separatorChar + "conf";
-		if (!new File(configFolder).exists()) {
-			URL url = getClass().getClassLoader().getResource("collection1/conf");		
+
+		String configFolderPath = properties.getSolrHome() + File.separatorChar + "collection1" + File.separatorChar + "conf";
+		File configFolder = new File (configFolderPath);
+		if (configFolder.exists()){
 			try {
-				File file = new File(url.toURI());
-				FileUtils.copyDirectoryToDirectory(file, new File(properties.getSolrHome() + File.separatorChar
-				        + "collection1"));
-				setDataImportConnectionInfo(configFolder);
-			}
-			catch (IOException e) {
-				log.error("Failed to copy Solr config folder", e);
-			}
-			catch (Exception e) {
-				log.error("Failed to set dataImport connection info", e);
+				FileUtils.deleteDirectory(configFolder);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
+		
+		URL url = getClass().getClassLoader().getResource("collection1/conf");		
+		try {
+			File file = new File(url.toURI());
+			FileUtils.copyDirectoryToDirectory(file, new File(properties.getSolrHome() + File.separatorChar
+					+ "collection1"));
+			setDataImportConnectionInfo(configFolderPath);
+		}
+		catch (IOException e) {
+			log.error("Failed to copy Solr config folder", e);
+		}
+		catch (Exception e) {
+			log.error("Failed to set dataImport connection info", e);
+		}
+
 		// Get the solr home folder
 		// Tell solr that this is our home folder
 		System.setProperty("solr.solr.home", properties.getSolrHome());
-		
+
 		log.info(String.format("solr.solr.home: %s", properties.getSolrHome()));
-		
+
 		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer;
 		try {
@@ -94,35 +103,35 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
-	
+
 	private void setDataImportConnectionInfo(String configFolder) throws Exception {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(getClass().getClassLoader().getResourceAsStream("collection1/conf/data-config.xml"));
 		Element node = (Element) doc.getElementsByTagName("dataSource").item(0);
-		
+
 		node.setAttribute("url", properties.getDbUrl());
 		node.setAttribute("user", properties.getDbUser());
 		node.setAttribute("password", properties.getDbPassword());
-		
+
 		String xml = doc2String(doc);
 		File file = new File(configFolder + File.separatorChar + "data-config.xml");
 		FileUtils.writeStringToFile(file, xml, "UTF-8");
 	}
-	
+
 	public static String doc2String(Node doc) throws Exception {
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
-		
+
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		
+
 		StringWriter outStream = new StringWriter();
 		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(outStream);
 		transformer.transform(source, result);
 		return outStream.getBuffer().toString();
 	}
-	
+
 }

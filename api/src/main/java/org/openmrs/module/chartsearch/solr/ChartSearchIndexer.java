@@ -46,7 +46,7 @@ public class ChartSearchIndexer {
 		params.set("command", "import");
 		params.set("clean", false);
 		params.set("personId", personId);
-		
+
 		try {
 			solrServer.query(params);
 		}

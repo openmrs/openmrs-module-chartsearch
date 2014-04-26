@@ -5,9 +5,15 @@
 <script>
     var resultJSON ='<% resultList.each{ %> ${ it } <% } %>';
     var jsonAfterParse = JSON.parse(resultJSON);
-    var resultText = viewsFactory.result_row({
-        head: "direct_contact_wrap",
-        body: "cont_image"
-    });
-    document.getElementById('result_main_box').innerHTML += resultText;
+    var obs=jsonAfterParse.observations;
+    var resultText = '';
+    for(var i=0; i<obs.length; i++)
+    {
+        resultText+=viewsFactory.result_row({
+            head: obs[i].date,
+            body: obs[i].concept_name
+        });
+    }
+
+/*    document.getElementById('result_main_box').innerHTML += resultText;*/
 </script>

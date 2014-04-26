@@ -13,16 +13,17 @@
  */
 package org.openmrs.module.chartsearch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.server.PatientInfo;
-import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
+import org.openmrs.module.chartsearch.solr.SolrSearch;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -31,31 +32,43 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 public class IndexerTest extends BaseModuleContextSensitiveTest{
 
 	
-	ChartSearchIndexer indexer;
+	SolrSearch solr;
 	
 	/**
 	 * Test method for {@link org.openmrs.module.chartsearch.solr.ChartSearchIndexer#indexPatientData(java.lang.Integer)}.
 	 */
 	@Test
 	public void testIndexPatiendData() {
-		indexer.clearIndex("patientIds" , "28", 0, 0);
-		indexer.indexPatientData(28);
-		PatientInfo pi = indexer.getPatientInfo(28);
-		assertNotNull(pi);
-		assertEquals(pi.getPatientId().intValue(), 28);
-		System.out.println("################################" + pi.getLastIndexTime());
 
+		int patientID = 14;
+		solr.initiateServer();
+		solr.indexPatientData(patientID);
+		
+		PatientInfo pi = solr.getPatientInfo(patientID);
+		assertNotNull(pi);
+		assertEquals(pi.getPatientId().intValue(), patientID);
+		try {
+			List<ChartListItem> obs = solr.search(patientID, "blood", 0, 10);
+			for (ChartListItem item : obs) {
+				System.out.println(((ObsItem) item).getConceptName());
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
 	}
 	
 	@Before
     public void setUp() {
-		indexer = new ChartSearchIndexer();
+		solr = new SolrSearch();
     }
  
     @After
     public void tearDown() {
         SolrManagement  management = new SolrManagement();
-        management.shutdown();
+       // management.shutdown();
     }
 	
 

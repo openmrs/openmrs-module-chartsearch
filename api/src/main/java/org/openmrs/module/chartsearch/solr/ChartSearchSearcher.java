@@ -26,6 +26,9 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.EncounterItem;
+import org.openmrs.module.chartsearch.FormItem;
+import org.openmrs.module.chartsearch.ObsItem;
 
 /**
  *
@@ -44,7 +47,11 @@ public class ChartSearchSearcher {
 			throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		if (StringUtils.isNumeric(searchText)){
+			searchText = searchText + ".*" + " || " + searchText;
+		}
+		
+		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
 							// get the count very quickly.
@@ -55,14 +62,21 @@ public class ChartSearchSearcher {
 	public List<ChartListItem> getDocumentList(Integer patientId,
 			String searchText, Integer start, Integer length) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
-		
+		// TODO Move to Eli's code
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		SolrQuery query = new SolrQuery(String.format("value:%s", searchText));
+		if (StringUtils.isNumeric(searchText)){
+			searchText = searchText + ".*" + " || " + searchText;
+		}
+		
+		SolrQuery query = new SolrQuery(String.format("text:%s", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
-		query.setParam("hl.fl", "concept_name, value");
+		query.setParam("hl.fl", "text");
+
+		
+		
 		QueryResponse response = solrServer.query(query);
 
 		Iterator<SolrDocument> iter = response.getResults().iterator();
@@ -70,22 +84,29 @@ public class ChartSearchSearcher {
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
+
 			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
-			String value = ((List<String>) document.get("value")).get(0);
+			Integer obsGroupId = (Integer) document.get("obs_group_id");
+			List<String> values = ((List<String>) document.get("value"));
+				
+			String value = "";
+			if (values != null){ value = values.get(0); }
+
 			String conceptName = (String) document.get("concept_name");
 
-			ChartListItem item = new ChartListItem();
+			ObsItem item = new ObsItem();
 			item.setUuid(uuid);
 			item.setObsId(obsId);
 			item.setConceptName(conceptName);
 			item.setObsDate(obsDate.toString());
+			item.setObsGroupId(obsGroupId);
 			item.setValue(value);
 
 			if (response.getHighlighting().get(uuid) != null) {
 				List<String> highlights = response.getHighlighting().get(uuid)
-						.get("value");
+						.get("text");
 				if (highlights != null && !highlights.isEmpty()) {
 					item.setHighlights(new ArrayList<String>(highlights));
 				}
@@ -93,6 +114,43 @@ public class ChartSearchSearcher {
 			list.add(item);
 		}
 
+		
+		// Encounters
+		System.out.println("Encounters:");
+		SolrQuery query3 = new SolrQuery(String.format("encounter_type:%s", searchText));
+		query3.addFilterQuery(String.format("patient_id:%d", patientId));
+		QueryResponse response3 = solrServer.query(query3);
+		Iterator<SolrDocument> iter3 = response3.getResults().iterator();
+
+		while (iter3.hasNext()) {
+			SolrDocument document = iter3.next();
+			EncounterItem item = new EncounterItem();
+			item.setUuid((String) document.get("id"));
+			item.setEncounterId((Integer) document.get("encounter_id"));
+			item.setEncounterType((String) document.get("encounter_type"));
+			list.add(item);
+			
+			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
+		}
+		
+		// forms
+		System.out.println("Forms:");
+		SolrQuery query2 = new SolrQuery(String.format("form_name:%s", searchText));
+		QueryResponse response2 = solrServer.query(query2);
+		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
+
+		while (iter2.hasNext()) {
+			SolrDocument document = iter2.next();
+			FormItem item = new FormItem();
+			item.setUuid((String) document.get("id"));
+			item.setEncounterType((String) document.get("encounter_type_name"));
+			item.setFormId((Integer) document.get("form_id"));
+			item.setFormName((String) document.get("form_name"));
+			list.add(item);
+			
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+		}
+		
 		return list;
 	}
 }

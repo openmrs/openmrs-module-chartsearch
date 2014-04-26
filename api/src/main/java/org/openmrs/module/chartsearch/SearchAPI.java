@@ -16,7 +16,6 @@ public class SearchAPI {
 
 	private SearchAPI(){
 		resultList = new ArrayList<ChartListItem>();
-        ChartListItem noData = new ChartListItem();
 	}
 
 	/*private SearchAPI(String searchPhrase){

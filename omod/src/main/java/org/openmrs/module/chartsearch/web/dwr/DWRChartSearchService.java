@@ -132,21 +132,8 @@ public class DWRChartSearchService {
 				+ obs.getLocation();
 		return result;
 	}
- public static ChartListItem getObservationDetails(Integer id) {
-        ObsListItem obs = new ObsListItem(Context.getObsService().getObs(id),
-                Context.getLocale());
 
-        // TODO create renderer
-        ChartListItem item = new ChartListItem();
-        item.setConceptName(obs.getConceptName());
-        item.setLocation(obs.getLocation());
-        item.setValue(obs.getValue());
-        item.setObsDate(obs.getObsDate());
         item.setObsId(obs.getObsId());
-
-
-        return item;
-    }
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

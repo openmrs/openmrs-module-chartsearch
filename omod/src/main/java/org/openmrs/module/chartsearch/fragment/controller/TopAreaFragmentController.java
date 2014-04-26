@@ -6,6 +6,7 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeftPaneFragmentController
+public class TopAreaFragmentController
 {
-    private static final Logger log = LoggerFactory.getLogger(LeftPaneFragmentController.class);
+    private static final Logger log = LoggerFactory.getLogger(TopAreaFragmentController.class);
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 
     public void get()
@@ -55,18 +56,14 @@ public class LeftPaneFragmentController
         {
             e.printStackTrace();
         }
-        if(items == null)
-        {
-            items = new ArrayList<ChartListItem>();
-            ChartListItem itemsIsNull = new ChartListItem();
-            itemsIsNull.setConceptName("items list returned from search is null");
-            items.add(itemsIsNull);
-        }
         List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
         for(ChartListItem observation : items) //loop to get full details about observations.
         {
-
-            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(observation.getObsId());
+            int itemObsId = -1;
+            if(observation instanceof ObsItem){
+                itemObsId = ((ObsItem) observation).getObsId();
+            }
+            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
             updatedItems.add(updatedObservation);
         }
         searchAPI.setResults(updatedItems); //setting results to show.

@@ -11,8 +11,9 @@ public class ObsItem extends ChartListItem{
 	private String conceptName = "";
 	private String value = "";
 	private ArrayList<String> highlights = new ArrayList<String>();
-	
-	public Integer getObsId() {
+    private String location = "";
+
+    public Integer getObsId() {
 		return obsId;
 	}
 	
@@ -68,4 +69,11 @@ public class ObsItem extends ChartListItem{
 		this.obsGroupId = obsGroupId;
 	}
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
 }

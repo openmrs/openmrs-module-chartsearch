@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.chartsearch.solr;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,6 +24,11 @@ import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.ObsItem;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -75,8 +75,8 @@ public class ChartSearchSearcher {
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
 		query.setParam("hl.fl", "text");
 
-		
-		
+
+        System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
 
 		Iterator<SolrDocument> iter = response.getResults().iterator();
@@ -112,6 +112,7 @@ public class ChartSearchSearcher {
 				}
 			}
 			list.add(item);
+            System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", " + document.get("obs_datetime"));
 		}
 
 		

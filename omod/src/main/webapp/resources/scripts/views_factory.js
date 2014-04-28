@@ -352,7 +352,7 @@ function load_detailed_obs(obs_id)
 }
 
 jQuery( document ).ready(function() {
-    addAllObsGroups(mainJsonFile);
+    addAllObsGroups(jsonAfterParse);
 });
 
 

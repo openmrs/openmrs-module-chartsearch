@@ -155,11 +155,13 @@ public class GeneratingJson {
 
         SearchAPI searchAPI = SearchAPI.getInstance();
         for (ChartListItem item : searchAPI.getResults()) {               //for each item in results we classify it by its obsGroup, and add all of the group.
-            if (item != null) {
+            if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
                 int itemObsId = -1;
-                if(item instanceof ObsItem){
-                    itemObsId = ((ObsItem) item).getObsId();
-                }
+
+
+                itemObsId = ((ObsItem) item).getObsId();
+
+
                 // System.out.println("OUTSIDE" + Context.getObsService().getObs(itemObsId).getConcept().getDisplayString());
 
                 if (Context.getObsService().getObs(itemObsId).getObsGroup() != null) {
@@ -195,11 +197,11 @@ public class GeneratingJson {
         SearchAPI searchAPI = SearchAPI.getInstance();
         Set<Obs> obsSingles = new HashSet<Obs>();
         for (ChartListItem item : searchAPI.getResults()) {
-            if (item != null) {
+            if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
                 int itemObsId = -1;
-                if(item instanceof ObsItem){
-                    itemObsId = ((ObsItem) item).getObsId();
-                }
+
+                itemObsId = ((ObsItem) item).getObsId();
+
 
                 if (Context.getObsService().getObs(itemObsId).getObsGroup() == null && Context.getObsService().getObs(itemObsId) != null) {
                     obsSingles.add(Context.getObsService().getObs(itemObsId));

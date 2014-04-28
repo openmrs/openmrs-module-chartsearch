@@ -1,6 +1,4 @@
-<div class="resultBox_container" id="result_main_box">
-    <div class="form_header">Search Results: </div>
-</div>
+
 
 <script>
     var resultJSON ='<% resultList.each{ %> ${ it } <% } %>';

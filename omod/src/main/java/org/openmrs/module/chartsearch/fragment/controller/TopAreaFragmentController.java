@@ -20,13 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TopAreaFragmentController
-{
+public class TopAreaFragmentController {
     private static final Logger log = LoggerFactory.getLogger(TopAreaFragmentController.class);
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 
-    public void get()
-    {
+    public void get() {
         //TODO - Eli - what's need to be here?
     }
 
@@ -38,29 +36,39 @@ public class TopAreaFragmentController
     *   @param patient - requests the patient's id
     *   @return redirection to the same page with the same patient's id.
      */
-    //public String post(PageModel model, @RequestParam("search_phrase") SearchPhrase searchPhrase ,@RequestParam("patientId") Integer patient)
-    public String post(PageModel model, @BindParams SearchPhrase search_phrase ,@RequestParam("patientId") Integer patient)
 
-    {
-        SearchAPI searchAPI =SearchAPI.getInstance();
+    public String post(PageModel model, @BindParams SearchPhrase search_phrase, @RequestParam("patientId") Integer patient) {
+        System.out.println("phrase : " + search_phrase.getPhrase());
+        if(search_phrase.getPhrase() == "," ){
+            search_phrase.setPhrase("");
+        }
+        SearchAPI searchAPI = SearchAPI.getInstance();
         model.addAttribute("patientID_from_get", patient); //get patient
 
         Integer length = Integer.valueOf(999999999); //amount of obs we want - all of them
         Integer start = Integer.valueOf(0);//starting from first obs.
         List<ChartListItem> items = new ArrayList<ChartListItem>();
-        try
-        {
+
+        /*String synonyms = search_phrase.getPhrase();
+        SynonymGroup synGroup = SynonymGroups.isSynonymContainedInGroup(search_phrase.getPhrase());
+        if (!synGroup.equals(null)) {
+            for (String syn : (HashSet<String>) synGroup.getSynonyms()) {
+                synonyms += " OR " + syn;
+            }
+        }*/
+
+        try {
             items = searcher.getDocumentList(patient, search_phrase.getPhrase(), start, length); //searching for the phrase.
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
-        for(ChartListItem observation : items) //loop to get full details about observations.
+        for (ChartListItem observation : items) //loop to get full details about observations.
         {
+
             int itemObsId = -1;
-            if(observation instanceof ObsItem){
+            if (observation instanceof ObsItem) {
                 itemObsId = ((ObsItem) observation).getObsId();
             }
             ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
@@ -71,8 +79,7 @@ public class TopAreaFragmentController
     }
 
     // TODO - ELI - add javadoc please
-    private <T> T getComponent(Class<T> clazz)
-    {
+    private <T> T getComponent(Class<T> clazz) {
         List<T> list = Context.getRegisteredComponents(clazz);
         if (list == null || list.size() == 0)
             throw new RuntimeException("Cannot find component of " + clazz);

@@ -1,51 +1,42 @@
 package org.openmrs.module.chartsearch;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SearchAPI {
-	private static String searchPhrase;
-	private static List<String> resultList;
+	//private static String searchPhrase;
+	private static List<ChartListItem> resultList;
+    private static SearchAPI instance;
 
-	public SearchAPI(){
-		resultList = new ArrayList<String>();
+    public static SearchAPI getInstance(){
+        if(instance == null){
+            instance = new SearchAPI();
+        }
+        return instance;
+    }
+
+	private SearchAPI(){
+		resultList = new ArrayList<ChartListItem>();
 	}
 
-	public SearchAPI(String searchPhrase){
-		SearchAPI.setSearchPhrase(searchPhrase);
-	}
 
-	public static void search(){
-		//todo
-		List<String> temp = new ArrayList<String>();
-		temp.add(getSearchPhrase());
-		showResults(temp);
-	}
 
-	public static List<String> showResults(List<String> results){
-		SearchAPI.setResults(results);
+	public List<ChartListItem> showResults(List<ChartListItem> results){
+		setResults(results);
 		return results;
 	}
 
 
-	public static String getSearchPhrase() {
-		return searchPhrase;
-	}
-
-	public static void setSearchPhrase(String searchPhrase) {
-		if(searchPhrase == null)
-            SearchAPI.searchPhrase ="default search phrase";
-		else
-			SearchAPI.searchPhrase = searchPhrase;
-	}
-
-	public static List<String> getResults() {
+	public List<ChartListItem> getResults() {
 		return resultList;
 	}
 
-	public static void setResults(List<String> results) {
+	public void setResults(List<ChartListItem> results) {
 		SearchAPI.resultList = results;
 	}
+
+    public void clearResults() {
+        SearchAPI.resultList.clear();
+    }
 
 
 

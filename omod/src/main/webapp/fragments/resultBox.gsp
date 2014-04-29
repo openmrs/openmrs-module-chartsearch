@@ -3,15 +3,15 @@
 <script>
     var resultJSON ='<% resultList.each{ %> ${ it } <% } %>';
     var jsonAfterParse = JSON.parse(resultJSON);
-    var obs=jsonAfterParse.observations;
-    var resultText = '';
-    for(var i=0; i<obs.length; i++)
-    {
-        resultText+=viewsFactory.result_row({
-            head: obs[i].date,
-            body: obs[i].concept_name
-        });
-    }
+
+
+    jQuery( document ).ready(function() {
+        setTimeout(function(){
+            /*addAllObsGroups(jsonAfterParse);*/
+            addAllSingleObs(jsonAfterParse);
+        },100);
+
+    });
 
 /*    document.getElementById('result_main_box').innerHTML += resultText;*/
 </script>

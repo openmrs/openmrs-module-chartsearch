@@ -9,10 +9,10 @@
 
 ${ ui.includeFragment("chartsearch", "cssIncludes") }
 <div class="search_container">
+    ${ ui.includeFragment("chartsearch", "resultBox") }
     ${ ui.includeFragment("chartsearch", "filters") }
     ${ ui.includeFragment("chartsearch", "topArea") }
     ${ ui.includeFragment("chartsearch", "main_results") }
-    ${ ui.includeFragment("chartsearch", "resultBox") }
     <div style="clear:both;"></div>
     
 </div>

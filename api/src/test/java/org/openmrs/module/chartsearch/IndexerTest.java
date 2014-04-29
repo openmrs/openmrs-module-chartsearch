@@ -16,12 +16,14 @@ package org.openmrs.module.chartsearch;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.module.chartsearch.server.PatientInfo;
-import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
+import org.openmrs.module.chartsearch.solr.SolrSearch;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
@@ -30,16 +32,19 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 public class IndexerTest extends BaseModuleContextSensitiveTest{
 
 	
-	ChartSearchIndexer indexer;
+	SolrSearch solr;
 	
 	/**
 	 * Test method for {@link org.openmrs.module.chartsearch.solr.ChartSearchIndexer#indexPatientData(java.lang.Integer)}.
 	 */
 	@Test
 	public void testIndexPatiendData() {
-		indexer.clearIndex("patientIds" , "28", 0, 0);
-		indexer.indexPatientData(28);
-		PatientInfo pi = indexer.getPatientInfo(28);
+
+		int patientID = 14;
+		solr.initiateServer();
+		solr.indexPatientData(patientID);
+		
+		PatientInfo pi = solr.getPatientInfo(patientID);
 		assertNotNull(pi);
 		assertEquals(pi.getPatientId().intValue(), patientID);
 		try {
@@ -57,7 +62,7 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 	
 	@Before
     public void setUp() {
-		indexer = new ChartSearchIndexer();
+		solr = new SolrSearch();
     }
  
     @After

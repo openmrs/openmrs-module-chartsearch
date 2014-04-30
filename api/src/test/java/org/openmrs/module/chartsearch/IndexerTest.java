@@ -39,7 +39,7 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 	 */
 	@Test
 	public void testIndexPatiendData() {
-
+		/*
 		int patientID = 14;
 		solr.initiateServer();
 		solr.indexPatientData(patientID);
@@ -57,17 +57,17 @@ public class IndexerTest extends BaseModuleContextSensitiveTest{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
+		*/
 	}
 	
 	@Before
     public void setUp() {
-		solr = new SolrSearch();
+		// solr = new SolrSearch();
     }
  
     @After
     public void tearDown() {
-        SolrManagement  management = new SolrManagement();
+       // SolrManagement  management = new SolrManagement();
        // management.shutdown();
     }
 	

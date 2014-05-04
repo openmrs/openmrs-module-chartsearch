@@ -2,6 +2,57 @@
  * Views manipulations.
  * Created by Tallevi12
  */
+var dates = {
+    convert:function(d) {
+        // Converts the date in d to a date-object. The input can be:
+        //   a date object: returned without modification
+        //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+        //   a number     : Interpreted as number of milliseconds
+        //                  since 1 Jan 1970 (a timestamp)
+        //   a string     : Any format supported by the javascript engine, like
+        //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+        //  an object     : Interpreted as an object with year, month and date
+        //                  attributes.  **NOTE** month is 0-11.
+        return (
+            d.constructor === Date ? d :
+                d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+                    d.constructor === Number ? new Date(d) :
+                        d.constructor === String ? new Date(format_date(d)) :
+                            typeof d === "object" ? new Date(d.year,d.month,d.date) :
+                                NaN
+            );
+    },
+    compare:function(a,b) {
+        // Compare two dates (could be of any type supported by the convert
+        // function above) and returns:
+        //  -1 : if a < b
+        //   0 : if a = b
+        //   1 : if a > b
+        // NaN : if a or b is an illegal date
+        // NOTE: The code inside isFinite does an assignment (=).
+        return (
+            isFinite(a=this.convert(a).valueOf()) &&
+                isFinite(b=this.convert(b).valueOf()) ?
+                (a>b)-(a<b) :
+                NaN
+            );
+    },
+    inRange:function(d,start,end) {
+        // Checks if date in d is between dates in start and end.
+        // Returns a boolean or NaN:
+        //    true  : if d is between start and end (inclusive)
+        //    false : if d is before start or after end
+        //    NaN   : if one or more of the dates is illegal.
+        // NOTE: The code inside isFinite does an assignment (=).
+        return (
+            isFinite(d=this.convert(d).valueOf()) &&
+                isFinite(start=this.convert(start).valueOf()) &&
+                isFinite(end=this.convert(end).valueOf()) ?
+                start <= d && d <= end :
+                NaN
+            );
+    }
+}
 
 var mainJsonFile = {
     "Obsgroubs": [
@@ -257,10 +308,13 @@ function addAllSingleObs(obsJSON)
     console.log(obsJSON);
     var resultText='';
     var single_obsJSON=obsJSON.obs_singles;
-    for(var i=0;i<single_obsJSON.length;i++){
-        resultText+=addSingleObsToResults(single_obsJSON[i]);
+    if (typeof single_obsJSON !== 'undefined')
+    {
+        for(var i=0;i<single_obsJSON.length;i++){
+            resultText+=addSingleObsToResults(single_obsJSON[i]);
+        }
+        document.getElementById('obsgroups_results').innerHTML+=resultText;
     }
-    document.getElementById('obsgroups_results').innerHTML+=resultText;
 }
 
 function addSingleObsToResults(obsJSON)
@@ -280,19 +334,127 @@ function addSingleObsToResults(obsJSON)
     return resultText;
 }
 
-
-
-function load_single_detailed_obs(){
-
+function get_single_obs_by_id(obs_id)
+{
+    var obsgroupJSON=jsonAfterParse.obs_singles;
+    for(var i=0;i<obsgroupJSON.length;i++){
+        if(obsgroupJSON[i].observation_id==obs_id)
+        {
+            return obsgroupJSON[i];
+        }
+    }
+    return -1;
 }
+
+
+function load_single_detailed_obs(obs_id){
+    var obsJSON = get_single_obs_by_id(obs_id);
+    var resultText='';
+    resultText+='<div class="obsgroup_view">';
+    resultText+='<h3 class="chartserach_center">';
+    resultText+=obsJSON.concept_name;
+    resultText+='</h3>';
+    resultText+='<div class="obsgroup_all_wrapper">';
+
+    resultText+='<label class="cs_label">';
+    resultText+='Date: ';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.date;
+    resultText+='</span>';
+    resultText+='<br />';
+    resultText+='<label class="cs_label">';
+    resultText+='Value Type:';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.value_type;
+    resultText+='</span>';
+    resultText+='<br />';
+    resultText+='<label class="cs_label">';
+    resultText+='Location: ';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.location;
+    resultText+='</span>';
+    resultText+='<br />';
+    resultText+='<label class="cs_label">';
+    resultText+='Value:';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.value+' '+obsJSON.units_of_measurement;
+    resultText+='</span>';
+    resultText+='<br />';
+    resultText+='<label class="cs_label">';
+    resultText+='Absolute High:';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.value+' '+obsJSON.absolute_high;
+    resultText+='</span>';
+    resultText+='<br />';
+    resultText+='<label class="cs_label">';
+    resultText+='Absolute Low:';
+    resultText+='</label>';
+    resultText+='<span class="cs_span">';
+    resultText+=obsJSON.value+' '+obsJSON.absolute_low;
+    resultText+='</span>';
+    resultText+='</div>';
+    /*HISTORY*/
+    resultText+='<div class="obsgroup_all_wrapper">';
+    resultText+=load_single_obs_history(obs_id);
+    resultText+='</div>';
+
+    resultText+='</div>';
+    document.getElementById('obsgroup_view').innerHTML=resultText;
+}
+
+function load_single_obs_history(obs_id) {
+    resultText='<h3>History</h3>';
+    var obs_obj = get_single_obs_by_id(obs_id);
+    var obs_name = obs_obj.concept_name;
+    var history_json = get_obs_history_json_by_name(obs_name);
+    resultText+='<table><tr><th>Date</th><th>Value</th></tr>';
+    for(var i=0;i<history_json.length;i++){
+        resultText+='<tr><td>'+history_json[i].date+'</td><td>'+history_json[i].value+'</td></tr>';
+    }
+    resultText+='</table>';
+    return resultText;
+}
+
+function format_date(obs_date) {
+    return obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2)+'/'+obs_date.substring(6, 8);
+}
+
+function get_obs_history_json_by_name(obs_name) {
+    var result = new Array();
+    var single_obsJSON=jsonAfterParse.obs_singles;
+    if (typeof single_obsJSON !== 'undefined')
+    {
+        for(var i=0;i<single_obsJSON.length;i++){
+            if(single_obsJSON[i].concept_name === obs_name) {
+                result.push(single_obsJSON[i]);
+            }
+        }
+    }
+    result.sort(compare);
+    return result;
+}
+
+function compare(a,b) {
+    return dates.compare(b.date, a.date);
+}
+
+
 function addAllObsGroups(obsJSON)
 {
     var resultText='';
     var obsgroupJSON=obsJSON.Obsgroubs;
-    for(var i=0;i<obsgroupJSON.length;i++){
-        resultText+=addObsGroupToResults(obsgroupJSON[i]);
+    if (typeof obsgroupJSON !== 'undefined')
+    {
+        for(var i=0;i<obsgroupJSON.length;i++){
+            resultText+=addObsGroupToResults(obsgroupJSON[i]);
+        }
+        document.getElementById('obsgroups_results').innerHTML+=resultText;
     }
-    document.getElementById('obsgroups_results').innerHTML+=resultText;
 }
 
 function addObsGroupToResults(obsJSON)
@@ -343,7 +505,7 @@ function single_obs_html(obsJSON) {
 
 function get_obs_by_id(id)
 {
-    var obsgroupJSON=mainJsonFile.Obsgroubs;
+    var obsgroupJSON=jsonAfterParse.Obsgroubs;
     for(var i=0;i<obsgroupJSON.length;i++){
         if(obsgroupJSON[i].groupID==id)
         {

@@ -28,9 +28,15 @@
         font-weight: bold;
         font-size: 13px;
     }
-
     .obsgroup_item_row:nth-child(even) {
         background-color: #d6d6d6;
+    }
+    .cs_label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    .cs_span {
+        margin-right: 10px;
     }
 </style>
 <div class="detailed_results_container">

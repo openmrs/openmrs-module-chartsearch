@@ -5,6 +5,8 @@
 <h2>Chart Search Page</h2>
 <hr />
 <% ui.includeJavascript("chartsearch", "doT.js") %>
+<% ui.includeJavascript("chartsearch", "jquery.flot.js") %>
+<% ui.includeJavascript("chartsearch", "jquery.flot.time.js") %>
 <% ui.includeJavascript("chartsearch", "views_factory.js") %>
 
 ${ ui.includeFragment("chartsearch", "cssIncludes") }

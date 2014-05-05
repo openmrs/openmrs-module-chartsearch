@@ -325,8 +325,14 @@ function addSingleObsToResults(obsJSON)
     resultText+='<h3 class="obsgroup_title">';
     resultText+=obsJSON.concept_name;
     resultText+='</h3>';
+    resultText+='<span class="obsgroup_value">';
+    resultText+=obsJSON.value;
+    resultText+='</span>'
     resultText+='<span class="obsgroup_date">';
-    resultText+=obsJSON.date;
+    if (typeof obsJSON.absolute_low !== 'undefined' && typeof obsJSON.absolute_high !== 'undefined')
+    {
+        resultText+='('+obsJSON.absolute_low+'-'+obsJSON.absolute_high+')';
+    }
     resultText+='</span>'
     resultText+='<div class="chart_serach_clear"></div>';
     resultText+='</div>';
@@ -344,6 +350,36 @@ function get_single_obs_by_id(obs_id)
         }
     }
     return -1;
+}
+
+function get_obs_graph_points(obs_id) {
+    var res = new Array();
+    var cur;
+    var obs_obj = get_single_obs_by_id(obs_id);
+    var obs_name = obs_obj.concept_name;
+    var history_json = get_obs_history_json_by_name(obs_name);
+    for(var i=0;i<history_json.length;i++){
+        console.log(format_date_2(history_json[i].date));
+        cur = [(new Date(format_date_2(history_json[i].date))).getTime(), history_json[i].value];
+        console.log(cur);
+        res.push(cur);
+    }
+    return res;
+}
+
+function enable_graph(obs_id) {
+
+
+        var d3 = get_obs_graph_points(obs_id);
+        var options = {
+            xaxis: {
+                mode: "time",
+                tickLength: 5
+            }
+        };
+        $.plot("#placeholder", [  d3 ], options);
+
+
 }
 
 
@@ -404,7 +440,10 @@ function load_single_detailed_obs(obs_id){
     resultText+='</div>';
 
     resultText+='</div>';
+    resultText+='<div class="demo-container"><div id="placeholder" class="demo-placeholder" style="width:400px;height:140px"></div></div>';
+
     document.getElementById('obsgroup_view').innerHTML=resultText;
+    enable_graph(obs_id);
 }
 
 function load_single_obs_history(obs_id) {
@@ -422,6 +461,10 @@ function load_single_obs_history(obs_id) {
 
 function format_date(obs_date) {
     return obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2)+'/'+obs_date.substring(6, 8);
+}
+
+function format_date_2(obs_date) {
+    return '20'+obs_date.substring(6, 8)+'/'+obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2);
 }
 
 function get_obs_history_json_by_name(obs_name) {

@@ -26,8 +26,9 @@
         margin: 0;
         color: #00463f;
         font-weight: bold;
-        font-size: 14px;
+        font-size: 13px;
         float: left;
+        width: 190px;
     }
     .obsgroup_date {
         float: right;

@@ -13,46 +13,14 @@
  */
 package org.openmrs.module.chartsearch;
 
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URL;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log; 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.velocity.app.event.ReferenceInsertionEventHandler.referenceInsertExecutor;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.Daemon;
 import org.openmrs.module.BaseModuleActivator;
-import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
-import org.openmrs.scheduler.Task;
-import org.openmrs.scheduler.TaskDefinition;
-import org.openmrs.scheduler.timer.TimerSchedulerTask;
-import org.openmrs.util.OpenmrsClassLoader;
-import org.openmrs.util.OpenmrsUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped. * 
@@ -85,8 +53,11 @@ public class ChartSearchActivator extends BaseModuleActivator{
 	/**
 	 * @see BaseModuleActivator#started()
 	 */
-	public void started() {	
-		log.info("Chart Search Module started");		
+	public void started() {
+		log.info("Chart Search Module started");
+		
+		ChartSearchIndexer indexer = getComponent(ChartSearchIndexer.class);
+		indexer.getStatistics();
 	}
 	
 	/**

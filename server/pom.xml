@@ -48,9 +48,8 @@
 			<artifactId>super-csv</artifactId>
 			<version>2.1.0</version>
 		</dependency>
-
-
 		<!-- End Solr -->
+
 	</dependencies>
 	<build>
 		<resources>

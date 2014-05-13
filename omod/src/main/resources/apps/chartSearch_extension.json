@@ -1,0 +1,12 @@
+[
+    {
+        "id": "${project.parent.artifactId}.chartSearchLink",
+        "extensionPointId": "patientDashboard.overallActions",
+        "type": "link",
+        "label": "Chart Serach",
+        "url": "${project.parent.artifactId}/chartsearch.page?patientId={{patientId}}",
+        "icon": "icon-calendar",
+        "order": 14,
+        "requiredPrivilege": "Task: Chart Search"
+    }
+]

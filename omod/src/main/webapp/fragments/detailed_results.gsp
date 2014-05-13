@@ -38,62 +38,13 @@
     .cs_span {
         margin-right: 10px;
     }
+    .demo-container {
+        border: 1px solid #bebebe;
+        margin: 20px 0;
+    }
 </style>
 <div class="detailed_results_container">
     <div class="obsgroup_view" id="obsgroup_view">
-        <!--
-        <h3 class="chartserach_center">Obsgroup name</h3>
-        <div class="obsgroup_all_wrapper">
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline"></div>
-                <div class="obsgroup_item_sec chartserach_bold inline">14 May 2013</div>
-                <div class="obsgroup_item_trd chartserach_bold inline">12 May 2012</div>
-                <div class="obsgroup_item_frth chartserach_bold inline">21 Jan 2013</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-            <div class="obsgroup_item_row">
-                <div class="obsgroup_item_first inline">HCF</div>
-                <div class="obsgroup_item_sec inline">141</div>
-                <div class="obsgroup_item_trd inline">134</div>
-                <div class="obsgroup_item_frth inline">121</div>
-            </div>
-        </div>
-        -->
     </div>
 
 </div>

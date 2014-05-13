@@ -57,6 +57,7 @@ var dates = {
 
 var viewsFactory;
 var doT;
+var current_JSON_OBJECT;
 
 viewsFactory = {
 
@@ -196,12 +197,11 @@ function load_single_detailed_obs(obs_id){
     resultText+='</span>';
     resultText+='</div>';
     /*HISTORY*/
+    resultText+='<div class="demo-container"><h1 class="graph_title">Graph</h1> <div id="placeholder" class="demo-placeholder" style="width:400px;height:140px"></div></div>';
     resultText+='<div class="obsgroup_all_wrapper">';
     resultText+=load_single_obs_history(obs_id);
     resultText+='</div>';
-
     resultText+='</div>';
-    resultText+='<div class="demo-container"><div id="placeholder" class="demo-placeholder" style="width:400px;height:140px"></div></div>';
 
     document.getElementById('obsgroup_view').innerHTML=resultText;
     enable_graph(obs_id);

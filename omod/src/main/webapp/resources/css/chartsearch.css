@@ -24,6 +24,7 @@
 #chartSearchWrapper{
 	overflow: hidden;
 	position: relative;
+	min-height: 280px;
 }
 
 #chartSearchWrapper div, .boxHeader {
@@ -39,3 +40,4 @@
 .cs-selected-row {
 	background: #BBEE00 !important;
 }
+

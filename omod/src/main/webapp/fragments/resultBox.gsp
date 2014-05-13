@@ -5,8 +5,7 @@
     var jsonAfterParse = JSON.parse(resultJSON);
 
     jQuery( document ).ready(function() {
-        addAllObsGroups(jsonAfterParse);
-        addAllSingleObs(jsonAfterParse);
+        refresh_data();
     });
 
 /*    document.getElementById('result_main_box').innerHTML += resultText;*/

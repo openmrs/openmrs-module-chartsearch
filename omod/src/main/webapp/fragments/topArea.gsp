@@ -1,7 +1,17 @@
 <script type="text/javascript">
     var jq = jQuery;
-    jq( "#date_filter_title" ).click(function() {
-        jq( "#date_filter_options" ).show();
+
+
+    jq( document ).ready(function() {
+        jq( "#date_filter_title" ).click(function() {
+            jq( "#date_filter_options" ).toggle();
+        });
+
+        jq( "#date_filter_options" ).click(function(e) {
+            jq( "#date_filter_options" ).hide();
+            var txt = jq(e.target).text();
+            jq("#date_filter_title").text(txt);
+        });
     });
 </script>
 
@@ -32,6 +42,11 @@
     }
     .filter_options {
         display: none;
+        background: white;
+        width: 90px;
+        padding: 13px;
+        position: absolute;
+        border: 1px solid black;
     }
     .date_filter_title {
         display: inline-block;
@@ -80,6 +95,10 @@
     .date_filter_title:after {
         content:' ↓'
     }
+    .single_filter_option {
+        display: block;
+        cursor: pointer;
+    }
 </style>
 
 <article id="search-box">
@@ -99,11 +118,11 @@
                         <div class="filter_wrap">
                             <span class="date_filter_title" id="date_filter_title">Any Time</span>
                             <div class="filter_options" id="date_filter_options">
-                                <a>Last Day</a>
-                                <a>Last Week</a>
-                                <a>Last Month</a>
-                                <a>Last Year</a>
-                                <a>Any Time</a>
+                                <a class="single_filter_option" onclick="time_filter(0)">Last Day</a>
+                                <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
+                                <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
+                                <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
+                                <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
                             </div>
                         </div>
                     </div>

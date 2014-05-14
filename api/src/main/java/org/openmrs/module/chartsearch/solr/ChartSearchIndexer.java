@@ -47,7 +47,9 @@ public class ChartSearchIndexer {
 		params.set("clean", false);
 		params.set("personId", personId);
 		try {
-			solrServer.query(params);
+			if (solrServer != null) {
+	            solrServer.query(params);
+            }
 		}
 		catch (SolrServerException ex) {
 			log.error(String.format("Tried to import patient #%d but failed", personId), ex);

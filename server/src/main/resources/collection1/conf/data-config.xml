@@ -1,33 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataConfig>
-	  <dataSource driver="com.mysql.jdbc.Driver" password="password" type="JdbcDataSource"
-               url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
-               user="openmrs"/>
-	  <document>
-            <entity name="obs"
-              query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
-			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
-			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
+	<dataSource driver="com.mysql.jdbc.Driver" password="password"
+		type="JdbcDataSource"
+		url="jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&amp;sessionVariables=storage_engine=InnoDB&amp;useUnicode=true&amp;characterEncoding=UTF-8"
+		user="openmrs" />
+	<document>
+		<entity name="obs"
+			query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
+			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text
 			  FROM openmrs.obs o 
-			  inner join concept_name cn on cn.concept_id = o.concept_id
-			  WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn.voided=0"              
-			  deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, cn.name as concept_name,   
-			  value_group_id,  value_boolean,  value_coded,  value_coded_name_id,     
-			  value_drug, value_datetime, value_numeric,  value_modifier,  value_text,  value_complex  
+			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1 on cn1.concept_id = o.concept_id 
+			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded 
+			  WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn1.voided=0"
+
+			deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
+			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text
 			  FROM openmrs.obs o 
-			  inner join concept_name cn on cn.concept_id = o.concept_id 
-			  FROM openmrs.obs  WHERE uuid='${dih.delta.id}' AND o.voided=0 AND cn.voided=0
-			  inner join concept_name cn on cn.concept_id = o.concept_id"
-                deltaQuery="select o.uuid as id from openmrs.obs o 
+			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1  on cn1.concept_id = o.concept_id 
+			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded 
+			  WHERE o.uuid='${dih.delta.id}' AND o.voided=0 AND cn1.voided=0"
+
+			deltaQuery="select o.uuid as id from openmrs.obs o 
 				inner join concept_name cn on cn.concept_id = o.concept_id
 				where person_id='${dataimporter.request.personId}'
 				AND o.voided=0 AND cn.voided=0
 				AND o.date_created &gt; '${dataimporter.request.lastIndexTime}'"
-				deletedPkQuery="select o.uuid as id from openmrs.obs o 
+
+			deletedPkQuery="select o.uuid as id from openmrs.obs o 
 				inner join concept_name cn on cn.concept_id = o.concept_id
 				where person_id='${dataimporter.request.personId}'
-				AND (o.voided=1 OR cn.voided=1) AND o.date_voided &gt; '${dataimporter.request.lastIndexTime}'"
-				>
-			</entity> 
+				AND (o.voided=1 OR cn.voided=1) AND o.date_voided &gt; '${dataimporter.request.lastIndexTime}'">
+		</entity>
+		<entity name="encounters"
+			query="SELECT e.uuid as id, e.encounter_id, e.patient_id, et.name as encounter_type, e.form_id as e_form_id, e.encounter_datetime , e.visit_id
+				FROM openmrs.encounter e
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'"
+
+			deltaImportQuery="SELECT e.uuid as id, e.encounter_id, e.patient_id, et.name as encounter_type, e.form_id as e_form_id, e.encounter_datetime , e.visit_id
+				FROM openmrs.encounter e
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
+				WHERE e.voided = '0' AND e.uuid='${dih.delta.id}'"
+
+			deltaQuery="select e.uuid as id FROM openmrs.encounter e
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'"
+				
+			deletedPkQuery="select e.uuid as id FROM openmrs.encounter e
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'">
+		</entity>
+		<entity name="forms"
+			query="SELECT f.uuid as id, form_id, f.name as form_name, f.date_created, et.name as encounter_type_name
+				FROM openmrs.form f 
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type 
+				WHERE f.retired = 0"
+
+			deltaImportQuery="SELECT f.uuid as id, form_id, f.name as form_name, f.date_created, et.name as encounter_type_name
+				FROM openmrs.form f 
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
+				WHERE f.uuid='${dih.delta.id}' AND f.retired = 0"
+
+			deltaQuery="select f.uuid as id from openmrs.form f
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
+				where f.retired = 0
+				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'"
+				
+			deletedPkQuery="select f.uuid as id from openmrs.form f
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
+				where f.retired = 0
+				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'">
+		</entity>
+
 	</document>
 </dataConfig>

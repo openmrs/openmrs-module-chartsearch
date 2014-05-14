@@ -41,7 +41,10 @@
 			</props>
 		</property>
 	</bean>
-
+	
+	<bean class="org.openmrs.ui.framework.StandardModuleUiConfiguration">
+        <property name="moduleId" value="${project.parent.artifactId}"/>
+    </bean>
 	<bean id="patientDashBoardChartSearchTabController"
 		class="${project.parent.groupId}.${project.parent.artifactId}.web.controller.PatientDashBoardChartSearchTabController">
 	</bean>

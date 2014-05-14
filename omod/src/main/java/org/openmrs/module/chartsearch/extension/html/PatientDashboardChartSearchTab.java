@@ -14,7 +14,6 @@
 package org.openmrs.module.chartsearch.extension.html;
 
 import org.openmrs.module.web.extension.PatientDashboardTabExt;
-import org.openmrs.util.PrivilegeConstants;
 
 /**
  *

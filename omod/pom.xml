@@ -29,6 +29,12 @@
 		
 		<!-- End OpenMRS modules -->
 
+		<!-- new ui module -->
+		
+		<dependency>
+		    <groupId>org.openmrs.module</groupId>
+		    <artifactId>uiframework-api</artifactId>
+		</dependency>
 
 		<!-- Begin OpenMRS core -->
 
@@ -74,7 +80,19 @@
 			<scope>test</scope>
 		</dependency>
 
+        <dependency>
+                       <groupId>org.openmrs.module</groupId>
+                        <artifactId>appui-omod</artifactId>
+                        <version>${appuiVersion}</version>
+                        <scope>provided</scope>
+                    </dependency>
 		<!-- End OpenMRS core -->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.5</version>
+        </dependency>
 
 	</dependencies>
 

@@ -39,7 +39,8 @@
 	}
 	
 	function nameColumnRenderer(oObj){
-		return "<div>"+oObj.aData[0]+"</div><div style='font-style: italic;'>"+oObj.aData[1]+"</div><div>"+oObj.aData[2]+"</div>";
+
+		return "<div>"+oObj.aData[0]+ ": " + oObj.aData[2]+"</div><div style='font-style: italic;'>"+oObj.aData[1]+"</div>";
 	}
 	
 	function linkColumnRenderer(oObj){

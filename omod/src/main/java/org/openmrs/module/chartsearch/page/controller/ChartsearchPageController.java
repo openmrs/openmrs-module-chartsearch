@@ -37,8 +37,10 @@ public class ChartsearchPageController {
       //  ArrayList<String> lst = new ArrayList<String>();
 
         
-        chartSearchIndexer.indexPatientData(patient);
-        log.info("indexed patient");
+        if (chartSearchIndexer != null && patient != null) {
+	        chartSearchIndexer.indexPatientData(patient);
+        }
+		log.info("indexed patient");
         //log.info("indexed successfully");
 
 

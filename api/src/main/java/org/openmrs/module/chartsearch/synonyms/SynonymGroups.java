@@ -1,42 +1,52 @@
 package org.openmrs.module.chartsearch.synonyms;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Created by Eli on 21/04/14.
  */
 public class SynonymGroups {
-    private static int counter;
-    private static Vector<SynonymGroup> synonymGroups;
+    private int counter;
+    private Vector<SynonymGroup> synonymGroupsHolder;
+    private static SynonymGroups instance;
 
-    public SynonymGroups() {
+    private SynonymGroups() {
+
         counter = 0;
-        synonymGroups = new Vector<SynonymGroup>();
+        synonymGroupsHolder = new Vector<SynonymGroup>();
     }
 
-    public static int getCounter() {
+    public static SynonymGroups getInstance() {
+        if (instance == null) {
+            instance = new SynonymGroups();
+        }
+        return instance;
+    }
+
+    public int getCounter() {
         return counter;
     }
 
-    public static int getNumberOfGroups() {
-        return synonymGroups.size();
+    public int getNumberOfGroups() {
+        return synonymGroupsHolder.size();
     }
 
-    public static SynonymGroup isSynonymContainedInGroup(String syn) {
-        for (SynonymGroup grp : synonymGroups) {
-            if (grp.contains(syn)) {
-                return grp;
+    public SynonymGroup isSynonymContainedInGroup(String syn) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
+            HashSet<String> synSet = grp.getSynonyms();
+            for (String synInGrp : synSet) {
+                if (synInGrp.equals(syn)) {
+                    return grp;
+                }
             }
         }
         return null;
     }
 
-    public static SynonymGroup isSynFromGroupContainedInOtherGroup(SynonymGroup checkGroup) {
-        for (SynonymGroup grp : synonymGroups) {
-            HashSet<String> intersection = new HashSet<String>((Collection<? extends String>) checkGroup); // use the copy constructor
-            intersection.retainAll((Collection<?>) grp);
+    public SynonymGroup isSynFromGroupContainedInOtherGroup(SynonymGroup checkGroup) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
+            HashSet<String> intersection = new HashSet<String>((Collection<? extends String>) checkGroup.getSynonyms()); // use the copy constructor
+            intersection.retainAll((Collection<?>) grp.getSynonyms());
             if (!intersection.isEmpty()) {
                 return grp;
             }
@@ -44,23 +54,33 @@ public class SynonymGroups {
         return null;
     }
 
-    public static void addSynonymGroup(SynonymGroup newGroup) {
-        if (isSynFromGroupContainedInOtherGroup(newGroup) == null) {
-            synonymGroups.add(newGroup);
-            counter++;
+    public boolean addSynonymGroup(SynonymGroup newGroup) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
+            if (grp.getGroupName().equals(newGroup.getGroupName())) {
+                return false;
+            }
         }
+        synonymGroupsHolder.add(newGroup);
+        counter++;
+        return true;
     }
 
-    public static void mergeSynonymGroups(SynonymGroup grpToMerge) {
-        SynonymGroup grp = isSynFromGroupContainedInOtherGroup(grpToMerge);
-        if (!grp.equals(null)) {
-            grp.merge(grpToMerge);
-
+    public SynonymGroup mergeSynonymGroups(SynonymGroup FirstGrpToMerge, SynonymGroup SecondGroupToMerge) {
+        SynonymGroup mergedGroup = null;
+        if (FirstGrpToMerge != null && SecondGroupToMerge != null) {
+            String newName = FirstGrpToMerge.getGroupName();
+            boolean newIsCategory = FirstGrpToMerge.isCategory();
+            ArrayList<String> newSynonymSet = new ArrayList<String>();
+            newSynonymSet.addAll(FirstGrpToMerge.getSynonyms());
+            newSynonymSet.addAll(SecondGroupToMerge.getSynonyms());
+            mergedGroup = new SynonymGroup(newName, newIsCategory, newSynonymSet);
+            return mergedGroup;
         }
+        return mergedGroup;
     }
 
-    public static SynonymGroup getSynonymGroupByName(String name) {
-        for (SynonymGroup grp : synonymGroups) {
+    public SynonymGroup getSynonymGroupByName(String name) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
             if (grp.getGroupName().equals(name)) {
                 return grp;
             }
@@ -68,19 +88,19 @@ public class SynonymGroups {
         return null;
     }
 
-    public static SynonymGroup getSynonymGroupBySynonym(String syn) {
-        for (SynonymGroup grp : synonymGroups) {
-            if (grp.contains(syn)) {
+    public SynonymGroup getSynonymGroupBySynonym(String syn) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
+            if (grp.getSynonyms().contains(syn)) {
                 return grp;
             }
         }
         return null;
     }
 
-    public static boolean deleteSynonymGroupByName(String name) {
-        for (SynonymGroup grp : synonymGroups) {
+    public boolean deleteSynonymGroupByName(String name) {
+        for (SynonymGroup grp : synonymGroupsHolder) {
             if (grp.getGroupName().equals(name)) {
-                synonymGroups.remove(grp);
+                synonymGroupsHolder.remove(grp);
 
                 return true;
             }
@@ -88,19 +108,54 @@ public class SynonymGroups {
         return false;
     }
 
-    public static Vector<SynonymGroup> getSynonymGroups() {
-        return synonymGroups;
+    public Vector<SynonymGroup> getSynonymGroupsHolder() {
+        return synonymGroupsHolder;
     }
+
+
+    public Vector<String> getAllMatchingSynonymsOfPhrase(String phrase) {
+        return getAllMatchingSynonymsOfPhraseRec(phrase, new Vector<String>());
+    }
+
+    public String getStrOfAllSynMatchingPhrase(String phrase) {
+        String returnStr = new String();
+        Vector<String> matchingSyns = getAllMatchingSynonymsOfPhrase(phrase);
+        Iterator<String> iter = matchingSyns.iterator();
+        if (iter.hasNext())
+            returnStr += iter.next();
+        while (iter.hasNext()) {
+            returnStr += "," + iter.next();
+        }
+        return returnStr;
+    }
+
+    private Vector<String> getAllMatchingSynonymsOfPhraseRec(String phrase, Vector<String> synonymSet) {
+        if (synonymSet.contains(phrase))
+            return synonymSet;
+        else {
+            synonymSet.add(phrase);
+            SynonymGroup currnetGrp = getSynonymGroupByName(phrase);
+            if (currnetGrp != null) {
+                HashSet<String> synonymsOfGrp = currnetGrp.getSynonyms();
+                for (String syn : synonymsOfGrp) {
+                    getAllMatchingSynonymsOfPhraseRec(syn, synonymSet);
+                }
+            }
+        }
+        return synonymSet;
+    }
+
 
     @Override
     public String toString() {
         {
             String str = "";
-            for (SynonymGroup grp : synonymGroups) {
+            for (SynonymGroup grp : synonymGroupsHolder) {
                 str += grp.toString() + '\n';
             }
             return str;
         }
 
     }
+
 }

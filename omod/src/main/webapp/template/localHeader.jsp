@@ -23,6 +23,16 @@
 	</openmrs:hasPrivilege>
 
 	<!-- Add further links here -->
+
+    <openmrs:hasPrivilege privilege="Add synonym Groups">
+        <li
+        <c:if test='<%=request.getRequestURI().contains("/addsynonymgroup")%>'>class="active"</c:if>>
+        <a
+                href="${pageContext.request.contextPath}/module/chartsearch/addsynonymgroup.form"><spring:message
+                code="chartsearch.manage.addsynonymgroup" /></a>
+        </li>
+    </openmrs:hasPrivilege>
+
 </ul>
 <h2>
 	<spring:message code="chartsearch.title" />

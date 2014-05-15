@@ -3,14 +3,18 @@ package org.openmrs.module.chartsearch.synonyms;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Eli on 21/04/14.
  */
 public class SynonymGroup {
-    private HashSet<String> synonymSet;
+    private Set<String> synonymSet;
     private String groupName;
     private boolean isCategory;
+
+    public SynonymGroup() {
+    }
 
 
 
@@ -47,7 +51,7 @@ public class SynonymGroup {
         }
     }
 
-    public HashSet getSynonyms() {
+    public Set getSynonyms() {
         return synonymSet;
     }
 
@@ -118,5 +122,27 @@ public class SynonymGroup {
 
     public void setCategory(boolean isCategory) {
         this.isCategory = isCategory;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SynonymGroup)) return false;
+
+        SynonymGroup that = (SynonymGroup) o;
+
+        if (isCategory != that.isCategory) return false;
+        if (!groupName.equals(that.groupName)) return false;
+        if (!synonymSet.equals(that.synonymSet)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = synonymSet.hashCode();
+        result = 31 * result + groupName.hashCode();
+        result = 31 * result + (isCategory ? 1 : 0);
+        return result;
     }
 }

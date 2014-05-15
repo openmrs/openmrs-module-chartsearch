@@ -33,7 +33,7 @@ public class SynonymGroups {
 
     public SynonymGroup isSynonymContainedInGroup(String syn) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            HashSet<String> synSet = grp.getSynonyms();
+            Set<String> synSet = grp.getSynonyms();
             for (String synInGrp : synSet) {
                 if (synInGrp.equals(syn)) {
                     return grp;
@@ -136,7 +136,7 @@ public class SynonymGroups {
             synonymSet.add(phrase);
             SynonymGroup currnetGrp = getSynonymGroupByName(phrase);
             if (currnetGrp != null) {
-                HashSet<String> synonymsOfGrp = currnetGrp.getSynonyms();
+                Set<String> synonymsOfGrp = currnetGrp.getSynonyms();
                 for (String syn : synonymsOfGrp) {
                     getAllMatchingSynonymsOfPhraseRec(syn, synonymSet);
                 }

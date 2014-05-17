@@ -1,12 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
     <!--
         See http://www.liquibase.org/manual/home#available_database_refactorings
         for a list of supported elements and attributes
     -->
-    
+
+    <changeSet id="1" author="Eli">
+        <comment>added synonym table</comment>
+        <createTable tableName="chartsearch_synonyms">
+            <column name="group_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="2" author="Eli">
+        <comment>added synonym groups table and a foreign key</comment>
+        <createTable tableName="chartsearch_synonym_groups">
+            <column name="group_id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="group_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_category" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_synonymgroups_synonyms"
+                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
+                onDelete="CASCADE"
+                onUpdate="RESTRICT"
+                />
+
+    </changeSet>
+
+    <changeSet id="3" author="Eli">
+        <comment>Added synonym_id column</comment>
+        <addColumn tableName="chartsearch_synonyms">
+            <column name="synonym_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+
 </databaseChangeLog>

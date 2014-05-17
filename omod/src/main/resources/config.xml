@@ -115,7 +115,8 @@
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
-
+        SynonymGroup.hbm.xml
+        Synonym.hbm.xml
 		ChartSearch.hbm.xml
 
 	</mappingFiles>

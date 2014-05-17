@@ -13,11 +13,19 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
-import org.openmrs.api.impl.BaseOpenmrsService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.APIException;
+import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
-import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
+import org.openmrs.module.chartsearch.api.db.SynonymDAO;
+import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
+import org.openmrs.module.chartsearch.synonyms.Synonym;
+import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -25,20 +33,113 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartSearchService {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
-	
-	private ChartSearchDAO dao;
-	
-	/**
-     * @param dao the dao to set
-     */
-    public void setDao(ChartSearchDAO dao) {
-	    this.dao = dao;
-    }
-    
+
+
+
+    private SynonymDAO synonymDAO;
+    private SynonymGroupDAO synonymGroupDAO;
+
     /**
-     * @return the dao
+     * Getters and Setters
      */
-    public ChartSearchDAO getDao() {
-	    return dao;
+    public SynonymGroupDAO getSynonymGroupDAO() {
+        return synonymGroupDAO;
+    }
+
+    public void setSynonymGroupDAO(SynonymGroupDAO synonymGroupDAO) {
+        this.synonymGroupDAO = synonymGroupDAO;
+    }
+
+    public SynonymDAO getSynonymDAO() {
+        return synonymDAO;
+    }
+
+    public void setSynonymDAO(SynonymDAO synonymDAO) {
+        this.synonymDAO = synonymDAO;
+    }
+
+
+
+
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public SynonymGroup getSynonymGroupById(Integer id) {
+        return (SynonymGroup)getSynonymGroupDAO().getById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SynonymGroup> getAllSynonymGroups() {
+        List<SynonymGroup> list = new ArrayList<SynonymGroup>();
+        list.addAll(getSynonymGroupDAO().getAll());
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void purgeSynonymGroup(SynonymGroup synGroup) {
+        getSynonymGroupDAO().delete(synGroup);
+    }
+
+    @Override
+    @Transactional
+    public SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException {
+        return (SynonymGroup)getSynonymGroupDAO().saveOrUpdate(synGroup);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SynonymGroup getSynonymGroupByName(String groupName) {
+        return getSynonymGroupDAO().getSynonymGroupByName(groupName);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SynonymGroup> getSynonymGroupsIsCategory(boolean isCategory) {
+        return getSynonymGroupDAO().getSynonymGroupsIsCategory(isCategory);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getCountOfSynonymGroups(boolean byIsCategory) {
+        return getSynonymGroupDAO().getCountOfSynonymGroups(byIsCategory);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Synonym getSynonymById(Integer id) {
+        return (Synonym)getSynonymDAO().getById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Synonym> getAllSynonyms() {
+        return getSynonymDAO().getAll();
+    }
+
+    @Override
+    @Transactional
+    public void purgeSynonym(Synonym synonym) {
+        getSynonymDAO().delete(synonym);
+    }
+
+    @Override
+    @Transactional
+    public Synonym saveSynonym(Synonym synonym) throws APIException {
+        return (Synonym)getSynonymDAO().saveOrUpdate(synonym);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Synonym> getSynonymsByGroup(SynonymGroup synonymGroup) {
+        return getSynonymDAO().getSynonymsByGroup(synonymGroup);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getSynonymsCountByGroup(SynonymGroup synonymGroup) {
+        return getSynonymDAO().getSynonymsCountByGroup(synonymGroup);
     }
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chartsearch.synonyms">
+
+
+    <class name="Synonym"
+           table="${project.parent.artifactId}_synonyms">
+        <id name="synonymId" type="int">
+            <column name="synonym_id"/>
+            <generator class="increment"/>
+        </id>
+
+        <many-to-one name="group" class="SynonymGroup" not-null="true">
+            <column name="group_id"/>
+        </many-to-one>
+
+
+        <property name="synonymName" type="java.lang.String">
+            <column name="name"/>
+        </property>
+
+
+
+
+    </class>
+
+
+</hibernate-mapping>

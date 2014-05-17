@@ -13,8 +13,13 @@
  */
 package org.openmrs.module.chartsearch.api;
 
+import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.chartsearch.synonyms.Synonym;
+import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -28,9 +33,65 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 public interface ChartSearchService extends OpenmrsService {
-     
-	/*
-	 * Add service methods here
-	 * 
-	 */
+
+    SynonymGroup getSynonymGroupById(Integer id);
+
+	List<SynonymGroup> getAllSynonymGroups();
+
+    void purgeSynonymGroup(SynonymGroup synGroup);
+
+    SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException;
+
+    /**
+     * Retrieve synonym group by group name
+     *
+     * @param groupName - The group name.
+     * @return the synonym group that matches the given groupName.
+     * @should not return voided group
+     */
+    SynonymGroup getSynonymGroupByName(String groupName);
+
+    /**
+     * Retrieve a list of synonym groups by is category.
+     *
+     * @param isCategory - Determines if a group is a category.
+     * @return if isCategory == true => return list of synonym groups that are categories, else, return list of groups that aren't categories.
+     * @should not return voided groups
+     */
+    List<SynonymGroup> getSynonymGroupsIsCategory(boolean isCategory);
+
+    /**
+     * Retrieve a count of synonym groups.
+     *
+     * @param byIsCategory - Determine if a group is a category.
+     * @return if byIsCategory == false => return count of all groups, else, returns count for categorized groups only.
+     * @should not return voided groups
+     */
+    Integer getCountOfSynonymGroups(boolean byIsCategory);
+
+    Synonym getSynonymById(Integer id);
+
+    List<Synonym> getAllSynonyms();
+
+    void purgeSynonym(Synonym synonym);
+
+    Synonym saveSynonym(Synonym synonym) throws APIException;
+
+    /**
+     * Retrieve synonyms by synonym group
+     *
+     * @param synonymGroup - the synonym group.
+     * @return list of synonyms for the given group.
+     * @should not return voided synonyms
+     */
+    List<Synonym> getSynonymsByGroup(SynonymGroup synonymGroup);
+
+    /**
+     * Retrieve count of synonyms by synonym group
+     *
+     * @param synonymGroup - the synonym group.
+     * @return count of synonyms for the given group.
+     * @should not return voided synonyms
+     */
+    Integer getSynonymsCountByGroup(SynonymGroup synonymGroup);
 }

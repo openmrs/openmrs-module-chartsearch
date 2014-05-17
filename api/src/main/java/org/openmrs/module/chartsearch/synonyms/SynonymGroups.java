@@ -7,20 +7,28 @@ import java.util.*;
  */
 public class SynonymGroups {
     private int counter;
-    private Vector<SynonymGroup> synonymGroupsHolder;
+    private List<SynonymGroup> synonymGroupsHolder;
     private static SynonymGroups instance;
 
     private SynonymGroups() {
 
         counter = 0;
-        synonymGroupsHolder = new Vector<SynonymGroup>();
+        synonymGroupsHolder = new ArrayList<SynonymGroup>();
     }
+
+
 
     public static SynonymGroups getInstance() {
         if (instance == null) {
             instance = new SynonymGroups();
         }
         return instance;
+    }
+
+    public void clearSynonymGroups(){
+        this.counter = 0;
+        this.synonymGroupsHolder.clear();
+
     }
 
     public int getCounter() {
@@ -33,8 +41,8 @@ public class SynonymGroups {
 
     public SynonymGroup isSynonymContainedInGroup(String syn) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            Set<String> synSet = grp.getSynonyms();
-            for (String synInGrp : synSet) {
+            Set<Synonym> synSet = grp.getSynonymSet();
+            for (Synonym synInGrp : synSet) {
                 if (synInGrp.equals(syn)) {
                     return grp;
                 }
@@ -45,7 +53,7 @@ public class SynonymGroups {
 
     public SynonymGroup isSynFromGroupContainedInOtherGroup(SynonymGroup checkGroup) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            HashSet<String> intersection = new HashSet<String>((Collection<? extends String>) checkGroup.getSynonyms()); // use the copy constructor
+            HashSet<Synonym> intersection = new HashSet<Synonym>((Collection<? extends Synonym>) checkGroup.getSynonyms()); // use the copy constructor
             intersection.retainAll((Collection<?>) grp.getSynonyms());
             if (!intersection.isEmpty()) {
                 return grp;
@@ -69,8 +77,8 @@ public class SynonymGroups {
         SynonymGroup mergedGroup = null;
         if (FirstGrpToMerge != null && SecondGroupToMerge != null) {
             String newName = FirstGrpToMerge.getGroupName();
-            boolean newIsCategory = FirstGrpToMerge.isCategory();
-            ArrayList<String> newSynonymSet = new ArrayList<String>();
+            boolean newIsCategory = FirstGrpToMerge.getIsCategory();
+            ArrayList<Synonym> newSynonymSet = new ArrayList<Synonym>();
             newSynonymSet.addAll(FirstGrpToMerge.getSynonyms());
             newSynonymSet.addAll(SecondGroupToMerge.getSynonyms());
             mergedGroup = new SynonymGroup(newName, newIsCategory, newSynonymSet);
@@ -108,10 +116,15 @@ public class SynonymGroups {
         return false;
     }
 
-    public Vector<SynonymGroup> getSynonymGroupsHolder() {
+    public List<SynonymGroup> getSynonymGroupsHolder() {
         return synonymGroupsHolder;
     }
 
+    public void setSynonymGroupsHolder(List<SynonymGroup> synonymGroupsHolder) {
+        for(SynonymGroup synGrp : synonymGroupsHolder){
+            addSynonymGroup(synGrp);
+        }
+    }
 
     public Vector<String> getAllMatchingSynonymsOfPhrase(String phrase) {
         return getAllMatchingSynonymsOfPhraseRec(phrase, new Vector<String>());
@@ -158,4 +171,13 @@ public class SynonymGroups {
 
     }
 
+ /*
+
+    public static void main(String[] args){
+        Synonym s1 = new Synonym("syn");
+        List<Synonym> synList = new ArrayList<Synonym>();
+        synList.add(s1);
+        SynonymGroup synGrp = new SynonymGroup("grpName", false,synList );
+        System.out.println(synGrp.contains("syn"));
+    }*/
 }

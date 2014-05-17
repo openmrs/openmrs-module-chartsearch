@@ -9,17 +9,26 @@ import java.util.Set;
  * Created by Eli on 21/04/14.
  */
 public class SynonymGroup {
-    private Set<String> synonymSet;
+
+
+    private Set<Synonym> synonymSet;
     private String groupName;
     private boolean isCategory;
+    private int group_id;
+
+
 
     public SynonymGroup() {
     }
 
+    public SynonymGroup(int group_id) {
+        this.group_id = group_id;
+    }
 
 
-    public SynonymGroup(String groupName, boolean isCategory, List<String> synonymList) {
-        synonymSet = new HashSet<String>();
+
+    public SynonymGroup(String groupName, boolean isCategory, List<Synonym> synonymList) {
+        synonymSet = new HashSet<Synonym>();
         if (!groupName.equals("")) {
             this.groupName = groupName;
         } else {
@@ -45,8 +54,8 @@ public class SynonymGroup {
 
 
 
-    public void addSynonyms(List<String> newSynonyms) {
-        for (String syn : newSynonyms) {
+    public void addSynonyms(List<Synonym> newSynonyms) {
+        for (Synonym syn : newSynonyms) {
             addSynonym(syn);
         }
     }
@@ -55,19 +64,19 @@ public class SynonymGroup {
         return synonymSet;
     }
 
-    public boolean addSynonym(String newSynonym) {
-        if (!newSynonym.equals("")) {
-
+    public boolean addSynonym(Synonym newSynonym) {
+        if (!newSynonym.equals("") && !contains(newSynonym.getSynonymName())) {
+            newSynonym.setGroup(this);
             synonymSet.add(newSynonym);
             return true;
         }
         return false;
     }
 
-    public boolean editSynonym(String oldSynonym, String newSynonym) {
-        if (synonymSet.contains(oldSynonym)) {
+    public boolean editSynonym(Synonym oldSynonym, Synonym newSynonym) {
+        if (this.contains(oldSynonym.getSynonymName())) {
 
-            synonymSet.remove(oldSynonym);
+            this.removeSynonym(oldSynonym.getSynonymName());
             addSynonym(newSynonym);
             return true;
 
@@ -76,22 +85,28 @@ public class SynonymGroup {
     }
 
     public boolean removeSynonym(String synonymToDel) {
-        if (synonymSet.contains(synonymToDel)) {
-            synonymSet.remove(synonymToDel);
+        if (this.contains(synonymToDel)) {
+            for(Synonym syn : synonymSet){
+                if(syn.getSynonymName().equals(synonymToDel)){
+                    synonymSet.remove(syn);
+                }
+            }
             return true;
         }
         return false;
     }
 
     public boolean contains(String synonymToCheck) {
-        if (synonymSet.contains(synonymToCheck)) {
-            return true;
+        for(Synonym syn : synonymSet){
+            if(syn.getSynonymName().equals(synonymToCheck)){
+                return true;
+            }
         }
         return false;
     }
 
     public boolean contains(SynonymGroup otherGroup) {
-        HashSet<String> intersection = new HashSet<String>((Collection<? extends String>) otherGroup); // use the copy constructor
+        HashSet<Synonym> intersection = new HashSet<Synonym>((Collection<? extends Synonym>) otherGroup); // use the copy constructor
         intersection.retainAll(synonymSet);
         if (intersection.isEmpty()) {
             return false;
@@ -100,28 +115,43 @@ public class SynonymGroup {
         }
     }
 
-    public void merge(SynonymGroup otherGroup) {
-        synonymSet.addAll((Collection<? extends String>) otherGroup);
+
+
+    public int getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(int group_id) {
+        this.group_id = group_id;
     }
 
     @Override
     public String toString() {
         {
             String str = getGroupName() + '\n';
-            for (String syn : synonymSet) {
-                str += syn.toString() + '\n';
+            for (Synonym syn : synonymSet) {
+                str += syn.getSynonymName().toString() + '\n';
             }
             return str;
         }
 
     }
 
-    public boolean isCategory() {
+
+    public boolean getIsCategory() {
         return isCategory;
     }
 
-    public void setCategory(boolean isCategory) {
+    public void setIsCategory(boolean isCategory) {
         this.isCategory = isCategory;
+    }
+
+    public Set<Synonym> getSynonymSet() {
+        return synonymSet;
+    }
+
+    public void setSynonymSet(Set<Synonym> synonymSet) {
+        this.synonymSet = synonymSet;
     }
 
     @Override

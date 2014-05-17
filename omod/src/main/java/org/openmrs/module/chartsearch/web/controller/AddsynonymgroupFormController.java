@@ -1,5 +1,8 @@
 package org.openmrs.module.chartsearch.web.controller;
 
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroups;
 import org.springframework.stereotype.Controller;
@@ -8,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -23,27 +27,46 @@ public class AddsynonymgroupFormController {
         String groupName = requestParams.get("groupName");
 
         int synLen = "synonym".length();
-        ArrayList<String> synonymList = new ArrayList<String>();
+        ArrayList<Synonym> synonymList = new ArrayList<Synonym>();
         for (String param : requestParams.keySet()) {
             if (param.substring(0, synLen).equals("synonym")) {
                 if (requestParams.get(param) != null || !requestParams.get(param).equals("")) {
-                    synonymList.add(requestParams.get(param));
+                    Synonym newSyn = new Synonym(requestParams.get(param));
+                    synonymList.add(newSyn);
                 }
             }
         }
-        for(String str : synonymList){
-            System.out.println(str);
+        for (Synonym syn : synonymList) {
+            System.out.println(syn.getSynonymName());
         }
         boolean category;
-        if(requestParams.get("category")==null){
-            category=false;
+        if (requestParams.get("category") == null) {
+            category = false;
+        } else {
+            category = true;
         }
-        else{
-            category=true;
-        }
-        SynonymGroup synGrp = new SynonymGroup(groupName, category, synonymList);
 
-        SynonymGroups.getInstance().addSynonymGroup(synGrp);
+        if (Context.isAuthenticated()) {
+            ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
+            SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();
+            synonymGroupsInstance.clearSynonymGroups();
+            List synGroups = chartSearchService.getAllSynonymGroups();
+
+            if (synGroups != null) {
+                synonymGroupsInstance.setSynonymGroupsHolder(chartSearchService.getAllSynonymGroups());
+
+                SynonymGroup synGrp = new SynonymGroup(groupName, category, synonymList);
+
+                if (synonymGroupsInstance.addSynonymGroup(synGrp)) {
+                    chartSearchService.saveSynonymGroup(synGrp);
+                }
+            }
+            else {
+                System.out.println("synonym groups from db are null");
+            }
+            synonymGroupsInstance.clearSynonymGroups();
+        }
+
 
         return "redirect:addsynonymgroup.form";
     }

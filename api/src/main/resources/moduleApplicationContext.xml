@@ -39,22 +39,33 @@
 	</bean>
 
 	<!-- Services accessible via Context.getService() -->
-	<bean id="chartSearch"
+	<bean id="chartSearchService"
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />
 		</property>
 		<property name="target">
-			<bean
-				class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.ChartSearchServiceImpl">
-				<property name="dao">
-					<bean
-						class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateChartSearchDAO">
-						<property name="sessionFactory">
-							<ref bean="sessionFactory" />
-						</property>
-					</bean>
-				</property>
+			<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.ChartSearchServiceImpl">
+
+
+                <property name="SynonymDAO">
+                    <bean
+                            class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory" />
+                        </property>
+                    </bean>
+                </property>
+
+                <property name="SynonymGroupDAO">
+                    <bean
+                            class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymGroupDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory" />
+                        </property>
+                    </bean>
+                </property>
+
 			</bean>
 		</property>
 		<property name="preInterceptors">
@@ -70,7 +81,7 @@
 		<property name="moduleService">
 			<list>
 				<value>${project.parent.groupId}.${project.parent.artifactId}.api.ChartSearchService</value>
-				<ref local="chartSearch" />
+				<ref bean="chartSearchService" />
 			</list>
 		</property>
 	</bean>

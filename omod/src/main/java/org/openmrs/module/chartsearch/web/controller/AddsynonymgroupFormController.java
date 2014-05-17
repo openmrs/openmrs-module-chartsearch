@@ -53,7 +53,7 @@ public class AddsynonymgroupFormController {
             List synGroups = chartSearchService.getAllSynonymGroups();
 
             if (synGroups != null) {
-                synonymGroupsInstance.setSynonymGroupsHolder(chartSearchService.getAllSynonymGroups());
+                synonymGroupsInstance.setSynonymGroupsHolder(synGroups);
 
                 SynonymGroup synGrp = new SynonymGroup(groupName, category, synonymList);
 

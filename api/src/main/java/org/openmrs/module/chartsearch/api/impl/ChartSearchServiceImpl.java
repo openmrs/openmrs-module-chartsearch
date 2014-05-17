@@ -74,7 +74,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public List<SynonymGroup> getAllSynonymGroups() {
         List<SynonymGroup> list = new ArrayList<SynonymGroup>();
         list.addAll(getSynonymGroupDAO().getAll());
-        return null;
+        return list;
     }
 
     @Override

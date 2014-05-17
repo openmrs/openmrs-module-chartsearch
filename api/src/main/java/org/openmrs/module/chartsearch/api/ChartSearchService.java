@@ -33,13 +33,38 @@ import java.util.List;
  */
 @Transactional
 public interface ChartSearchService extends OpenmrsService {
-
+    /**
+     * Retrieve synonym group by id
+     *
+     * @param id - The group id.
+     * @return the synonym group that matches the given id.
+     * @should not return voided group
+     */
     SynonymGroup getSynonymGroupById(Integer id);
 
+    /**
+     * Retrieve List of all synonym groups.
+     *
+     * @return List of all synonym groups.
+     * @should not return voided group
+     */
 	List<SynonymGroup> getAllSynonymGroups();
 
+    /**
+     * Delete a synonym group.
+     *
+     * @param synGroup - The group to delete.
+     * @should not return voided group
+     */
     void purgeSynonymGroup(SynonymGroup synGroup);
 
+    /**
+     * Update a synonym group or save a new one.
+     *
+     * @param synGroup - The groupto save.
+     * @return the synonym group that has been saved.
+     * @should not return voided group
+     */
     SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException;
 
     /**
@@ -69,12 +94,38 @@ public interface ChartSearchService extends OpenmrsService {
      */
     Integer getCountOfSynonymGroups(boolean byIsCategory);
 
+    /**
+     * Retrive a synonym by its id.
+     *
+     * @param id - id of the synonym.
+     * @return the synonym that matches the id.
+     * @should not return voided synonyms
+     */
     Synonym getSynonymById(Integer id);
 
+    /**
+     * Retrieve all synonyms.
+     *
+     * @return List of all the synonyms.
+     * @should not return voided synonyms
+     */
     List<Synonym> getAllSynonyms();
 
+    /**
+     * Delete a synonym.
+     *
+     * @param synonym - the synonym to delete.
+     * @should not return voided synonyms
+     */
     void purgeSynonym(Synonym synonym);
 
+    /**
+     * Update a synonym or save a new one.
+     *
+     * @param synonym - the synonym to save.
+     * @return the synonym that has been saved.
+     * @should not return voided synonyms
+     */
     Synonym saveSynonym(Synonym synonym) throws APIException;
 
     /**

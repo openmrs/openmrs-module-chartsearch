@@ -2,6 +2,8 @@
     ui.decorateWith("appui", "standardEmrPage")
 %>
 
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
+
 <h2>Chart Search Page</h2>
 <hr />
 <% ui.includeJavascript("chartsearch", "doT.js") %>

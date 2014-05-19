@@ -310,7 +310,12 @@ function addAllObsGroups(obsJSON)
 function addObsGroupToResults(obsJSON)
 {
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap" onclick="load_detailed_obs('+obsJSON.group_Id+');">';
+    var obs_id_html = '';
+    var obs_id = 'obs_group_'+obsJSON.group_Id;
+    if(typeof obsJSON.group_Id !== 'undefined') {
+        obs_id_html = 'id="obs_group_'+obsJSON.group_Id+'"';
+    }
+    resultText+='<div class="obsgroup_wrap" '+obs_id_html+' onclick="load_detailed_obs('+obsJSON.group_Id+');">';
     resultText+='<div class="obsgroup_first_row">';
     if (typeof obsJSON.group_name !== 'undefined')
     {
@@ -391,9 +396,12 @@ function get_obs_by_id(id)
 
 function load_detailed_obs(obs_id)
 {
+    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
+    //console.log(hoverID)
+    $( "#obs_group_"+obs_id ).addClass( "obsgroup_current" );
     var obsJSON = get_obs_by_id(obs_id);
-    console.log(obs_id);
-    console.log(obsJSON);
+    //console.log(obs_id);
+    //console.log(obsJSON);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';

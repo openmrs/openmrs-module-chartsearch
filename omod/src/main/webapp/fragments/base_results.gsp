@@ -22,6 +22,9 @@
         background-color: #d6d6d6;
         cursor: pointer;
     }
+    .obsgroup_current {
+        background-color: #d6d6d6;
+    }
     .obsgroup_title {
         margin: 0;
         color: #00463f;

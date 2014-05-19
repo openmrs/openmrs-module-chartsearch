@@ -72,6 +72,7 @@ function addAllSingleObs(obsJSON)
     var single_obsJSON=obsJSON.obs_singles;
     if (typeof single_obsJSON !== 'undefined')
     {
+        resultText+='<h2>Single observations</h2>';
         for(var i=0;i<single_obsJSON.length;i++){
             resultText+=addSingleObsToResults(single_obsJSON[i]);
         }
@@ -104,11 +105,21 @@ function addSingleObsToResults(obsJSON)
 
 function get_single_obs_by_id(obs_id)
 {
-    var obsgroupJSON=jsonAfterParse.obs_singles;
-    for(var i=0;i<obsgroupJSON.length;i++){
-        if(obsgroupJSON[i].observation_id==obs_id)
+    var obs_single_JSON=jsonAfterParse.obs_singles;
+    for(var i=0;i<obs_single_JSON.length;i++){
+        if(obs_single_JSON[i].observation_id==obs_id)
         {
-            return obsgroupJSON[i];
+            return obs_single_JSON[i];
+        }
+    }
+    var obsgroupJSON=jsonAfterParse.obs_groups;
+    for(var i=0;i<obsgroupJSON.length;i++){
+        var singleGroup = obsgroupJSON[i].observations;
+        for(var j=0;j<singleGroup.length;j++){
+            if(singleGroup[j].observation_id==obs_id)
+            {
+                return singleGroup[j];
+            }
         }
     }
     return -1;
@@ -134,12 +145,34 @@ function enable_graph(obs_id) {
 
         var d3 = get_obs_graph_points(obs_id);
         var options = {
+            series: {
+                lines: {
+                    show: true
+                },
+                points: {
+                    show: true
+                }
+            },
+            grid: {
+                hoverable: true,
+                clickable: true
+            },
             xaxis: {
                 mode: "time",
                 tickLength: 5
             }
         };
-        $.plot("#placeholder", [  d3 ], options);
+        $.plot("#placeholder", [ d3 ], options);
+    $("<div id='tooltip'></div>").css({
+        position: "absolute",
+        display: "none",
+        border: "1px solid #fdd",
+        padding: "2px",
+        "background-color": "#fee",
+        opacity: 0.80
+    }).appendTo("body");
+
+
 
 
 }
@@ -239,6 +272,18 @@ function get_obs_history_json_by_name(obs_name) {
             }
         }
     }
+
+    var obsgroupJSON=jsonAfterParse.obs_groups;
+    for(var i=0;i<obsgroupJSON.length;i++){
+        var singleGroup = obsgroupJSON[i].observations;
+        for(var j=0;j<singleGroup.length;j++){
+            if(singleGroup[j].concept_name==obs_name)
+            {
+                result.push(singleGroup[j]);
+            }
+        }
+    }
+
     result.sort(compare);
     return result;
 }
@@ -251,9 +296,10 @@ function compare(a,b) {
 function addAllObsGroups(obsJSON)
 {
     var resultText='';
-    var obsgroupJSON=obsJSON.Obsgroubs;
+    var obsgroupJSON=obsJSON.obs_groups;
     if (typeof obsgroupJSON !== 'undefined')
     {
+        resultText+='<h2>Observation Groups</h2>';
         for(var i=0;i<obsgroupJSON.length;i++){
             resultText+=addObsGroupToResults(obsgroupJSON[i]);
         }
@@ -264,14 +310,20 @@ function addAllObsGroups(obsJSON)
 function addObsGroupToResults(obsJSON)
 {
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap" onclick="load_detailed_obs('+obsJSON.groupID+');">';
+    resultText+='<div class="obsgroup_wrap" onclick="load_detailed_obs('+obsJSON.group_Id+');">';
     resultText+='<div class="obsgroup_first_row">';
-    resultText+='<h3 class="obsgroup_title">';
-    resultText+=obsJSON.groupName;
-    resultText+='</h3>';
-    resultText+='<span class="obsgroup_date">';
-    resultText+=obsJSON.lastTakenDate;
-    resultText+='</span>'
+    if (typeof obsJSON.group_name !== 'undefined')
+    {
+        resultText+='<h3 class="obsgroup_title">';
+        resultText+=obsJSON.group_name;
+        resultText+='</h3>';
+    }
+    if (typeof obsJSON.last_taken_date !== 'undefined')
+    {
+        resultText+='<span class="obsgroup_date">';
+        resultText+=obsJSON.last_taken_date;
+        resultText+='</span>'
+    }
     resultText+='<div class="chart_serach_clear"></div>';
     resultText+='</div>';
     resultText+=innerObservationsHTML(obsJSON.observations);
@@ -280,7 +332,6 @@ function addObsGroupToResults(obsJSON)
 }
 
 function innerObservationsHTML(obsJSON) {
-    console.log('====innerObservationsHTML function======');
     var resultText='';
     resultText+='<div class="obsgroup_rows">';
     for(var i=0;i<obsJSON.length;i++){
@@ -290,28 +341,47 @@ function innerObservationsHTML(obsJSON) {
     return resultText;
 }
 
+function displayOnlyIfDef(display_opt) {
+    if (typeof display_opt !== 'undefined')
+    {
+        return display_opt;
+    }
+    else {
+        return '';
+    }
+}
+
 function single_obs_html(obsJSON) {
     console.log('====single obs html function=========');
     var resultText='';
     resultText+='<div class="obsgroup_row">';
-    resultText+='<div class="obsgroup_row_first_section inline">';
-    resultText+=obsJSON.concept_name;
-    resultText+='</div>';
-    resultText+='<div class="obsgroup_row_sec_section inline">';
-    resultText+=obsJSON.value + ' ' + obsJSON.UnitsOfMeasurement;
-    resultText+='</div>';
-    resultText+='<div class="obsgroup_row_trd_section inline">';
-    resultText+='(' + obsJSON.minValue + ' - ' + obsJSON.maxValue + ')';
-    resultText+='</div>';
+    if (typeof obsJSON.concept_name !== 'undefined')
+    {
+        resultText+='<div class="obsgroup_row_first_section inline">';
+        resultText+=obsJSON.concept_name;
+        resultText+='</div>';
+    }
+    if (typeof obsJSON.value !== 'undefined')
+    {
+        resultText+='<div class="obsgroup_row_sec_section inline">';
+        resultText+=obsJSON.value + ' ' + displayOnlyIfDef(obsJSON.units_of_measurement);
+        resultText+='</div>';
+    }
+    if (typeof obsJSON.absolute_low !== 'undefined')
+    {
+        resultText+='<div class="obsgroup_row_trd_section inline">';
+        resultText+='(' + obsJSON.absolute_low + ' - ' + obsJSON.absolute_high + ')';
+        resultText+='</div>';
+    }
     resultText+='</div>';
     return resultText;
 }
 
 function get_obs_by_id(id)
 {
-    var obsgroupJSON=jsonAfterParse.Obsgroubs;
+    var obsgroupJSON=jsonAfterParse.obs_groups;
     for(var i=0;i<obsgroupJSON.length;i++){
-        if(obsgroupJSON[i].groupID==id)
+        if(obsgroupJSON[i].group_Id==id)
         {
             return obsgroupJSON[i];
         }
@@ -322,32 +392,31 @@ function get_obs_by_id(id)
 function load_detailed_obs(obs_id)
 {
     var obsJSON = get_obs_by_id(obs_id);
+    console.log(obs_id);
+    console.log(obsJSON);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';
-    resultText+=obsJSON.groupName;
+    resultText+=obsJSON.group_name;
     resultText+='</h3>';
     resultText+='<div class="obsgroup_all_wrapper">';
     var singleObs = obsJSON.observations;
     for(var i=0;i<singleObs.length;i++){
-        resultText+='<div class="obsgroup_item_row">';
+        resultText+='<div class="obsgroup_item_row" onclick="load_single_detailed_obs('+singleObs[i].observation_id+')">';
         resultText+='<div class="obsgroup_item_first inline">';
         resultText+=singleObs[i].concept_name;
         resultText+='</div>';
         resultText+='<div class="obsgroup_item_sec inline">';
-        resultText+=singleObs[i].value +" "+ singleObs[i].UnitsOfMeasurement;
-        resultText+='</div>';
-        resultText+='<div class="obsgroup_item_trd inline">';
-        resultText+=singleObs[i].location;
+        resultText+=singleObs[i].value +" "+ singleObs[i].units_of_measurement;
         resultText+='</div>';
         resultText+='<div class="obsgroup_item_frth inline">';
         resultText+=singleObs[i].date;
-        resultText+'</div>';
+        resultText+='</div>';
         resultText+='</div>';
     }
     resultText+='</div>';
     resultText+='</div>';
-    document.getElementById('obsgroup_view').innerHTML+=resultText;
+    document.getElementById('obsgroup_view').innerHTML=resultText;
 }
 
 function get_today_date(time_back) {

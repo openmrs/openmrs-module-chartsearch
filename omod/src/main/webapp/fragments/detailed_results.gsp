@@ -13,23 +13,28 @@
         border: 1px solid #bebebe;
     }
     .obsgroup_item_first {
-        width: 25%;
+        width: 35%;
     }
     .obsgroup_item_sec {
-        width: 24%;
+        width: 30%;
     }
     .obsgroup_item_trd {
-        width: 24%;
+        width: 30%;
     }
     .obsgroup_item_frth {
-        width: 24%;
+        width: 30%;
     }
     .chartserach_bold {
         font-weight: bold;
         font-size: 13px;
     }
-    .obsgroup_item_row:nth-child(even) {
+    .obsgroup_item_row:hover {
         background-color: #d6d6d6;
+        cursor: pointer;
+    }
+    .obsgroup_item_row {
+        padding: 3px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.28);
     }
     .cs_label {
         font-weight: bold;

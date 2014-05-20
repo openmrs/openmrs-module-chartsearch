@@ -47,6 +47,7 @@ public class AdminList extends AdministrationSectionExt {
 		map.put("/module/chartsearch/settings.form", "chartsearch.manage.settings");
 		map.put("/module/chartsearch/commands.form", "chartsearch.manage.commands");
         map.put("/module/chartsearch/addsynonymgroup.form", "chartsearch.manage.addsynonymgroup");
+        map.put("/module/chartsearch/managesynonymgroups.form", "chartsearch.manage.managesynonymgroups");
 		/*map.put("/dataimport?command=status", "chartsearch.dataImportStatus");
 		map.put("/dataimport?command=full-import&clean=true", "chartsearch.importData");*/
 		

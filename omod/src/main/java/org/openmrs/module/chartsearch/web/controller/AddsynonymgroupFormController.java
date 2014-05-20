@@ -6,6 +6,7 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroups;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +20,22 @@ import java.util.Map;
 @RequestMapping("/module/chartsearch/addsynonymgroup")
 public class AddsynonymgroupFormController {
     @RequestMapping(method = RequestMethod.GET)
-    public void showForm() {
+    public void showForm(ModelMap map, @RequestParam(value = "synonymGroupId", required = false) Integer groupId) {
+        if (groupId != null) {
+
+            ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
+            SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();
+            synonymGroupsInstance.clearSynonymGroups();
+            SynonymGroup synonymGroup = chartSearchService.getSynonymGroupById(groupId);
+            int synonymCount = synonymGroup.getSynonymSet().size();
+            map.put("synonymGroup", synonymGroup);
+            if (synonymGroup.getIsCategory()) {
+                map.put("isCategory", "checked");
+            }
+
+            map.put("synonymCount", synonymCount);
+        }
+
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -60,8 +76,7 @@ public class AddsynonymgroupFormController {
                 if (synonymGroupsInstance.addSynonymGroup(synGrp)) {
                     chartSearchService.saveSynonymGroup(synGrp);
                 }
-            }
-            else {
+            } else {
                 System.out.println("synonym groups from db are null");
             }
             synonymGroupsInstance.clearSynonymGroups();

@@ -33,6 +33,15 @@
         </li>
     </openmrs:hasPrivilege>
 
+    <openmrs:hasPrivilege privilege="Manage Synonym Groups">
+        <li
+        <c:if test='<%=request.getRequestURI().contains("/managesynonymgroups")%>'>class="active"</c:if>>
+        <a
+                href="${pageContext.request.contextPath}/module/chartsearch/managesynonymgroups.form"><spring:message
+                code="chartsearch.manage.managesynonymgroups" /></a>
+        </li>
+    </openmrs:hasPrivilege>
+
 </ul>
 <h2>
 	<spring:message code="chartsearch.title" />

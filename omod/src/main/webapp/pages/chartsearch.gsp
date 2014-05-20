@@ -4,7 +4,6 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
 
-<h2>Chart Search Page</h2>
 <hr />
 <% ui.includeJavascript("chartsearch", "doT.js") %>
 <% ui.includeJavascript("chartsearch", "jquery.flot.js") %>

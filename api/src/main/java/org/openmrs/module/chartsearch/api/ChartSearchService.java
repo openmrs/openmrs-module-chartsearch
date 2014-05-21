@@ -61,7 +61,7 @@ public interface ChartSearchService extends OpenmrsService {
     /**
      * Update a synonym group or save a new one.
      *
-     * @param synGroup - The groupto save.
+     * @param synGroup - The group to save.
      * @return the synonym group that has been saved.
      * @should not return voided group
      */

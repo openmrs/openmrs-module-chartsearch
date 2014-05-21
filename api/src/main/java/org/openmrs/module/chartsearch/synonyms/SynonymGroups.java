@@ -73,6 +73,13 @@ public class SynonymGroups {
         return true;
     }
 
+    public boolean editSynonymGroupByName(String groupName, SynonymGroup newGrp){
+        SynonymGroup grp = getSynonymGroupByName(groupName);
+        deleteSynonymGroupByName(groupName);
+        addSynonymGroup(newGrp);
+        return true;
+    }
+
     public SynonymGroup mergeSynonymGroups(SynonymGroup FirstGrpToMerge, SynonymGroup SecondGroupToMerge) {
         SynonymGroup mergedGroup = null;
         if (FirstGrpToMerge != null && SecondGroupToMerge != null) {

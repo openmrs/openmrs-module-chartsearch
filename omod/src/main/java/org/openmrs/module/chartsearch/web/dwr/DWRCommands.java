@@ -13,14 +13,14 @@
  */
 package org.openmrs.module.chartsearch.web.dwr;
 
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
+
+import java.util.List;
 
 public class DWRCommands {
 	
@@ -47,6 +47,11 @@ public class DWRCommands {
 		int daemonsCount = chartSearchIndexer.changeDaemonsCount(count);
 		return daemonsCount;
 	}
+
+    public Integer addNewSynonymGroup(){
+
+        return null;
+    }
 	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);

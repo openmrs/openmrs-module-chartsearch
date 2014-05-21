@@ -2,7 +2,6 @@ package org.openmrs.module.chartsearch.web.controller;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
-import org.openmrs.module.chartsearch.synonyms.SynonymGroups;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +18,6 @@ public class ManagesynonymgroupsFormController {
     @RequestMapping(method = RequestMethod.GET)
     public void showForm(ModelMap map) {
         ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
-        SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();
-        synonymGroupsInstance.clearSynonymGroups();
         List synGroups = chartSearchService.getAllSynonymGroups();
 
         map.put("synonymGroups", synGroups);

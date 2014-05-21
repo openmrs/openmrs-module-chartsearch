@@ -24,8 +24,6 @@ public class AddsynonymgroupFormController {
         if (groupId != null) {
 
             ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
-            SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();
-            synonymGroupsInstance.clearSynonymGroups();
             SynonymGroup synonymGroup = chartSearchService.getSynonymGroupById(groupId);
             int synonymCount = synonymGroup.getSynonymSet().size();
             map.put("synonymGroup", synonymGroup);
@@ -33,7 +31,7 @@ public class AddsynonymgroupFormController {
                 map.put("isCategory", "checked");
             }
 
-            map.put("synonymCount", synonymCount);
+
         }
 
     }
@@ -42,15 +40,20 @@ public class AddsynonymgroupFormController {
     public String handleSubmission(@RequestParam Map<String, String> requestParams) {
         String groupName = requestParams.get("groupName");
 
-        int synLen = "synonym".length();
+        int synLen = "synonymName".length();
         ArrayList<Synonym> synonymList = new ArrayList<Synonym>();
         for (String param : requestParams.keySet()) {
-            if (param.substring(0, synLen).equals("synonym")) {
-                if (requestParams.get(param) != null || !requestParams.get(param).equals("")) {
-                    Synonym newSyn = new Synonym(requestParams.get(param));
-                    synonymList.add(newSyn);
+            try {
+                if (param.substring(0, synLen).equals("synonymName")) {
+                    if (requestParams.get(param) != null || !requestParams.get(param).equals("")) {
+                        Synonym newSyn = new Synonym(requestParams.get(param));
+                        synonymList.add(newSyn);
+                    }
                 }
             }
+            catch (Exception e){
+            }
+
         }
         for (Synonym syn : synonymList) {
             System.out.println(syn.getSynonymName());
@@ -60,6 +63,13 @@ public class AddsynonymgroupFormController {
             category = false;
         } else {
             category = true;
+        }
+        boolean saveOrUpdate = false; //true for save, false for update
+        String oldGroupNameForUpdate = "";
+        if (requestParams.get("save").equals("save")) {
+            saveOrUpdate = true;
+        } else {
+            oldGroupNameForUpdate = requestParams.get("save");
         }
 
         if (Context.isAuthenticated()) {
@@ -73,9 +83,21 @@ public class AddsynonymgroupFormController {
 
                 SynonymGroup synGrp = new SynonymGroup(groupName, category, synonymList);
 
-                if (synonymGroupsInstance.addSynonymGroup(synGrp)) {
-                    chartSearchService.saveSynonymGroup(synGrp);
+                if (saveOrUpdate) { // save new group
+
+                    if (synonymGroupsInstance.addSynonymGroup(synGrp)) {
+                        chartSearchService.saveSynonymGroup(synGrp);
+                    }
+                } else {
+                    SynonymGroup synGrpToUpdate =synonymGroupsInstance.getSynonymGroupByName(oldGroupNameForUpdate);
+                    if (synonymGroupsInstance.editSynonymGroupByName(oldGroupNameForUpdate, synGrp)) {
+                        chartSearchService.purgeSynonymGroup(synGrpToUpdate);
+                        chartSearchService.saveSynonymGroup(synGrp);
+                    }
+
                 }
+
+
             } else {
                 System.out.println("synonym groups from db are null");
             }
@@ -83,7 +105,7 @@ public class AddsynonymgroupFormController {
         }
 
 
-        return "redirect:addsynonymgroup.form";
+        return "redirect:managesynonymgroups.form";
     }
 
 

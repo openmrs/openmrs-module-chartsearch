@@ -107,7 +107,7 @@
             <form class="chart-search-form" method="post">
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
-                        <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="Search for patient data..." size="40">
+                        <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         <input type="submit" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">

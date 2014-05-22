@@ -146,4 +146,69 @@ div.ui-datepicker{
     text-decoration: underline;
     cursor: pointer;
 }
+
+	.dropdown {
+		float:left;
+		margin-top:-11px;
+		background-color: #ddd;
+		height:23px;
+		//width: 170px;
+	}
+	
+	.dropdown .inside_categories_filter a {
+		font-family:Arial, Helvetica, sans-serif;
+		font-size:16px; 
+		color: #231F20;
+		text-decoration:none;
+	}
+	
+	.dropdown .inside_categories_filter:hover a {
+		color:#161616;
+		height:27px;
+		text-shadow: 1px 1px 1px #ffffff;
+	}
+	
+	.dropdown-name i {
+	
+	}
+
+	.dropdown .inside_categories_filter .filter_method {
+		font-size:20px;
+	}
+	 
+	.filter_categories {
+		float:left;
+		position:absolute;
+		width: 180px;
+		color:black;
+		left:-999em; /* Hides the drop down */
+		text-align:left;
+		font-size:20px;
+		padding:10px 5px 10px 5px;
+		border:1px solid #777777;
+		border-top:none;
+		background:#F4F4F4;
+	}
+	
+	.filter_categories #submit_selected_categories {
+		font-size:10px;
+	}
+	
+	.dropdown .inside_categories_filter:hover .filter_categories {
+		left:-1px;
+		margin-left:0px;
+	}
+	
+	.dropdown .insider_categories:active {
+		position:relative;
+	}
+	
+	.align_to_right {
+		float:right;
+	}
+	
+	#icon-arrow-dropdown {
+		color:black;
+	}
+	
 </style>

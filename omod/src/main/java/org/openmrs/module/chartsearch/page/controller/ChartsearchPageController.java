@@ -33,19 +33,15 @@ public class ChartsearchPageController {
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
 		
-		//model.addAttribute("user", sessionContext.getCurrentUser());
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		
-		model.addAttribute("patientID_from_get", patient);
 		log.info("getting patient ID :" + patient);
 		log.info("trying to index a patient");
-		//  ArrayList<String> lst = new ArrayList<String>();
 		
 		if (chartSearchIndexer != null && patient != null) {
 			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");
-		//log.info("indexed successfully");
 		
 	}
 	

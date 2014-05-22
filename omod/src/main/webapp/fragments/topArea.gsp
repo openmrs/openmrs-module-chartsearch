@@ -111,6 +111,26 @@
                         <input type="submit" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">
+                    	<div class="dropdown">
+                    		<div class="inside_categories_filter">
+								<span class="dropdown-name" id="categories_label">
+									<a href="#" class="filter_method">Categories</script></a>
+									<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+								</span>
+								<div class="filter_categories">
+										<a href="">Select All</a><span><label class="align_to_right"><a href="">Clear</a></label></span>
+										<br /><hr />
+									    <input class="category_check" type="checkbox" name="diagnoses" checked>Diagnoses <a href="#" >(1)</a><br />
+										<input type="checkbox" name="labs" checked >Labs <a href="#">(121)</a><br />
+										<input type="checkbox" name="meds" checked >Meds <a href="#">(103)</a><br />
+										<input type="checkbox" name="orders" checked >Orders <a href="#">(1002)</a><br />
+										<input type="checkbox" name="reports" checked >Reports <a href="#">(198)</a><br />
+										<input type="checkbox" name="vitals" checked >Vitals <a href="#">(12)</a><br />
+										<input type="checkbox" name="others" checked >Others <a href="#">(34)</a><br /><hr />
+										<input id="submit_selected_categories" type="button" value="OK" ><a href="#" class="align_to_right">Cancel</a>
+								</div>
+							</div>
+						</div>
                         <div class="filter_wrap">
                             <span class="date_filter_title" id="date_filter_title">Any Time</span>
                             <div class="filter_options" id="date_filter_options">
@@ -123,6 +143,7 @@
                         </div>
                     </div>
                 </div>
+    			${ ui.includeFragment("chartsearch", "main_results") }
             </form>
         </div>
     </section>

@@ -114,8 +114,10 @@
         <name>Manage Synonym Groups</name>
         <description>Ability to manage synonym groups</description>
     </privilege>
-
-
+    <privilege>
+        <name>Register Categories</name>
+        <description>Ability to register categories</description>
+    </privilege>
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

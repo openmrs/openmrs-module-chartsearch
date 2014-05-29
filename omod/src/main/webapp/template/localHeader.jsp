@@ -44,10 +44,10 @@
     
     <openmrs:hasPrivilege privilege="Register Categories">
     	<li>
-    		<c:if test='<%=request.getRequestURI().contains("/registerCategories")%>'></c:if>
+    		<c:if test='<%=request.getRequestURI().contains("/manageCategories")%>'></c:if>
     		<a
-                href="${pageContext.request.contextPath}/module/chartsearch/registerCategories.form"><spring:message
-                code="chartsearch.manage.registercategories" />
+                href="${pageContext.request.contextPath}/module/chartsearch/manageCategories.form"><spring:message
+                code="chartsearch.manage.manageCategories" />
         	</a>
     	</li>
     </openmrs:hasPrivilege>

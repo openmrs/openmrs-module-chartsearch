@@ -22,15 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * Controller for registerCategories.jsp.
+ * Controller for manageCategories.jsp.
  */
 @Controller
-public class RegisterCategoriesFormController {
+public class ManageCategoriesFormController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
-	@RequestMapping(value = "/module/chartsearch/registerCategories.form", method = RequestMethod.GET)
-	public ModelMap registerCategories() {
+	@RequestMapping(value = "/module/chartsearch/manageCategories.form", method = RequestMethod.GET)
+	public ModelMap manageCategories() {
 		ModelMap model = new ModelMap();
 		return model;
 	}

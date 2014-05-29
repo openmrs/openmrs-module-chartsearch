@@ -102,6 +102,12 @@
 			<!-- End OpenMRS core -->
 		
 			<!-- New UI Module -->
+
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+			</dependency>
 			
 		<dependency>
             <groupId>org.openmrs.module</groupId>

@@ -5,7 +5,7 @@
 
 <openmrs:require privilege="Register Categories" otherwise="/login.htm" redirect="/module/chartsearch/createCategories.form" />
 
-<h2><spring:message code="chartsearch.manage.registerCategories" /></h2>
+<h2><spring:message code="chartsearch.manage.manageCategories" /></h2>
 
 
 <style>
@@ -50,10 +50,10 @@
 	            <td>
 	                <table>
 	                    <tr><b>Add Members of the first Category</b></tr>
-	                    <tr><td>all observations of concept:</td><td><input type="text" name="category_name" placeholder="X"></td></tr>
-	                    <tr><td>all observations groups of concept set:</td><td><input type="text" name="category_name" placeholder="Y"></td></tr>
-	                    <tr><td>all forms of ID:</td><td><input type="text" name="category_name" placeholder="Z"></td></tr>
-	                    <tr><td>text search for the term:</td><td><input type="text" name="category_name" placeholder="ABC"></td></tr>
+	                    <tr><td>Observations of concept:</td><td><input type="text" name="category_name" placeholder="X"></td></tr>
+	                    <tr><td>Observations groups of concept set:</td><td><input type="text" name="category_name" placeholder="Y"></td></tr>
+	                    <tr><td>Forms of ID:</td><td><input type="text" name="category_name" placeholder="Z"></td></tr>
+	                    <tr><td>Text search for the term:</td><td><input type="text" name="category_name" placeholder="ABC"></td></tr>
 	                </table>
 	            </td>
 	            </td>
@@ -71,10 +71,10 @@
 	            <td>
 	                <table>
 	                    <tr><b>Add Members of the Second Category</b></tr>
-	                    <tr><td>all observations of concept:</td><td><input type="text" name="category_name" placeholder="X"></td></tr>
-	                    <tr><td>all observations groups of concept set:</td><td><input type="text" name="category_name" placeholder="Y"></td></tr>
-	                    <tr><td>all forms of ID:</td><td><input type="text" name="category_name" placeholder="Z"></td></tr>
-	                    <tr><td>text search for the term:</td><td><input type="text" name="category_name" placeholder="ABC"></td></tr>
+	                    <tr><td>Observations of concept:</td><td><input type="text" name="category_name" placeholder="X"></td></tr>
+	                    <tr><td>Observations groups of concept set:</td><td><input type="text" name="category_name" placeholder="Y"></td></tr>
+	                    <tr><td>Forms of ID:</td><td><input type="text" name="category_name" placeholder="Z"></td></tr>
+	                    <tr><td>Text search for the term:</td><td><input type="text" name="category_name" placeholder="ABC"></td></tr>
 	                </table>
 	            </td>
 	        </tr>
@@ -84,7 +84,7 @@
 	</form>
 </div>
 
-<div class="boxHeader"><spring:message code="chartsearch.manage.displayExistingCategories" /></div>
+<div class="boxHeader"><spring:message code="chartsearch.manage.editExistingCategories" /></div>
 <div class="box">
 	
 </div>

@@ -1,9 +1,13 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
+<openmrs:htmlInclude file="/dwr/interface/DWRCommands.js"/>
+
 <openmrs:require privilege="Add synonym Groups" otherwise="/login.htm"
                  redirect="/module/chartsearch/addsynonymgroup.form"/>
 
 <%@ include file="/WEB-INF/template/header.jsp" %>
+
+<openmrs:htmlInclude file="/moduleResources/chartsearch/js/commands.js"/>
 
 <%@ include file="template/localHeader.jsp" %>
 
@@ -48,9 +52,9 @@
         <c:forEach items="${synonymGroup.synonymSet}" var="synonym" varStatus="loop">
             <p class="inputRow" id="rowEdit${synonym.synonymId}">
                 <input type="text" name="synonymNameEdit${synonym.synonymId}" value="${synonym.synonymName}">
-                <button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">Delete
+                <%--<button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">Delete
                     Synonym
-                </button>
+                </button>--%>
             </p>
         </c:forEach>
 
@@ -58,7 +62,7 @@
 
         <c:choose>
             <c:when test="${!empty synonymGroup.groupName}">
-                <input type="text" name="save" value="${synonymGroup.groupName}" hidden>
+                <input type="text" name="save" id="groupName" value="${synonymGroup.groupName}" hidden>
             </c:when>
             <c:otherwise>
                 <input type="text" name="save" value="save" hidden>
@@ -66,9 +70,15 @@
         </c:choose>
 
         <br>
-        <input type="submit"  value="Save Synonym Group">
+        <input type="submit" value="Save Synonym Group">
         <input type="button" value='<spring:message code="general.cancel"/>'
                onclick="javascript:window.location='<openmrs:contextPath />/admin'"/>
+        <c:choose>
+            <c:when test="${!empty synonymGroup.groupName}">
+                <input type="button" id="deleteSynGrpBtn" value="Delete Synonym Group"/>
+            </c:when>
+        </c:choose>
+
     </form>
 
 </div>

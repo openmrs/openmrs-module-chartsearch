@@ -47,6 +47,7 @@
         padding: 13px;
         position: absolute;
         border: 1px solid black;
+        left:340px;
     }
     .date_filter_title {
         display: inline-block;
@@ -104,9 +105,10 @@
 <article id="search-box">
     <section>
         <div class="chart-search-wrapper">
-            <form class="chart-search-form" method="post">
+            <form class="chart-search-form">
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
+                        <input type="text" name="patientId" value=${patientId} hidden>
                         <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         <input type="submit" class="button inline chart_search_form_button" value="search"/>
                     </div>

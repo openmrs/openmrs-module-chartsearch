@@ -50,14 +50,11 @@ public class AddsynonymgroupFormController {
                         synonymList.add(newSyn);
                     }
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
             }
 
         }
-        for (Synonym syn : synonymList) {
-            System.out.println(syn.getSynonymName());
-        }
+
         boolean category;
         if (requestParams.get("category") == null) {
             category = false;

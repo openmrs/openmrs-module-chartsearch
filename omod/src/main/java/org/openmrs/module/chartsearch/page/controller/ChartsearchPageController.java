@@ -4,20 +4,26 @@ package org.openmrs.module.chartsearch.page.controller;
  * Created by Eli on 10/03/14.
  */
 
-import java.util.List;
-
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
+import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
+import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ChartsearchPageController {
 	
@@ -27,13 +33,16 @@ public class ChartsearchPageController {
 	
 	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 	
-	public void controller(PageModel model, UiSessionContext sessionContext, @RequestParam("patientId") Patient patient,
+	public void controller(PageModel model,@BindParams SearchPhrase search_phrase, UiSessionContext sessionContext, @RequestParam("patientId") Patient patient,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper) {
-		
+
+        //indexing the patient on enter
+
+
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
-		
-		SearchAPI searchAPI = SearchAPI.getInstance();
+
+        SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		
 		log.info("getting patient ID :" + patient);
 		log.info("trying to index a patient");
@@ -42,6 +51,29 @@ public class ChartsearchPageController {
 			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");
+
+        //Searching an empty phrase to get all results to show at start
+
+
+        SearchPhrase emptyPhrase = new SearchPhrase("");
+
+        List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId() , search_phrase);
+        List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
+
+        //loop to get full details about observations.
+
+        for (ChartListItem observation : items)
+        {
+            int itemObsId = -1;
+            if (observation instanceof ObsItem) {
+                itemObsId = ((ObsItem) observation).getObsId();
+            }
+            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
+            updatedItems.add(updatedObservation);
+        }
+
+        //setting results to show.
+        searchAPIInstance.setResults(updatedItems);
 		
 	}
 	

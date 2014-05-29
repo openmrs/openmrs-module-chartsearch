@@ -61,6 +61,7 @@
 				<include method="getStatistics" />
 				<include method="clearIndex" />
 				<include method="changeDaemonsCount" />
+                <include method="deleteSynonymGroup" />
 			</create>
 		</allow>
 	</dwr>

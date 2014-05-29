@@ -42,6 +42,7 @@
 
         </tbody>
     </table>
+    <span id="manageSynonymGroupsResult"></span>
 </div>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

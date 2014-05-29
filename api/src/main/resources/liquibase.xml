@@ -53,6 +53,18 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="4" author="Eli">
+        <comment>Changed cascade options</comment>
+        <addForeignKeyConstraint
+                constraintName="fk_synonymgroups_synonyms_cascade"
+                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"
+                />
+    </changeSet>
+
+
 
 
 </databaseChangeLog>

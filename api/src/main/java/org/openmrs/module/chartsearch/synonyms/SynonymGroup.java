@@ -11,6 +11,7 @@ import java.util.Set;
 public class SynonymGroup {
 
 
+
     private Set<Synonym> synonymSet;
     private String groupName;
     private boolean isCategory;

@@ -105,11 +105,33 @@ public class SynonymGroups {
 
     public SynonymGroup getSynonymGroupBySynonym(String syn) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            if (grp.getSynonyms().contains(syn)) {
-                return grp;
+            for(Synonym synInGrp : grp.getSynonymSet()){
+                if(synInGrp.getSynonymName().equals(syn)){
+                    return grp;
+                }
             }
         }
         return null;
+    }
+
+    public String getSynonymSetStrBySynonym(String syn){
+        String returnStr = "";
+        SynonymGroup grp;
+        Set matchingSyns;
+
+        grp = getSynonymGroupBySynonym(syn);
+
+        if(grp != null){
+            matchingSyns = grp.getSynonyms();
+            Iterator<Synonym> iter = matchingSyns.iterator();
+            if (iter.hasNext())
+                returnStr += iter.next().getSynonymName();
+            while (iter.hasNext()) {
+                returnStr += " || " + iter.next().getSynonymName();
+            }
+
+        }
+        return returnStr;
     }
 
     public boolean deleteSynonymGroupByName(String name) {
@@ -144,7 +166,7 @@ public class SynonymGroups {
         if (iter.hasNext())
             returnStr += iter.next();
         while (iter.hasNext()) {
-            returnStr += "," + iter.next();
+            returnStr += " || " + iter.next();
         }
         return returnStr;
     }

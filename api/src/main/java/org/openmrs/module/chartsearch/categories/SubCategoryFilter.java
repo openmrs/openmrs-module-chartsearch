@@ -1,5 +1,4 @@
 /**
- * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://license.openmrs.org
@@ -15,11 +14,17 @@
 package org.openmrs.module.chartsearch.categories;
 
 /**
- * Creates category item for LabSet
+ * Represents in sub-category within a category like LabSet in Tests, Drug in Orders et-cetera
  */
-public class LabsCategoryFilter extends CategoryFilter {
+public class SubCategoryFilter extends CategoryFilter {
 	
-	public LabsCategoryFilter(String uuid) {
-		setCategoryFilterPropertiesStoredAsConceptClass(uuid);
+	private CategoryFilter subcategoryFor;
+	
+	public CategoryFilter getSubcategoryFor() {
+		return subcategoryFor;
+	}
+	
+	public void setSubcategoryFor(CategoryFilter subcategoryFor) {
+		this.subcategoryFor = subcategoryFor;
 	}
 }

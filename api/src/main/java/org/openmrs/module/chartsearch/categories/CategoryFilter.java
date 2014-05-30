@@ -13,44 +13,48 @@
 
 package org.openmrs.module.chartsearch.categories;
 
+import org.openmrs.ConceptClass;
+import org.openmrs.api.context.Context;
+
 /**
  * Creates Categories Filter Item for results returned by CSM like; diagnosis, labs, meds, orders,
- * reports, vitals or defined categories by the user
+ * reports, vitals or other defined categories by the user. A Category Filter can have sub-categories like
+ * Tests(LabSet, Test, MedSet, ConvSet), Orders (Drug), Diagnoses (Diagnosis) et-cetera
  */
 public class CategoryFilter {
 	
-	private String catName;
+	private String categoryName;
 	
-	private String catUuid;
+	private String categoryUuid;
 	
-	private Integer catId;
+	private Integer categoryId;
 	
-	private String catDescription;
+	private String categoryDescription;
 	
 	private String hitCounts;
 	
-	public String getCatName() {
-		return catName;
+	public String getCategoryName() {
+		return categoryName;
 	}
 	
-	public void setCatName(String catName) {
-		this.catName = catName;
+	public void setCategoryName(String catName) {
+		this.categoryName = catName;
 	}
 	
-	public String getCatUuid() {
-		return catUuid;
+	public String getCategoryUuid() {
+		return categoryUuid;
 	}
 	
-	public void setCatUuid(String catUuid) {
-		this.catUuid = catUuid;
+	public void setCategoryUuid(String catUuid) {
+		this.categoryUuid = catUuid;
 	}
 	
-	public Integer getCatId() {
-		return catId;
+	public Integer getCategoryId() {
+		return categoryId;
 	}
 	
-	public void setCatId(Integer catId) {
-		this.catId = catId;
+	public void setCategoryId(Integer catId) {
+		this.categoryId = catId;
 	}
 	
 	public String getHitCounts() {
@@ -61,12 +65,35 @@ public class CategoryFilter {
 		this.hitCounts = hitCounts;
 	}
 	
-	public String getCatDescription() {
-		return catDescription;
+	public String getCategoryDescription() {
+		return categoryDescription;
 	}
 	
-	public void setCatDescription(String catDescription) {
-		this.catDescription = catDescription;
+	public void setCategoryDescription(String catDescription) {
+		this.categoryDescription = catDescription;
+	}
+	
+	/**
+	 * Sets properties of a category filter to properties of an existing concept class that is
+	 * stored as a concept class in the openmrs database
+	 * 
+	 * @param uuid
+	 */
+	protected void setCategoryFilterPropertiesStoredAsConceptClass(String uuid) {
+		try {
+			if (uuid != "" && uuid != " ") {
+				ConceptClass cc = Context.getConceptService().getConceptClassByUuid(uuid);
+				
+				setCategoryName(cc.getName());
+				setCategoryDescription(cc.getDescription());
+				setCategoryUuid(cc.getUuid());
+				setCategoryId(cc.getId());
+			} else
+				System.out.println("Provided no uuid (uuid passed in is \"\" or \" \"!!!)");
+		}
+		catch (NullPointerException e) {
+			System.out.println("The uuid provided for the concept class doesn't match any of those exising in the DB!!!");
+		}
 	}
 	
 }

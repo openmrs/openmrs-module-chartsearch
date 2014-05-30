@@ -14,28 +14,73 @@
 
 package org.openmrs.module.chartsearch.categories;
 
-import org.openmrs.ConceptClass;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.openmrs.Concept;
+import org.openmrs.Obs;
+import org.openmrs.OpenmrsObject;
+import org.openmrs.Person;
+import org.openmrs.activelist.Problem;
+import org.openmrs.api.ConceptService;
+import org.openmrs.api.EncounterService;
+import org.openmrs.api.ObsService;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 
 /**
- * Creates category item for diagnosis
+ * Creates category item for diagnosis which is probably a single concept with a coded answer and
+ * Patient's problem list.
  */
-public class DiagnosesCategoryFilter extends CategoryFilter {
+public class DiagnosesCategoryFilter extends SubCategoryFilter {
+	
+	ConceptService conceptService = Context.getConceptService();
+	
+	PatientService patientService = Context.getPatientService();
+	
+	EncounterService encounterService = Context.getEncounterService();
+	
+	ObsService obsService = Context.getObsService();
 	
 	/**
-	 * Creating object for DiagnosisFilterCategories Diagnoses (Diagnosis).
-	 * 
-	 * @param uuid
+	 * @param patientId
+	 * @return concept with coded answer or concept class "diagnosis" fetched by patient and concept
 	 */
-	public DiagnosesCategoryFilter(String uuid) {
-		if (uuid != null && uuid != "" && uuid != " ") {
-			ConceptClass cc = Context.getConceptService().getConceptClassByUuid(uuid);
-			
-			setCatName(cc.getName());
-			setCatDescription(cc.getDescription());
-			setCatUuid(cc.getUuid());
-			setCatId(cc.getId());
+	public List<Concept> fetchConceptWithCodedAnswerForAPatient(Integer patientId) {
+		List<Concept> diagnoses = new ArrayList<Concept>();
+		String diagnosisClassUuid = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
+		Person person = patientService.getPatient(patientId);
+		
+		Concept concept = (Concept) conceptService.getConceptsByClass(conceptService
+		        .getConceptClassByUuid(diagnosisClassUuid));
+		
+		List<Obs> obs = obsService.getObservationsByPersonAndConcept(person, concept);
+		
+		for (Iterator<Obs> iterator = obs.iterator(); iterator.hasNext();) {
+			diagnoses.add(concept);
 		}
+		return diagnoses;
 	}
 	
+	/**
+	 * @param patientId
+	 * @return problem list for a patient
+	 */
+	public List<Problem> fetchItemsFromPatientProblemList(Integer patientId) {
+		return patientService.getProblems(patientService.getPatient(patientId));
+	}
+	
+	/**
+	 * @param patientId
+	 * @return diagnoses (both concept with coded answer and problem list for a patient)
+	 */
+	public List<OpenmrsObject> fetchCodedAnswerAndProblemListAsDiagnoses(Integer patientId) {
+		List<OpenmrsObject> diadnoses = new ArrayList<OpenmrsObject>();
+		
+		diadnoses.addAll(fetchConceptWithCodedAnswerForAPatient(patientId));
+		diadnoses.addAll(fetchItemsFromPatientProblemList(patientId));
+		
+		return diadnoses;
+	}
 }

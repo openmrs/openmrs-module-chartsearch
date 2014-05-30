@@ -1,5 +1,4 @@
 /**
- * The contents of this file are subject to the OpenMRS Public License
  * Version 1.0 (the "License"); you may not use this file except in
  * compliance with the License. You may obtain a copy of the License at
  * http://license.openmrs.org
@@ -20,18 +19,20 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test class for {@link org.openmrs.module.chartsearch.categories.DiagnosesCategoryFilter}
+ * Test for {@link LabsCategoryFilter}
  */
 @Ignore
 @SuppressWarnings("deprecation")
-public class DiagnosesCategoryFilterTest extends ChartSearchCategoriesTest {
+public class LabsCategoryFilterTest extends ChartSearchCategoriesTest {
 	
 	@Test
-	public void testingWhetherDiagnosisFilterCategoryIsCreatedAsExpected() {
-		/*saveANewConceptClass("Diagnosis", "Conclusion drawn through findings", "uuid");
+	public void testingWhetherLabsFilterCategoryIsCreatedAsExpected() {
 		
-		DiagnosesCategoryFilter diagnosisCategory = new DiagnosesCategoryFilter("uuid");
+		String dbLabsUuid = "4719138c-8553-4c81-bb92-753f41f8be16";
 		
-		Assert.assertEquals(diagnosisCategory.getCategoryName(), cc.getName());*/
+		 cc = fetchAConceptClassByUuid(dbLabsUuid);
+		 LabsCategoryFilter labsCategory = new LabsCategoryFilter("4719138c-8553-4c81-bb92-753f41f8be16");
+		 
+		 Assert.assertEquals(labsCategory.getCategoryDescription(), cc.getDescription());
 	}
 }

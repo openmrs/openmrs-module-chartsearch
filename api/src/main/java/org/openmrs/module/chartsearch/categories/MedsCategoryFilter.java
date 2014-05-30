@@ -15,11 +15,11 @@
 package org.openmrs.module.chartsearch.categories;
 
 /**
- * Creates category item for LabSet
+ * Creates category item for MedSet
  */
-public class LabsCategoryFilter extends CategoryFilter {
+public class MedsCategoryFilter extends CategoryFilter {
 	
-	public LabsCategoryFilter(String uuid) {
+	public MedsCategoryFilter(String uuid) {
 		setCategoryFilterPropertiesStoredAsConceptClass(uuid);
 	}
 }

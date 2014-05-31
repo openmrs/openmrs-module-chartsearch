@@ -51,7 +51,7 @@ public class Synonym {
 
         String synonym = (String) o;
 
-        if (!synonymName.equals(synonym)) return false;
+        if (!synonymName.equalsIgnoreCase(synonym)) return false;
 
         return true;
     }

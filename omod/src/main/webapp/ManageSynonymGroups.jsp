@@ -10,7 +10,7 @@
 
 <div id="manageDiv">
     <h3>Manage Synonym Groups</h3>
-    <a href="addsynonymgroup.form">Add Synonym Group</a>
+    <a href="managesynonymgroup.form">Add Synonym Group</a>
     <br>
     <br>
     <b class="boxHeader">Current Synonym Groups</b>
@@ -27,7 +27,7 @@
             <c:forEach items="${synonymGroups}" var="synonymGroup">
                 <tr>
                     <td>
-                        <a href=addsynonymgroup.form?synonymGroupId=${synonymGroup.group_id}> ${synonymGroup.groupName}</a>
+                        <a href=managesynonymgroup.form?synonymGroupId=${synonymGroup.group_id}> ${synonymGroup.groupName}</a>
                     </td>
                     <td>${synonymGroup.isCategory}</td>
                     <td>
@@ -42,7 +42,7 @@
 
         </tbody>
     </table>
-    <span id="manageSynonymGroupsResult"></span>
+
 </div>
 
 <%@ include file="/WEB-INF/template/footer.jsp" %>

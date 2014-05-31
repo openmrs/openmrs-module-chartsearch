@@ -64,7 +64,7 @@ public class SynonymGroups {
 
     public boolean addSynonymGroup(SynonymGroup newGroup) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            if (grp.getGroupName().equals(newGroup.getGroupName())) {
+            if (grp.getGroupName().equalsIgnoreCase(newGroup.getGroupName())) {
                 return false;
             }
         }
@@ -96,7 +96,7 @@ public class SynonymGroups {
 
     public SynonymGroup getSynonymGroupByName(String name) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            if (grp.getGroupName().equals(name)) {
+            if (grp.getGroupName().equalsIgnoreCase(name)) {
                 return grp;
             }
         }
@@ -106,7 +106,7 @@ public class SynonymGroups {
     public SynonymGroup getSynonymGroupBySynonym(String syn) {
         for (SynonymGroup grp : synonymGroupsHolder) {
             for(Synonym synInGrp : grp.getSynonymSet()){
-                if(synInGrp.getSynonymName().equals(syn)){
+                if(synInGrp.getSynonymName().equalsIgnoreCase(syn)){
                     return grp;
                 }
             }
@@ -136,7 +136,7 @@ public class SynonymGroups {
 
     public boolean deleteSynonymGroupByName(String name) {
         for (SynonymGroup grp : synonymGroupsHolder) {
-            if (grp.getGroupName().equals(name)) {
+            if (grp.getGroupName().equalsIgnoreCase(name)) {
                 synonymGroupsHolder.remove(grp);
 
                 return true;
@@ -178,9 +178,10 @@ public class SynonymGroups {
             synonymSet.add(phrase);
             SynonymGroup currnetGrp = getSynonymGroupByName(phrase);
             if (currnetGrp != null) {
-                Set<String> synonymsOfGrp = currnetGrp.getSynonyms();
-                for (String syn : synonymsOfGrp) {
-                    getAllMatchingSynonymsOfPhraseRec(syn, synonymSet);
+                Set<Synonym> synonymsOfGrp = currnetGrp.getSynonyms();
+                for (Synonym syn : synonymsOfGrp) {
+                    String synName = syn.getSynonymName();
+                    getAllMatchingSynonymsOfPhraseRec(synName, synonymSet);
                 }
             }
         }
@@ -200,13 +201,5 @@ public class SynonymGroups {
 
     }
 
- /*
 
-    public static void main(String[] args){
-        Synonym s1 = new Synonym("syn");
-        List<Synonym> synList = new ArrayList<Synonym>();
-        synList.add(s1);
-        SynonymGroup synGrp = new SynonymGroup("grpName", false,synList );
-        System.out.println(synGrp.contains("syn"));
-    }*/
 }

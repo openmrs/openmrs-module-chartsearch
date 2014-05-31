@@ -1,6 +1,7 @@
 package org.openmrs.module.chartsearch;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
+import org.openmrs.module.chartsearch.synonyms.SynonymsAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,19 +49,16 @@ public class SearchAPI {
             searchPhrase.setPhrase("");
         }
 
-        String finalPhrase = searchPhrase.getPhrase();
+        String searchPhraseStr = searchPhrase.getPhrase();
 
         Integer length = Integer.valueOf(999999999); //amount of obs we want - all of them
         Integer start = Integer.valueOf(0);//starting from first obs.
         List<ChartListItem> items = new ArrayList<ChartListItem>();
 
-        /*String synonyms = search_phrase.getPhrase();
-        SynonymGroup synGroup = SynonymGroups.isSynonymContainedInGroup(search_phrase.getPhrase());
-        if (!synGroup.equals(null)) {
-            for (String syn : (HashSet<String>) synGroup.getSynonyms()) {
-                synonyms += " OR " + syn;
-            }
-        }*/
+        String finalPhrase;
+        finalPhrase = SynonymsAPI.getSynonymsForSearch(searchPhraseStr);
+
+        System.out.println("finalPhrase :"+finalPhrase);
 
         try {
             items = searcher.getDocumentList(patientId, finalPhrase, start, length); //searching for the phrase.

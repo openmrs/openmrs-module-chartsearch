@@ -1,13 +1,11 @@
 <%@ include file="/WEB-INF/template/include.jsp" %>
 
-<openmrs:htmlInclude file="/dwr/interface/DWRCommands.js"/>
 
-<openmrs:require privilege="Add synonym Groups" otherwise="/login.htm"
-                 redirect="/module/chartsearch/addsynonymgroup.form"/>
+<openmrs:require privilege="Manage synonym group" otherwise="/login.htm"
+                 redirect="/module/chartsearch/managesynonymgroup.form"/>
 
 <%@ include file="/WEB-INF/template/header.jsp" %>
 
-<openmrs:htmlInclude file="/moduleResources/chartsearch/js/commands.js"/>
 
 <%@ include file="template/localHeader.jsp" %>
 
@@ -24,9 +22,6 @@
         var newRow = "<p class=\"inputRow\" id=" + rowId + "> <input type=\"text\" name=" + boxName + ">" +
                 " <button type=\"button\" class=\"deleteBtn\" onclick=\"deleteInput(" + rowId + ")\">Delete Synonym</button> </p>";
 
-        /* var deleteBtn = "<button type=\"button\" class=\"deleteBtn\" onclick=\"deleteInput(" + deleteRowId + ")\">Delete</button>";*/
-        /* $('.addBtn').last().replaceWith(deleteBtn);*/
-        /*"<button type=\"button\" class=\"addBtn\" onclick=\"addInput()\">Add</button> </p>"*/
         $('.inputRow').last().after(newRow);
 
     }
@@ -41,7 +36,7 @@
     <h3> Add synonym group page </h3>
 
 
-    <form id="addSynonymGroupForm" method="post">
+    <form id="ManageSynonymGroupForm" method="post">
         <button type="button" class="addBtn" onclick="addInput()">Add Synonym</button>
         <br> <br>
         <input type="text" name="groupName" value="${synonymGroup.groupName}" placeholder="Group name">
@@ -52,9 +47,9 @@
         <c:forEach items="${synonymGroup.synonymSet}" var="synonym" varStatus="loop">
             <p class="inputRow" id="rowEdit${synonym.synonymId}">
                 <input type="text" name="synonymNameEdit${synonym.synonymId}" value="${synonym.synonymName}">
-                <%--<button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">Delete
+                <button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">Delete
                     Synonym
-                </button>--%>
+                </button>
             </p>
         </c:forEach>
 
@@ -70,12 +65,12 @@
         </c:choose>
 
         <br>
-        <input type="submit" value="Save Synonym Group">
+        <input type="submit" name="button" id="saveGroup" value="Save Synonym Group">
         <input type="button" value='<spring:message code="general.cancel"/>'
                onclick="javascript:window.location='<openmrs:contextPath />/admin'"/>
         <c:choose>
             <c:when test="${!empty synonymGroup.groupName}">
-                <input type="button" id="deleteSynGrpBtn" value="Delete Synonym Group"/>
+                <input type="submit" id="deleteSynGrpBtn" name="button" value="Delete Synonym Group"/>
             </c:when>
         </c:choose>
 

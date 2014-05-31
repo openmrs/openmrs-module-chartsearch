@@ -88,7 +88,7 @@ public class SynonymGroup {
     public boolean removeSynonym(String synonymToDel) {
         if (this.contains(synonymToDel)) {
             for(Synonym syn : synonymSet){
-                if(syn.getSynonymName().equals(synonymToDel)){
+                if(syn.getSynonymName().equalsIgnoreCase(synonymToDel)){
                     synonymSet.remove(syn);
                 }
             }
@@ -99,7 +99,7 @@ public class SynonymGroup {
 
     public boolean contains(String synonymToCheck) {
         for(Synonym syn : synonymSet){
-            if(syn.getSynonymName().equals(synonymToCheck)){
+            if(syn.getSynonymName().equalsIgnoreCase(synonymToCheck)){
                 return true;
             }
         }
@@ -163,7 +163,7 @@ public class SynonymGroup {
         SynonymGroup that = (SynonymGroup) o;
 
         if (isCategory != that.isCategory) return false;
-        if (!groupName.equals(that.groupName)) return false;
+        if (!groupName.equalsIgnoreCase(that.groupName)) return false;
         if (!synonymSet.equals(that.synonymSet)) return false;
 
         return true;

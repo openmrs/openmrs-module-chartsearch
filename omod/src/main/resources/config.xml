@@ -61,7 +61,6 @@
 				<include method="getStatistics" />
 				<include method="clearIndex" />
 				<include method="changeDaemonsCount" />
-                <include method="deleteSynonymGroup" />
 			</create>
 		</allow>
 	</dwr>
@@ -108,8 +107,8 @@
 		<description>Ability view Chart Search Section in Patient Dashboard</description>
 	</privilege>
     <privilege>
-        <name>Add synonym Groups</name>
-        <description>Ability to add synonym groups</description>
+        <name>Manage synonym group</name>
+        <description>Ability to manage synonym group</description>
     </privilege>
     <privilege>
         <name>Manage Synonym Groups</name>

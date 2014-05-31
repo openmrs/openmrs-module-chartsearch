@@ -19,36 +19,13 @@ public class TopAreaFragmentController {
 
 
     public void controller(FragmentModel model,  @RequestParam("patientId") Integer patient){
-        System.out.println("CONTROLLER: patientID is:" + patient);
-
-        model.addAttribute("patientId", patient);
+              model.addAttribute("patientId", patient);
 
     }
 
 
 
-/*
 
-    public String post(FragmentModel model, @BindParams SearchPhrase search_phrase, @RequestParam("patientId") Integer patient) {
-        SearchAPI searchAPIInstance = SearchAPI.getInstance();
-        List<ChartListItem> items = searchAPIInstance.search(patient,search_phrase);
-        List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
-
-        for (ChartListItem observation : items) //loop to get full details about observations.
-        {
-            int itemObsId = -1;
-            if (observation instanceof ObsItem) {
-                itemObsId = ((ObsItem) observation).getObsId();
-            }
-            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
-            updatedItems.add(updatedObservation);
-        }
-        searchAPIInstance.setResults(updatedItems); //setting results to show.
-
-        return "redirect:chartsearch/chartsearch.page?patientId=" + patient;
-    }
-
-*/
 
     private <T> T getComponent(Class<T> clazz) {
         List<T> list = Context.getRegisteredComponents(clazz);

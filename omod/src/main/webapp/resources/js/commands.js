@@ -85,18 +85,7 @@ function changeDaemonsCount() {
 	});
 
 
-}
 
-function deleteSynonymGroup() {
-    DWRCommands.deleteSynonymGroup($j("#groupName").val(), function(groupName) {
-        var text;
-        if (groupName == "-1")
-            text = "Failed to delete synonym group";
-        else {
-            text = "Successfully deleted synonym group named: " + groupName;
-        }
-        $j("#manageSynonymGroupsResult").text(text);
-    });
 
 
 }

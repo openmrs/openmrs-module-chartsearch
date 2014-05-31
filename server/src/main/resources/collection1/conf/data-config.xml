@@ -42,9 +42,10 @@
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
 				WHERE e.voided = '0' AND e.uuid='${dih.delta.id}'"
 
-			deltaQuery="select e.uuid as id FROM openmrs.encounter e
-				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
-				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'"
+			deltaQuery="select e.uuid as id FROM openmrs.encounter e     
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type     
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'  
+				AND e.date_changed &gt; '${dataimporter.request.lastIndexTime}'"
 				
 			deletedPkQuery="select e.uuid as id FROM openmrs.encounter e
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type

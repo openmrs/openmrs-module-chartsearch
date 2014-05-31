@@ -897,7 +897,7 @@
 		<field name="encounter_type_name" type="text_general" indexed="true" stored="true"	required="false" />	
 		<field name="date_created" type="date" indexed="true" stored="true"		required="false" />
 			
-		<!-- encounters  -->
+		<!-- encounters  -->		
 		<field name="encounter_id" type="int" indexed="true" stored="true"	required="false" />
 		<field name="patient_id" type="int" indexed="true" stored="true"	required="false" />
 		<field name="e_form_id" type="int" indexed="true" stored="true"		required="false" />

@@ -118,11 +118,9 @@ public class ChartSearchSearcher {
 
 		
 		// Encounters
-		//System.out.println("Encounters:");
+		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
-		query3.addFilterQuery(String.format("patient_id:%d", patientId));
-		query3.setStart(start);
-		query3.setRows(length);
+		//query3.addFilterQuery(String.format("patient_id:%d", patientId));
 		QueryResponse response3 = solrServer.query(query3);
 		Iterator<SolrDocument> iter3 = response3.getResults().iterator();
 
@@ -134,14 +132,12 @@ public class ChartSearchSearcher {
 			item.setEncounterType((String) document.get("encounter_type"));
 			list.add(item);
 			
-			//System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
+			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
 		}
 		
 		// forms
-		//tem.out.println("Forms:");
+		System.out.println("Forms:");
 		SolrQuery query2 = new SolrQuery(String.format("form_name:(%s)", searchText));
-		query2.setStart(start);
-		query2.setRows(length);
 		QueryResponse response2 = solrServer.query(query2);
 		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
 
@@ -154,7 +150,7 @@ public class ChartSearchSearcher {
 			item.setFormName((String) document.get("form_name"));
 			list.add(item);
 			
-			//System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
 		}
 		return list;
 	}

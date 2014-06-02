@@ -18,8 +18,10 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,8 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 
     private SynonymDAO synonymDAO;
     private SynonymGroupDAO synonymGroupDAO;
+    
+    private CategoryFilterDAO categoryFilterDao;
 
     /**
      * Getters and Setters
@@ -141,5 +145,35 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     @Transactional(readOnly = true)
     public Integer getSynonymsCountByGroup(SynonymGroup synonymGroup) {
         return getSynonymDAO().getSynonymsCountByGroup(synonymGroup);
+    }
+
+	@Override
+    public CategoryFilter getCategoryFilter(Integer categoryFilterId) {
+	    return categoryFilterDao.getCategoryFilter(categoryFilterId);
+    }
+
+	@Override
+    public List<CategoryFilter> getCategoryFilters() {
+	    return categoryFilterDao.getCategoryFilters();
+    }
+
+	@Override
+    public void createCategoryFilter(CategoryFilter categoryFilter) {
+		categoryFilterDao.createCategoryFilter(categoryFilter);
+    }
+
+	@Override
+    public void updateCategoryFilter(CategoryFilter categoryFilter) {
+		categoryFilterDao.updateCategoryFilter(categoryFilter);
+    }
+
+	@Override
+    public void deleteCategoryFilter(CategoryFilter categoryFilter) {
+		categoryFilterDao.deleteCategoryFilter(categoryFilter);
+    }
+
+	@Override
+    public CategoryFilter getCategoryFilterByUuid(String uuid) {
+	    return categoryFilterDao.getCategoryFilterByUuid(uuid);
     }
 }

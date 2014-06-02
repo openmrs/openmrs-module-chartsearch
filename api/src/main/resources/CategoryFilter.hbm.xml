@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.openmrs.module.chartsearch.categories.CategoryFilter" table="chartsearch_categories">
+        <id name="categoryId" type="int">
+            <column name="category_id" />
+            <generator class="increment" />
+        </id>
+        <property name="categoryName" type="java.lang.String">
+            <column name="name" />
+        </property>
+        <property name="categoryDescription" type="java.lang.String">
+            <column name="description" />
+        </property>
+        <property name="categoryUuid" type="java.lang.String">
+        	<column name="uuid" />
+        </property>
+        <property name="hitCounts" type="int">
+        	<column name="hit_counts"
+        </property>
+    </class>
+</hibernate-mapping>

@@ -34,6 +34,16 @@
                 code="chartsearch.manage.managesynonymgroups" /></a>
         </li>
     </openmrs:hasPrivilege>
+    
+    <openmrs:hasPrivilege privilege="Manage Categories">
+	     <li>
+	     <c:if test='<%=request.getRequestURI().contains("/manageCategories")%>'></c:if>
+	     	<a
+	     		href="${pageContext.request.contextPath}/module/chartsearch/manageCategories.form"><spring:message
+	            code="chartsearch.manage.manageCategories" />
+	     	</a>
+	     </li>
+    </openmrs:hasPrivilege>
 
 </ul>
 <h2>

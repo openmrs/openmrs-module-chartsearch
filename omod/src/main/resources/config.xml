@@ -115,13 +115,17 @@
         <description>Ability to manage synonym groups</description>
     </privilege>
 
-
+	<privilege>
+		<name>Manage Categories</name>
+		<description>Ability to manage filter Categories</description>
+	</privilege>
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
         SynonymGroup.hbm.xml
         Synonym.hbm.xml
 		ChartSearch.hbm.xml
+		CateryFilter.hbm.xml
 
 	</mappingFiles>
 

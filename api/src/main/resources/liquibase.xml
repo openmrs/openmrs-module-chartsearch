@@ -64,7 +64,53 @@
                 />
     </changeSet>
 
-
-
+	<changeSet id="CSM-58-01062014" author="k-joseph">
+		<comment>Defining Categories to filter CSM results</comment>
+		<createTable tableName="chartsearch_categories">
+			<column name="category_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="description" type="varchar(255)" defaultValue="null"/>
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false"/>
+			</column>
+        </createTable>
+	</changeSet>
+	
+	<changeSet id="CSM-58-020620141120" author="k-joseph">
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Diagnoses"/>
+			<column name="description" value="Category item for filtering Diagnoses from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Labs"/>
+			<column name="description" value="Category item for filtering Labs from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Meds"/>
+			<column name="description" value="Category item for filtering Meds from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Orders"/>
+			<column name="description" value="Category item for filtering Orders from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Reports"/>
+			<column name="description" value="Category item for filtering Reports/Notes from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Vitals"/>
+			<column name="description" value="Category item for fitering Vitals from other CSM results"/>
+			<column name="uuid" value="UUID()"/>
+		</insert>
+	</changeSet>
 
 </databaseChangeLog>

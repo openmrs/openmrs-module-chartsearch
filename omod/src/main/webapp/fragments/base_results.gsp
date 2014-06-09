@@ -58,13 +58,17 @@
         padding-top: 10px;
     }
     .obsgroup_rows {
-        margin-top: 10px;
+        margin-top: 5px;
+    }
+    .obsgroup_row {
+        margin-bottom: 5px;
     }
     .obsgroup_row_first_section {
-         width: 40%;
+         width: 50%;
+         font-size: 13px;
      }
     .obsgroup_row_sec_section {
-        width: 36%;
+         font-size: 13px;
     }
     .obsgroup_row_trd_section {
         width: 20%;

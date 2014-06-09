@@ -329,6 +329,7 @@ function addObsGroupToResults(obsJSON)
     }
     resultText+='<div class="obsgroup_wrap" '+obs_id_html+' onclick="load_detailed_obs('+obsJSON.group_Id+');">';
     resultText+='<div class="obsgroup_first_row">';
+	resultText+='<div class="obsgroup_titleBox">';
     if (typeof obsJSON.group_name !== 'undefined')
     {
         resultText+='<h3 class="obsgroup_title">';
@@ -337,10 +338,11 @@ function addObsGroupToResults(obsJSON)
     }
     if (typeof obsJSON.last_taken_date !== 'undefined')
     {
-        resultText+='<span class="obsgroup_date">';
+        resultText+='<br><span class="obsgroup_date">';
         resultText+=obsJSON.last_taken_date;
         resultText+='</span>'
     }
+    resultText+='</div>'
     resultText+='<div class="chart_serach_clear"></div>';
     resultText+='</div>';
     resultText+=innerObservationsHTML(obsJSON.observations);

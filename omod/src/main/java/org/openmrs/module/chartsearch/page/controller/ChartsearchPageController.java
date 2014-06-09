@@ -4,6 +4,7 @@ package org.openmrs.module.chartsearch.page.controller;
  * Created by Eli on 10/03/14.
  */
 
+import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
@@ -48,6 +49,7 @@ public class ChartsearchPageController {
 		log.info("trying to index a patient");
 		
 		if (chartSearchIndexer != null && patient != null) {
+			//chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), patient.getPatientId()+"", 0, 0);
 			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");

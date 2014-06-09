@@ -69,16 +69,7 @@ public class ChartSearchIndexUpdater {
 		}
 		Map<String, Object> paramsMap = getParamsMap(params);
 		
-		if (DataImporter.IMPORT_CMD.equals(paramsMap.get("command"))) {
-			Date lastIndexTime = patientInfoHolder.getLastIndexTime(patientId);
-			if (lastIndexTime != null) {
-				log.info("Putting last index time [{}] into params map", lastIndexTime);
-				
-				//Do delta import
-				paramsMap.put("lastIndexTime", lastIndexTime);
-				paramsMap.put("command", DataImporter.DELTA_IMPORT_CMD);
-			}
-		}
+
 		
 		RequestInfo requestParams = new RequestInfo(paramsMap, contentStream);
 		

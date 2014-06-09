@@ -85,13 +85,25 @@ function addSingleObsToResults(obsJSON)
     var resultText = '';
     resultText+='<div class="obsgroup_wrap" onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
     resultText+='<div class="obsgroup_first_row">';
+    resultText+='<div class="obsgroup_titleBox">';
     resultText+='<h3 class="obsgroup_title">';
     resultText+=obsJSON.concept_name;
     resultText+='</h3>';
-    resultText+='<span class="obsgroup_value">';
-    resultText+=obsJSON.value;
-    resultText+='</span>'
-    resultText+='<span class="obsgroup_date">';
+    resultText+='<br><span class="obsgroup_date">';
+    resultText+=obsJSON.date;
+    resultText+='</span></div>';
+    if (obsJSON.value_type && obsJSON.value_type === "Numeric") {
+        resultText+='<span class="obsgroup_value">';
+	    resultText+=obsJSON.value;
+	    resultText+='</span>'
+    }
+    else {
+	    resultText+='<span class="obsgroup_valueText">';
+	    resultText+=obsJSON.value.substring(0, 50) + "...";
+	    resultText+='</span>'
+    }
+
+    resultText+='<span class="obsgroup_range">';
     if (typeof obsJSON.absolute_low !== 'undefined' && typeof obsJSON.absolute_high !== 'undefined')
     {
         resultText+='('+obsJSON.absolute_low+'-'+obsJSON.absolute_high+')';

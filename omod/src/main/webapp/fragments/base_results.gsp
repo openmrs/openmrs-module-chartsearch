@@ -25,18 +25,37 @@
     .obsgroup_current {
         background-color: #d6d6d6;
     }
+    .obsgroup_titleBox {
+		width: 70%; 
+		float: left;
+    }
+    
     .obsgroup_title {
         margin: 0;
         color: #00463f;
         font-weight: bold;
-        font-size: 13px;
-        float: left;
-        width: 190px;
+		font-size: 14px;
+		float: left;
+    }
+    
+    .obsgroup_valueText {
+		font-size: 12px;
+		float: left;
+    }
+    
+    .obsgroup_value {
+        padding-top: 10px;
+		float: left;
     }
     .obsgroup_date {
+        color: #949494;
+        font-size: 12px;
+    }
+    .obsgroup_range {
         float: right;
         color: #00463f;
         font-size: 14px;
+        padding-top: 10px;
     }
     .obsgroup_rows {
         margin-top: 10px;

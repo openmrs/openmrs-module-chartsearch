@@ -42,11 +42,10 @@
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
 				WHERE e.voided = '0' AND e.uuid='${dih.delta.id}'"
 
-			deltaQuery="select e.uuid as id FROM openmrs.encounter e     
-				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type     
-				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'  
-				AND e.date_changed &gt; '${dataimporter.request.lastIndexTime}'"
-				
+			deltaQuery="select e.uuid as id FROM openmrs.encounter e
+				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'"
+
 			deletedPkQuery="select e.uuid as id FROM openmrs.encounter e
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
 				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'">
@@ -66,7 +65,7 @@
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				where f.retired = 0
 				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'"
-				
+
 			deletedPkQuery="select f.uuid as id from openmrs.form f
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				where f.retired = 0

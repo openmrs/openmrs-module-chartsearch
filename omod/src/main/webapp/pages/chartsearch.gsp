@@ -2,6 +2,15 @@
     ui.decorateWith("appui", "standardEmrPage")
 %>
 
+<script type="text/javascript">
+    var breadcrumbs = [
+        { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
+        { label: "${ ui.format(patient.patient.familyName) }, ${ ui.format(patient.patient.givenName) }" ,
+        link: '${ui.pageLink("coreapps", "clinicianfacing/clinicianFacingPatientDashboard", [patientId: patient.patient.id])}'}
+    ]
+    var patient = { id: ${ patient.id } };
+</script>
+
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ]) }
 
 <hr />

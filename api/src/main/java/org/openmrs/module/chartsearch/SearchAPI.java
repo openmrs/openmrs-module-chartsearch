@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchAPI {
-	//private static String searchPhrase;
+
+
+    private static SearchPhrase searchPhrase;
 	private static List<ChartListItem> resultList;
     private static SearchAPI instance;
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
@@ -44,6 +46,7 @@ public class SearchAPI {
     }
 
     public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase){
+        SearchAPI.searchPhrase = searchPhrase;
         System.out.println("phrase :" + searchPhrase.getPhrase());
         if(searchPhrase.getPhrase().equals(",")){
             searchPhrase.setPhrase("");
@@ -67,6 +70,14 @@ public class SearchAPI {
         }
 
         return items;
+    }
+
+    public SearchPhrase getSearchPhrase() {
+        return searchPhrase;
+    }
+
+    public void setSearchPhrase(SearchPhrase searchPhrase) {
+        SearchAPI.searchPhrase = searchPhrase;
     }
 
 

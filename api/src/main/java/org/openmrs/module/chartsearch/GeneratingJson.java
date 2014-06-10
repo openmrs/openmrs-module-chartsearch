@@ -68,6 +68,8 @@ public class GeneratingJson {
         }
         jsonToReturn.put("obs_singles", arr_of_obs);
 
+        String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
+        jsonToReturn.put("search_phrase", searchPhrase);
         return jsonToReturn.toString();
     }
 

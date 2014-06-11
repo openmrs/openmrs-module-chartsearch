@@ -44,11 +44,12 @@
 
 			deltaQuery="select e.uuid as id FROM openmrs.encounter e
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
-				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'"
+				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'
+				AND e.date_created &gt; '${dataimporter.request.lastIndexTime}'"
 
 			deletedPkQuery="select e.uuid as id FROM openmrs.encounter e
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = e.encounter_type
-				WHERE e.voided = '0' AND e.patient_id = '${dataimporter.request.personId}'">
+				WHERE e.voided = '1' AND e.date_voided &gt; '${dataimporter.request.lastIndexTime}'">
 		</entity>
 		<entity name="forms"
 			query="SELECT f.uuid as id, form_id, f.name as form_name, f.date_created, et.name as encounter_type_name
@@ -68,8 +69,7 @@
 
 			deletedPkQuery="select f.uuid as id from openmrs.form f
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
-				where f.retired = 0
-				AND f.date_created &gt; '${dataimporter.request.lastIndexTime}'">
+				where f.retired = 1">
 		</entity>
 
 	</document>

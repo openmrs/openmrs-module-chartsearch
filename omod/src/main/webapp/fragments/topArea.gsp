@@ -109,8 +109,8 @@
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
                         <input type="text" name="patientId" value=${patientId} hidden>
-                        <input type="text" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
-                        <input type="submit" class="button inline chart_search_form_button" value="search"/>
+                        <input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
+                        <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">
                     	<div class="dropdown">

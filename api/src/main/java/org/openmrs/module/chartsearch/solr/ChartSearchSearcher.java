@@ -120,7 +120,7 @@ public class ChartSearchSearcher {
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
-		//query3.addFilterQuery(String.format("patient_id:%d", patientId));
+		query3.addFilterQuery(String.format("patient_id:%d", patientId));
 		QueryResponse response3 = solrServer.query(query3);
 		Iterator<SolrDocument> iter3 = response3.getResults().iterator();
 

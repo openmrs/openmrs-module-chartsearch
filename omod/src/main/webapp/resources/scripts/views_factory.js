@@ -483,6 +483,9 @@ function time_filter(time_back) {
 }
 
 function refresh_data() {
+	var searchText = document.getElementById('searchText');
+	searchText.value = jsonAfterParse.search_phrase;
+
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
 }

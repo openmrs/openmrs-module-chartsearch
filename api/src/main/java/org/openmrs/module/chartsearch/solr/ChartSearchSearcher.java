@@ -50,11 +50,11 @@ public class ChartSearchSearcher {
 		if (StringUtils.isNumeric(searchText)){
 			searchText = searchText + ".*" + " || " + searchText;
 		}
-		
+
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
-							// get the count very quickly.
+		// get the count very quickly.
 		QueryResponse response = solrServer.query(query);
 		return response.getResults().getNumFound();
 	}
@@ -68,7 +68,7 @@ public class ChartSearchSearcher {
 		if (StringUtils.isNumeric(searchText)){
 			searchText = searchText + ".*" + " || " + searchText;
 		}
-		
+
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);
@@ -77,7 +77,7 @@ public class ChartSearchSearcher {
 		query.setParam("hl.fl", "text");
 
 
-        System.out.println("Observations:");
+		System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
 
 		Iterator<SolrDocument> iter = response.getResults().iterator();
@@ -91,7 +91,7 @@ public class ChartSearchSearcher {
 			Date obsDate = (Date) document.get("obs_datetime");
 			Integer obsGroupId = (Integer) document.get("obs_group_id");
 			List<String> values = ((List<String>) document.get("value"));
-				
+
 			String value = "";
 			if (values != null){ value = values.get(0); }
 
@@ -113,10 +113,10 @@ public class ChartSearchSearcher {
 				}
 			}
 			list.add(item);
-            System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", " + document.get("obs_datetime"));
+			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", " + document.get("obs_datetime"));
 		}
 
-		
+
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
@@ -131,10 +131,10 @@ public class ChartSearchSearcher {
 			item.setEncounterId((Integer) document.get("encounter_id"));
 			item.setEncounterType((String) document.get("encounter_type"));
 			list.add(item);
-			
+
 			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
 		}
-		
+
 		// forms
 		System.out.println("Forms:");
 		SolrQuery query2 = new SolrQuery(String.format("form_name:(%s)", searchText));
@@ -149,9 +149,10 @@ public class ChartSearchSearcher {
 			item.setFormId((Integer) document.get("form_id"));
 			item.setFormName((String) document.get("form_name"));
 			list.add(item);
-			
+
 			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
 		}
+
 		return list;
 	}
 }

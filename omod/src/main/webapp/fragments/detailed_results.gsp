@@ -39,10 +39,17 @@
     .cs_label {
         font-weight: bold;
         margin-right: 10px;
+        padding-left: 10px;
     }
     .cs_span {
         margin-right: 10px;
+		padding-left: 10px;
     }
+    
+     .cs_span_measure {
+		font-size: 11px;
+    }
+    
     .demo-container {
         border: 1px solid #bebebe;
         margin: 20px 0;

@@ -152,6 +152,17 @@ public class ChartSearchSearcher {
 			
 			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
 		}
+
+        for (ChartListItem item : list) {
+            if (item != null && item instanceof FormItem && ((FormItem) item).getFormId() != null) {
+                System.out.println("List Forms: " + ((FormItem) item).getFormId() +
+                        ", " + ((FormItem) item).getFormName() + ", " + ((FormItem) item).getEncounterType());
+            }
+            else  if (item != null && item instanceof EncounterItem && ((EncounterItem) item).getEncounterId() != null) {
+                System.out.println("List Encounters: " + ((EncounterItem) item).getEncounterId() +
+                        ", " + ((EncounterItem) item).getEncounterType());
+            }
+        }
 		return list;
 	}
 }

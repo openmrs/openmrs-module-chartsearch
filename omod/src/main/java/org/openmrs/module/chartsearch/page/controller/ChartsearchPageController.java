@@ -4,14 +4,10 @@ package org.openmrs.module.chartsearch.page.controller;
  * Created by Eli on 10/03/14.
  */
 
-import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.chartsearch.ChartListItem;
-import org.openmrs.module.chartsearch.ObsItem;
-import org.openmrs.module.chartsearch.SearchAPI;
-import org.openmrs.module.chartsearch.SearchPhrase;
+import org.openmrs.module.chartsearch.*;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
@@ -64,14 +60,22 @@ public class ChartsearchPageController {
 
         //loop to get full details about observations.
 
-        for (ChartListItem observation : items)
+        for (ChartListItem chartListItem : items)
         {
-            int itemObsId = -1;
-            if (observation instanceof ObsItem) {
-                itemObsId = ((ObsItem) observation).getObsId();
+
+            if (chartListItem instanceof ObsItem) {
+                int itemObsId = ((ObsItem) chartListItem).getObsId();
+                ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
+                updatedItems.add(updatedObservation);
             }
-            ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
-            updatedItems.add(updatedObservation);
+            if (chartListItem instanceof FormItem) {
+                updatedItems.add(chartListItem);
+            }
+
+            if (chartListItem instanceof EncounterItem) {
+                updatedItems.add(chartListItem);
+            }
+
         }
 
         //setting results to show.

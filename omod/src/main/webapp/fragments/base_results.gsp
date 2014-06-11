@@ -26,7 +26,7 @@
         background-color: #d6d6d6;
     }
     .obsgroup_titleBox {
-		width: 70%; 
+		width: 65%; 
 		float: left;
     }
     

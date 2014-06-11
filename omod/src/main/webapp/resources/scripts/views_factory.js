@@ -82,8 +82,12 @@ function addAllSingleObs(obsJSON)
 
 function addSingleObsToResults(obsJSON)
 {
+    var obs_id_html = '';
+    if(typeof obsJSON.observation_id !== 'undefined') {
+        obs_id_html = 'id="obs_single_'+obsJSON.observation_id+'"';
+    }
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap" onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
+    resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
     resultText+='<div class="obsgroup_first_row">';
     resultText+='<div class="obsgroup_titleBox">';
     resultText+='<h3 class="obsgroup_title">';
@@ -92,14 +96,19 @@ function addSingleObsToResults(obsJSON)
     resultText+='<br><span class="obsgroup_date">';
     resultText+=obsJSON.date;
     resultText+='</span></div>';
-    if (obsJSON.value_type && obsJSON.value_type === "Numeric") {
-        resultText+='<span class="obsgroup_value">';
-	    resultText+=obsJSON.value;
+    if (obsJSON.value_type && obsJSON.value_type === "Text") {
+	    resultText+='<span class="obsgroup_valueText">';
+	    resultText+=obsJSON.value.substring(0, 50) + "...";
 	    resultText+='</span>'
     }
     else {
-	    resultText+='<span class="obsgroup_valueText">';
-	    resultText+=obsJSON.value.substring(0, 50) + "...";
+        resultText+='<span class="obsgroup_value">';
+	    resultText+=obsJSON.value;
+	    if (obsJSON.units_of_measurement) {
+	        resultText+='<span class="cs_span_measure">';
+	    	resultText+=' '+obsJSON.units_of_measurement;
+	    	resultText+='</span>';
+	    }
 	    resultText+='</span>'
     }
 
@@ -191,6 +200,8 @@ function enable_graph(obs_id) {
 
 
 function load_single_detailed_obs(obs_id){
+    removeAllHovering();
+    $( "#obs_single_"+obs_id ).addClass( "obsgroup_current" );
     var obsJSON = get_single_obs_by_id(obs_id);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
@@ -223,23 +234,35 @@ function load_single_detailed_obs(obs_id){
     resultText+='<label class="cs_label">';
     resultText+='Value:';
     resultText+='</label>';
+
     resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.units_of_measurement;
+    resultText+=obsJSON.value;
+    if (obsJSON.units_of_measurement) {
+        resultText+='<span class="cs_span_measure">';
+    	resultText+=' '+obsJSON.units_of_measurement;
+    	resultText+='</span>';
+    }
     resultText+='</span>';
+
     resultText+='<br />';
-    resultText+='<label class="cs_label">';
-    resultText+='Absolute High:';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.absolute_high;
-    resultText+='</span>';
-    resultText+='<br />';
-    resultText+='<label class="cs_label">';
-    resultText+='Absolute Low:';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.absolute_low;
-    resultText+='</span>';
+    if (obsJSON.absolute_high) {
+	    resultText+='<label class="cs_label">';
+	    resultText+='Absolute High:';
+	    resultText+='</label>';
+	    resultText+='<span class="cs_span">';
+	    resultText+=obsJSON.absolute_high;
+	    resultText+='</span>';
+	    resultText+='<br />';
+    }
+
+    if (obsJSON.absolute_low) {
+	    resultText+='<label class="cs_label">';
+	    resultText+='Absolute Low:';
+	    resultText+='</label>';
+	    resultText+='<span class="cs_span">';
+	    resultText+=obsJSON.absolute_low;
+	    resultText+='</span>';
+    }
     resultText+='</div>';
     /*HISTORY*/
     resultText+='<div class="demo-container"><h1 class="graph_title">Graph</h1> <div id="placeholder" class="demo-placeholder" style="width:400px;height:140px"></div></div>';
@@ -408,14 +431,15 @@ function get_obs_by_id(id)
     return -1;
 }
 
+function removeAllHovering() {
+    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
+}
+
 function load_detailed_obs(obs_id)
 {
-    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
-    //console.log(hoverID)
+    removeAllHovering();
     $( "#obs_group_"+obs_id ).addClass( "obsgroup_current" );
     var obsJSON = get_obs_by_id(obs_id);
-    //console.log(obs_id);
-    //console.log(obsJSON);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';

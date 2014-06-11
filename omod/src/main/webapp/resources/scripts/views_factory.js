@@ -82,8 +82,12 @@ function addAllSingleObs(obsJSON)
 
 function addSingleObsToResults(obsJSON)
 {
+    var obs_id_html = '';
+    if(typeof obsJSON.observation_id !== 'undefined') {
+        obs_id_html = 'id="obs_single_'+obsJSON.observation_id+'"';
+    }
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap" onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
+    resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
     resultText+='<div class="obsgroup_first_row">';
     resultText+='<div class="obsgroup_titleBox">';
     resultText+='<h3 class="obsgroup_title">';
@@ -191,6 +195,8 @@ function enable_graph(obs_id) {
 
 
 function load_single_detailed_obs(obs_id){
+    removeAllHovering();
+    $( "#obs_single_"+obs_id ).addClass( "obsgroup_current" );
     var obsJSON = get_single_obs_by_id(obs_id);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
@@ -408,14 +414,15 @@ function get_obs_by_id(id)
     return -1;
 }
 
+function removeAllHovering() {
+    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
+}
+
 function load_detailed_obs(obs_id)
 {
-    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
-    //console.log(hoverID)
+    removeAllHovering();
     $( "#obs_group_"+obs_id ).addClass( "obsgroup_current" );
     var obsJSON = get_obs_by_id(obs_id);
-    //console.log(obs_id);
-    //console.log(obsJSON);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';

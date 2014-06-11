@@ -2,8 +2,7 @@ package org.openmrs.module.chartsearch;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.openmrs.ConceptNumeric;
-import org.openmrs.Obs;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
 import java.text.SimpleDateFormat;
@@ -68,6 +67,27 @@ public class GeneratingJson {
         }
         jsonToReturn.put("obs_singles", arr_of_obs);
 
+        JSONObject jsonForms = null;
+        JSONArray arr_of_forms = new JSONArray();
+        for (Form form : generateFormsFromSearchResults()) {
+            if (form != null) {
+                jsonForms = createJsonForm(form);
+            }
+            arr_of_forms.add(jsonForms);
+        }
+        jsonToReturn.put("froms", arr_of_forms);
+
+        JSONObject jsonEncounters = null;
+        JSONArray arr_of_encounterss = new JSONArray();
+        for (Encounter encounter : generateEncountersFromSearchResults()) {
+            if (encounter != null) {
+                jsonEncounters = createJsonEncounter(encounter);
+            }
+            arr_of_forms.add(jsonEncounters);
+        }
+        jsonToReturn.put("encounters", arr_of_encounterss);
+
+
         String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
         jsonToReturn.put("search_phrase", searchPhrase);
         return jsonToReturn.toString();
@@ -79,12 +99,12 @@ public class GeneratingJson {
         jsonObs.put("observation_id", obs.getObsId());
         jsonObs.put("concept_name", obs.getConcept().getDisplayString());
 
-        Date obsDate = obs.getObsDatetime() == null ? new Date() : obs.getObsDatetime();
+        Date obsDate = obs.getDateCreated() == null ? new Date() : obs.getDateCreated();
 
-        SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy");
-        String obsDateStr = formatDateJava.format(obsDate);
+        SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String dateStr = formatDateJava.format(obsDate);
 
-        jsonObs.put("date", obsDateStr);
+        jsonObs.put("date", dateStr);
 
         if (obs.getConcept().getDatatype().isNumeric()) { // ADD MORE DATATYPES
             jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
@@ -97,37 +117,68 @@ public class GeneratingJson {
             jsonObs.put("critical_low", conceptNumeric.getLowCritical());
             jsonObs.put("normal_high", conceptNumeric.getHiNormal());
             jsonObs.put("normal_low", conceptNumeric.getLowNormal());
-
         }
+        else jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
+
+
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
         jsonObs.put("location", obs.getLocation().getDisplayString());
+
         return jsonObs;
     }
+
+    private static JSONObject createJsonForm(Form form) {
+        JSONObject jsonForm = new JSONObject();
+        jsonForm.put("form_id", form.getFormId());
+
+        Date formDate = form.getDateCreated() == null ? new Date() : form.getDateCreated();
+
+        SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String dateStr = formatDateJava.format(formDate);
+
+        jsonForm.put("date", dateStr);
+        jsonForm.put("encounter_type", form.getEncounterType().getName());
+        jsonForm.put("creator",form.getCreator().getName());
+
+        formDate = form.getDateChanged() == null ? new Date() : form.getDateChanged();
+        dateStr = formatDateJava.format(formDate);
+        jsonForm.put("last_changed_date",dateStr);
+        jsonForm.put("last_changed_by", form.getChangedBy().getName());
+
+       /* for(FormField formField : form.getOrderedFormFields()){
+            jsonForm.put(formField.getName(),formField.getDescription());
+
+        }*/
+
+
+        return jsonForm;
+    }
+
+    private static JSONObject createJsonEncounter(Encounter encounter) {
+        JSONObject jsonEncounter = new JSONObject();
+        jsonEncounter.put("encounter_id", encounter.getEncounterId());
+
+
+        return jsonEncounter;
+    }
+
 
 
     public static Set<Set<Obs>> generateObsGroupFromSearchResults() {
         Set<Set<Obs>> obsGroups = new HashSet<Set<Obs>>();
 
         SearchAPI searchAPI = SearchAPI.getInstance();
-        List<ChartListItem> searchResultsList= searchAPI.getResults();
+        List<ChartListItem> searchResultsList = searchAPI.getResults();
         for (ChartListItem item : searchResultsList) {               //for each item in results we classify it by its obsGroup, and add all of the group.
             if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
                 int itemObsId = ((ObsItem) item).getObsId();
-
-
-                // System.out.println("OUTSIDE" + Context.getObsService().getObs(itemObsId).getConcept().getDisplayString());
                 Obs obsGrp = Context.getObsService().getObs(itemObsId).getObsGroup();
                 if (obsGrp != null) {
-                    // System.out.println("INSIDE OF IF" + Context.getObsService().getObs(itemObsId).getConcept().getDisplayString());
                     int groupId = obsGrp.getId();
-
-
                     Set<Obs> obsGroup = obsGrp.getGroupMembers();
-
                     boolean found = false;                                      //if found == ture then we don't need to add the group.
                     for (Set<Obs> grp : obsGroups) {
                         Obs ob = new Obs(-1);
-
                         if (grp.iterator().hasNext()) {
                             ob = grp.iterator().next();
                         }
@@ -143,7 +194,6 @@ public class GeneratingJson {
                 }
             }
         }
-
         return obsGroups;
     }
 
@@ -154,14 +204,44 @@ public class GeneratingJson {
             if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
                 int itemObsId = ((ObsItem) item).getObsId();
 
-                    Obs obs = Context.getObsService().getObs(itemObsId);
-                if (obs != null && obs.getObsGroup() == null && !obs.isObsGrouping() ) {
+                Obs obs = Context.getObsService().getObs(itemObsId);
+                if (obs != null && obs.getObsGroup() == null && !obs.isObsGrouping()) {
                     obsSingles.add(Context.getObsService().getObs(itemObsId));
                 }
             }
-
-
         }
         return obsSingles;
+    }
+
+    public static Set<Form> generateFormsFromSearchResults() {
+        SearchAPI searchAPI = SearchAPI.getInstance();
+        Set<Form> forms = new HashSet<Form>();
+        for (ChartListItem item : searchAPI.getResults()) {
+            if (item != null && item instanceof FormItem && ((FormItem) item).getFormId() != null) {
+                int itemFormId = ((FormItem) item).getFormId();
+
+                Form form = Context.getFormService().getForm(itemFormId);
+                if (form != null) {
+                    forms.add(Context.getFormService().getForm(itemFormId));
+                }
+            }
+        }
+        return forms;
+    }
+
+    public static Set<Encounter> generateEncountersFromSearchResults() {
+        SearchAPI searchAPI = SearchAPI.getInstance();
+        Set<Encounter> encounters = new HashSet<Encounter>();
+        for (ChartListItem item : searchAPI.getResults()) {
+            if (item != null && item instanceof EncounterItem && ((EncounterItem) item).getEncounterId() != null) {
+                int itemEncounterId = ((EncounterItem) item).getEncounterId();
+
+                Encounter encounter = Context.getEncounterService().getEncounter(itemEncounterId);
+                if (encounter != null) {
+                    encounters.add(Context.getEncounterService().getEncounter(itemEncounterId));
+                }
+            }
+        }
+        return encounters;
     }
 }

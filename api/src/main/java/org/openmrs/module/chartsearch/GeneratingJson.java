@@ -44,7 +44,7 @@ public class GeneratingJson {
                 jsonGrp.put("group_name", obsGrp.getConcept().getDisplayString());
 
                 Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
-                SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 String obsDateStr = formatDateJava.format(obsDate);
 
                 jsonGrp.put("last_taken_date", obsDateStr);

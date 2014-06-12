@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="org.openmrs.module.chartsearch.categories.SubCategoryFilter"
+		table="chartsearch_sub_categories">
+		<id name="subCategoryId" type="java.lang.Integer" column="sub_category_id" />
+
+		<discriminator column="sub_category_id" insert="false" />
+
+		<property name="subCategoryName" type="java.lang.String"
+			not-null="true" length="255">
+			<column name="name" />
+		</property>
+		<property name="subCategoryDescription" type="java.lang.String">
+			<column name="description" />
+		</property>
+		<property name="subCategoryUuid" type="java.lang.String">
+			<column name="uuid" not-null="true" length="255" />
+		</property>
+		<many-to-one name="categoryFilter" column="category_id"
+			class="org.openmrs.module.chartsearch.categories.CategoryFilter"
+			not-null="true" />
+	</class>
+</hibernate-mapping>
+

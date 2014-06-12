@@ -125,7 +125,8 @@
         SynonymGroup.hbm.xml
         Synonym.hbm.xml
 		ChartSearch.hbm.xml
-		CateryFilter.hbm.xml
+		CategoryFilter.hbm.xml
+		SubCategoryFilter.hbm.xml
 
 	</mappingFiles>
 

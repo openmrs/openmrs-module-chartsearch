@@ -13,14 +13,15 @@
  */
 package org.openmrs.module.chartsearch.api;
 
+import java.util.List;
+
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.categories.SubCategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -147,9 +148,9 @@ public interface ChartSearchService extends OpenmrsService {
      */
     Integer getSynonymsCountByGroup(SynonymGroup synonymGroup);
     
-    public CategoryFilter getCategoryFilter(Integer categoryFilterId);
+    public CategoryFilter getCategoryFilterById(Integer categoryFilterId);
 	
-	public List<CategoryFilter> getCategoryFilters();
+	public List<CategoryFilter> getCategoryAllFilters();
 	
 	public void createCategoryFilter(CategoryFilter categoryFilter);
 	
@@ -158,4 +159,16 @@ public interface ChartSearchService extends OpenmrsService {
 	public void deleteCategoryFilter(CategoryFilter categoryFilter);
 	
 	public CategoryFilter getCategoryFilterByUuid(String uuid);
+	
+	public SubCategoryFilter getSubCategoryFilterById(Integer subCategoryFilterId);
+	
+	public List<SubCategoryFilter> getSubCategoryFiltersFor(CategoryFilter categoryFilter);
+	
+	public void createSubCategoryFilter(SubCategoryFilter subCategoryFilter);
+	
+	public void updateSubCategoryFilter(SubCategoryFilter subCategoryFilter);
+	
+	public void deleteSubCategoryFilter(SubCategoryFilter subCategoryFilter);
+	
+	public SubCategoryFilter getSubCategoryFilterByUuid(String uuid);
 }

@@ -13,21 +13,23 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
+import org.openmrs.module.chartsearch.api.db.SubCategoryFilterDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.categories.SubCategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -36,12 +38,12 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-
-
     private SynonymDAO synonymDAO;
     private SynonymGroupDAO synonymGroupDAO;
     
     private CategoryFilterDAO categoryFilterDao;
+    
+    private SubCategoryFilterDAO subCategoryFilterDao;
 
     /**
      * Getters and Setters
@@ -61,12 +63,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public void setSynonymDAO(SynonymDAO synonymDAO) {
         this.synonymDAO = synonymDAO;
     }
-
-
-
-
-
-
+    
     @Override
     @Transactional(readOnly = true)
     public SynonymGroup getSynonymGroupById(Integer id) {
@@ -148,12 +145,12 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     }
 
 	@Override
-    public CategoryFilter getCategoryFilter(Integer categoryFilterId) {
+    public CategoryFilter getCategoryFilterById(Integer categoryFilterId) {
 	    return categoryFilterDao.getCategoryFilter(categoryFilterId);
     }
 
 	@Override
-    public List<CategoryFilter> getCategoryFilters() {
+    public List<CategoryFilter> getCategoryAllFilters() {
 	    return categoryFilterDao.getCategoryFilters();
     }
 
@@ -175,5 +172,35 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
     public CategoryFilter getCategoryFilterByUuid(String uuid) {
 	    return categoryFilterDao.getCategoryFilterByUuid(uuid);
+    }
+
+	@Override
+    public SubCategoryFilter getSubCategoryFilterById(Integer subCategoryFilterId) {
+	    return subCategoryFilterDao.getSubCategoryFilter(subCategoryFilterId);
+    }
+
+	@Override
+    public List<SubCategoryFilter> getSubCategoryFiltersFor(CategoryFilter categoryFilter) {
+	    return subCategoryFilterDao.getSubCategoryFilters(categoryFilter);
+    }
+
+	@Override
+    public void createSubCategoryFilter(SubCategoryFilter subCategoryFilter) {
+		subCategoryFilterDao.createSubCategoryFilter(subCategoryFilter);
+    }
+
+	@Override
+    public void updateSubCategoryFilter(SubCategoryFilter subCategoryFilter) {
+		subCategoryFilterDao.updateSubCategoryFilter(subCategoryFilter);
+    }
+
+	@Override
+    public void deleteSubCategoryFilter(SubCategoryFilter subCategoryFilter) {
+		subCategoryFilterDao.deleteSubCategoryFilter(subCategoryFilter);
+    }
+
+	@Override
+    public SubCategoryFilter getSubCategoryFilterByUuid(String uuid) {
+	    return subCategoryFilterDao.getSubCategoryFilterByUuid(uuid);
     }
 }

@@ -13,6 +13,8 @@
 package org.openmrs.module.chartsearch.categories;
 
 import org.openmrs.OpenmrsObject;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 
 /**
  * A category can have a sub category
@@ -26,6 +28,22 @@ public class SubCategoryFilter implements OpenmrsObject {
 	private String subCategoryDescription;
 	
 	private String SubCategoryUuid;
+	
+	/**
+	 * The Category where the sub-category belongs
+	 */
+	private CategoryFilter categoryFilter;
+	
+	private ChartSearchService chartSearchService;
+	
+	public SubCategoryFilter(CategoryFilter categoryFilter) {
+		if (categoryFilter != null) {
+			setCategoryFilter(categoryFilter);
+		} else {
+			//Set category filter where a sub category belongs to "Others" is the user supplied nothing
+			setCategoryFilter(chartSearchService.getCategoryFilterByUuid("0717136a-5c5f-4d68-b099-cbf1ad820363"));
+		}
+	}
 	
 	public Integer getSubCategoryId() {
 		return subCategoryId;
@@ -66,11 +84,6 @@ public class SubCategoryFilter implements OpenmrsObject {
 	public void setCategoryFilter(CategoryFilter categoryFilter) {
 		this.categoryFilter = categoryFilter;
 	}
-	
-	/**
-	 * The Category where the sub-category belongs
-	 */
-	private CategoryFilter categoryFilter;
 	
 	@Override
 	public Integer getId() {

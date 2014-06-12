@@ -84,6 +84,6 @@ public class HibernateCategoryFilterDAO implements CategoryFilterDAO {
 	@Override
 	public CategoryFilter getCategoryFilterByUuid(String uuid) {
 		return (CategoryFilter) sessionFactory.getCurrentSession()
-		        .createQuery("from CategoryFilter cf where cf.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		        .createQuery("from CategoryFilter cf where cf.categoryUuid = :uuid").setString("uuid", uuid).uniqueResult();
 	}
 }

@@ -1,116 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <!--
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
+	<!-- See http://www.liquibase.org/manual/home#available_database_refactorings 
+		for a list of supported elements and attributes -->
 
-    <changeSet id="1" author="Eli">
-        <comment>added synonym table</comment>
-        <createTable tableName="chartsearch_synonyms">
-            <column name="group_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="1" author="Eli">
+		<comment>added synonym table</comment>
+		<createTable tableName="chartsearch_synonyms">
+			<column name="group_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
 
-    <changeSet id="2" author="Eli">
-        <comment>added synonym groups table and a foreign key</comment>
-        <createTable tableName="chartsearch_synonym_groups">
-            <column name="group_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="group_name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="is_category" type="boolean" defaultValueBoolean="false"/>
-        </createTable>
+	<changeSet id="2" author="Eli">
+		<comment>added synonym groups table and a foreign key</comment>
+		<createTable tableName="chartsearch_synonym_groups">
+			<column name="group_id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="group_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_category" type="boolean" defaultValueBoolean="false" />
+		</createTable>
 
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                />
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="RESTRICT" />
 
-    </changeSet>
+	</changeSet>
 
-    <changeSet id="3" author="Eli">
-        <comment>Added synonym_id column</comment>
-        <addColumn tableName="chartsearch_synonyms">
-            <column name="synonym_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
+	<changeSet id="3" author="Eli">
+		<comment>Added synonym_id column</comment>
+		<addColumn tableName="chartsearch_synonyms">
+			<column name="synonym_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 
-    <changeSet id="4" author="Eli">
-        <comment>Changed cascade options</comment>
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms_cascade"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="CASCADE"
-                />
-    </changeSet>
+	<changeSet id="4" author="Eli">
+		<comment>Changed cascade options</comment>
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms_cascade"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
+	</changeSet>
 
 	<changeSet id="CSM-58-01062014" author="k-joseph">
-		<comment>Defining Categories to filter CSM results</comment>
-		<createTable tableName="chartsearch_categories">
-			<column name="category_id" type="int" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="name" type="varchar(50)">
-				<constraints nullable="false"/>
-			</column>
-			<column name="description" type="varchar(255)" defaultValue="null"/>
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false"/>
-			</column>
-        </createTable>
-	</changeSet>
-	
+    	<preConditions onFail="MARK_RAN">
+         	<not><tableExists tableName="chartsearch_categories"/></not>
+        </preConditions>
+        <comment>
+        	Create the chartsearch_categories table
+        </comment>
+        <createTable tableName="chartsearch_categories">
+        	<column name="category_id" type="int" autoIncrement="true">
+            	<constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="name" type="varchar(50)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" defaultValue="null" />
+            <column name="uuid" type="char(38)">
+            	<constraints nullable="false" />
+            </column>
+    	</createTable>
+    </changeSet>
+
 	<changeSet id="CSM-58-020620141120" author="k-joseph">
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Diagnoses"/>
-			<column name="description" value="Category item for filtering Diagnoses from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Diagnoses" />
+			<column name="description"
+				value="Category item for filtering Diagnoses from other CSM results" />
+			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />
 		</insert>
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Labs"/>
-			<column name="description" value="Category item for filtering Labs from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Labs" />
+			<column name="description"
+				value="Category item for filtering Labs from other CSM results" />
+			<column name="uuid" value="66b0e726-a280-4d42-ada3-42bc111f68d6" />
 		</insert>
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Meds"/>
-			<column name="description" value="Category item for filtering Meds from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Meds" />
+			<column name="description"
+				value="Category item for filtering Meds from other CSM results" />
+			<column name="uuid" value="35cdafb5-5f6b-4c79-89e4-7226bea70ba9" />
 		</insert>
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Orders"/>
-			<column name="description" value="Category item for filtering Orders from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Orders" />
+			<column name="description"
+				value="Category item for filtering Orders from other CSM results" />
+			<column name="uuid" value="a458cbba-fb5d-4e5f-b0da-bfab122860a8" />
 		</insert>
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Reports"/>
-			<column name="description" value="Category item for filtering Reports/Notes from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Reports" />
+			<column name="description"
+				value="Category item for filtering Reports/Notes from other CSM results" />
+			<column name="uuid" value="fc29ada4-0e00-4450-905c-e2982a242df2" />
 		</insert>
 		<insert tableName="chartsearch_categories">
-			<column name="name" value="Vitals"/>
-			<column name="description" value="Category item for fitering Vitals from other CSM results"/>
-			<column name="uuid" value="UUID()"/>
+			<column name="name" value="Vitals" />
+			<column name="description"
+				value="Category item for fitering Vitals from other CSM results" />
+			<column name="uuid" value="290c0ddd-3aad-4718-addf-3d1d33f7ae5e" />
 		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Others" />
+			<column name="description"
+				value="All others have their results grouped under this category filter" />
+			<column name="uuid" value="0717136a-5c5f-4d68-b099-cbf1ad820363" />
+		</insert>
+	</changeSet>
+
+	<changeSet id="CSM-58-120620141637" author="k-joseph">
+		<comment>Defining Sub Categories to be used in filtering search
+			results</comment>
+		<createTable tableName="chartsearch_sub_categories">
+			<column name="sub_category_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="category_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="description" type="varchar(255)" defaultValue="null" />
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="category_sub_category_fk"
+			baseTableName="chartsearch_sub_categories" baseColumnNames="category_id"
+			referencedTableName="chartsearch_categories"
+			referencedColumnNames="category_id" />
 	</changeSet>
 
 </databaseChangeLog>

@@ -61,7 +61,7 @@
          	<not><tableExists tableName="chartsearch_categories"/></not>
         </preConditions>
         <comment>
-        	Create the chartsearch_categories table
+        	Create chartsearch_categories table
         </comment>
         <createTable tableName="chartsearch_categories">
         	<column name="category_id" type="int" autoIncrement="true">
@@ -123,8 +123,12 @@
 	</changeSet>
 
 	<changeSet id="CSM-58-120620141637" author="k-joseph">
-		<comment>Defining Sub Categories to be used in filtering search
-			results</comment>
+		<preConditions onFail="MARK_RAN">
+         	<not><tableExists tableName="chartsearch_sub_categories"/></not>
+        </preConditions>
+        <comment>
+        	Create chartsearch_sub_categories table
+        </comment>
 		<createTable tableName="chartsearch_sub_categories">
 			<column name="sub_category_id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
@@ -140,10 +144,14 @@
 				<constraints nullable="false" />
 			</column>
 		</createTable>
-		<addForeignKeyConstraint constraintName="category_sub_category_fk"
-			baseTableName="chartsearch_sub_categories" baseColumnNames="category_id"
-			referencedTableName="chartsearch_categories"
-			referencedColumnNames="category_id" />
 	</changeSet>
-
+	
+	<changeSet id="CSM-58-120620142307" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<not><foreignKeyConstraintExists foreignKeyName="sub_category_category_id_fk"/></not>
+		</preConditions>
+		<comment>Adding foreign key constraint for sub_category.category_id</comment>
+		<addForeignKeyConstraint baseTableName="chartsearch_sub_categories" baseColumnNames="category_id" constraintName="sub_category_category_id_fk" referencedTableName="chartsearch_categories" referencedColumnNames="category_id"/>
+	</changeSet>
+	
 </databaseChangeLog>

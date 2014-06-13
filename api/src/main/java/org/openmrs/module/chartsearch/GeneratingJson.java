@@ -19,7 +19,7 @@ import java.util.Set;
  */
 
 public class GeneratingJson {
-
+    final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
 
     public static String generateJson() {
 
@@ -48,7 +48,8 @@ public class GeneratingJson {
 
                 Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
                 SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                String obsDateStr = formatDateJava.format(obsDate);
+                /*String obsDateStr = formatDateJava.format(obsDate);*/
+                String obsDateStr = obsDate.getTime()+"";
 
                 jsonGrp.put("last_taken_date", obsDateStr);
                 jsonGrp.put("observations", arr_of_obs);
@@ -105,7 +106,8 @@ public class GeneratingJson {
         Date obsDate = obs.getDateCreated() == null ? new Date() : obs.getDateCreated();
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dateStr = formatDateJava.format(obsDate);
+        /*String dateStr = formatDateJava.format(obsDate);*/
+        String dateStr = obsDate.getTime()+"";
 
         jsonObs.put("date", dateStr);
 
@@ -136,8 +138,8 @@ public class GeneratingJson {
         Date formDate = form.getDateCreated() == null ? new Date() : form.getDateCreated();
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dateStr = formatDateJava.format(formDate);
-
+        /*String dateStr = formatDateJava.format(formDate);*/
+        String dateStr = formDate.getTime()+"";
         jsonForm.put("date", dateStr);
         jsonForm.put("encounter_type", form.getEncounterType().getName());
         jsonForm.put("creator", form.getCreator().getName());
@@ -229,9 +231,6 @@ public class GeneratingJson {
             if (item != null && item instanceof FormItem) {
 
                 int itemFormId = ((FormItem) item).getFormId();
-
-                System.out.println("INSIDE OF IF, means the item is form, and its id is:" + itemFormId);
-
                 Form form = Context.getFormService().getForm(itemFormId);
                 if (form != null) {
                     forms.add(Context.getFormService().getForm(itemFormId));

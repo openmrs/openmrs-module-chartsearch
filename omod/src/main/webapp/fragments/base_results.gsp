@@ -72,9 +72,20 @@
     }
     .obsgroup_row_trd_section {
         width: 20%;
+        font-size: 13px;
+        margin-left: 2px;
     }
     .inline {
         display: inline-block;
+    }
+    .more_then_normal, .less_then_normal {
+        color: red;
+    }
+    .more_then_normal:before {
+        content: '￪';
+    }
+    .less_then_normal:before {
+        content: '￬';
     }
 </style>
 

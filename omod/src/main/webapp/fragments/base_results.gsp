@@ -78,19 +78,20 @@
     .inline {
         display: inline-block;
     }
-    .more_then_normal, .less_then_normal {
+    .more_then_normal, .less_then_normal, .red {
         color: red;
     }
     .more_then_normal:before {
-        content: '￪';
+        content: '↑';
+        font-size: 20px;
     }
     .less_then_normal:before {
-        content: '￬';
+        content: '↓';
     }
+
 </style>
 
 <div class="results_box_container">
-    <h3 class="border_bottom">Results: </h3>
     <div class="results_table_wrap" id="obsgroups_results">
 
     </div>

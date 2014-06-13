@@ -435,7 +435,20 @@ function displayOnlyIfDef(display_opt) {
 function single_obs_html(obsJSON) {
     console.log('====single obs html function=========');
     var resultText='';
-    resultText+='<div class="obsgroup_row">';
+    var red = '';
+    if (typeof obsJSON.normal_high !== 'undefined')
+    {
+        if(obsJSON.value > obsJSON.normal_high) {
+            red=' red ';
+        }
+    }
+    if (typeof obsJSON.normal_low !== 'undefined')
+    {
+        if(obsJSON.value < obsJSON.normal_low) {
+            red=' red ';
+        }
+    }
+    resultText+='<div class="obsgroup_row ' + red + '">';
     if (typeof obsJSON.concept_name !== 'undefined')
     {
         resultText+='<div class="obsgroup_row_first_section inline">';
@@ -448,10 +461,24 @@ function single_obs_html(obsJSON) {
         resultText+=obsJSON.value + ' ' + displayOnlyIfDef(obsJSON.units_of_measurement);
         resultText+='</div>';
     }
-    if (typeof obsJSON.absolute_low !== 'undefined' && typeof obsJSON.absolute_high !== 'undefined')
+    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined')
     {
-        resultText+='<div class="obsgroup_row_trd_section inline">';
-        resultText+='(' + obsJSON.absolute_low + ' - ' + obsJSON.absolute_high + ')';
+        var change = '';
+        if (typeof obsJSON.normal_high !== 'undefined')
+        {
+            if(obsJSON.value > obsJSON.normal_high) {
+                change+=' more_then_normal ';
+            }
+        }
+        if (typeof obsJSON.normal_low !== 'undefined')
+        {
+            if(obsJSON.value < obsJSON.normal_low) {
+                change+=' less_then_normal ';
+            }
+        }
+
+        resultText+='<div class="obsgroup_row_trd_section inline '+ change +'">';
+        resultText+='(' + obsJSON.normal_low + ' - ' + obsJSON.normal_high + ')';
         resultText+='</div>';
     }
     resultText+='</div>';

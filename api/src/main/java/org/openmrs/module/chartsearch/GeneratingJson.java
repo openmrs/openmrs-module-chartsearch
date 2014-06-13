@@ -49,7 +49,7 @@ public class GeneratingJson {
                 Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
                 SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                 /*String obsDateStr = formatDateJava.format(obsDate);*/
-                String obsDateStr = obsDate.getTime()+"";
+                String obsDateStr = obsDate.getTime() + "";
 
                 jsonGrp.put("last_taken_date", obsDateStr);
                 jsonGrp.put("observations", arr_of_obs);
@@ -107,7 +107,7 @@ public class GeneratingJson {
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         /*String dateStr = formatDateJava.format(obsDate);*/
-        String dateStr = obsDate.getTime()+"";
+        String dateStr = obsDate.getTime() + "";
 
         jsonObs.put("date", dateStr);
 
@@ -127,6 +127,16 @@ public class GeneratingJson {
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
         jsonObs.put("location", obs.getLocation().getDisplayString());
+        SearchAPI searchAPI = SearchAPI.getInstance();
+        if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*") ) {
+            for (ChartListItem item : searchAPI.getResults()) {
+                if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
+                    if (((ObsItem) item).getObsId() == obs.getObsId()) {
+                        jsonObs.put("chosen", "true");
+                    }
+                }
+            }
+        }
 
         return jsonObs;
     }
@@ -139,7 +149,7 @@ public class GeneratingJson {
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         /*String dateStr = formatDateJava.format(formDate);*/
-        String dateStr = formDate.getTime()+"";
+        String dateStr = formDate.getTime() + "";
         jsonForm.put("date", dateStr);
         jsonForm.put("encounter_type", form.getEncounterType().getName());
         jsonForm.put("creator", form.getCreator().getName());
@@ -234,8 +244,6 @@ public class GeneratingJson {
                 }
             }
         }
-
-
         return forms;
     }
 

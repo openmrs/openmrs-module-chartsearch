@@ -222,10 +222,7 @@ public class GeneratingJson {
         Set<Form> forms = new HashSet<Form>();
         List<ChartListItem> searchResultsList = searchAPI.getResults();
 
-        for (ChartListItem item : searchResultsList) {
-            System.out.println(item.getClass().toString());
 
-        }
         for (ChartListItem item : searchResultsList) {
 
             if (item != null && item instanceof FormItem) {
@@ -237,7 +234,8 @@ public class GeneratingJson {
                 }
             }
         }
-        System.out.println("number of forms is:" + forms.size());
+
+
         return forms;
     }
 

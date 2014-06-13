@@ -158,7 +158,6 @@ function get_obs_graph_points(obs_id) {
 
 function enable_graph(obs_id) {
 
-
         var d3 = get_obs_graph_points(obs_id);
         var options = {
             series: {
@@ -179,6 +178,8 @@ function enable_graph(obs_id) {
             }
         };
         $.plot("#placeholder", [ d3 ], options);
+
+       console.log(d3);
     $("<div id='tooltip'></div>").css({
         position: "absolute",
         display: "none",

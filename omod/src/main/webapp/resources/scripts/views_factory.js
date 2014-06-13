@@ -96,14 +96,19 @@ function addSingleObsToResults(obsJSON)
     resultText+='<br><span class="obsgroup_date">';
     resultText+=obsJSON.date;
     resultText+='</span></div>';
-    if (obsJSON.value_type && obsJSON.value_type === "Numeric") {
-        resultText+='<span class="obsgroup_value">';
-	    resultText+=obsJSON.value;
+    if (obsJSON.value_type && obsJSON.value_type === "Text") {
+	    resultText+='<span class="obsgroup_valueText">';
+	    resultText+=obsJSON.value.substring(0, 50) + "...";
 	    resultText+='</span>'
     }
     else {
-	    resultText+='<span class="obsgroup_valueText">';
-	    resultText+=obsJSON.value.substring(0, 50) + "...";
+        resultText+='<span class="obsgroup_value">';
+	    resultText+=obsJSON.value;
+	    if (obsJSON.units_of_measurement) {
+	        resultText+='<span class="cs_span_measure">';
+	    	resultText+=' '+obsJSON.units_of_measurement;
+	    	resultText+='</span>';
+	    }
 	    resultText+='</span>'
     }
 
@@ -230,23 +235,35 @@ function load_single_detailed_obs(obs_id){
     resultText+='<label class="cs_label">';
     resultText+='Value:';
     resultText+='</label>';
+
     resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.units_of_measurement;
+    resultText+=obsJSON.value;
+    if (obsJSON.units_of_measurement) {
+        resultText+='<span class="cs_span_measure">';
+    	resultText+=' '+obsJSON.units_of_measurement;
+    	resultText+='</span>';
+    }
     resultText+='</span>';
+
     resultText+='<br />';
-    resultText+='<label class="cs_label">';
-    resultText+='Absolute High:';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.absolute_high;
-    resultText+='</span>';
-    resultText+='<br />';
-    resultText+='<label class="cs_label">';
-    resultText+='Absolute Low:';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value+' '+obsJSON.absolute_low;
-    resultText+='</span>';
+    if (obsJSON.absolute_high) {
+	    resultText+='<label class="cs_label">';
+	    resultText+='Absolute High:';
+	    resultText+='</label>';
+	    resultText+='<span class="cs_span">';
+	    resultText+=obsJSON.absolute_high;
+	    resultText+='</span>';
+	    resultText+='<br />';
+    }
+
+    if (obsJSON.absolute_low) {
+	    resultText+='<label class="cs_label">';
+	    resultText+='Absolute Low:';
+	    resultText+='</label>';
+	    resultText+='<span class="cs_span">';
+	    resultText+=obsJSON.absolute_low;
+	    resultText+='</span>';
+    }
     resultText+='</div>';
     /*HISTORY*/
     resultText+='<div class="demo-container"><h1 class="graph_title">Graph</h1> <div id="placeholder" class="demo-placeholder" style="width:400px;height:140px"></div></div>';

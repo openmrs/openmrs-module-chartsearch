@@ -2,7 +2,10 @@ package org.openmrs.module.chartsearch;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.openmrs.*;
+import org.openmrs.ConceptNumeric;
+import org.openmrs.Encounter;
+import org.openmrs.Form;
+import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 
 import java.text.SimpleDateFormat;
@@ -16,7 +19,7 @@ import java.util.Set;
  */
 
 public class GeneratingJson {
-
+    final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
 
     public static String generateJson() {
 
@@ -45,7 +48,8 @@ public class GeneratingJson {
 
                 Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
                 SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                String obsDateStr = formatDateJava.format(obsDate);
+                /*String obsDateStr = formatDateJava.format(obsDate);*/
+                String obsDateStr = obsDate.getTime()+"";
 
                 jsonGrp.put("last_taken_date", obsDateStr);
                 jsonGrp.put("observations", arr_of_obs);
@@ -75,17 +79,17 @@ public class GeneratingJson {
             }
             arr_of_forms.add(jsonForms);
         }
-        jsonToReturn.put("froms", arr_of_forms);
+        jsonToReturn.put("forms", arr_of_forms);
 
         JSONObject jsonEncounters = null;
-        JSONArray arr_of_encounterss = new JSONArray();
+        JSONArray arr_of_encounters = new JSONArray();
         for (Encounter encounter : generateEncountersFromSearchResults()) {
             if (encounter != null) {
                 jsonEncounters = createJsonEncounter(encounter);
             }
-            arr_of_forms.add(jsonEncounters);
+            arr_of_encounters.add(jsonEncounters);
         }
-        jsonToReturn.put("encounters", arr_of_encounterss);
+        jsonToReturn.put("encounters", arr_of_encounters);
 
 
         String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
@@ -102,7 +106,8 @@ public class GeneratingJson {
         Date obsDate = obs.getDateCreated() == null ? new Date() : obs.getDateCreated();
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dateStr = formatDateJava.format(obsDate);
+        /*String dateStr = formatDateJava.format(obsDate);*/
+        String dateStr = obsDate.getTime()+"";
 
         jsonObs.put("date", dateStr);
 
@@ -117,8 +122,7 @@ public class GeneratingJson {
             jsonObs.put("critical_low", conceptNumeric.getLowCritical());
             jsonObs.put("normal_high", conceptNumeric.getHiNormal());
             jsonObs.put("normal_low", conceptNumeric.getLowNormal());
-        }
-        else jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
+        } else jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
 
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
@@ -134,16 +138,16 @@ public class GeneratingJson {
         Date formDate = form.getDateCreated() == null ? new Date() : form.getDateCreated();
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String dateStr = formatDateJava.format(formDate);
-
+        /*String dateStr = formatDateJava.format(formDate);*/
+        String dateStr = formDate.getTime()+"";
         jsonForm.put("date", dateStr);
         jsonForm.put("encounter_type", form.getEncounterType().getName());
-        jsonForm.put("creator",form.getCreator().getName());
+        jsonForm.put("creator", form.getCreator().getName());
 
         formDate = form.getDateChanged() == null ? new Date() : form.getDateChanged();
         dateStr = formatDateJava.format(formDate);
-        jsonForm.put("last_changed_date",dateStr);
-        jsonForm.put("last_changed_by", form.getChangedBy().getName());
+        jsonForm.put("last_changed_date", dateStr);
+
 
        /* for(FormField formField : form.getOrderedFormFields()){
             jsonForm.put(formField.getName(),formField.getDescription());
@@ -161,7 +165,6 @@ public class GeneratingJson {
 
         return jsonEncounter;
     }
-
 
 
     public static Set<Set<Obs>> generateObsGroupFromSearchResults() {
@@ -197,6 +200,7 @@ public class GeneratingJson {
         return obsGroups;
     }
 
+
     public static Set<Obs> generateObsSinglesFromSearchResults() {
         SearchAPI searchAPI = SearchAPI.getInstance();
         Set<Obs> obsSingles = new HashSet<Obs>();
@@ -216,25 +220,35 @@ public class GeneratingJson {
     public static Set<Form> generateFormsFromSearchResults() {
         SearchAPI searchAPI = SearchAPI.getInstance();
         Set<Form> forms = new HashSet<Form>();
-        for (ChartListItem item : searchAPI.getResults()) {
-            if (item != null && item instanceof FormItem && ((FormItem) item).getFormId() != null) {
-                int itemFormId = ((FormItem) item).getFormId();
+        List<ChartListItem> searchResultsList = searchAPI.getResults();
 
+        for (ChartListItem item : searchResultsList) {
+            System.out.println(item.getClass().toString());
+
+        }
+        for (ChartListItem item : searchResultsList) {
+
+            if (item != null && item instanceof FormItem) {
+
+                int itemFormId = ((FormItem) item).getFormId();
                 Form form = Context.getFormService().getForm(itemFormId);
                 if (form != null) {
                     forms.add(Context.getFormService().getForm(itemFormId));
                 }
             }
         }
+        System.out.println("number of forms is:" + forms.size());
         return forms;
     }
 
     public static Set<Encounter> generateEncountersFromSearchResults() {
         SearchAPI searchAPI = SearchAPI.getInstance();
         Set<Encounter> encounters = new HashSet<Encounter>();
-        for (ChartListItem item : searchAPI.getResults()) {
+        List<ChartListItem> searchResultsList = searchAPI.getResults();
+        for (ChartListItem item : searchResultsList) {
             if (item != null && item instanceof EncounterItem && ((EncounterItem) item).getEncounterId() != null) {
                 int itemEncounterId = ((EncounterItem) item).getEncounterId();
+
 
                 Encounter encounter = Context.getEncounterService().getEncounter(itemEncounterId);
                 if (encounter != null) {

@@ -23,8 +23,15 @@ import org.hibernate.Transaction;
 import org.openmrs.module.chartsearch.api.db.SubCategoryFilterDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.categories.SubCategoryFilter;
+import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 
-public class HibernateSubCategoryFilterDAO implements SubCategoryFilterDAO {
+@SuppressWarnings("rawtypes")
+public class HibernateSubCategoryFilterDAO extends HibernateSingleClassDAO implements SubCategoryFilterDAO {
+	
+	@SuppressWarnings("unchecked")
+    protected HibernateSubCategoryFilterDAO() {
+		super(SubCategoryFilter.class);
+	}
 	
 	protected final static Log log = LogFactory.getLog(HibernateCategoryFilterDAO.class);
 	

@@ -17,7 +17,8 @@ import java.util.List;
 
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
-public interface CategoryFilterDAO {
+@SuppressWarnings("rawtypes")
+public interface CategoryFilterDAO extends SingleClassDAO {
 	
 	public CategoryFilter getCategoryFilter(Integer categoryFilterId);
 	
@@ -28,6 +29,6 @@ public interface CategoryFilterDAO {
 	public void updateCategoryFilter(CategoryFilter categoryFilter);
 	
 	public void deleteCategoryFilter(CategoryFilter categoryFilter);
-
+	
 	public CategoryFilter getCategoryFilterByUuid(String uuid);
 }

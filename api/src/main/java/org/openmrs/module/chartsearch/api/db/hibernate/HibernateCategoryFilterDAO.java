@@ -24,7 +24,13 @@ import org.openmrs.Concept;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
-public class HibernateCategoryFilterDAO implements CategoryFilterDAO {
+@SuppressWarnings("rawtypes")
+public class HibernateCategoryFilterDAO extends HibernateSingleClassDAO implements CategoryFilterDAO {
+	
+	@SuppressWarnings("unchecked")
+    protected HibernateCategoryFilterDAO() {
+		super(CategoryFilter.class);
+	}
 	
 	protected final static Log log = LogFactory.getLog(HibernateCategoryFilterDAO.class);
 	

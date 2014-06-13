@@ -145,11 +145,13 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public CategoryFilter getCategoryFilterById(Integer categoryFilterId) {
 	    return categoryFilterDao.getCategoryFilter(categoryFilterId);
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public List<CategoryFilter> getCategoryAllFilters() {
 	    return categoryFilterDao.getCategoryFilters();
     }
@@ -170,16 +172,19 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public CategoryFilter getCategoryFilterByUuid(String uuid) {
 	    return categoryFilterDao.getCategoryFilterByUuid(uuid);
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public SubCategoryFilter getSubCategoryFilterById(Integer subCategoryFilterId) {
 	    return subCategoryFilterDao.getSubCategoryFilter(subCategoryFilterId);
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public List<SubCategoryFilter> getSubCategoryFiltersFor(CategoryFilter categoryFilter) {
 	    return subCategoryFilterDao.getSubCategoryFilters(categoryFilter);
     }
@@ -200,6 +205,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     }
 
 	@Override
+	@Transactional(readOnly = true)
     public SubCategoryFilter getSubCategoryFilterByUuid(String uuid) {
 	    return subCategoryFilterDao.getSubCategoryFilterByUuid(uuid);
     }

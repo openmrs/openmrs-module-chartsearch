@@ -2,9 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
-	<class name="org.openmrs.module.chartsearch.categories.CategoryFilter"
-		table="chartsearch_categories">
+<hibernate-mapping package="org.openmrs.module.chartsearch.categories">
+	<class name="CategoryFilter" table="chartsearch_categories">
 		<id name="categoryId" type="int">
 			<column name="category_id" />
 			<generator class="increment" />

@@ -67,7 +67,7 @@
                 </property>
                 
                 <property name="CategoryFilterDAO">
-                	<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.CategoryFilterDAO">
+                	<bean class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateCategoryFilterDAO">
                 		<property name="sessionFactory">
                             <ref bean="sessionFactory" />
                         </property>
@@ -75,7 +75,7 @@
                 </property>
                 
                 <property name="SubCategoryFilterDAO">
-                	<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.SubCategoryFilterDAO">
+                	<bean class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateSubCategoryFilterDAO">
                 		<property name="sessionFactory">
                             <ref bean="sessionFactory" />
                         </property>

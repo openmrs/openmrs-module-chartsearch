@@ -17,7 +17,8 @@ import java.util.List;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.categories.SubCategoryFilter;
 
-public interface SubCategoryFilterDAO {
+@SuppressWarnings("rawtypes")
+public interface SubCategoryFilterDAO extends SingleClassDAO {
 	
 	public SubCategoryFilter getSubCategoryFilter(Integer subCategoryFilterId);
 	

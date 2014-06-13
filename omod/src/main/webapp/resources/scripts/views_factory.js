@@ -168,6 +168,19 @@ function enable_graph(obs_id) {
 
     var observation_obj = get_single_obs_by_id(obs_id);
     var data2 = get_obs_graph_points(obs_id);
+    var mark = {
+        enabled: true,
+        showMinMax: true,
+        avg:0
+    };
+    if (typeof observation_obj.normal_high !== 'undefined')
+    {
+        mark.max = parseInt(observation_obj.normal_high);
+    }
+    if (typeof observation_obj.normal_low !== 'undefined')
+    {
+        mark.min = parseInt(observation_obj.normal_low);
+    }
 
     var plot = $.plot("#placeholder", [
         { data: data2, label: observation_obj.concept_name}
@@ -176,13 +189,7 @@ function enable_graph(obs_id) {
             lines: {
                 show: true
             },
-            autoMarkings: {
-                enabled: true,
-                showMinMax: true,
-                min: 35,
-                max: 37,
-                avg:0
-            },
+            autoMarkings: mark,
             points: {
                 show: true
             }

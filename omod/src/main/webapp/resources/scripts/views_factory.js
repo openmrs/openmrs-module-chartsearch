@@ -170,16 +170,18 @@ function enable_graph(obs_id) {
     var data2 = get_obs_graph_points(obs_id);
     var mark = {
         enabled: true,
-        showMinMax: true,
+        showMinMax: false,
         avg:0
     };
     if (typeof observation_obj.normal_high !== 'undefined')
     {
         mark.max = parseInt(observation_obj.normal_high);
+        mark.showMinMax = true;
     }
     if (typeof observation_obj.normal_low !== 'undefined')
     {
         mark.min = parseInt(observation_obj.normal_low);
+        mark.showMinMax = true;
     }
 
     var plot = $.plot("#placeholder", [
@@ -202,7 +204,7 @@ function enable_graph(obs_id) {
         },
         xaxis: {
             mode: "time",
-            timeformat: "%y/%m/%d"
+            timeformat: "%d.%m"
         }
     });
 
@@ -245,19 +247,19 @@ function load_single_detailed_obs(obs_id){
         '<div id="placeholder" class="demo-placeholder"></div>' +
         '</div>';
     // resultText+='<div class="demo-container"><h1 class="graph_title">Graph</h1> <div id="placeholder" class="demo-placeholder" style="width:550px;height:300px;margin:0 auto;"></div></div>';
-    resultText+='<div class="obsgroup_all_wrapper">';
+    /*resultText+='<div class="obsgroup_all_wrapper">';*/
     resultText+=load_single_obs_history(obs_id);
-    resultText+='</div>';
+    /*resultText+='</div>';*/
 
     resultText+='<div class="obsgroup_all_wrapper">';
 
-    resultText+='<label class="cs_label">';
+    /*resultText+='<label class="cs_label">';
     resultText+='Date: ';
     resultText+='</label>';
     resultText+='<span class="cs_span">';
     resultText+=getDateStr(obsJSON.date);
     resultText+='</span>';
-    resultText+='<br />';
+    resultText+='<br />';*/
     resultText+='<label class="cs_label">';
     resultText+='Value Type:';
     resultText+='</label>';
@@ -271,8 +273,8 @@ function load_single_detailed_obs(obs_id){
     resultText+='<span class="cs_span">';
     resultText+=obsJSON.location;
     resultText+='</span>';
-    resultText+='<br />';
-    resultText+='<label class="cs_label">';
+    /*resultText+='<br />';*/
+    /*resultText+='<label class="cs_label">';
     resultText+='Value:';
     resultText+='</label>';
 
@@ -283,7 +285,7 @@ function load_single_detailed_obs(obs_id){
     	resultText+=' '+obsJSON.units_of_measurement;
     	resultText+='</span>';
     }
-    resultText+='</span>';
+    resultText+='</span>';*/
 
     resultText+='<br />';
     if (obsJSON.absolute_high) {
@@ -304,6 +306,24 @@ function load_single_detailed_obs(obs_id){
 	    resultText+=obsJSON.absolute_low;
 	    resultText+='</span>';
     }
+    if (obsJSON.normal_high) {
+        resultText+='<label class="cs_label">';
+        resultText+='Normal High:';
+        resultText+='</label>';
+        resultText+='<span class="cs_span">';
+        resultText+=obsJSON.normal_high;
+        resultText+='</span>';
+        resultText+='<br />';
+    }
+
+    if (obsJSON.normal_low) {
+        resultText+='<label class="cs_label">';
+        resultText+='Normal Low:';
+        resultText+='</label>';
+        resultText+='<span class="cs_span">';
+        resultText+=obsJSON.normal_low;
+        resultText+='</span>';
+    }
     resultText+='</div>';
     resultText+='</div>';
 
@@ -318,7 +338,20 @@ function load_single_obs_history(obs_id) {
     var history_json = get_obs_history_json_by_name(obs_name);
     resultText+='<table><tr><th>Date</th><th>Value</th></tr>';
     for(var i=0;i<history_json.length;i++){
-        resultText+='<tr><td>'+getDateStr(history_json[i].date)+'</td><td>'+history_json[i].value+'</td></tr>';
+        var red = '';
+        if (typeof history_json[i].normal_high !== 'undefined')
+        {
+            if(history_json[i].value > history_json[i].normal_high) {
+                red=' red ';
+            }
+        }
+        if (typeof history_json[i].normal_low !== 'undefined')
+        {
+            if(history_json[i].value < history_json[i].normal_low) {
+                red=' red ';
+            }
+        }
+        resultText+='<tr class="'+red+'"><td>'+getDateStr(history_json[i].date)+'</td><td>'+history_json[i].value+'</td></tr>';
     }
     resultText+='</table>';
     return resultText;

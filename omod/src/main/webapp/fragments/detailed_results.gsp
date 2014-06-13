@@ -11,6 +11,7 @@
     }
     .obsgroup_all_wrapper {
         border: 1px solid #bebebe;
+        margin-bottom: 15px;
     }
     .obsgroup_item_first {
         width: 35%;

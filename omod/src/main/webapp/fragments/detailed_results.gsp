@@ -14,7 +14,7 @@
         margin-top: 15px;
     }
     .obsgroup_item_first {
-        width: 35%;
+        width: 40%;
     }
     .obsgroup_item_sec {
         width: 30%;
@@ -37,6 +37,9 @@
         padding: 3px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.28);
     }
+    /*.obsgroup_all_wrapper:last-child {
+        border-bottom: 0;
+    }*/
     .cs_label {
         font-weight: bold;
         margin-right: 10px;

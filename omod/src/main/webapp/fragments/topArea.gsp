@@ -132,6 +132,10 @@
         display: none;
     }
 
+    .bold {
+        font-weight: bold;
+    }
+
 </style>
 
 <article id="search-box">

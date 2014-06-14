@@ -71,22 +71,32 @@
          font-size: 13px;
     }
     .obsgroup_row_trd_section {
-        width: 20%;
+        width: 25%;
         font-size: 13px;
-        margin-left: 2px;
+        float: right;
     }
     .inline {
         display: inline-block;
+        vertical-align: text-top;
     }
     .more_then_normal, .less_then_normal, .red {
         color: red;
     }
-    .more_then_normal:before {
+    .more_then_normal:after {
         content: '↑';
-        font-size: 20px;
+        position: relative;
+        top: -2px;
+        left: 2px;
     }
-    .less_then_normal:before {
+    .less_then_normal:after {
         content: '↓';
+        position: relative;
+        top: -2px;
+        left: 2px;
+    }
+
+    .obsgroup_all_wrapper {
+        font-size: 13px;
     }
 
 </style>

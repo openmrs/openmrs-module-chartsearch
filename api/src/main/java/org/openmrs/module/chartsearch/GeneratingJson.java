@@ -127,6 +127,7 @@ public class GeneratingJson {
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
         jsonObs.put("location", obs.getLocation().getDisplayString());
+
         SearchAPI searchAPI = SearchAPI.getInstance();
         if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*") ) {
             for (ChartListItem item : searchAPI.getResults()) {
@@ -137,6 +138,7 @@ public class GeneratingJson {
                 }
             }
         }
+        
 
         return jsonObs;
     }

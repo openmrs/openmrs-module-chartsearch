@@ -4,6 +4,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by Eli on 31/05/14.
@@ -81,6 +82,25 @@ public class SynonymsAPI {
                 synonymGroupsInstance.setSynonymGroupsHolder(synGroups);
 
                 ans = synonymGroupsInstance.getStrOfAllSynMatchingPhrase(phrase);
+
+                synonymGroupsInstance.clearSynonymGroups();
+            }
+        }
+        return ans;
+    }
+
+    public static Vector<String> getGroupNamesBySynonym(String phrase){
+        Vector<String> ans = new Vector<String>();
+        if (Context.isAuthenticated()) {
+            ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
+            SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();
+            synonymGroupsInstance.clearSynonymGroups();
+            List synGroups = chartSearchService.getAllSynonymGroups();
+
+            if (synGroups != null) {
+                synonymGroupsInstance.setSynonymGroupsHolder(synGroups);
+
+                ans = synonymGroupsInstance.getAllMatchingSynonymGroupNamesOfPhrase(phrase);
 
                 synonymGroupsInstance.clearSynonymGroups();
             }

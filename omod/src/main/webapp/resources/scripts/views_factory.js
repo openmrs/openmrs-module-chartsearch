@@ -644,9 +644,10 @@ function time_filter(time_back, lbl) {
     $("#time_anchor").text(lbl);
     var today = get_timeback_date(time_back), myDate;
     var single_obsJSON=jsonAfterParse.obs_singles;
+	var group_obsJSON=jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'Obsgroubs':new Array(),
+        'obs_groups':new Array(),
         'obs_singles': new Array()
     };
     if (typeof single_obsJSON !== 'undefined')
@@ -660,18 +661,35 @@ function time_filter(time_back, lbl) {
                 json_counter++;
             }
         }
-        document.getElementById('obsgroups_results').innerHTML='';
-        addAllSingleObs(newJSON);
     }
+	
+	json_counter = 0;
+	if (group_obsJSON)
+    {
+        for(var i=0;i<group_obsJSON.length;i++){
+		var observations = group_obsJSON[i].observations;
+			for(var j=0;j<observations.length;j++){
+				myDate = new Date(parseInt(observations[j].date));
+				 if(dates.compare(today, myDate) <= 0) {
+					newJSON.obs_groups[json_counter]=group_obsJSON[i];
+					json_counter++;
+					break;
+				}
+			}
+        }
+    }
+	addAllObsGroups(newJSON);
+	addAllSingleObs(newJSON);
 
 }
 
 function location_filter(location, lbl) {
     $("#location_anchor").text(lbl);
     var single_obsJSON=jsonAfterParse.obs_singles;
+	var group_obsJSON=jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'Obsgroubs':new Array(),
+        'obs_groups':new Array(),
         'obs_singles': new Array()
     };
     if (typeof single_obsJSON !== 'undefined')
@@ -682,17 +700,34 @@ function location_filter(location, lbl) {
                 json_counter++;
             }
         }
-        document.getElementById('obsgroups_results').innerHTML='';
-        addAllSingleObs(newJSON);
     }
+	
+	json_counter = 0;
+	if (group_obsJSON)
+    {
+        for(var i=0;i<group_obsJSON.length;i++){
+		var observations = group_obsJSON[i].observations;
+			for(var j=0;j<observations.length;j++){
+				 if(observations[j].location && observations[j].location === location) {
+					newJSON.obs_groups[json_counter]=group_obsJSON[i];
+					json_counter++;
+					break;
+				}
+			}
+        }
+    }
+	addAllObsGroups(newJSON);
+	addAllSingleObs(newJSON);
+	
 }
 
 function provider_filter(provider, lbl) {
     $("#provider_anchor").text(lbl);
     var single_obsJSON=jsonAfterParse.obs_singles;
+	var group_obsJSON=jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'Obsgroubs':new Array(),
+        'obs_groups':new Array(),
         'obs_singles': new Array()
     };
     if (typeof single_obsJSON !== 'undefined')
@@ -703,20 +738,38 @@ function provider_filter(provider, lbl) {
                 json_counter++;
             }
         }
-        document.getElementById('obsgroups_results').innerHTML='';
-        addAllSingleObs(newJSON);
     }
+	
+	json_counter = 0;
+	if (group_obsJSON)
+    {
+        for(var i=0;i<group_obsJSON.length;i++){
+		var observations = group_obsJSON[i].observations;
+			for(var j=0;j<observations.length;j++){
+				 if(observations[j].provider && observations[j].provider === provider) {
+					newJSON.obs_groups[json_counter]=group_obsJSON[i];
+					json_counter++;
+					break;
+				}
+			}
+        }
+    }
+	addAllObsGroups(newJSON);
+	addAllSingleObs(newJSON);
+	
 }
 
 function dataType_filter(type, lbl) {
     $("#dataType_anchor").text(lbl);
     var single_obsJSON=jsonAfterParse.obs_singles;
+	var group_obsJSON=jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'Obsgroubs':new Array(),
+        'obs_groups':new Array(),
         'obs_singles': new Array()
     };
-    if (typeof single_obsJSON !== 'undefined')
+
+	if (typeof single_obsJSON !== 'undefined')
     {
         for(var i=0;i<single_obsJSON.length;i++){
             if(single_obsJSON[i].value_type && single_obsJSON[i].value_type === type) {
@@ -724,9 +777,24 @@ function dataType_filter(type, lbl) {
                 json_counter++;
             }
         }
-        document.getElementById('obsgroups_results').innerHTML='';
-        addAllSingleObs(newJSON);
     }
+	
+	json_counter = 0;
+	if (group_obsJSON)
+    {
+        for(var i=0;i<group_obsJSON.length;i++){
+		var observations = group_obsJSON[i].observations;
+			for(var j=0;j<observations.length;j++){
+				 if(observations[j].value_type && observations[j].value_type === type) {
+					newJSON.obs_groups[json_counter]=group_obsJSON[i];
+					json_counter++;
+					break;
+				}
+			}
+        }
+    }
+	addAllObsGroups(newJSON);
+	addAllSingleObs(newJSON);
 }
 
 function refresh_data() {

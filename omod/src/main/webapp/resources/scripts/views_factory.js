@@ -666,10 +666,76 @@ function time_filter(time_back, lbl) {
 
 }
 
+function location_filter(location, lbl) {
+    $("#location_anchor").text(lbl);
+    var single_obsJSON=jsonAfterParse.obs_singles;
+    var json_counter = 0;
+    var newJSON = {
+        'Obsgroubs':new Array(),
+        'obs_singles': new Array()
+    };
+    if (typeof single_obsJSON !== 'undefined')
+    {
+        for(var i=0;i<single_obsJSON.length;i++){
+            if(single_obsJSON[i].location === location) {
+                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+                json_counter++;
+            }
+        }
+        document.getElementById('obsgroups_results').innerHTML='';
+        addAllSingleObs(newJSON);
+    }
+}
+
+function provider_filter(provider, lbl) {
+    $("#provider_anchor").text(lbl);
+    var single_obsJSON=jsonAfterParse.obs_singles;
+    var json_counter = 0;
+    var newJSON = {
+        'Obsgroubs':new Array(),
+        'obs_singles': new Array()
+    };
+    if (typeof single_obsJSON !== 'undefined')
+    {
+        for(var i=0;i<single_obsJSON.length;i++){
+            if(single_obsJSON[i].provider && single_obsJSON[i].provider === provider) {
+                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+                json_counter++;
+            }
+        }
+        document.getElementById('obsgroups_results').innerHTML='';
+        addAllSingleObs(newJSON);
+    }
+}
+
+function dataType_filter(type, lbl) {
+    $("#dataType_anchor").text(lbl);
+    var single_obsJSON=jsonAfterParse.obs_singles;
+    var json_counter = 0;
+    var newJSON = {
+        'Obsgroubs':new Array(),
+        'obs_singles': new Array()
+    };
+    if (typeof single_obsJSON !== 'undefined')
+    {
+        for(var i=0;i<single_obsJSON.length;i++){
+            if(single_obsJSON[i].value_type && single_obsJSON[i].value_type === type) {
+                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+                json_counter++;
+            }
+        }
+        document.getElementById('obsgroups_results').innerHTML='';
+        addAllSingleObs(newJSON);
+    }
+}
+
 function refresh_data() {
 	var searchText = document.getElementById('searchText');
 	searchText.value = jsonAfterParse.search_phrase;
     $("#time_anchor").text('Any Time');
+	$("#location_anchor").text('All Locations');
+	$("#provider_anchor").text('All Providers');
+	$("#dataType_anchor").text('All Data Types');
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
 }

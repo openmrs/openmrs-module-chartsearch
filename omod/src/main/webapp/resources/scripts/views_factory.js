@@ -432,7 +432,7 @@ function get_obs_history_json_by_name(obs_name) {
 }
 
 function compare(a,b) {
-    return dates.compare(a.date, b.date);
+    return dates.compare(new Date(a.date), new Date(b.date));
 }
 
 
@@ -630,26 +630,14 @@ function load_detailed_obs(obs_id)
     }
 }
 
-function get_today_date(time_back) {
+function get_timeback_date(time_back) {
     var today = new Date();
     today.setDate(today.getDate()-time_back);
-    var dd = today.getDate();
-    var mm = today.getMonth()+1;
-    var yyyy = today.getFullYear()+'';
-    yyyy = yyyy.substring(2, 4);
-    if(dd<10) {
-        dd='0'+dd
-    }
-    if(mm<10) {
-        mm='0'+mm
-    }
-    today = mm+'/'+dd+'/'+yyyy;
     return today;
 }
 
 function time_filter(time_back) {
-    var today = get_today_date(time_back);
-    today = format_date(today);
+    var today = get_timeback_date(time_back);
     var single_obsJSON=jsonAfterParse.obs_singles;
     var json_counter = 0;
     var newJSON = {
@@ -660,7 +648,7 @@ function time_filter(time_back) {
     {
         for(var i=0;i<single_obsJSON.length;i++){
             console.log('try to compare today: '+today+' with: '+single_obsJSON[i].date);
-            if(dates.compare(today, single_obsJSON[i].date) <= 0) {
+            if(dates.compare(today, new Date(single_obsJSON[i].date)) <= 0) {
                 console.log('pass!!');
                 newJSON.obs_singles[json_counter]=single_obsJSON[i];
                 json_counter++;

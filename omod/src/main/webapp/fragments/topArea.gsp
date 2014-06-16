@@ -157,7 +157,7 @@
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                        <a class="single_filter_option" onclick="time_filter(new Date(), )">Last Day</a>
+                                        <a class="single_filter_option" onclick="time_filter(1)">Last Day</a>
                                         <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
                                         <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
                                         <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>

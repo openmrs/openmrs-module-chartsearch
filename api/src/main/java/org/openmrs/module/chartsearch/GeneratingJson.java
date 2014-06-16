@@ -263,8 +263,8 @@ public class GeneratingJson {
         return jsonDatatype;
     }
 
-    public static Vector<String> generateLocationsFromResults() {
-        Vector<String> res = new Vector<String>();
+    public static Set<String> generateLocationsFromResults() {
+        Set<String> res = new HashSet<String>();
         SearchAPI searchAPI = SearchAPI.getInstance();
 
         for (ChartListItem item : searchAPI.getResults()) {
@@ -279,8 +279,8 @@ public class GeneratingJson {
         }
         return res;
     }
-    public static Vector<String> generateProvidersFromResults() {
-        Vector<String> res = new Vector<String>();
+    public static Set<String> generateProvidersFromResults() {
+        Set<String> res = new HashSet<String>();
         SearchAPI searchAPI = SearchAPI.getInstance();
 
         for (ChartListItem item : searchAPI.getResults()) {
@@ -295,8 +295,8 @@ public class GeneratingJson {
         }
         return res;
     }
-    public static Vector<String> generateDatatypesFromResults() {
-        Vector<String> res = new Vector<String>();
+    public static Set<String> generateDatatypesFromResults() {
+        Set<String> res = new HashSet<String>();
         SearchAPI searchAPI = SearchAPI.getInstance();
 
         for (ChartListItem item : searchAPI.getResults()) {

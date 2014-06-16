@@ -122,7 +122,7 @@ public class GeneratingJson {
         jsonObs.put("observation_id", obs.getObsId());
         jsonObs.put("concept_name", obs.getConcept().getDisplayString());
 
-        Date obsDate = obs.getDateCreated() == null ? new Date() : obs.getDateCreated();
+        Date obsDate = obs.getObsDatetime() == null ? new Date() : obs.getObsDatetime();
 
         SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         /*String dateStr = formatDateJava.format(obsDate);*/
@@ -131,7 +131,7 @@ public class GeneratingJson {
         jsonObs.put("date", dateStr);
 
         if (obs.getConcept().getDatatype().isNumeric()) { // ADD MORE DATATYPES
-            jsonObs.put("datatype", obs.getConcept().getDatatype().getName());
+
 
             ConceptNumeric conceptNumeric = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
             jsonObs.put("units_of_measurement", conceptNumeric.getUnits());
@@ -141,7 +141,8 @@ public class GeneratingJson {
             jsonObs.put("critical_low", conceptNumeric.getLowCritical());
             jsonObs.put("normal_high", conceptNumeric.getHiNormal());
             jsonObs.put("normal_low", conceptNumeric.getLowNormal());
-        } else jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
+        }
+        jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
 
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));

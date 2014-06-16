@@ -122,9 +122,9 @@ function addSingleObsToResults(obsJSON)
     }
 
     resultText+='<span class="obsgroup_range">';
-    if (typeof obsJSON.absolute_low !== 'undefined' && typeof obsJSON.absolute_high !== 'undefined')
+    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined')
     {
-        resultText+='('+obsJSON.absolute_low+'-'+obsJSON.absolute_high+')';
+        resultText+='('+obsJSON.normal_low+'-'+obsJSON.normal_high+')';
     }
     resultText+='</span>'
     resultText+='<div class="chart_serach_clear"></div>';
@@ -432,7 +432,11 @@ function get_obs_history_json_by_name(obs_name) {
 }
 
 function compare(a,b) {
-    return dates.compare(new Date(a.date), new Date(b.date));
+    var first_date = new Date(parseInt(a.date));
+    var second_date = new Date(parseInt(b.date));
+    /*console.log(first_date.toLocaleString() + ' against: ' + second_date.toLocaleString());
+    console.log(dates.compare(first_date, second_date));*/
+    return dates.compare(second_date, first_date);
 }
 
 
@@ -446,7 +450,7 @@ function addAllObsGroups(obsJSON)
         for(var i=0;i<obsgroupJSON.length;i++){
             resultText+=addObsGroupToResults(obsgroupJSON[i]);
         }
-        document.getElementById('obsgroups_results').innerHTML+=resultText;
+        document.getElementById('obsgroups_results').innerHTML=resultText;
     }
 }
 
@@ -636,8 +640,9 @@ function get_timeback_date(time_back) {
     return today;
 }
 
-function time_filter(time_back) {
-    var today = get_timeback_date(time_back);
+function time_filter(time_back, lbl) {
+    $("#time_anchor").text(lbl);
+    var today = get_timeback_date(time_back), myDate;
     var single_obsJSON=jsonAfterParse.obs_singles;
     var json_counter = 0;
     var newJSON = {
@@ -647,8 +652,9 @@ function time_filter(time_back) {
     if (typeof single_obsJSON !== 'undefined')
     {
         for(var i=0;i<single_obsJSON.length;i++){
-            console.log('try to compare today: '+today+' with: '+single_obsJSON[i].date);
-            if(dates.compare(today, new Date(single_obsJSON[i].date)) <= 0) {
+            myDate = new Date(parseInt(single_obsJSON[i].date));
+           /* console.log('try to compare today: '+today+' with: '+ myDate);*/
+            if(dates.compare(today, myDate) <= 0) {
                 console.log('pass!!');
                 newJSON.obs_singles[json_counter]=single_obsJSON[i];
                 json_counter++;
@@ -657,12 +663,13 @@ function time_filter(time_back) {
         document.getElementById('obsgroups_results').innerHTML='';
         addAllSingleObs(newJSON);
     }
+
 }
 
 function refresh_data() {
 	var searchText = document.getElementById('searchText');
 	searchText.value = jsonAfterParse.search_phrase;
-
+    $("#time_anchor").text('Any Time');
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
 }

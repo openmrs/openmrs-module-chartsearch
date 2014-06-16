@@ -151,16 +151,16 @@
                     <div class="filters_section">
                         <div class="dropdown">
                             <div class="inside_categories_filter">
-                                <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">Any Time</a>
+                                <span class="dropdown-name" id="time_label">
+                                    <a href="#" class="filter_method" id="time_anchor">Any Time</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                        <a class="single_filter_option" onclick="time_filter(1)">Last Day</a>
-                                        <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                        <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                        <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
+                                        <a class="single_filter_option" onclick="time_filter(1, 'Last Day')">Last Day</a>
+                                        <a class="single_filter_option" onclick="time_filter(7, 'Last Week')">Last Week</a>
+                                        <a class="single_filter_option" onclick="time_filter(30, 'Last Month')">Last Month</a>
+                                        <a class="single_filter_option" onclick="time_filter(365, 'Last Year')">Last Year</a>
                                         <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
                                 </div>
                             </div>

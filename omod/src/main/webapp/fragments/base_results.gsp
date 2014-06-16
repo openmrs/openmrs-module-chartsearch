@@ -15,7 +15,7 @@
     }
     .obsgroup_wrap {
         border: 1px solid #bebebe;
-        padding: 5px;
+        padding: 3px;
         margin-top: 2px;
     }
     .obsgroup_wrap:hover {

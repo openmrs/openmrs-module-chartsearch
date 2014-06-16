@@ -13,7 +13,7 @@
 {
     background: #ebf1f6; /* Old browsers */
     background: -moz-linear-gradient(top,  #ebf1f6 0%, #abd3ee 50%, #89c3eb 51%, #d5ebfb 100%); /* FF3.6+ */
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebf1f6), color-stop(50%,#abd3ee), color-stop(51%,#89c3eb), color-stop(100%,#d5ebfb)); /* Chrome,Safari4+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebf1f6), color-stop(50%,#abd3ee), color-stop(51%,#89c3eb), color-stop(100%,#d5ebfb)); /* frome,Safari4+ */
     background: -webkit-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Chrome10+,Safari5.1+ */
     background: -o-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* Opera 11.10+ */
     background: -ms-linear-gradient(top,  #ebf1f6 0%,#abd3ee 50%,#89c3eb 51%,#d5ebfb 100%); /* IE10+ */
@@ -157,7 +157,7 @@ div.ui-datepicker{
 	
 	.dropdown .inside_categories_filter a {
 		font-family:Arial, Helvetica, sans-serif;
-		font-size:16px; 
+		font-size:13px;
 		color: #231F20;
 		text-decoration:none;
 	}
@@ -173,22 +173,25 @@ div.ui-datepicker{
 	}
 
 	.dropdown .inside_categories_filter .filter_method {
-		font-size:20px;
+		font-size:13px;
 	}
 	 
 	.filter_categories {
 		float:left;
 		position:absolute;
-		width: 180px;
+		width: 104px;
 		color:black;
 		left:-999em; /* Hides the drop down */
 		text-align:left;
-		font-size:20px;
+		font-size:13px;
 		padding:10px 5px 10px 5px;
 		border:1px solid #777777;
-		border-top:none;
 		background:#F4F4F4;
 	}
+
+    .filter_categories a:hover {
+        text-decoration: underline;
+    }
 	
 	.filter_categories #submit_selected_categories {
 		font-size:10px;
@@ -210,5 +213,7 @@ div.ui-datepicker{
 	#icon-arrow-dropdown {
 		color:black;
 	}
-	
+	.filters_section {
+        height:35px;
+    }
 </style>

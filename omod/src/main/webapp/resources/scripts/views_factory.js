@@ -155,6 +155,12 @@ function get_single_obs_by_id(obs_id)
     return -1;
 }
 
+function array_sort(a,b) {
+    var first_date = new Date(a[0]);
+    var second_date = new Date(b[0]);
+    return dates.compare(first_date, second_date);
+}
+
 function get_obs_graph_points(obs_id) {
     var res = new Array();
     var cur, date_formmated, int_date;
@@ -167,6 +173,7 @@ function get_obs_graph_points(obs_id) {
         cur = [date_formmated.getTime(), history_json[i].value];
         res.push(cur);
     }
+    res.sort(array_sort);
     return res;
 }
 
@@ -394,10 +401,6 @@ function format_date(obs_date) {
     return obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2)+'/'+obs_date.substring(6, 8);
 }
 
-function format_date_2(obs_date) {
-    return '20'+obs_date.substring(6, 8)+'/'+obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2);
-}
-
 function get_obs_history_json_by_name(obs_name) {
     var result = new Array();
     var single_obsJSON=jsonAfterParse.obs_singles;
@@ -426,7 +429,7 @@ function get_obs_history_json_by_name(obs_name) {
 }
 
 function compare(a,b) {
-    return dates.compare(b.date, a.date);
+    return dates.compare(a.date, b.date);
 }
 
 

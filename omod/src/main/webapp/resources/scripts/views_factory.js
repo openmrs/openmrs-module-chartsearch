@@ -365,7 +365,10 @@ function load_single_detailed_obs(obs_id){
     resultText+='</div>';
 
     document.getElementById('obsgroup_view').innerHTML=resultText;
-    enable_graph(obs_id);
+    if(obsJSON.value_type == 'Numeric')
+    {
+        enable_graph(obs_id);
+    }
 }
 
 function load_single_obs_history(obs_id) {

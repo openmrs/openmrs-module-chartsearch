@@ -131,7 +131,7 @@ public class GeneratingJson {
         jsonObs.put("date", dateStr);
 
         if (obs.getConcept().getDatatype().isNumeric()) { // ADD MORE DATATYPES
-            jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
+            jsonObs.put("datatype", obs.getConcept().getDatatype().getName());
 
             ConceptNumeric conceptNumeric = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
             jsonObs.put("units_of_measurement", conceptNumeric.getUnits());
@@ -146,6 +146,7 @@ public class GeneratingJson {
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
         jsonObs.put("location", obs.getLocation().getDisplayString());
+        jsonObs.put("provider", obs.getCreator().getDisplayString());
 
         SearchAPI searchAPI = SearchAPI.getInstance();
         if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*") ) {

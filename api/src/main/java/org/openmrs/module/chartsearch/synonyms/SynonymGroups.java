@@ -17,7 +17,6 @@ public class SynonymGroups {
     }
 
 
-
     public static SynonymGroups getInstance() {
         if (instance == null) {
             instance = new SynonymGroups();
@@ -25,7 +24,7 @@ public class SynonymGroups {
         return instance;
     }
 
-    public void clearSynonymGroups(){
+    public void clearSynonymGroups() {
         this.counter = 0;
         this.synonymGroupsHolder.clear();
 
@@ -39,17 +38,6 @@ public class SynonymGroups {
         return synonymGroupsHolder.size();
     }
 
-    public SynonymGroup isSynonymContainedInGroup(String syn) {
-        for (SynonymGroup grp : synonymGroupsHolder) {
-            Set<Synonym> synSet = grp.getSynonymSet();
-            for (Synonym synInGrp : synSet) {
-                if (synInGrp.equals(syn)) {
-                    return grp;
-                }
-            }
-        }
-        return null;
-    }
 
     public SynonymGroup isSynFromGroupContainedInOtherGroup(SynonymGroup checkGroup) {
         for (SynonymGroup grp : synonymGroupsHolder) {
@@ -73,7 +61,7 @@ public class SynonymGroups {
         return true;
     }
 
-    public boolean editSynonymGroupByName(String groupName, SynonymGroup newGrp){
+    public boolean editSynonymGroupByName(String groupName, SynonymGroup newGrp) {
         SynonymGroup grp = getSynonymGroupByName(groupName);
         deleteSynonymGroupByName(groupName);
         addSynonymGroup(newGrp);
@@ -103,25 +91,27 @@ public class SynonymGroups {
         return null;
     }
 
-    public SynonymGroup getSynonymGroupBySynonym(String syn) {
+    public Vector<String> getSynonymGroupsNamesBySynonym(String syn) {
+        Vector<String> groups = new Vector<String>();
         for (SynonymGroup grp : synonymGroupsHolder) {
-            for(Synonym synInGrp : grp.getSynonymSet()){
-                if(synInGrp.getSynonymName().equalsIgnoreCase(syn)){
-                    return grp;
+            for (Synonym synInGrp : grp.getSynonymSet()) {
+                if (synInGrp.getSynonymName().equalsIgnoreCase(syn)) {
+                    groups.add(grp.getGroupName());
+                    break;
                 }
             }
         }
-        return null;
+        return groups;
     }
 
-    public String getSynonymSetStrBySynonym(String syn){
+/*    public String getSynonymSetStrBySynonym(String syn) {
         String returnStr = "";
         SynonymGroup grp;
         Set matchingSyns;
 
         grp = getSynonymGroupBySynonym(syn);
 
-        if(grp != null){
+        if (grp != null) {
             matchingSyns = grp.getSynonyms();
             Iterator<Synonym> iter = matchingSyns.iterator();
             if (iter.hasNext())
@@ -132,7 +122,7 @@ public class SynonymGroups {
 
         }
         return returnStr;
-    }
+    }*/
 
     public boolean deleteSynonymGroupByName(String name) {
         for (SynonymGroup grp : synonymGroupsHolder) {
@@ -150,7 +140,7 @@ public class SynonymGroups {
     }
 
     public void setSynonymGroupsHolder(List<SynonymGroup> synonymGroupsHolder) {
-        for(SynonymGroup synGrp : synonymGroupsHolder){
+        for (SynonymGroup synGrp : synonymGroupsHolder) {
             addSynonymGroup(synGrp);
         }
     }
@@ -186,6 +176,29 @@ public class SynonymGroups {
             }
         }
         return synonymSet;
+    }
+
+    public Vector<String> getAllMatchingSynonymGroupNamesOfPhrase(String phrase) {
+        Vector<String> groupNames = new Vector<String>();
+        return getAllMatchingSynonymGroupNamesOfPhraseRec(phrase, groupNames);
+    }
+
+    private Vector<String> getAllMatchingSynonymGroupNamesOfPhraseRec(String phrase, Vector<String> groupNames) {
+        Vector<String> thisSynGroupNames = getSynonymGroupsNamesBySynonym(phrase);
+        for (String grpName : thisSynGroupNames) {
+            if (groupNames.contains(grpName)) {
+                thisSynGroupNames.remove(grpName);
+            }
+        }
+        if (thisSynGroupNames.isEmpty()) {
+            return groupNames;
+        }
+
+        groupNames.addAll(thisSynGroupNames);
+        for (String groupName : groupNames) {
+            return getAllMatchingSynonymGroupNamesOfPhraseRec(groupName, groupNames);
+        }
+        return groupNames;
     }
 
 

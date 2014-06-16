@@ -394,7 +394,7 @@ function load_single_obs_history(obs_id) {
                 addition = ' less_then_normal ';
             }
         }
-        resultText+='<tr class="'+red+'"><td>'+getDateStr(history_json[i].date)+'</td><td><div class="'+addition+'">'+history_json[i].value+'</div></td></tr>';
+        resultText+='<tr class="'+red+'"><td>'+getDateStr(history_json[i].date, true)+'</td><td><div class="'+addition+'">'+history_json[i].value+'</div></td></tr>';
     }
     resultText+='</table>';
     return resultText;

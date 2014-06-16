@@ -797,6 +797,44 @@ function dataType_filter(type, lbl) {
 	addAllSingleObs(newJSON);
 }
 
+function filterOptions_providers() {
+	var providers = jsonAfterParse.providers;
+	var result = '<hr />';
+	for(var i=0; i<providers.length; i++){
+		var tmpProvider = providers[i].location;
+		result += '<a class="single_filter_option" onclick="provider_filter(\'' + tmpProvider + '\', \'' + tmpProvider + '\')">' + tmpProvider + '</a>';
+	}
+	
+	result += '<a class="single_filter_option" onclick="refresh_data()">All Providers</a>';
+	document.getElementById('providersOptions').innerHTML = result;
+}
+
+function filterOptions_locations() {
+	var locations = jsonAfterParse.locations;
+	var result = '<hr />';
+	for(var i=0; i<locations.length; i++){
+		var tmpLocation = locations[i].location;
+		result += '<a class="single_filter_option" onclick="location_filter(\'' + tmpLocation + '\', \'' + tmpLocation + '\')">' + tmpLocation + '</a>';
+	}
+	
+	result += '<a class="single_filter_option" onclick="refresh_data()">All Locations</a>';
+	document.getElementById('locationOptions').innerHTML = result;
+}
+
+function filterOptions_datatypes() {
+	var datatypes = jsonAfterParse.datatypes;
+	var result = '<hr />';
+	for(var i=0; i<datatypes.length; i++){
+		var tmpdatatypes = datatypes[i].location;
+		result += '<a class="single_filter_option" onclick="dataType_filter(\'' + tmpdatatypes + '\', \'' + tmpdatatypes + '\')">' + tmpdatatypes + '</a>';
+	}
+	
+	result += '<a class="single_filter_option" onclick="refresh_data()">All Data Types</a>';
+	document.getElementById('datatypesOptions').innerHTML = result;
+}
+
+
+
 function refresh_data() {
 	var searchText = document.getElementById('searchText');
 	searchText.value = jsonAfterParse.search_phrase;
@@ -804,6 +842,9 @@ function refresh_data() {
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
 	$("#dataType_anchor").text('All Data Types');
+	filterOptions_providers();
+	filterOptions_locations();
+	filterOptions_datatypes();
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
 }

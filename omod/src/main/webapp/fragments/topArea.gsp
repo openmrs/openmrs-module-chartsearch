@@ -171,13 +171,8 @@
                                     <a href="#" class="filter_method" id="location_anchor">All Locations</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
-                                <div class="filter_categories">
-                                    <hr />
-                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
-                                    <a class="single_filter_option" onclick="location_filter('Amani Hospital', 'Amani Hospital')">Amani Hospital</a>
-                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
-                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">All Locations</a>
+                                <div class="filter_categories" id="locationOptions">
+
                                 </div>
                             </div>
                         </div>
@@ -187,13 +182,8 @@
                                     <a href="#" class="filter_method" id="provider_anchor">All Providers</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
-                                <div class="filter_categories">
-                                    <hr />
-                                    <a class="single_filter_option" onclick="provider_filter('provider 1', 'provider 1')">provider 1</a>
-                                    <a class="single_filter_option" onclick="provider_filter('provider 2', 'provider 2')">provider 2</a>
-                                    <a class="single_filter_option" onclick="provider_filter('provider 3', 'provider 3')">provider 3</a>
-                                    <a class="single_filter_option" onclick="provider_filter('provider 4', 'provider 4')">provider 4</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">All Providers</a>
+                                <div class="filter_categories" id="providersOptions">
+                                    
                                 </div>
                             </div>
                         </div>
@@ -203,14 +193,8 @@
                                     <a href="#" class="filter_method" id="dataType_anchor">All Data Types</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
-                                <div class="filter_categories">
-                                    <hr />
-                                    <a class="single_filter_option" onclick="dataType_filter('Numeric', 'Numeric')">Numeric</a>
-                                    <a class="single_filter_option" onclick="dataType_filter('Text', 'Text')">Text</a>
-                                    <a class="single_filter_option" onclick="dataType_filter('Boolean', 'Boolean')">Boolean</a>
-                                    <a class="single_filter_option" onclick="dataType_filter('Date', 'Date')">Date</a>
-									<a class="single_filter_option" onclick="dataType_filter('Coded', 'Coded')">Coded</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">All Data Types</a>
+                                <div class="filter_categories" id="datatypesOptions">
+
                                 </div>
                             </div>
                         </div>

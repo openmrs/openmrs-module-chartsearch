@@ -9,10 +9,7 @@ import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Eli on 16/03/14.
@@ -25,6 +22,28 @@ public class GeneratingJson {
 
         JSONObject jsonToReturn = new JSONObject();                     //returning this object
         JSONArray arr_of_groups = new JSONArray();
+
+        JSONArray arr_of_locations = new JSONArray();
+        JSONArray arr_of_providers = new JSONArray();
+        JSONArray arr_of_datatypes = new JSONArray();
+
+        for(String location : generateLocationsFromResults()){
+            JSONObject jsonLoc = generateLocationJson(location);
+            arr_of_locations.add(jsonLoc);
+        }
+
+        for(String provider : generateProvidersFromResults()){
+            JSONObject jsonProvider = generateLocationJson(provider);
+            arr_of_providers.add(jsonProvider);
+        }
+
+        for(String datatype : generateDatatypesFromResults()){
+            JSONObject jsonDatatype = generateLocationJson(datatype);
+            arr_of_datatypes.add(jsonDatatype);
+        }
+        jsonToReturn.put("locations", arr_of_locations);
+        jsonToReturn.put("providers", arr_of_providers);
+        jsonToReturn.put("datatypes", arr_of_datatypes);
 
         Set<Set<Obs>> setOfObsGroups = generateObsGroupFromSearchResults();
         for (Set<Obs> obsGrpSet : setOfObsGroups) {           //for each obs group we go through it's obs
@@ -227,6 +246,70 @@ public class GeneratingJson {
             }
         }
         return obsSingles;
+    }
+    public static JSONObject generateLocationJson(String location){
+        JSONObject jsonLocation = new JSONObject();
+        jsonLocation.put("location", location);
+        return jsonLocation;
+    }
+    public static JSONObject generateProviderJson(String provider){
+        JSONObject jsonProvider = new JSONObject();
+        jsonProvider.put("provider", provider);
+        return jsonProvider;
+    }
+    public static JSONObject generateDatatypeJson(String datatype){
+        JSONObject jsonDatatype = new JSONObject();
+        jsonDatatype.put("datatype", datatype);
+        return jsonDatatype;
+    }
+
+    public static Vector<String> generateLocationsFromResults() {
+        Vector<String> res = new Vector<String>();
+        SearchAPI searchAPI = SearchAPI.getInstance();
+
+        for (ChartListItem item : searchAPI.getResults()) {
+            if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
+                int itemObsId = ((ObsItem) item).getObsId();
+
+                Obs obs = Context.getObsService().getObs(itemObsId);
+                if (obs != null) {
+                    res.add(obs.getLocation().getDisplayString());
+                }
+            }
+        }
+        return res;
+    }
+    public static Vector<String> generateProvidersFromResults() {
+        Vector<String> res = new Vector<String>();
+        SearchAPI searchAPI = SearchAPI.getInstance();
+
+        for (ChartListItem item : searchAPI.getResults()) {
+            if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
+                int itemObsId = ((ObsItem) item).getObsId();
+
+                Obs obs = Context.getObsService().getObs(itemObsId);
+                if (obs != null) {
+                    res.add(obs.getCreator().getDisplayString());
+                }
+            }
+        }
+        return res;
+    }
+    public static Vector<String> generateDatatypesFromResults() {
+        Vector<String> res = new Vector<String>();
+        SearchAPI searchAPI = SearchAPI.getInstance();
+
+        for (ChartListItem item : searchAPI.getResults()) {
+            if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
+                int itemObsId = ((ObsItem) item).getObsId();
+
+                Obs obs = Context.getObsService().getObs(itemObsId);
+                if (obs != null) {
+                    res.add(obs.getConcept().getDatatype().getName());
+                }
+            }
+        }
+        return res;
     }
 
     public static Set<Form> generateFormsFromSearchResults() {

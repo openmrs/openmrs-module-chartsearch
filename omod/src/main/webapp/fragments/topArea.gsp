@@ -151,16 +151,16 @@
                     <div class="filters_section">
                         <div class="dropdown">
                             <div class="inside_categories_filter">
-                                <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">Any Time</a>
+                                <span class="dropdown-name" id="time_label">
+                                    <a href="#" class="filter_method" id="time_anchor">Any Time</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                        <a class="single_filter_option" onclick="time_filter(1)">Last Day</a>
-                                        <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                        <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                        <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
+                                        <a class="single_filter_option" onclick="time_filter(1, 'Last Day')">Last Day</a>
+                                        <a class="single_filter_option" onclick="time_filter(7, 'Last Week')">Last Week</a>
+                                        <a class="single_filter_option" onclick="time_filter(30, 'Last Month')">Last Month</a>
+                                        <a class="single_filter_option" onclick="time_filter(365, 'Last Year')">Last Year</a>
                                         <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
                                 </div>
                             </div>
@@ -168,64 +168,49 @@
                         <div class="dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">All Categories</a>
+                                    <a href="#" class="filter_method" id="location_anchor">All Locations</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                    <a class="single_filter_option" onclick="time_filter(0)">Last Day</a>
-                                    <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                    <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                    <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
+                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
+                                    <a class="single_filter_option" onclick="location_filter('Amani Hospital', 'Amani Hospital')">Amani Hospital</a>
+                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
+                                    <a class="single_filter_option" onclick="location_filter('Outpatient Clinic', 'Outpatient Clinic')">Outpatient Clinic</a>
+                                    <a class="single_filter_option" onclick="refresh_data()">All Locations</a>
                                 </div>
                             </div>
                         </div>
                         <div class="dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">All Locations</a>
+                                    <a href="#" class="filter_method" id="provider_anchor">All Providers</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                    <a class="single_filter_option" onclick="time_filter(0)">Last Day</a>
-                                    <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                    <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                    <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
+                                    <a class="single_filter_option" onclick="provider_filter('provider 1', 'provider 1')">provider 1</a>
+                                    <a class="single_filter_option" onclick="provider_filter('provider 2', 'provider 2')">provider 2</a>
+                                    <a class="single_filter_option" onclick="provider_filter('provider 3', 'provider 3')">provider 3</a>
+                                    <a class="single_filter_option" onclick="provider_filter('provider 4', 'provider 4')">provider 4</a>
+                                    <a class="single_filter_option" onclick="refresh_data()">All Providers</a>
                                 </div>
                             </div>
                         </div>
                         <div class="dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">All Providers</a>
+                                    <a href="#" class="filter_method" id="dataType_anchor">All Data Types</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories">
                                     <hr />
-                                    <a class="single_filter_option" onclick="time_filter(0)">Last Day</a>
-                                    <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                    <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                    <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <div class="inside_categories_filter">
-                                <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method">All Data Types</a>
-                                    <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
-                                </span>
-                                <div class="filter_categories">
-                                    <hr />
-                                    <a class="single_filter_option" onclick="time_filter(0)">Last Day</a>
-                                    <a class="single_filter_option" onclick="time_filter(7)">Last Week</a>
-                                    <a class="single_filter_option" onclick="time_filter(30)">Last Month</a>
-                                    <a class="single_filter_option" onclick="time_filter(365)">Last Year</a>
-                                    <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
+                                    <a class="single_filter_option" onclick="dataType_filter('Numeric', 'Numeric')">Numeric</a>
+                                    <a class="single_filter_option" onclick="dataType_filter('Text', 'Text')">Text</a>
+                                    <a class="single_filter_option" onclick="dataType_filter('Boolean', 'Boolean')">Boolean</a>
+                                    <a class="single_filter_option" onclick="dataType_filter('Date', 'Date')">Date</a>
+									<a class="single_filter_option" onclick="dataType_filter('Coded', 'Coded')">Coded</a>
+                                    <a class="single_filter_option" onclick="refresh_data()">All Data Types</a>
                                 </div>
                             </div>
                         </div>

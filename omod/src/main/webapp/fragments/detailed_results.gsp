@@ -1,6 +1,6 @@
 <style type="text/css">
     .detailed_results_container {
-        height: 480px;
+        height: 580px;
         padding: 10px 20px;
         overflow-x: scroll;
     }

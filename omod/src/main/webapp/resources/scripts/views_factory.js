@@ -287,8 +287,8 @@ function load_single_detailed_obs(obs_id){
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';
     resultText+=capitalizeFirstLetter(obsJSON.concept_name);
+    resultText+='<span style="font-weight: normal; display: inline;"> ('+obsJSON.units_of_measurement+') </span>';
     resultText+='</h3>';
-
     resultText+='<div class="demo-container">' +
         '<div id="placeholder" class="demo-placeholder"></div>' +
         '</div>';
@@ -602,6 +602,14 @@ function removeAllHovering() {
     $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
 }
 
+function showOnlyIfDef(str) {
+    if (typeof str !== 'undefined')
+    {
+        return str;
+    }
+    return '';
+}
+
 function load_detailed_obs(obs_id)
 {
     removeAllHovering();
@@ -625,7 +633,7 @@ function load_detailed_obs(obs_id)
         resultText+=capitalizeFirstLetter(singleObs[i].concept_name);
         resultText+='</div>';
         resultText+='<div class="obsgroup_item_sec inline">';
-        resultText+=singleObs[i].value +" "+ singleObs[i].units_of_measurement;
+        resultText+='<span style="display: inline; font-weight: bold;">'+singleObs[i].value +"</span> "+ showOnlyIfDef(singleObs[i].units_of_measurement);
         resultText+='</div>';
         resultText+='<div class="obsgroup_item_frth inline">';
         resultText+=getDateStr(singleObs[i].date, true);

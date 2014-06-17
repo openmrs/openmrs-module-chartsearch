@@ -5,7 +5,7 @@
         padding: 20px;
         display: block;
         border-radius: 3px;
-        height: 500px;
+        height: 600px;
     }
     .base_results {
          float: left;

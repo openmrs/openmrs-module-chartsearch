@@ -17,6 +17,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
 <% ui.includeJavascript("chartsearch", "jquery.flot.js") %>
 <% ui.includeJavascript("chartsearch", "jquery.flot.time.js") %>
 <% ui.includeJavascript("chartsearch", "jquery.flot.autoMarkings.js") %>
+<% ui.includeJavascript("chartsearch", "jquery.flot.tickrotor.js") %>
 <% ui.includeJavascript("chartsearch", "jquery.sparkline.js") %>
 <% ui.includeJavascript("chartsearch", "views_factory.js") %>
 ${ ui.includeFragment("chartsearch", "cssIncludes") }

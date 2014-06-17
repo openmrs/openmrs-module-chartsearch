@@ -2,14 +2,14 @@ package org.openmrs.module.chartsearch;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.openmrs.ConceptNumeric;
-import org.openmrs.Encounter;
-import org.openmrs.Form;
-import org.openmrs.Obs;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Eli on 16/03/14.
@@ -27,18 +27,18 @@ public class GeneratingJson {
         JSONArray arr_of_providers = new JSONArray();
         JSONArray arr_of_datatypes = new JSONArray();
 
-        for(String location : generateLocationsFromResults()){
+        for (String location : generateLocationsFromResults()) {
             JSONObject jsonLoc = generateLocationJson(location);
             arr_of_locations.add(jsonLoc);
         }
 
-        for(String provider : generateProvidersFromResults()){
-            JSONObject jsonProvider = generateLocationJson(provider);
+        for (String provider : generateProvidersFromResults()) {
+            JSONObject jsonProvider = generateProviderJson(provider);
             arr_of_providers.add(jsonProvider);
         }
 
-        for(String datatype : generateDatatypesFromResults()){
-            JSONObject jsonDatatype = generateLocationJson(datatype);
+        for (String datatype : generateDatatypesFromResults()) {
+            JSONObject jsonDatatype = generateDatatypeJson(datatype);
             arr_of_datatypes.add(jsonDatatype);
         }
         jsonToReturn.put("locations", arr_of_locations);
@@ -147,10 +147,19 @@ public class GeneratingJson {
 
         jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
         jsonObs.put("location", obs.getLocation().getDisplayString());
-        jsonObs.put("provider", obs.getCreator().getDisplayString());
+        jsonObs.put("creator", obs.getCreator().getDisplayString());
+        Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
+
+        if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
+            EncounterProvider provider = encounterProviders.iterator().next();
+            if (provider.getProvider() != null) {
+                jsonObs.put("provider", provider.getProvider().getName());
+            }
+        }
+
 
         SearchAPI searchAPI = SearchAPI.getInstance();
-        if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*") ) {
+        if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*")) {
             for (ChartListItem item : searchAPI.getResults()) {
                 if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
                     if (((ObsItem) item).getObsId() == obs.getObsId()) {
@@ -159,7 +168,7 @@ public class GeneratingJson {
                 }
             }
         }
-        
+
 
         return jsonObs;
     }
@@ -249,17 +258,20 @@ public class GeneratingJson {
         }
         return obsSingles;
     }
-    public static JSONObject generateLocationJson(String location){
+
+    public static JSONObject generateLocationJson(String location) {
         JSONObject jsonLocation = new JSONObject();
         jsonLocation.put("location", location);
         return jsonLocation;
     }
-    public static JSONObject generateProviderJson(String provider){
+
+    public static JSONObject generateProviderJson(String provider) {
         JSONObject jsonProvider = new JSONObject();
         jsonProvider.put("provider", provider);
         return jsonProvider;
     }
-    public static JSONObject generateDatatypeJson(String datatype){
+
+    public static JSONObject generateDatatypeJson(String datatype) {
         JSONObject jsonDatatype = new JSONObject();
         jsonDatatype.put("datatype", datatype);
         return jsonDatatype;
@@ -281,6 +293,7 @@ public class GeneratingJson {
         }
         return res;
     }
+
     public static Set<String> generateProvidersFromResults() {
         Set<String> res = new HashSet<String>();
         SearchAPI searchAPI = SearchAPI.getInstance();
@@ -291,12 +304,20 @@ public class GeneratingJson {
 
                 Obs obs = Context.getObsService().getObs(itemObsId);
                 if (obs != null) {
-                    res.add(obs.getCreator().getDisplayString());
+                    Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
+
+                    if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
+                        EncounterProvider provider = encounterProviders.iterator().next();
+                        if (provider.getProvider() != null) {
+                            res.add(provider.getProvider().getName());
+                        }
+                    }
                 }
             }
         }
         return res;
     }
+
     public static Set<String> generateDatatypesFromResults() {
         Set<String> res = new HashSet<String>();
         SearchAPI searchAPI = SearchAPI.getInstance();

@@ -162,6 +162,7 @@
 										<a class="single_filter_option" onclick="time_filter(14, 'Last 2 Weeks')">Last 2 Weeks</a>
                                         <a class="single_filter_option" onclick="time_filter(31, 'Last Month')">Last Month</a>
 										<a class="single_filter_option" onclick="time_filter(93, 'Last 3 Months')">Last 3 Months</a>
+                                    <a class="single_filter_option" onclick="time_filter(183, 'Last 6 Months')">Last 6 Months</a>
                                         <a class="single_filter_option" onclick="time_filter(365, 'Last Year')">Last Year</a>
                                         <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
                                 </div>

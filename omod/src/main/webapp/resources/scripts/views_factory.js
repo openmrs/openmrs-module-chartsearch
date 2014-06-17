@@ -74,11 +74,19 @@ viewsFactory = {
 
 }
 
+function single_sort_func(a, b) {
+    var first_date = new Date(parseInt(a.date));
+    var second_date = new Date(parseInt(b.date));
+    return dates.compare(first_date, second_date);
+}
+
 function addAllSingleObs(obsJSON)
 {
     console.log(obsJSON);
     var resultText='';
     var single_obsJSON=obsJSON.obs_singles;
+    single_obsJSON.sort(single_sort_func);
+    single_obsJSON.reverse();
     if (typeof single_obsJSON !== 'undefined')
     {
         resultText+='<h2>Single observations</h2>';
@@ -103,7 +111,7 @@ function addSingleObsToResults(obsJSON)
     resultText+=capitalizeFirstLetter(obsJSON.concept_name);
     resultText+='</h3>';
     resultText+='<br><span class="obsgroup_date">';
-    resultText+=getDateStr(obsJSON.date);
+    resultText+=getDateStr(obsJSON.date, true);
     resultText+='</span></div>';
     if (obsJSON.value_type && obsJSON.value_type === "Text") {
 	    resultText+='<span class="obsgroup_valueText">';
@@ -207,6 +215,7 @@ function enable_graph(obs_id) {
     var mark = {
         enabled: true,
         showMinMax: false,
+        color: "rgb(6,191,2)",
         avg:0
     };
     if (typeof observation_obj.normal_high !== 'undefined')
@@ -221,7 +230,7 @@ function enable_graph(obs_id) {
     }
 
     var plot = $.plot("#placeholder", [
-        { data: data2, label: capitalizeFirstLetter(observation_obj.concept_name)}
+        { data: data2, label: capitalizeFirstLetter(observation_obj.concept_name), color: '#0D4F8B'}
     ], {
         series: {
             lines: {
@@ -240,8 +249,8 @@ function enable_graph(obs_id) {
         },
         xaxis: {
             mode: "time",
-            timeformat: "%d/%m",
-            ticks: get_obs_ticks(obs_id)
+            minTickSize: [1, "month"],
+            timeformat: "%b <br/> %y"
         }
     });
 
@@ -439,11 +448,17 @@ function compare(a,b) {
     return dates.compare(second_date, first_date);
 }
 
-
+function groupSortFunc(a,b) {
+    var first_date = new Date(parseInt(a.last_taken_date));
+    var second_date = new Date(parseInt(b.last_taken_date));
+    return dates.compare(first_date,second_date);
+}
 function addAllObsGroups(obsJSON)
 {
     var resultText='';
     var obsgroupJSON=obsJSON.obs_groups;
+    obsgroupJSON.sort(groupSortFunc);
+    obsgroupJSON.reverse();
     if (typeof obsgroupJSON !== 'undefined')
     {
         resultText+='<h2>Observation Groups</h2>';
@@ -484,7 +499,7 @@ function addObsGroupToResults(obsJSON)
     if (typeof obsJSON.last_taken_date !== 'undefined')
     {
         resultText+='<br><span class="obsgroup_date">';
-        resultText+=getDateStr(obsJSON.last_taken_date);
+        resultText+=getDateStr(obsJSON.last_taken_date, true);
         resultText+='</span>'
     }
     resultText+='</div>'
@@ -630,6 +645,7 @@ function load_detailed_obs(obs_id)
             normalRangeMin: singleObs[i].normal_low,
             normalRangeMax: singleObs[i].normal_high,
             normalRangeColor: '#d3ffa8',
+            fillColor: false,
             drawNormalOnTop: true});
     }
 }
@@ -824,7 +840,7 @@ function filterOptions_providers() {
 	var providers = jsonAfterParse.providers;
 	var result = '<hr />';
 	for(var i=0; i<providers.length; i++){
-		var tmpProvider = providers[i].location;
+		var tmpProvider = providers[i].provider;
 		result += '<a class="single_filter_option" onclick="provider_filter(\'' + tmpProvider + '\', \'' + tmpProvider + '\')">' + tmpProvider + '</a>';
 	}
 	
@@ -848,7 +864,7 @@ function filterOptions_datatypes() {
 	var datatypes = jsonAfterParse.datatypes;
 	var result = '<hr />';
 	for(var i=0; i<datatypes.length; i++){
-	var tmpdatatypes = datatypes[i].location;
+	var tmpdatatypes = datatypes[i].datatype;
 		if (tmpdatatypes !== 'N/A') {
 			result += '<a class="single_filter_option" onclick="dataType_filter(\'' + tmpdatatypes + '\', \'' + tmpdatatypes + '\')">' + tmpdatatypes + '</a>';
 

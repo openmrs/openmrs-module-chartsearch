@@ -152,7 +152,8 @@ div.ui-datepicker{
 		margin-top:-11px;
 		background-color: #ddd;
 		height:23px;
-		//width: 170px;
+		width: 140px;
+		text-align: center;
 	}
 	
 	.dropdown .inside_categories_filter a {
@@ -172,6 +173,10 @@ div.ui-datepicker{
 	
 	}
 
+	.single_filter_option {
+		padding-left: 5px;
+	}
+	
 	.dropdown .inside_categories_filter .filter_method {
 		font-size:13px;
 	}
@@ -200,6 +205,7 @@ div.ui-datepicker{
 	.dropdown .inside_categories_filter:hover .filter_categories {
 		left:-1px;
 		margin-left:0px;
+		width: 140px;
 	}
 	
 	.dropdown .insider_categories:active {

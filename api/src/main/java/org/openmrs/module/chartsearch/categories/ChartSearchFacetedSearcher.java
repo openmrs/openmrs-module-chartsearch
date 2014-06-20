@@ -29,6 +29,7 @@ import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.ObsItem;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 
@@ -37,8 +38,15 @@ import org.openmrs.module.chartsearch.solr.SolrSingleton;
  * filters on the ChartSearch Module page
  */
 public class ChartSearchFacetedSearcher extends ChartSearchSearcher {
+	//TODO I think i can merge the functionality of this class into ChartSearchSearcher!!!
 	
 	protected static final Log log = LogFactory.getLog(ChartSearchFacetedSearcher.class);
+	
+	private ChartSearchService chartSearchService;
+	
+	public ChartSearchService getChartSearchService() {
+		return chartSearchService;
+	}
 	
 	/**
 	 * Adds one facet or category to filter results
@@ -46,16 +54,19 @@ public class ChartSearchFacetedSearcher extends ChartSearchSearcher {
 	 * @param facet
 	 * @return
 	 */
-	public SolrQuery provideAQueryWithFaceting(String searchText, String[] facets) {
+	public SolrQuery provideAQueryWithFaceting(String searchText, List<FacetForACategoryFilter> facets) {
 		reFormattingSearchText(searchText);
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		
 		/*appending something like : //&facet.query=person_id%3A[200+TO+3000]&facet.query=person_id%3A[299+TO+5000] on to url
 		 *E.g. http://localhost:8983/solr/collection1/select?q=*%3A*&wt=json&indent=true&facet=true&facet.query=person_id%3A[200+TO+3000]&facet.query=person_id%3A[299+TO+5000]
 		 */
-		query.setFacet(true);
-		for (int i = 0; i < facets.length; i++) {
-			query.addFacetQuery(facets[i]);//like: patient_id:[200 TO 3000]
+		if (!facets.isEmpty() || facets != null) {
+			query.setFacet(true);
+			Iterator<FacetForACategoryFilter> iterator = facets.iterator();
+			while (iterator.hasNext()) {
+				query.addFacetQuery(iterator.next().getFacetQuery());
+			}
 		}
 		return query;
 	}
@@ -74,11 +85,9 @@ public class ChartSearchFacetedSearcher extends ChartSearchSearcher {
 	    throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		
-		/*********************************************/
-		String[] facets = null;
-		// TODO get facet provided in the ui from the DB and append them onto the query
+		//getting facets from the DB and appending them onto the SolrQuery
+		List<FacetForACategoryFilter> facets = getChartSearchService().getAllFacets();
 		SolrQuery query = provideAQueryWithFaceting(searchText, facets);
-		/*********************************************/
 		
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setStart(start);

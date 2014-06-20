@@ -122,6 +122,8 @@
         SynonymGroup.hbm.xml
         Synonym.hbm.xml
 		ChartSearch.hbm.xml
+		ChartSearchCategories.hbm.xml
+		ChartSearchFacets.hbm.xml
 
 	</mappingFiles>
 

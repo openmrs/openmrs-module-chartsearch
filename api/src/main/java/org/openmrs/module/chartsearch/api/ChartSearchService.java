@@ -15,6 +15,8 @@ package org.openmrs.module.chartsearch.api;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.categories.FacetForACategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,4 +147,33 @@ public interface ChartSearchService extends OpenmrsService {
      * @should not return voided synonyms
      */
     Integer getSynonymsCountByGroup(SynonymGroup synonymGroup);
+    
+    public CategoryFilter getACategoryFilterByItsId(Integer categoryFilterId);
+	
+	public List<CategoryFilter> getAllCategoryFilters();
+	
+	public void createACategoryFilter(CategoryFilter categoryFilter);
+	
+	public void updateACategoryFilter(CategoryFilter categoryFilter);
+	
+	public void deleteACategoryFilter(CategoryFilter categoryFilter);
+	
+	public CategoryFilter getACategoryFilterByItsUuid(String uuid);
+	
+	public FacetForACategoryFilter getFacetForACategoryFilterByItsId(Integer facetForACategoryFilter);
+	
+	public List<FacetForACategoryFilter> getAllFacetsForACategoryFilter(CategoryFilter categoryFilter);
+	
+	public void createFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
+	
+	public void updateFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
+	
+	public void deleteFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
+	
+	public CategoryFilter getCategoryFilterWhereAFacetBelongs(FacetForACategoryFilter facetForACategoryFilter);
+	
+	public FacetForACategoryFilter getFacetForACategoryFilterByItsUuid(String uuid);
+
+	public List<FacetForACategoryFilter> getAllFacets();
+	
 }

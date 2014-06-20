@@ -15,6 +15,8 @@ package org.openmrs.module.chartsearch.categories;
 import java.io.Serializable;
 
 import org.openmrs.BaseOpenmrsObject;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
 /**
  * A {@link CategoryFilter} can have facet(s) to filter results, this implements
@@ -32,16 +34,24 @@ public class FacetForACategoryFilter extends BaseOpenmrsObject implements Serial
 	
 	private String facetUuid;
 	
+	private ChartSearchService chartSearchService;
+	
 	/**
 	 * The Category where the facet belongs
 	 */
 	private CategoryFilter categoryFilter;
 	
+	public ChartSearchService getChartSearchService() {
+	    return chartSearchService;
+    }
+
 	public FacetForACategoryFilter(CategoryFilter categoryFilter) {
 		if (categoryFilter != null) {
 			setCategoryFilter(categoryFilter);
 		} else {
-			//TODO make category to be Others, this should be got from ChartSearchService
+			//set categoryFilter to "Others" is categoryFilter is not supplied
+			String othersUuid = "0717136a-5c5f-4d68-b099-cbf1ad820363";
+			setCategoryFilter(getChartSearchService().getACategoryFilterByItsUuid(othersUuid));
 		}
 	}
 	

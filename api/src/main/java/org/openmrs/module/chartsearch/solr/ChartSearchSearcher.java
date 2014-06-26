@@ -13,6 +13,12 @@
  */
 package org.openmrs.module.chartsearch.solr;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,15 +26,13 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.ObsItem;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
 /**
  *
@@ -37,6 +41,15 @@ public class ChartSearchSearcher {
 
 	private static Log log = LogFactory.getLog(ChartSearchSearcher.class);
 
+	private ChartSearchService chartSearchService;
+	
+	public ChartSearchService getChartSearchService() {
+		if (Context.isAuthenticated()) {
+            chartSearchService = Context.getService(ChartSearchService.class);
+		} else log.debug("Not Authenticated!!!");
+		return chartSearchService;
+	}
+	
 	//private final SolrServer solrServer;
 
 	public ChartSearchSearcher() {
@@ -60,7 +73,7 @@ public class ChartSearchSearcher {
 	}
 
 	public List<ChartListItem> getDocumentList(Integer patientId,
-			String searchText, Integer start, Integer length) throws Exception {
+			String searchText, Integer start, Integer length, List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 
 		// TODO Move to Eli's code
@@ -71,6 +84,10 @@ public class ChartSearchSearcher {
 
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
+
+		//TODO add selected categories to the query here or use all categories
+		addSelectedFilterQueriesToQuery(query, selectedCategories);
+		
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
@@ -154,5 +171,40 @@ public class ChartSearchSearcher {
 		}
 
 		return list;
+	}
+	
+    public void addSelectedFilterQueriesToQuery(SolrQuery query, List<String> selectedCats) {
+    	LinkedList<String> selectedCategories = new LinkedList<String>();
+    	selectedCategories.addAll(selectedCats);
+    	System.out.println("selected categories contains"+selectedCategories);
+		if(selectedCategories == null || selectedCategories.isEmpty()) {
+			System.out.println("Either selectedCategories is null or empty.");
+		} else {
+			LinkedList<CategoryFilter> existingCategories = new LinkedList<CategoryFilter>();
+			existingCategories.addAll(getChartSearchService().getAllCategoryFilters());
+			int indexOfFirstSelected = selectedCategories.indexOf(selectedCategories.getFirst());
+			int indexOfLastSelected = selectedCategories.indexOf(selectedCategories.getLast());
+			int indexOfFirstExisting = existingCategories.indexOf(existingCategories.getFirst());
+			int indexOfLastExisting = existingCategories.indexOf(existingCategories.getLast());
+			
+			for (int i = indexOfFirstSelected; i <= indexOfLastSelected ; i++) {
+				String currentSelected = selectedCategories.get(i);
+				System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+				System.out.println("Current Selected Category is: "+currentSelected);
+				System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+				for (int j = indexOfFirstExisting; j <= indexOfLastExisting ; j++) {
+					CategoryFilter currentExisting = existingCategories.get(j);
+					System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+					System.out.println("Current Existing Category is: "+currentExisting.getCategoryName());
+					System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+					if (currentSelected.equals(currentExisting.getCategoryName())) {
+						System.out.println("cccccccccccccccccccccccccccccccccccccccc");
+						System.out.println("Current Filter Query to add is: "+currentExisting.getFilterQuery());
+						System.out.println("cccccccccccccccccccccccccccccccccccccccc");
+						query.addFilterQuery(currentExisting.getFilterQuery());
+					}
+				}
+			}
+		}
 	}
 }

@@ -13,6 +13,7 @@
             jq("#date_filter_title").text(txt);
         });
     });
+    
 </script>
 
 <style type="text/css">
@@ -149,6 +150,24 @@
                         <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">
+                    	<div class="dropdown">
+	                     	<div class="inside_categories_filter">
+								<span class="dropdown-name" id="categories_label">
+								<a href="#" class="filter_method">Categories</script></a>
+								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+								</span>
+								<div class="filter_categories">
+									<a href="">Select All</a><span><label class="align_to_right"><a href="">Clear</a></label></span>
+									<br /><hr />
+									<input class="category_check" type="checkbox" name="categories" value="Diagnoses" >Diagnoses <a href="#" >(0)</a><br />
+									<input class="category_check" type="checkbox" name="categories" value="Meds" >Meds <a href="#" >(0)</a><br />
+									<input class="category_check" type="checkbox" name="categories" value="Orders" >Orders <a href="#">(3)</a><br />
+									<input class="category_check" type="checkbox" name="categories" value="Reports" >Reports <a href="#">(6)</a><br />
+									<input class="category_check" type="checkbox" name="categories" value="Others" >Others <a href="#">(54)</a><br /><hr />
+									<input id="submit_selected_categories" type="submit" value="OK" ><a href="#" class="align_to_right">Cancel</a>
+								</div>
+							</div>
+						</div>
                         <div class="dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">

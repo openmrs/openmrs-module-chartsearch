@@ -19,8 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class ChartsearchPageController {
 
@@ -31,11 +35,15 @@ public class ChartsearchPageController {
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 
     public void controller(PageModel model, @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext, @RequestParam("patientId") Patient patient,
-                           @InjectBeans PatientDomainWrapper patientDomainWrapper) {
-
-        //indexing the patient on enter
-
-
+                           @InjectBeans PatientDomainWrapper patientDomainWrapper, HttpServletRequest request) {
+    	
+    	String[] categories = request.getParameterValues("categories");
+    	if (categories == null) {
+        	categories = new String[0];
+        }
+    	List<String> selectedCategories = Arrays.asList(categories);
+        
+        
         patientDomainWrapper.setPatient(patient);
         model.addAttribute("patient", patientDomainWrapper);
 
@@ -51,7 +59,7 @@ public class ChartsearchPageController {
         log.info("indexed patient");
         //Searching an empty phrase to get all results to show at start
         SearchPhrase emptyPhrase = new SearchPhrase("");
-        List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase);
+        List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
         List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
         //loop to get full details about observations.
         for (ChartListItem chartListItem : items) {

@@ -10,7 +10,6 @@
  *
  * Copyright (C) OpenMRS, LLC. All Rights Reserved.
  */
-
 package org.openmrs.module.chartsearch.categories;
 
 import java.io.Serializable;
@@ -33,6 +32,8 @@ public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
 	private Integer categoryId;
 	
 	private String categoryDescription;
+	
+	private String filterQuery;
 	
 	public String getCategoryName() {
 		return categoryName;
@@ -74,6 +75,14 @@ public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
 	@Override
 	public void setId(Integer id) {
 		setCategoryId(id);
+	}
+	
+	public String getFilterQuery() {
+		return filterQuery;
+	}
+	
+	public void setFilterQuery(String filterQuery) {
+		this.filterQuery = filterQuery;
 	}
 	
 }

@@ -81,7 +81,8 @@ public class ChartSearchFacetedSearcher extends ChartSearchSearcher {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length)
+	//TODO needs further modification
+	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length, List<String> selectedCategories)
 	    throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		

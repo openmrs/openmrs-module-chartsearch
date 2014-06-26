@@ -81,6 +81,7 @@
 			<column name="name" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
+			<column name="filter_query" type="varchar(255)"></column>
 			<column name="description" type="varchar(255)" defaultValue="null" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
@@ -91,36 +92,43 @@
 	<changeSet id="CSM-58-18062014-2210" author="k-joseph">
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Diagnoses" />
+			<column name="filter_query" value="concept_class_name:Diagnosis" />
 			<column name="description" value="Category item for filtering Diagnoses" />
 			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Labs" />
+			<column name="filter_query" value="concept_class_name:LabSet" />
 			<column name="description" value="Category item for filtering Labs" />
 			<column name="uuid" value="66b0e726-a280-4d42-ada3-42bc111f68d6" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Meds" />
+			<column name="filter_query" value="concept_class_name:MedSet" />
 			<column name="description" value="Category item for filtering Meds" />
 			<column name="uuid" value="35cdafb5-5f6b-4c79-89e4-7226bea70ba9" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Orders" />
+			<column name='filter_query' value='concept_class_name:"Misc Order"' />
 			<column name="description" value="Category item for filtering Orders" />
 			<column name="uuid" value="a458cbba-fb5d-4e5f-b0da-bfab122860a8" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Reports" />
+			<column name="filter_query" value='concept_class_name:Finding' />
 			<column name="description" value="Category item for filtering Reports/Notes" />
 			<column name="uuid" value="fc29ada4-0e00-4450-905c-e2982a242df2" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Vitals" />
+			<column name="filter_query" value="concept_class_name:Test" />
 			<column name="description" value="Category item for fitering Vitals" />
 			<column name="uuid" value="290c0ddd-3aad-4718-addf-3d1d33f7ae5e" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Others" />
+			<column name="filter_query" value="concept_class_name:Misc" />
 			<column name="description" value="All others or un-categorized results" />
 			<column name="uuid" value="0717136a-5c5f-4d68-b099-cbf1ad820363" />
 		</insert>

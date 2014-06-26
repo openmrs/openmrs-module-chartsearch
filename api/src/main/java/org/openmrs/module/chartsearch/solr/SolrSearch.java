@@ -51,9 +51,9 @@ public class SolrSearch {
 	}
 	
 	public List<ChartListItem> search(Integer patientId,
-			String searchText, Integer start, Integer length){
+			String searchText, Integer start, Integer length, List<String> selectedCategoryNames){
 		try {
-			return searcher.getDocumentList(patientId, searchText, start, length);
+			return searcher.getDocumentList(patientId, searchText, start, length, selectedCategoryNames);
 		} catch (Exception e) {
 			return new ArrayList<ChartListItem>();
 		}

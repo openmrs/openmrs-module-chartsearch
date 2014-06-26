@@ -67,6 +67,16 @@ public class ChartSearchManageController {
 			        + "<td><textarea placeholder='inbuilt categories' disabled style='width:400px; height:37px;'></textarea></td>"
 			        + "<td><textarea disabled style='width:400px; height:37px;'>"
 			        + categoriesIterator.next().getCategoryDescription() + "</textarea></td>" + "</tr>";
+			
+			/*
+			 <tr>
+			 	<td><input type='checkbox' disabled></td>
+			 	<td><input type='text' value='' disabled></td>
+			 	<td><textarea placeholder='inbuilt categories' disabled style='width:400px; height:37px;'></textarea></td>
+			 	<td><textarea disabled style='width:400px; height:37px;'></textarea></td>
+			 </tr>
+			 * */
+			
 			log.debug(inBuiltCategories);
 			
 			//use only the first 7 category filters which are in-built
@@ -90,6 +100,7 @@ public class ChartSearchManageController {
 		}
 	}
 	
+	/*
 	@RequestMapping(value = "/module/chartsearch/manageCategories.form", method = RequestMethod.POST)
 	public String submitCategoryFilter(WebRequest request, HttpSession httpSession, ModelMap model,
 	                                   @RequestParam(required = false, value = "action") String action,
@@ -117,4 +128,5 @@ public class ChartSearchManageController {
 		}
 		return "redirect:manageCategories.form";
 	}
+	*/
 }

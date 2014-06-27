@@ -40,7 +40,7 @@ public class DWRChartSearchService {
 			List<String> includeClassNames, List<String> excludeClassNames,
 			List<String> includeDatatypeNames,
 			List<String> excludeDatatypeNames, Integer start, Integer length,
-			boolean getMatchCount) throws APIException {
+			boolean getMatchCount,  List<String> selectedCategories) throws APIException {
 		// Map to return
 		Map<String, Object> resultsMap = new HashMap<String, Object>();
 		Vector<Object> objectList = new Vector<Object>();
@@ -59,7 +59,7 @@ public class DWRChartSearchService {
 				objectList.addAll(findBatchOfObs(patientId, phrase,
 						includeRetired, includeClassNames, excludeClassNames,
 						includeDatatypeNames, excludeDatatypeNames, start,
-						length));
+						length, selectedCategories));
 			}
 
 			resultsMap.put("count", matchCount);
@@ -81,7 +81,7 @@ public class DWRChartSearchService {
 	public List<Object> findBatchOfObs(Integer patientId, String phrase,
 			boolean includeRetired, List<String> includeClassNames,
 			List<String> excludeClassNames, List<String> includeDatatypeNames,
-			List<String> excludeDatatypeNames, Integer start, Integer length) {
+			List<String> excludeDatatypeNames, Integer start, Integer length, List<String> selectedCategories) {
 		// List to return
 		// Object type gives ability to return error strings
 		Vector<Object> objectList = new Vector<Object>();
@@ -94,7 +94,7 @@ public class DWRChartSearchService {
 
 		try {
 			List<ChartListItem> items = searcher.getDocumentList(patientId,
-					phrase, start, length);
+					phrase, start, length, selectedCategories);
 			objectList.addAll(items);
 
 			if (objectList.size() < 1) {

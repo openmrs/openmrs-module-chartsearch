@@ -13,6 +13,7 @@ public class SearchAPI {
 	private static List<ChartListItem> resultList;
     private static SearchAPI instance;
     private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
+    private static List<String> selectedCategoryNames;
 
     public static SearchAPI getInstance(){
         if(instance == null){
@@ -45,8 +46,9 @@ public class SearchAPI {
         SearchAPI.resultList.clear();
     }
 
-    public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase){
+    public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames){
         SearchAPI.searchPhrase = searchPhrase;
+        SearchAPI.setSelectedCategoryNames(selectedCategoryNames);
         System.out.println("phrase :" + searchPhrase.getPhrase());
         if(searchPhrase.getPhrase().equals(",")){
             searchPhrase.setPhrase("");
@@ -64,7 +66,7 @@ public class SearchAPI {
         System.out.println("finalPhrase :"+finalPhrase);
 
         try {
-            items = searcher.getDocumentList(patientId, finalPhrase, start, length); //searching for the phrase.
+            items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames()); //searching for the phrase.
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,7 +83,15 @@ public class SearchAPI {
     }
 
 
-    private <T> T getComponent(Class<T> clazz) {
+    public static List<String> getSelectedCategoryNames() {
+	    return selectedCategoryNames;
+    }
+
+	public static void setSelectedCategoryNames(List<String> selectedCategoryNames) {
+	    SearchAPI.selectedCategoryNames = selectedCategoryNames;
+    }
+
+	private <T> T getComponent(Class<T> clazz) {
         List<T> list = Context.getRegisteredComponents(clazz);
         if (list == null || list.size() == 0)
             throw new RuntimeException("Cannot find component of " + clazz);

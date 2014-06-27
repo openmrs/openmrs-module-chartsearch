@@ -13,13 +13,14 @@
  */
 package org.openmrs.module.chartsearch.api;
 
+import java.util.List;
+
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -145,4 +146,16 @@ public interface ChartSearchService extends OpenmrsService {
      * @should not return voided synonyms
      */
     Integer getSynonymsCountByGroup(SynonymGroup synonymGroup);
+    
+    public CategoryFilter getACategoryFilterByItsId(Integer categoryFilterId);
+	
+	public List<CategoryFilter> getAllCategoryFilters();
+	
+	public void createACategoryFilter(CategoryFilter categoryFilter);
+	
+	public void updateACategoryFilter(CategoryFilter categoryFilter);
+	
+	public void deleteACategoryFilter(CategoryFilter categoryFilter);
+	
+	public CategoryFilter getACategoryFilterByItsUuid(String uuid);
 }

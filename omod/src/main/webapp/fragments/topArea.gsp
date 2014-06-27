@@ -13,6 +13,20 @@
             jq("#date_filter_title").text(txt);
         });
     });
+    
+    //TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
+    jq('#selectAll_categories').click(function (event) {
+	    console.log(jq('.category_check'));
+	    jq('.category_check').prop('checked', true);
+	    return false;
+	});
+	
+	//TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
+	jq('#deselectAll_categories').click(function (event) {
+	    jq('.category_check').prop('checked', false);
+	    return false;
+	});
+    
 </script>
 
 <style type="text/css">
@@ -135,6 +149,8 @@
     .bold {
         font-weight: bold;
     }
+    
+    
 
 </style>
 
@@ -149,6 +165,25 @@
                         <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">
+                    	<div class="dropdown">
+	                     	<div class="inside_categories_filter">
+								<span class="dropdown-name" id="categories_label">
+								<a href="#" class="filter_method">Categories</script></a>
+								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+								</span>
+								<div class="filter_categories">
+									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
+									<br /><hr />
+									<% if (facets) { %>
+										<% facets.each { facet -> %>
+											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" >${facet.name} (${facet.count})<br />
+										<%}%>
+									<%}%>
+									<hr />
+									<input id="submit_selected_categories" type="submit" value="OK" >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="#" class="disabled_link">Reset</a>
+								</div>
+							</div>
+						</div>
                         <div class="dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">

@@ -48,7 +48,7 @@
 			<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.ChartSearchServiceImpl">
 
 
-                <property name="SynonymDAO">
+                <property name="synonymDAO">
                     <bean
                             class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymDAO">
                         <property name="sessionFactory">
@@ -57,9 +57,18 @@
                     </bean>
                 </property>
 
-                <property name="SynonymGroupDAO">
+                <property name="synonymGroupDAO">
                     <bean
                             class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymGroupDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory" />
+                        </property>
+                    </bean>
+                </property>
+                
+                <property name="categoryFilterDAO">
+                    <bean
+                            class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCategoryFilterDAO">
                         <property name="sessionFactory">
                             <ref bean="sessionFactory" />
                         </property>

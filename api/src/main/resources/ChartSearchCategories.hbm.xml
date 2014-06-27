@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chartsearch.categories">
+	<class name="CategoryFilter" table="${project.parent.artifactId}_categories">
+		<id name="categoryId" type="int" column="category_id"
+			unsaved-value="0">
+			<generator class="native" />
+		</id>
+		<discriminator column="category_id" insert="false" />
+
+		<property name="categoryName" type="java.lang.String" column="name"
+			length="255" unique="true" />
+		<property name="filterQuery" type="java.lang.String" column="filter_query" length="255"/>
+		<property name="categoryUuid" type="java.lang.String" column="uuid"
+			length="38" unique="true" />
+		<property name="categoryDescription" type="java.lang.String"
+			column="description" length="255" />
+	</class>
+</hibernate-mapping>

@@ -13,19 +13,21 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -34,10 +36,11 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 
-
-
     private SynonymDAO synonymDAO;
+	
     private SynonymGroupDAO synonymGroupDAO;
+    
+    private CategoryFilterDAO categoryFilterDAO;
 
     /**
      * Getters and Setters
@@ -57,13 +60,17 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public void setSynonymDAO(SynonymDAO synonymDAO) {
         this.synonymDAO = synonymDAO;
     }
+    
+    public CategoryFilterDAO getCategoryFilterDAO() {
+    	return categoryFilterDAO;
+    }
 
-
-
-
-
-
-    @Override
+	
+    public void setCategoryFilterDAO(CategoryFilterDAO categoryFilterDAO) {
+    	this.categoryFilterDAO = categoryFilterDAO;
+    }
+    
+	@Override
     @Transactional(readOnly = true)
     public SynonymGroup getSynonymGroupById(Integer id) {
         return (SynonymGroup)getSynonymGroupDAO().getById(id);
@@ -142,4 +149,41 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public Integer getSynonymsCountByGroup(SynonymGroup synonymGroup) {
         return getSynonymDAO().getSynonymsCountByGroup(synonymGroup);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public CategoryFilter getACategoryFilterByItsId(Integer categoryFilterId) {
+		return getCategoryFilterDAO().getCategoryFilter(categoryFilterId);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+    public List<CategoryFilter> getAllCategoryFilters() {
+	    return getCategoryFilterDAO().getAllCategoryFilters();
+    }
+
+	@Override
+	@Transactional
+    public void createACategoryFilter(CategoryFilter categoryFilter) {
+		getCategoryFilterDAO().createCategoryFilter(categoryFilter);
+    }
+
+	@Override
+	@Transactional
+    public void updateACategoryFilter(CategoryFilter categoryFilter) {
+		getCategoryFilterDAO().updateCategoryFilter(categoryFilter);
+    }
+
+	@Override
+	@Transactional
+    public void deleteACategoryFilter(CategoryFilter categoryFilter) {
+		getCategoryFilterDAO().deleteCategoryFilter(categoryFilter);
+    }
+
+	@Override
+	@Transactional(readOnly = true)
+    public CategoryFilter getACategoryFilterByItsUuid(String uuid) {
+	    return getCategoryFilterDAO().getCategoryFilterByUuid(uuid);
+    }
+
 }

@@ -14,6 +14,19 @@
         });
     });
     
+    //TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
+    jq('#selectAll_categories').click(function (event) {
+	    console.log(jq('.category_check'));
+	    jq('.category_check').prop('checked', true);
+	    return false;
+	});
+	
+	//TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
+	jq('#deselectAll_categories').click(function (event) {
+	    jq('.category_check').prop('checked', false);
+	    return false;
+	});
+    
 </script>
 
 <style type="text/css">
@@ -136,6 +149,8 @@
     .bold {
         font-weight: bold;
     }
+    
+    
 
 </style>
 
@@ -157,14 +172,15 @@
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
 								<div class="filter_categories">
-									<a href="">Select All</a><span><label class="align_to_right"><a href="">Clear</a></label></span>
+									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
 									<br /><hr />
-									<input class="category_check" type="checkbox" name="categories" value="Diagnoses" >Diagnoses <a href="#" >(0)</a><br />
-									<input class="category_check" type="checkbox" name="categories" value="Meds" >Meds <a href="#" >(0)</a><br />
-									<input class="category_check" type="checkbox" name="categories" value="Orders" >Orders <a href="#">(3)</a><br />
-									<input class="category_check" type="checkbox" name="categories" value="Reports" >Reports <a href="#">(6)</a><br />
-									<input class="category_check" type="checkbox" name="categories" value="Others" >Others <a href="#">(54)</a><br /><hr />
-									<input id="submit_selected_categories" type="submit" value="OK" ><a href="#" class="align_to_right">Cancel</a>
+									<% if (facets) { %>
+										<% facets.each { facet -> %>
+											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" >${facet.name} (${facet.count})<br />
+										<%}%>
+									<%}%>
+									<hr />
+									<input id="submit_selected_categories" type="submit" value="OK" >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="#" class="disabled_link">Reset</a>
 								</div>
 							</div>
 						</div>

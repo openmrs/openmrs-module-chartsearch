@@ -24,8 +24,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.params.FacetParams;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
@@ -35,35 +38,44 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
 /**
- *
+ * Handles all searches from the Chart Search Module UI from its ChartsearchPageController
  */
 public class ChartSearchSearcher {
-
+	
 	private static Log log = LogFactory.getLog(ChartSearchSearcher.class);
-
+	
 	private ChartSearchService chartSearchService;
+	
+	private List<Count> facetFieldValueNamesAndCounts;
 	
 	public ChartSearchService getChartSearchService() {
 		if (Context.isAuthenticated()) {
-            chartSearchService = Context.getService(ChartSearchService.class);
-		} else log.debug("Not Authenticated!!!");
+			chartSearchService = Context.getService(ChartSearchService.class);
+		} else
+			log.debug("Not Authenticated!!!");
 		return chartSearchService;
 	}
 	
-	//private final SolrServer solrServer;
-
+	/**
+	 * stores and returns FacetField.Count values
+	 * 
+	 * @return facetFieldValueNamesAndCounts
+	 */
+	public List<Count> getFacetFieldValueNamesAndCounts() {
+		return facetFieldValueNamesAndCounts;
+	}
+	
 	public ChartSearchSearcher() {
 		//this.solrServer = SolrSingleton.getInstance().getServer();
 	}
-
-	public Long getDocumentListCount(Integer patientId, String searchText)
-			throws Exception {
+	
+	public Long getDocumentListCount(Integer patientId, String searchText) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		if (StringUtils.isNumeric(searchText)){
+		if (StringUtils.isNumeric(searchText)) {
 			searchText = searchText + ".*" + " || " + searchText;
 		}
-
+		
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		query.setRows(0); // Intentionally setting to this value such that we
@@ -71,20 +83,20 @@ public class ChartSearchSearcher {
 		QueryResponse response = solrServer.query(query);
 		return response.getResults().getNumFound();
 	}
-
-	public List<ChartListItem> getDocumentList(Integer patientId,
-			String searchText, Integer start, Integer length, List<String> selectedCategories) throws Exception {
+	
+	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
+	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
-
+		
 		// TODO Move to Eli's code
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		if (StringUtils.isNumeric(searchText)){
+		if (StringUtils.isNumeric(searchText)) {
 			searchText = searchText + ".*" + " || " + searchText;
 		}
-
+		
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
-
+		
 		//TODO add selected categories to the query here or use all categories
 		addSelectedFilterQueriesToQuery(query, selectedCategories);
 		
@@ -92,28 +104,37 @@ public class ChartSearchSearcher {
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
 		query.setParam("hl.fl", "text");
-
-
+		
+		//TODO add facet fields here and if more than one, getAndUseCountsForFacetFields(..)
+		query.remove(FacetParams.FACET_FIELD);
+		query.setFacet(true);
+		//adding facet field for concept_class
+		query.addFacetField("concept_class_name");
+		
 		System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
-
+		
+		this.facetFieldValueNamesAndCounts = getAndUseFacetFieldsNamesAndCounts(response);
+		
 		Iterator<SolrDocument> iter = response.getResults().iterator();
-
+		
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
-
+			
 			String uuid = (String) document.get("id");
 			Integer obsId = (Integer) document.get("obs_id");
 			Date obsDate = (Date) document.get("obs_datetime");
 			Integer obsGroupId = (Integer) document.get("obs_group_id");
 			List<String> values = ((List<String>) document.get("value"));
-
+			
 			String value = "";
-			if (values != null){ value = values.get(0); }
-
+			if (values != null) {
+				value = values.get(0);
+			}
+			
 			String conceptName = (String) document.get("concept_name");
-
+			
 			ObsItem item = new ObsItem();
 			item.setUuid(uuid);
 			item.setObsId(obsId);
@@ -121,26 +142,25 @@ public class ChartSearchSearcher {
 			item.setObsDate(obsDate.toString());
 			item.setObsGroupId(obsGroupId);
 			item.setValue(value);
-
+			
 			if (response.getHighlighting().get(uuid) != null) {
-				List<String> highlights = response.getHighlighting().get(uuid)
-						.get("text");
+				List<String> highlights = response.getHighlighting().get(uuid).get("text");
 				if (highlights != null && !highlights.isEmpty()) {
 					item.setHighlights(new ArrayList<String>(highlights));
 				}
 			}
 			list.add(item);
-			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", " + document.get("obs_datetime"));
+			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", "
+			        + document.get("obs_datetime"));
 		}
-
-
+		
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
 		query3.addFilterQuery(String.format("patient_id:%d", patientId));
 		QueryResponse response3 = solrServer.query(query3);
 		Iterator<SolrDocument> iter3 = response3.getResults().iterator();
-
+		
 		while (iter3.hasNext()) {
 			SolrDocument document = iter3.next();
 			EncounterItem item = new EncounterItem();
@@ -148,16 +168,17 @@ public class ChartSearchSearcher {
 			item.setEncounterId((Integer) document.get("encounter_id"));
 			item.setEncounterType((String) document.get("encounter_type"));
 			list.add(item);
-
-			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", " + document.get("encounter_datetime"));
+			
+			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", "
+			        + document.get("encounter_datetime"));
 		}
-
+		
 		// forms
 		System.out.println("Forms:");
 		SolrQuery query2 = new SolrQuery(String.format("form_name:(%s)", searchText));
 		QueryResponse response2 = solrServer.query(query2);
 		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
-
+		
 		while (iter2.hasNext()) {
 			SolrDocument document = iter2.next();
 			FormItem item = new FormItem();
@@ -166,18 +187,25 @@ public class ChartSearchSearcher {
 			item.setFormId((Integer) document.get("form_id"));
 			item.setFormName((String) document.get("form_name"));
 			list.add(item);
-
-			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", " + document.get("encounter_type_name"));
+			
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", "
+			        + document.get("encounter_type_name"));
 		}
-
+		
 		return list;
 	}
 	
-    public void addSelectedFilterQueriesToQuery(SolrQuery query, List<String> selectedCats) {
-    	LinkedList<String> selectedCategories = new LinkedList<String>();
-    	selectedCategories.addAll(selectedCats);
-    	System.out.println("selected categories contains"+selectedCategories);
-		if(selectedCategories == null || selectedCategories.isEmpty()) {
+	/**
+	 * Adds filter Queries to the query for selected categories returned from the UI
+	 * 
+	 * @param query
+	 * @param selectedCats
+	 */
+	public void addSelectedFilterQueriesToQuery(SolrQuery query, List<String> selectedCats) {
+		String filterQuery = "";
+		LinkedList<String> selectedCategories = new LinkedList<String>();
+		selectedCategories.addAll(selectedCats);
+		if (selectedCategories == null || selectedCategories.isEmpty()) {
 			System.out.println("Either selectedCategories is null or empty.");
 		} else {
 			LinkedList<CategoryFilter> existingCategories = new LinkedList<CategoryFilter>();
@@ -187,24 +215,35 @@ public class ChartSearchSearcher {
 			int indexOfFirstExisting = existingCategories.indexOf(existingCategories.getFirst());
 			int indexOfLastExisting = existingCategories.indexOf(existingCategories.getLast());
 			
-			for (int i = indexOfFirstSelected; i <= indexOfLastSelected ; i++) {
+			for (int i = indexOfFirstSelected; i <= indexOfLastSelected; i++) {
 				String currentSelected = selectedCategories.get(i);
-				System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-				System.out.println("Current Selected Category is: "+currentSelected);
-				System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-				for (int j = indexOfFirstExisting; j <= indexOfLastExisting ; j++) {
+				for (int j = indexOfFirstExisting; j <= indexOfLastExisting; j++) {
 					CategoryFilter currentExisting = existingCategories.get(j);
-					System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-					System.out.println("Current Existing Category is: "+currentExisting.getCategoryName());
-					System.out.println("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
-					if (currentSelected.equals(currentExisting.getCategoryName())) {
-						System.out.println("cccccccccccccccccccccccccccccccccccccccc");
-						System.out.println("Current Filter Query to add is: "+currentExisting.getFilterQuery());
-						System.out.println("cccccccccccccccccccccccccccccccccccccccc");
-						query.addFilterQuery(currentExisting.getFilterQuery());
+					String currentExistingName = currentExisting.getCategoryName();
+					if (currentSelected.equals(currentExistingName.toLowerCase())) {
+						if (i != indexOfLastSelected) {
+							filterQuery += currentExisting.getFilterQuery() + " OR ";
+						} else
+							filterQuery += currentExisting.getFilterQuery();
 					}
 				}
 			}
+			query.addFilterQuery(filterQuery);
 		}
+	}
+	
+	/**
+	 * Looks for any added filter fields onto the query and and returns its value names and counts
+	 * 
+	 * @param response
+	 */
+	public List<Count> getAndUseFacetFieldsNamesAndCounts(QueryResponse response) {
+		List<FacetField> facets = response.getFacetFields();
+		LinkedList<FacetField> conceptNameFacets = new LinkedList<FacetField>();
+		conceptNameFacets.addAll(facets);
+		
+		//TODO use iteration when adding other facet fields rather than concept class
+		FacetField conceptNameFacet = conceptNameFacets.get(0);
+		return conceptNameFacet.getValues();
 	}
 }

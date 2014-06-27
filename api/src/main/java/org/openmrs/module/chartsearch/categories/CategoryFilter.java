@@ -17,22 +17,33 @@ import java.io.Serializable;
 import org.openmrs.BaseOpenmrsObject;
 
 /**
- * This class Filters returned results by category items such as; diagnosis, labs, meds, orders,
- * Others, reports, vitals plus other custom defined categories by the user from the
- * manageCategories page
+ * This class represents A category to be used to filter returned results; items such as; diagnosis,
+ * labs, meds, orders, Others, reports, vitals
  */
 public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * The name of the Category
+	 */
 	private String categoryName;
 	
+	/**
+	 * The Uuid of a Category
+	 */
 	private String categoryUuid;
 	
 	private Integer categoryId;
 	
+	/**
+	 * The Description of a Category
+	 */
 	private String categoryDescription;
 	
+	/**
+	 * The Filter Query of a Category
+	 */
 	private String filterQuery;
 	
 	public String getCategoryName() {

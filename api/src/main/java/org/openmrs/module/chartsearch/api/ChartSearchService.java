@@ -13,15 +13,14 @@
  */
 package org.openmrs.module.chartsearch.api;
 
+import java.util.List;
+
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
-import org.openmrs.module.chartsearch.categories.FacetForACategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in moduleApplicationContext.xml.
@@ -159,21 +158,4 @@ public interface ChartSearchService extends OpenmrsService {
 	public void deleteACategoryFilter(CategoryFilter categoryFilter);
 	
 	public CategoryFilter getACategoryFilterByItsUuid(String uuid);
-	
-	public FacetForACategoryFilter getFacetForACategoryFilterByItsId(Integer facetForACategoryFilter);
-	
-	public List<FacetForACategoryFilter> getAllFacetsForACategoryFilter(CategoryFilter categoryFilter);
-	
-	public void createFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
-	
-	public void updateFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
-	
-	public void deleteFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter);
-	
-	public CategoryFilter getCategoryFilterWhereAFacetBelongs(FacetForACategoryFilter facetForACategoryFilter);
-	
-	public FacetForACategoryFilter getFacetForACategoryFilterByItsUuid(String uuid);
-
-	public List<FacetForACategoryFilter> getAllFacets();
-	
 }

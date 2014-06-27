@@ -12,6 +12,7 @@
  */
 package org.openmrs.module.chartsearch;
 
+
 public class SearchCategory {
 	
 	private String[] categories;
@@ -23,4 +24,6 @@ public class SearchCategory {
 	public void setCategories(String[] categories) {
 		this.categories = categories;
 	}
+	
+	
 }

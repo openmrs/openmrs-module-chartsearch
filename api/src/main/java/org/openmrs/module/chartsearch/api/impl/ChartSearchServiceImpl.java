@@ -22,14 +22,11 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
-import org.openmrs.module.chartsearch.api.db.FacetForACategoryFilterDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
-import org.openmrs.module.chartsearch.categories.FacetForACategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -44,8 +41,6 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     private SynonymGroupDAO synonymGroupDAO;
     
     private CategoryFilterDAO categoryFilterDAO;
-    
-    private FacetForACategoryFilterDAO facetForACategoryFilterDAO;
 
     /**
      * Getters and Setters
@@ -74,15 +69,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public void setCategoryFilterDAO(CategoryFilterDAO categoryFilterDAO) {
     	this.categoryFilterDAO = categoryFilterDAO;
     }
-
-	public FacetForACategoryFilterDAO getFacetForACategoryFilterDAO() {
-	    return facetForACategoryFilterDAO;
-    }
-
-	public void setFacetForACategoryFilterDAO(FacetForACategoryFilterDAO facetForACategoryFilterDAO) {
-	    this.facetForACategoryFilterDAO = facetForACategoryFilterDAO;
-    }
-
+    
 	@Override
     @Transactional(readOnly = true)
     public SynonymGroup getSynonymGroupById(Integer id) {
@@ -199,50 +186,4 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	    return getCategoryFilterDAO().getCategoryFilterByUuid(uuid);
     }
 
-	@Override
-	@Transactional(readOnly = true)
-    public FacetForACategoryFilter getFacetForACategoryFilterByItsId(Integer facetForACategoryFilter) {
-	    return getFacetForACategoryFilterDAO().getFacetForACategoryFilter(facetForACategoryFilter);
-    }
-
-	@Override
-	@Transactional(readOnly = true)
-    public List<FacetForACategoryFilter> getAllFacetsForACategoryFilter(CategoryFilter categoryFilter) {
-	    return getFacetForACategoryFilterDAO().getAllFacetsForACategoryFilter(categoryFilter);
-    }
-
-	@Override
-	@Transactional
-    public void createFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter) {
-		getFacetForACategoryFilterDAO().createFacetForACategoryFilter(facetForACategoryFilter);
-    }
-
-	@Override
-	@Transactional
-    public void updateFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter) {
-		getFacetForACategoryFilterDAO().updateFacetForACategoryFilter(facetForACategoryFilter);
-    }
-
-	@Override
-	@Transactional
-    public void deleteFacetForACategoryFilter(FacetForACategoryFilter facetForACategoryFilter) {
-		getFacetForACategoryFilterDAO().deleteFacetForACategoryFilter(facetForACategoryFilter);
-    }
-
-	@Override
-	@Transactional(readOnly = true)
-    public CategoryFilter getCategoryFilterWhereAFacetBelongs(FacetForACategoryFilter facetForACategoryFilter) {
-	    return getFacetForACategoryFilterDAO().getCategoryFilterWhereAFacetBelongs(facetForACategoryFilter);
-    }
-
-	@Override
-	@Transactional(readOnly = true)
-    public FacetForACategoryFilter getFacetForACategoryFilterByItsUuid(String uuid) {
-	    return getFacetForACategoryFilterDAO().getFacetForACategoryFilterByUuid(uuid);
-    }
-
-	@Override
-    public List<FacetForACategoryFilter> getAllFacets() {
-	    return getFacetForACategoryFilterDAO().getAllFacets();
-    }
 }

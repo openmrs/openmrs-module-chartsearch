@@ -52,7 +52,8 @@ public class HibernateCategoryFilterDAO implements CategoryFilterDAO {
 	@Override
 	public List<CategoryFilter> getAllCategoryFilters() {
 		log.info("Getting all category filters from the database");
-		return sessionFactory.getCurrentSession().createQuery("FROM CategoryFilter category ORDER BY category.categoryId").list();
+		return sessionFactory.getCurrentSession().createQuery("FROM CategoryFilter category ORDER BY category.categoryId")
+		        .list();
 	}
 	
 	@Override
@@ -74,6 +75,7 @@ public class HibernateCategoryFilterDAO implements CategoryFilterDAO {
 	@Override
 	public CategoryFilter getCategoryFilterByUuid(String uuid) {
 		return (CategoryFilter) sessionFactory.getCurrentSession()
-		        .createQuery("FROM CategoryFilter category WHERE category.categoryUuid = :uuid").setString("uuid", uuid).uniqueResult();
+		        .createQuery("FROM CategoryFilter category WHERE category.categoryUuid = :uuid").setString("uuid", uuid)
+		        .uniqueResult();
 	}
 }

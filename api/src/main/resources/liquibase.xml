@@ -90,81 +90,104 @@
 	</changeSet>
 	
 	<changeSet id="CSM-58-18062014-2210" author="k-joseph">
+		<comment>Adding category filters for all existing concept classes</comment>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Diagnoses" />
-			<column name="filter_query" value="concept_class_name:Diagnosis" />
-			<column name="description" value="Category item for filtering Diagnoses" />
+			<column name="name" value="Test" />
+			<column name="filter_query" value="concept_class_name:Test" />
+			<column name="description" value="Category item for filtering Test" />
 			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Labs" />
-			<column name="filter_query" value="concept_class_name:LabSet" />
-			<column name="description" value="Category item for filtering Labs" />
+			<column name="name" value="Procedure" />
+			<column name="filter_query" value="concept_class_name:Procedure" />
+			<column name="description" value="Category item for filtering Procedure" />
 			<column name="uuid" value="66b0e726-a280-4d42-ada3-42bc111f68d6" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Meds" />
-			<column name="filter_query" value="concept_class_name:MedSet" />
-			<column name="description" value="Category item for filtering Meds" />
+			<column name="name" value="Drug" />
+			<column name="filter_query" value="concept_class_name:Drug" />
+			<column name="description" value="Category item for filtering Drug" />
 			<column name="uuid" value="35cdafb5-5f6b-4c79-89e4-7226bea70ba9" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Orders" />
-			<column name='filter_query' value='concept_class_name:"Misc Order"' />
-			<column name="description" value="Category item for filtering Orders" />
+			<column name="name" value="Diagnosis" />
+			<column name='filter_query' value='concept_class_name:Diagnosis' />
+			<column name="description" value="Category item for filtering Diagnosis" />
 			<column name="uuid" value="a458cbba-fb5d-4e5f-b0da-bfab122860a8" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Reports" />
+			<column name="name" value="Finding" />
 			<column name="filter_query" value='concept_class_name:Finding' />
-			<column name="description" value="Category item for filtering Reports/Notes" />
+			<column name="description" value="Category item for filtering Finding" />
 			<column name="uuid" value="fc29ada4-0e00-4450-905c-e2982a242df2" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Vitals" />
-			<column name="filter_query" value="concept_class_name:Test" />
-			<column name="description" value="Category item for fitering Vitals" />
+			<column name="name" value="Anatomy" />
+			<column name="filter_query" value="concept_class_name:Anatomy" />
+			<column name="description" value="Category item for filtering Anatomy" />
 			<column name="uuid" value="290c0ddd-3aad-4718-addf-3d1d33f7ae5e" />
 		</insert>
 		<insert tableName="${project.parent.artifactId}_categories">
-			<column name="name" value="Others" />
-			<column name="filter_query" value="concept_class_name:Misc" />
-			<column name="description" value="All others or un-categorized results" />
+			<column name="name" value="Question" />
+			<column name="filter_query" value="concept_class_name:Question" />
+			<column name="description" value="Category item for filtering Question" />
 			<column name="uuid" value="0717136a-5c5f-4d68-b099-cbf1ad820363" />
 		</insert>
+		
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="LabSet" />
+			<column name="filter_query" value="concept_class_name:LabSet" />
+			<column name="description" value="Category item for filtering LabSet" />
+			<column name="uuid" value="e68bb6ff-8b11-48e0-b259-703ffbdf4123" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="MedSet" />
+			<column name="filter_query" value="concept_class_name:MedSet" />
+			<column name="description" value="Category item for filtering MedSet" />
+			<column name="uuid" value="d90cb961-42c3-4dd8-93f1-d9d3bff09866" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="ConvSet" />
+			<column name="filter_query" value="concept_class_name:ConvSet" />
+			<column name="description" value="Category item for filtering ConvSet" />
+			<column name="uuid" value="c7cd56a5-62a3-4da5-a2ec-7b2390b31c7b" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Misc" />
+			<column name="filter_query" value="concept_class_name:Misc" />
+			<column name="description" value="Category item for filtering Misc" />
+			<column name="uuid" value="9159716d-120b-48c7-9d83-a954430b4362" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Symptom" />
+			<column name="filter_query" value="concept_class_name:Symptom" />
+			<column name="description" value="Category item for filtering Symptom" />
+			<column name="uuid" value="113f71f4-e1c0-4548-97df-1fca64f4b011" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Symptom/Finding" />
+			<column name="filter_query" value='concept_class_name:"Symptom/Finding"' />
+			<column name="description" value="Category item for filtering Symptom/Finding" />
+			<column name="uuid" value="b5611ebc-4ceb-40ed-8142-61d42967b87f" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Specimen" />
+			<column name="filter_query" value="concept_class_name:Specimen" />
+			<column name="description" value="Category item for filtering Specimen" />
+			<column name="uuid" value="4d280790-c856-4ebb-974b-4b1bd0684302" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Misc Order" />
+			<column name="filter_query" value='concept_class_name:"Misc Order"' />
+			<column name="description" value="Category item for filtering Misc Order" />
+			<column name="uuid" value="952ae740-b9d4-49ed-856c-500bc8e2a381" />
+		</insert>
+		<insert tableName="${project.parent.artifactId}_categories">
+			<column name="name" value="Frequency" />
+			<column name="filter_query" value="concept_class_name:Frequency" />
+			<column name="description" value="Category item for filtering Frequency" />
+			<column name="uuid" value="21ac0fec-947f-4a76-aeee-2e17d9d0cb13" />
+		</insert>
 	</changeSet>
-	
-	<changeSet id="CSM-58-18062014-2215" author="k-joseph">
-		<preConditions onFail="MARK_RAN">
-			<not>
-				<tableExists tableName="${project.parent.artifactId}_facets" />
-			</not>
-		</preConditions>
-		<comment>
-			Create chartsearch_facets table
-		</comment>
-		<createTable tableName="${project.parent.artifactId}_facets">
-			<column name="facet_id" type="int" autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-			<column name="category_id" type="int">
-				<constraints nullable="false" />
-			</column>
-			<column name="query" type="varchar(455)">
-				<constraints nullable="false" />
-			</column>
-			<column name="description" type="varchar(255)" defaultValue="null" />
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" />
-			</column>
-		</createTable>
-		<comment>Adding foreign key constraint for
-			chartsearch_facets.category_id
-		</comment>
-		<addForeignKeyConstraint baseTableName="${project.parent.artifactId}_facets"
-			baseColumnNames="category_id" constraintName="chartsearch_facets_category_id_fk"
-			referencedTableName="${project.parent.artifactId}_categories" referencedColumnNames="category_id" />
-	</changeSet>
-
 
 </databaseChangeLog>

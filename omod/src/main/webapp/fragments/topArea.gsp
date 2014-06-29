@@ -12,20 +12,18 @@
             var txt = jq(e.target).text();
             jq("#date_filter_title").text(txt);
         });
+        
+        jq('#selectAll_categories').click(function (event) {
+		    console.log(jq('.category_check'));
+		    jq('.category_check').prop('checked', true);
+		    return false;
+		});
+		
+		jq('#deselectAll_categories').click(function (event) {
+		    jq('.category_check').prop('checked', false);
+		    return false;
+		});
     });
-    
-    //TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
-    jq('#selectAll_categories').click(function (event) {
-	    console.log(jq('.category_check'));
-	    jq('.category_check').prop('checked', true);
-	    return false;
-	});
-	
-	//TODO This code works at http://jsfiddle.net/FvKZW/4/ but fails here
-	jq('#deselectAll_categories').click(function (event) {
-	    jq('.category_check').prop('checked', false);
-	    return false;
-	});
     
 </script>
 
@@ -180,7 +178,7 @@
 										<%}%>
 									<%}%>
 									<hr />
-									<input id="submit_selected_categories" type="submit" value="OK" >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="#" class="disabled_link">Reset</a>
+									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" >
 								</div>
 							</div>
 						</div>

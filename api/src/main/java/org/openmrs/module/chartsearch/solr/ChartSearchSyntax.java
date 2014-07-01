@@ -129,9 +129,9 @@ public class ChartSearchSyntax {
 				} else {
 					if (i != lastIndex) {
 						//support searching "hem" to return "hemoglobin" and "hematocrit" etc. using tilde, "~" for Fuzzy Searches or "*"
-						this.searchQuery += currentWord + " OR " + currentWord + "* OR " + currentWord + "~ OR ";
+						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR " + currentWord + "~ OR ";
 					} else
-						this.searchQuery += currentWord + " OR " + currentWord + "* OR " + currentWord + "~";
+						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR " + currentWord + "~";
 				}
 			}
 			this.searchQuery += " )";

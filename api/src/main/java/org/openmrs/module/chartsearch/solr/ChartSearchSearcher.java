@@ -87,10 +87,16 @@ public class ChartSearchSearcher {
 	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
 	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+
+		//TODO re-use ChartSearchSntax class hear
+		System.out.println("searchText: " +searchText);
+		ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
+		searchText = searchSyntax.getSearchQuery();
 		
 		// TODO Move to Eli's code
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
 		if (StringUtils.isNumeric(searchText)) {
+			//this allows 36 returning 36.* for numerics
 			searchText = searchText + ".*" + " || " + searchText;
 		}
 		

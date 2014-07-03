@@ -43,7 +43,7 @@ public class ChartSearchSyntax {
 	/**
 	 * The final search query after breaking down the received search phrase
 	 */
-	private String searchQuery = "( ";
+	private String searchQuery = "";
 	
 	public String getSearchQuery() {
 		return searchQuery;
@@ -134,7 +134,6 @@ public class ChartSearchSyntax {
 						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR " + currentWord + "~";
 				}
 			}
-			this.searchQuery += " )";
 		}
 	}
 	

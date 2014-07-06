@@ -174,11 +174,11 @@
 									<br /><hr />
 									<% if (facets) { %>
 										<% facets.each { facet -> %>
-											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" >${facet.name} (${facet.count})<br />
+											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
 										<%}%>
 									<%}%>
 									<hr />
-									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" >
+									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" />
 								</div>
 							</div>
 						</div>

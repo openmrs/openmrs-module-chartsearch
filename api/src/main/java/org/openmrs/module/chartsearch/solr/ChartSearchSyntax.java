@@ -81,26 +81,6 @@ public class ChartSearchSyntax {
 	}
 	
 	/**
-	 * Picks a phrase got from the UI and checks for presence of double quotes ("Blood Pressure")
-	 * 
-	 * @param searchPhrase
-	 * @return
-	 */
-	private boolean shouldTakePhraseAsItIs() {
-		//TODO add code for achieving this hear
-		return false;
-	}
-	
-	/**
-	 * Handles obs:blood, so that we search for blood in obs and the the like
-	 * 
-	 * @param searchPhrase
-	 */
-	private void searchAgainstSpecificiedFields(String s) {
-		//TODO add code here
-	}
-	
-	/**
 	 * Handles all behavior required as described at: https://issues.openmrs.org/browse/CSM-25
 	 */
 	private void handleAllSearchSyntaxBehavior() {
@@ -129,9 +109,11 @@ public class ChartSearchSyntax {
 				} else {
 					if (i != lastIndex) {
 						//support searching "hem" to return "hemoglobin" and "hematocrit" etc. using tilde, "~" for Fuzzy Searches or "*"
-						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR " + currentWord + "~ OR ";
+						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR "
+						        + currentWord + "~ OR ";
 					} else
-						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR " + currentWord + "~";
+						this.searchQuery += currentWord + " OR *" + currentWord + "* OR " + currentWord + "* OR "
+						        + currentWord + "~";
 				}
 			}
 		}

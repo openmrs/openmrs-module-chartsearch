@@ -344,12 +344,14 @@ public class GeneratingJson {
         for (ChartListItem item : searchResultsList) {
 
             if (item != null && item instanceof FormItem) {
-
-                int itemFormId = ((FormItem) item).getFormId();
-                Form form = Context.getFormService().getForm(itemFormId);
-                if (form != null) {
-                    forms.add(Context.getFormService().getForm(itemFormId));
-                }
+            	
+            	if (((FormItem) item).getFormId() != null) {
+	                int itemFormId = ((FormItem) item).getFormId();
+	                Form form = Context.getFormService().getForm(itemFormId);
+	                if (form != null) {
+	                    forms.add(Context.getFormService().getForm(itemFormId));
+	                }
+            	}
             }
         }
         return forms;

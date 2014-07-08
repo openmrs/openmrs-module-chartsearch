@@ -87,14 +87,29 @@ public class ChartSearchSearcher {
 	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
 	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
-		
-		// TODO Move to Eli's code
+		SolrQuery query = new SolrQuery();
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		if (StringUtils.isNumeric(searchText)) {
-			searchText = searchText + ".*" + " || " + searchText;
+		//TODO check for existence of characters such as ", and : in the search text and submit as it is if so
+		if (searchText.contains("\"")) {
+			String searchWhole = "text:" + searchText;
+			query.setQuery(searchWhole);
+		} else if (searchText.contains(":")) {
+			query.setQuery(searchText);
+		} else if (searchText.equals("*")) {
+			query.setQuery(String.format("text:(%s)", searchText));
+		} else {
+			//TODO re-use ChartSearchSntax class hear
+			ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
+			searchText = searchSyntax.getSearchQuery();
+			
+			// TODO Move to Eli's code
+			if (StringUtils.isNumeric(searchText)) {
+				//this allows 36 returning 36.* for numerics
+				searchText = searchText + ".*" + " || " + searchText;
+			}
+			query.setQuery(String.format("text:(%s)", searchText));
 		}
 		
-		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		
 		//TODO add selected categories to the query here or use all categories

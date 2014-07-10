@@ -91,7 +91,7 @@ public class ChartsearchPageController {
 		
 	}
 	
-	@RequestMapping(value = "?patientId*", method = RequestMethod.POST)
+	@RequestMapping(value = "chartsearch.form", method = RequestMethod.POST)
 	public @ResponseBody
 	List<ChartListItem> getReturnedResultsFromTheServer(@BindParams SearchPhrase search_phrase,
 	                                                    @RequestParam("patientId") Patient patient,

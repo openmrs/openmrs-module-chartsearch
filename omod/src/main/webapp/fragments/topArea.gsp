@@ -70,9 +70,9 @@
 			}
 			jsonData += "  }";
 			
-			alert(jsonData);
+			alert(jsonData);alert(chartSearchUrl);
 			jq.ajax({
-				URL: chartSearchUrl,
+				URL: "chartsearch.form",
 				type: chartSearchForm.attr('method'),
 				data: chartSearchForm.serialize(),
 				//dataType: "JSON",

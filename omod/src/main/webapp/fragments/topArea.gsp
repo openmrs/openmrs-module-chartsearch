@@ -1,7 +1,6 @@
 <script type="text/javascript">
     var jq = jQuery;
 
-
     jq( document ).ready(function() {
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -23,6 +22,81 @@
 		    jq('.category_check').prop('checked', false);
 		    return false;
 		});
+		
+		jq('#submit_selected_categories').click(function(event) {
+			submitChartSearchFormWithAjax();
+			return false;
+		});
+		
+		jq('#searchBtn').click(function(event) {
+			submitChartSearchFormWithAjax();
+			return false;
+		});
+		
+		jq('#searchText').keyup(function(event) {
+			//check if empty and after entry of at-least three characters
+			//submitChartSearchFormWithAjax();
+			//return false;
+		});
+		
+		function submitChartSearchFormWithAjax() {
+			var chartSearchForm = jq('#chart-search-form-submit');
+			var origPhrase = document.getElementById('searchText').value;
+			var categories = document.getElementsByClassName('category_check');
+			var patientId = document.getElementById('patient_id').value;
+			var chartSearchUrl = "?patientId=" + patientId;
+			var phrase = origPhrase.split('"').join('\\\\"').split(' ').join('+');
+			var jsonData = "{  patientId: " + patientId;
+
+			if (phrase != "") {
+				chartSearchUrl += "&phrase=" + phrase;
+				jsonData += ",  phrase: \"" + origPhrase.split('"').join('\\\\"') + "\"";
+			}
+			for(var i=0; i < categories.length; i++) {
+				
+				var catId = "#"+categories[i].id;
+				if (jq(catId).prop('checked')) {
+					if (i==0) {
+						jsonData += ",  [ ";
+					}
+					chartSearchUrl += "&categories=" + categories[i].value;
+					if (i != (categories.length - 1)) {
+						jsonData += "{categories: " + categories[i].value + "}, ";
+					}
+					if (i == (categories.length - 1)) {
+						jsonData += "{categories: " + categories[i].value + "} ]"
+					}
+				}
+			}
+			jsonData += "  }";
+			
+			alert(jsonData);
+			jq.ajax({
+				URL: chartSearchUrl,
+				type: chartSearchForm.attr('method'),
+				data: chartSearchForm.serialize(),
+				//dataType: "JSON",
+				success: function(data) {
+				
+					//TODO Search and Return Results then, Retain search text AND Retain checked category filters
+					
+					//first clear both results and details in the UI
+					jq(".base_results").empty();
+					jq(".detailed_results_container").empty();
+					
+					alert(data);
+					
+					jq("body").html(data);
+					
+					//then now get updated results from the server and populate results div
+				    
+				},
+				error: function(e) {
+				  alert("Error occurred!!! " + e);
+				}
+			});
+		}
+		
     });
     
 </script>
@@ -155,10 +229,10 @@
 <article id="search-box">
     <section>
         <div class="chart-search-wrapper">
-            <form class="chart-search-form">
+            <form class="chart-search-form" id="chart-search-form-submit" method="POST">
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
-                        <input type="text" name="patientId" value=${patientId} hidden>
+                        <input type="text" id="patient_id" name="patientId" value=${patientId} hidden>
                         <input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
@@ -174,7 +248,7 @@
 									<br /><hr />
 									<% if (facets) { %>
 										<% facets.each { facet -> %>
-											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
+											<input class="category_check" id="${facet.name}_category" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
 										<%}%>
 									<%}%>
 									<hr />

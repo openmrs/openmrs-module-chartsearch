@@ -39,7 +39,10 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 public class ChartsearchPageController {
 	
@@ -62,17 +65,8 @@ public class ChartsearchPageController {
 	                       @RequestParam("patientId") Patient patient,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper, HttpServletRequest request) {
 		
-		//get all checked categories from the UI and pass them into categories array
-		String[] categories = request.getParameterValues("categories");
-		if (categories == null) {
-			categories = new String[0];
-		}
-		List<String> selectedCategories = Arrays.asList(categories);
-		
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
-		
-		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		
 		log.info("getting patient ID :" + patient);
 		log.info("trying to index a patient");
@@ -82,8 +76,55 @@ public class ChartsearchPageController {
 			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");
+		
+		//very vital, i think it is fine to view returned contents after running this
+		System.out.println(setCategoriesPhraseAndSearchAndReturnResults(search_phrase, patient, request).toString());
+		
+		//getting all facets returned from the query to show in the UI
+		LinkedList<Count> facetFields = new LinkedList<Count>();
+		facetFields.addAll(searcher.getFacetFieldValueNamesAndCounts());
+		for (int i = facetFields.indexOf(facetFields.getFirst()); i <= facetFields.indexOf(facetFields.getLast()); i++) {
+			Count facet = facetFields.get(i);
+			this.facets.add(facet);
+		}
+		model.addAttribute("facets", getFacets());
+		
+	}
+	
+	@RequestMapping(value = "?patientId*", method = RequestMethod.POST)
+	public @ResponseBody
+	List<ChartListItem> getReturnedResultsFromTheServer(@BindParams SearchPhrase search_phrase,
+	                                                    @RequestParam("patientId") Patient patient,
+	                                                    HttpServletRequest request) {
+		List<ChartListItem> results = new ArrayList<ChartListItem>();
+		results.addAll(setCategoriesPhraseAndSearchAndReturnResults(search_phrase, patient, request));
+		
+		return results;
+	}
+	
+	/**
+	 * Passes checked categories, phrase and patient to the service layer, then afterwards returns
+	 * returned results, Split from
+	 * {@link #controller(PageModel, SearchPhrase, UiSessionContext, Patient, PatientDomainWrapper, HttpServletRequest)}
+	 * since there was need to re-use this code
+	 * 
+	 * @param search_phrase
+	 * @param patient
+	 * @param request
+	 * @return
+	 */
+	private List<ChartListItem> setCategoriesPhraseAndSearchAndReturnResults(SearchPhrase search_phrase, Patient patient,
+	                                                                         HttpServletRequest request) {
+		//get all checked categories from the UI and pass them into categories array
+		String[] categories = request.getParameterValues("categories");
+		if (categories == null) {
+			categories = new String[0];
+		}
+		List<String> selectedCategories = Arrays.asList(categories);
+		
+		SearchAPI searchAPIInstance = SearchAPI.getInstance();
+		
 		//Searching an empty phrase to get all results to show at start
-		SearchPhrase emptyPhrase = new SearchPhrase("");
 		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
 		//loop to get full details about observations.
@@ -105,16 +146,7 @@ public class ChartsearchPageController {
 		
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
-		
-		//getting all facets returned from the query to show in the UI
-		LinkedList<Count> facetFields = new LinkedList<Count>();
-		facetFields.addAll(searcher.getFacetFieldValueNamesAndCounts());
-		for (int i = facetFields.indexOf(facetFields.getFirst()); i <= facetFields.indexOf(facetFields.getLast()); i++) {
-			Count facet = facetFields.get(i);
-			this.facets.add(facet);
-		}
-		model.addAttribute("facets", getFacets());
-		
+		return searchAPIInstance.getResults();
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

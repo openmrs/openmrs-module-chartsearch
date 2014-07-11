@@ -27,6 +27,7 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
+import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
@@ -39,6 +40,8 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -91,15 +94,23 @@ public class ChartsearchPageController {
 		
 	}
 	
-	@RequestMapping(value = "chartsearch.form", method = RequestMethod.POST)
-	public @ResponseBody
-	List<ChartListItem> getReturnedResultsFromTheServer(@BindParams SearchPhrase search_phrase,
-	                                                    @RequestParam("patientId") Patient patient,
-	                                                    HttpServletRequest request) {
-		List<ChartListItem> results = new ArrayList<ChartListItem>();
-		results.addAll(setCategoriesPhraseAndSearchAndReturnResults(search_phrase, patient, request));
+	@RequestMapping(value = "/module/chartsearch/chartsearch.page", method = RequestMethod.POST)
+	public @ResponseBody String getResultsFromTheServer(@BindParams SearchPhrase search_phrase, @RequestParam("patientId") Patient patient,
+	                                     HttpServletRequest request, ModelMap model, @RequestBody String jsonData) {
 		
-		return results;
+		System.out.println(jsonData);
+		List<ChartListItem> resultsItems = new ArrayList<ChartListItem>();
+		resultsItems.addAll(setCategoriesPhraseAndSearchAndReturnResults(search_phrase, patient, request));
+		
+		SearchAPI searchAPI = SearchAPI.getInstance();
+		ArrayList<String> results = new ArrayList<String>();
+		String jsonResults = GeneratingJson.generateJson();
+		results.add(jsonResults);
+		searchAPI.clearResults();
+		model.addAttribute("results", results);
+		model.addAttribute("resultsItems", resultsItems);
+		
+		return jsonResults;
 	}
 	
 	/**
@@ -113,7 +124,7 @@ public class ChartsearchPageController {
 	 * @param request
 	 * @return
 	 */
-	private List<ChartListItem> setCategoriesPhraseAndSearchAndReturnResults(SearchPhrase search_phrase, Patient patient,
+	public static List<ChartListItem> setCategoriesPhraseAndSearchAndReturnResults(SearchPhrase search_phrase, Patient patient,
 	                                                                         HttpServletRequest request) {
 		//get all checked categories from the UI and pass them into categories array
 		String[] categories = request.getParameterValues("categories");

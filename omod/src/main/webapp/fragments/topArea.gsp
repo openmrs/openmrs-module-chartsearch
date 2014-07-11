@@ -44,7 +44,7 @@
 			var origPhrase = document.getElementById('searchText').value;
 			var categories = document.getElementsByClassName('category_check');
 			var patientId = document.getElementById('patient_id').value;
-			var chartSearchUrl = "?patientId=" + patientId;
+			var chartSearchUrl = "patientId=" + patientId;
 			var phrase = origPhrase.split('"').join('\\\\"').split(' ').join('+');
 			var jsonData = "{  patientId: " + patientId;
 
@@ -69,27 +69,21 @@
 				}
 			}
 			jsonData += "  }";
-			
-			alert(jsonData);alert(chartSearchUrl);
+			alert(jsonData);
 			jq.ajax({
-				URL: "chartsearch.form",
 				type: chartSearchForm.attr('method'),
-				data: chartSearchForm.serialize(),
-				//dataType: "JSON",
+      			contentType : 'application/json; charset=utf-8',
+				URL: "/module/chartsearch/chartsearch.page",
+				data: jsonData,
 				success: function(data) {
 				
-					//TODO Search and Return Results then, Retain search text AND Retain checked category filters
-					
-					//first clear both results and details in the UI
 					jq(".base_results").empty();
 					jq(".detailed_results_container").empty();
+    
 					
-					alert(data);
+					jq(".base_results").html(${ ui.includeFragment("chartsearch", "searchWithAjax") });
 					
-					jq("body").html(data);
-					
-					//then now get updated results from the server and populate results div
-				    
+				    refresh_data();
 				},
 				error: function(e) {
 				  alert("Error occurred!!! " + e);

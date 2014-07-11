@@ -13,12 +13,18 @@
  */
 package org.openmrs.module.chartsearch.web.controller;
 
+import java.util.ArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.module.chartsearch.GeneratingJson;
+import org.openmrs.module.chartsearch.SearchAPI;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for manageCategories.jsp.
@@ -32,5 +38,15 @@ public class ManageCategoriesFormController {
 	public ModelMap manageCategories() {
 		ModelMap model = new ModelMap();
 		return model;
+	}
+	
+	//just for testing purposes
+	@RequestMapping(value = "/module/chartsearch/manageCategories.form", method = RequestMethod.POST)
+	public @ResponseBody String
+	returnResultsWithAjax(@RequestBody String[] data) {
+		SearchAPI searchAPI = SearchAPI.getInstance();
+		searchAPI.clearResults();
+		
+		return GeneratingJson.generateJson();	
 	}
 }

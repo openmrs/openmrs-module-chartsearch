@@ -23,6 +23,35 @@
 		    jq('.category_check').prop('checked', false);
 		    return false;
 		});
+		
+		jq('#searchBtn').click(function(event) {
+			submitChartSearchFormWithAjax();
+			return false;
+		});
+		
+		jq('#searchText').keyup(function(event) {
+			//check if empty and after entry of at-least three characters
+			//submitChartSearchFormWithAjax();
+			//return false;
+		});
+		
+		function submitChartSearchFormWithAjax() {
+			jq.ajax({
+				type: "POST",
+				 url: "${ ui.actionLink('getResultsFromTheServer') }",
+				data: jq('#chart-search-form-submit').serialize(),
+				//dataType: "json",
+				success: function(data) {
+					jq(".base_results").empty();
+					jq(".detailed_results_container").empty();
+	    	
+					//include searchWithAjax fragment here doesn't help
+				},
+				error: function(e) {
+				  alert("Error occurred!!! " + e);
+				}
+			});
+		}
     });
     
 </script>

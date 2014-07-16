@@ -65,7 +65,7 @@
 					jq(".inside_filter_categories").fadeIn(500);
 				},
 				error: function(e) {
-				  alert("Error occurred!!! " + e);
+				  //alert("Error occurred!!! " + e);
 				}
 			});
 		}

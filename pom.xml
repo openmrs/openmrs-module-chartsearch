@@ -8,10 +8,22 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Chart Search Module</name>
-	<description>Chart Search module</description>
-	<url>https://wiki.openmrs.org/display/docs/Chart+Search+Module+Module</url>
+	<description>Chart Search Module for the OpenMRS Reference Application</description>
+	<url>https://wiki.openmrs.org/display/projects/Chart+Search+for+the+Reference+Application</url>
 
 	<developers>
+		<developer>
+			<name>k-joseph</name>
+		</developer>
+		<developer>
+			<name>Tal Levi</name>
+		</developer>
+		<developer>
+			<name>Or Hemi</name>
+		</developer>
+		<developer>
+			<name>Eli Zil</name>
+		</developer>
 		<developer>
 			<name>Zhaslan Doschanov</name>
 		</developer>
@@ -23,9 +35,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:svn:https://svn.openmrs.org/openmrs-modules/chartsearch/trunk/</connection>
-		<developerConnection>scm:svn:https://svn.openmrs.org/openmrs-modules/chartsearch/trunk/</developerConnection>
-		<url>https://svn.openmrs.org/openmrs-modules/chartsearch/trunk/</url>
+		<connection>scm:git:https://github.com/openmrs/openmrs-module-chartsearch</connection>
+		<developerConnection>scm:git:https://github.com/openmrs/openmrs-module-chartsearch</developerConnection>
+		<url>https://github.com/openmrs/openmrs-module-chartsearch</url>
 	</scm>
 
 	<modules>
@@ -162,6 +174,15 @@
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>2.4</version>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+					    <autoVersionSubmodules>true</autoVersionSubmodules>
+					    <tagNameFormat>@{project.version}</tagNameFormat>
+					</configuration>
+			    	</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -184,5 +205,18 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+	<distributionManagement>
+	    <repository>
+		<id>openmrs-repo-modules</id>
+		<name>Modules</name>
+		<url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules/</url>
+	    </repository>
+	    <snapshotRepository>
+		<id>openmrs-repo-snapshots</id>
+		<name>OpenMRS Snapshots</name>
+		<url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+	    </snapshotRepository>
+	</distributionManagement>
 
 </project>

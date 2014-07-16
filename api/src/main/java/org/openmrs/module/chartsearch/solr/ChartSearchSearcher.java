@@ -46,7 +46,7 @@ public class ChartSearchSearcher {
 	
 	private ChartSearchService chartSearchService;
 	
-	public List<Count> facetFieldValueNamesAndCounts;
+	public static List<Count> facetFieldValueNamesAndCounts;
 	
 	public ChartSearchService getChartSearchService() {
 		if (Context.isAuthenticated()) {
@@ -61,7 +61,7 @@ public class ChartSearchSearcher {
 	 * 
 	 * @return facetFieldValueNamesAndCounts
 	 */
-	public List<Count> getFacetFieldValueNamesAndCounts() {
+	public static List<Count> getFacetFieldValueNamesAndCounts() {
 		return facetFieldValueNamesAndCounts;
 	}
 	
@@ -129,7 +129,7 @@ public class ChartSearchSearcher {
 		System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
 		
-		this.facetFieldValueNamesAndCounts = getAndUseFacetFieldsNamesAndCounts(response);
+		ChartSearchSearcher.facetFieldValueNamesAndCounts = getAndUseFacetFieldsNamesAndCounts(response);
 		
 		Iterator<SolrDocument> iter = response.getResults().iterator();
 		

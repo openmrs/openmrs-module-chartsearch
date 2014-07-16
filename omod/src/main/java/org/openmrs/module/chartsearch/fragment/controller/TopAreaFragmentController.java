@@ -20,7 +20,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.Patient;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
@@ -28,7 +27,6 @@ import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
-import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.fragment.FragmentModel;
@@ -39,8 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class TopAreaFragmentController {
 	
 	private static final Logger log = LoggerFactory.getLogger(TopAreaFragmentController.class);
-	
-	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 	
 	public void controller(FragmentModel model, @RequestParam("patientId") Integer patient) {
 		model.addAttribute("patientId", patient);
@@ -75,12 +71,5 @@ public class TopAreaFragmentController {
 		searchAPIInstance.setResults(updatedItems);
 		
 		return GeneratingJson.generateJson();
-	}
-	
-	private <T> T getComponent(Class<T> clazz) {
-		List<T> list = Context.getRegisteredComponents(clazz);
-		if (list == null || list.size() == 0)
-			throw new RuntimeException("Cannot find component of " + clazz);
-		return list.get(0);
 	}
 }

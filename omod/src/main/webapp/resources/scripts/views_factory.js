@@ -902,6 +902,36 @@ function refresh_data() {
 	currentJson = jsonAfterParse;
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
+    displayCategories(jsonAfterParse);
 }
 
+/*
+ * maintains categories state and displays new categories from the server
+ */
+function displayCategories(jsonAfterParse) {
+	var categories = document.getElementsByClassName('category_check');
+	var checkedCategories = new Object();
 
+	//record previous state
+	for(var i=0; i < categories.length; i++) {
+		var catId = "#"+categories[i].id;
+		if (jq(catId).prop('checked')) {
+			checkedCategories[i] = catId;
+		}
+	}
+	
+	//delete all categories being shown on the page
+	document.getElementById('inside_filter_categories').innerHTML = "";
+	
+	//now fetch and display new categories from the server
+	for (var i = 0; i < jsonAfterParse.facets.length; i++) {
+        var name = jsonAfterParse.facets[i].facet.name;
+        var count = jsonAfterParse.facets[i].facet.count;
+        document.getElementById('inside_filter_categories').innerHTML += "<input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name + "' />" + name + " (" + count + ")<br />";
+    }
+	
+	//now check all previously checked categories
+	for (index in checkedCategories) {
+		jq(checkedCategories[index]).prop('checked', true);
+	}
+}

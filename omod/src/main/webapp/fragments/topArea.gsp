@@ -50,6 +50,7 @@
 				success: function(results) {
 					jq(".results_table_wrap").fadeOut(500);
 					jq(".obsgroup_view").fadeOut(500);
+					jq(".inside_filter_categories").fadeOut(500);
 					
 					jsonAfterParse = JSON.parse(results);
 					
@@ -60,9 +61,8 @@
 					//click the first result to show its details at the right side
 					jq('#first_obs_single').trigger('click');
 					
-					//clearing and updating facets being shown on the chart search page
-					//jq(".inside_filter_categories").empty();
-					//TODO update facets here
+					//show updated facets
+					jq(".inside_filter_categories").fadeIn(500);
 				},
 				error: function(e) {
 				  alert("Error occurred!!! " + e);
@@ -77,6 +77,7 @@
 		    timer = setTimeout(callback, ms);
 		  };
 		})();
+		
     });
     
 </script>
@@ -226,12 +227,10 @@
 								<div class="filter_categories">
 									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
 									<br /><hr />
-									<div class="inside_filter_categories">
-										<% if (facets) { %>
-											<% facets.each { facet -> %>
-												<input class="category_check" id="${facet.name}_category" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
-											<%}%>
-										<%}%>
+									<div id="inside_filter_categories">
+										<script type="text/javascript">
+											displayCategories(jsonAfterParse);
+										</script>
 									</div>
 									<hr />
 									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" />

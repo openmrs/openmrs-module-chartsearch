@@ -47,8 +47,6 @@ public class ChartsearchPageController {
 	
 	private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
 	
-	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
-	
 	/**
 	 * Stores facets returned after running the query
 	 */
@@ -105,16 +103,6 @@ public class ChartsearchPageController {
 		
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
-		
-		//getting all facets returned from the query to show in the UI
-		LinkedList<Count> facetFields = new LinkedList<Count>();
-		facetFields.addAll(searcher.getFacetFieldValueNamesAndCounts());
-		for (int i = facetFields.indexOf(facetFields.getFirst()); i <= facetFields.indexOf(facetFields.getLast()); i++) {
-			Count facet = facetFields.get(i);
-			this.facets.add(facet);
-		}
-		model.addAttribute("facets", getFacets());
-		model.addAttribute("searcher", searcher);
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

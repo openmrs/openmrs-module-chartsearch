@@ -89,19 +89,23 @@ function addAllSingleObs(obsJSON)
     single_obsJSON.reverse();
     if (typeof single_obsJSON !== 'undefined')
     {
-        resultText+='<h2>Single observations</h2>';
+        resultText+='';
         for(var i=0;i<single_obsJSON.length;i++){
-            resultText+=addSingleObsToResults(single_obsJSON[i]);
+            resultText+=addSingleObsToResults(single_obsJSON[i], i);
         }
         document.getElementById('obsgroups_results').innerHTML+=resultText;
     }
 }
 
-function addSingleObsToResults(obsJSON)
+function addSingleObsToResults(obsJSON, i)
 {
     var obs_id_html = '';
     if(typeof obsJSON.observation_id !== 'undefined') {
-        obs_id_html = 'id="obs_single_'+obsJSON.observation_id+'"';
+    	if (i == 0) {
+    		obs_id_html = 'id="first_obs_single"';
+    	} else {
+    		obs_id_html = 'id="obs_single_'+obsJSON.observation_id+'"';
+    	}
     }
     var resultText = '';
     resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
@@ -461,7 +465,7 @@ function addAllObsGroups(obsJSON)
     obsgroupJSON.reverse();
     if (typeof obsgroupJSON !== 'undefined')
     {
-        resultText+='<h2>Observation Groups</h2>';
+        resultText+='';
         for(var i=0;i<obsgroupJSON.length;i++){
             resultText+=addObsGroupToResults(obsgroupJSON[i]);
         }

@@ -46,7 +46,7 @@ public class ChartSearchSearcher {
 	
 	private ChartSearchService chartSearchService;
 	
-	private List<Count> facetFieldValueNamesAndCounts;
+	public List<Count> facetFieldValueNamesAndCounts;
 	
 	public ChartSearchService getChartSearchService() {
 		if (Context.isAuthenticated()) {

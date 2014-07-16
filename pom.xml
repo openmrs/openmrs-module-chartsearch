@@ -8,7 +8,7 @@
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Chart Search Module</name>
-	<description>Chart Search Module For The OpenMRS Reference Application Platform</description>
+	<description>Chart Search Module for the OpenMRS Reference Application</description>
 	<url>https://wiki.openmrs.org/display/projects/Chart+Search+for+the+Reference+Application</url>
 
 	<developers>

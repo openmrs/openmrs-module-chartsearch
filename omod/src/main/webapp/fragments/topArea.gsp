@@ -29,10 +29,16 @@
 			return false;
 		});
 		
+		jq('#submit_selected_categories').click(function(event) {
+			submitChartSearchFormWithAjax();
+			return false;
+		});
+		
 		jq('#searchText').keyup(function(event) {
-			//check if empty and after entry of at-least three characters
-			//submitChartSearchFormWithAjax();
-			//return false;
+			delay(function(){
+				submitChartSearchFormWithAjax();
+		    }, 2000 );
+			return false;
 		});
 		
 		function submitChartSearchFormWithAjax() {
@@ -40,18 +46,37 @@
 				type: "POST",
 				 url: "${ ui.actionLink('getResultsFromTheServer') }",
 				data: jq('#chart-search-form-submit').serialize(),
-				//dataType: "json",
-				success: function(data) {
-					jq(".base_results").empty();
-					jq(".detailed_results_container").empty();
-	    	
-					//include searchWithAjax fragment here doesn't help
+				dataType: "json",
+				success: function(results) {
+					jq(".results_table_wrap").fadeOut(500);
+					jq(".obsgroup_view").fadeOut(500);
+					
+					jsonAfterParse = JSON.parse(results);
+					
+					refresh_data();
+					jq(".results_table_wrap").fadeIn(500);
+					jq(".obsgroup_view").fadeIn(500);
+					
+					//click the first result to show its details at the right side
+					jq('#first_obs_single').trigger('click');
+					
+					//clearing and updating facets being shown on the chart search page
+					//jq(".inside_filter_categories").empty();
+					//TODO update facets here
 				},
 				error: function(e) {
 				  alert("Error occurred!!! " + e);
 				}
 			});
 		}
+		
+		var delay = (function(){
+		  var timer = 0;
+		  return function(callback, ms){
+		    clearTimeout (timer);
+		    timer = setTimeout(callback, ms);
+		  };
+		})();
     });
     
 </script>
@@ -184,10 +209,10 @@
 <article id="search-box">
     <section>
         <div class="chart-search-wrapper">
-            <form class="chart-search-form">
+            <form class="chart-search-form" id="chart-search-form-submit">
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
-                        <input type="text" name="patientId" value=${patientId} hidden>
+                        <input type="text" name="patientId" id="patient_id" value=${patientId} hidden>
                         <input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
@@ -201,11 +226,13 @@
 								<div class="filter_categories">
 									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
 									<br /><hr />
-									<% if (facets) { %>
-										<% facets.each { facet -> %>
-											<input class="category_check" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
+									<div class="inside_filter_categories">
+										<% if (facets) { %>
+											<% facets.each { facet -> %>
+												<input class="category_check" id="${facet.name}_category" type="checkbox" name="categories" value="${facet.name}" />${facet.name} (${facet.count})<br />
+											<%}%>
 										<%}%>
-									<%}%>
+									</div>
 									<hr />
 									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" />
 								</div>

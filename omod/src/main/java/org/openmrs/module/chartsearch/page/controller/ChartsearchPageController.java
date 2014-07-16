@@ -114,7 +114,7 @@ public class ChartsearchPageController {
 			this.facets.add(facet);
 		}
 		model.addAttribute("facets", getFacets());
-		
+		model.addAttribute("searcher", searcher);
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

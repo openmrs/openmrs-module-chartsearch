@@ -30,6 +30,7 @@
 
 <div class="results_wrap">
     <div class="base_results">
+    	<div id="failed_privileges"><script type="text/javascript">displayFailedPrivileges(jsonAfterParse);</script></div>
         ${ ui.includeFragment("chartsearch", "base_results") }
     </div>
     <div class="detailed_results">

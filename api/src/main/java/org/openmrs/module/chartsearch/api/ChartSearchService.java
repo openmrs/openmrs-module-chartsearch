@@ -15,6 +15,9 @@ package org.openmrs.module.chartsearch.api;
 
 import java.util.List;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
@@ -158,4 +161,18 @@ public interface ChartSearchService extends OpenmrsService {
 	public void deleteACategoryFilter(CategoryFilter categoryFilter);
 	
 	public CategoryFilter getACategoryFilterByItsUuid(String uuid);
+
+	void addEncountersToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonEncounters, JSONArray arr_of_encounters);
+
+	void addFormsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonForms, JSONArray arr_of_forms);
+
+	void addSingleObsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonObs, JSONArray arr_of_obs);
+
+	void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups);
+
+	void addDatatypesToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_datatypes);
+
+	void addProvidersToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_providers);
+
+	void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations);
 }

@@ -32,6 +32,7 @@ import org.openmrs.Obs;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.util.PrivilegeConstants;
 
@@ -41,6 +42,16 @@ import org.openmrs.util.PrivilegeConstants;
 public class GeneratingJson {
 	
 	final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
+	
+	private static ChartSearchService chartSearchService;
+	
+	public static ChartSearchService getChartSearchService() {
+		if (Context.isAuthenticated()) {
+			chartSearchService = Context.getService(ChartSearchService.class);
+		} else
+			System.out.println("Not Authenticated!!!");
+		return chartSearchService;
+	}
 	
 	public static String generateJson() {
 		
@@ -52,7 +63,7 @@ public class GeneratingJson {
 		JSONArray arr_of_datatypes = new JSONArray();
 		JSONObject failedPrivilegeMessages = new JSONObject();
 		try {
-			addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
+			getChartSearchService().addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noLocations");
@@ -60,7 +71,7 @@ public class GeneratingJson {
 		}
 		
 		try {
-			addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
+			getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noProviders");
@@ -68,7 +79,7 @@ public class GeneratingJson {
 		}
 		
 		try {
-			addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
+			getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noDatatypes");
@@ -76,7 +87,7 @@ public class GeneratingJson {
 		}
 		
 		try {
-			addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
+			getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noObsGroups");
@@ -86,7 +97,7 @@ public class GeneratingJson {
 		JSONObject jsonObs = null;
 		JSONArray arr_of_obs = new JSONArray();
 		try {
-			addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
+			getChartSearchService().addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noSingleObs");
@@ -96,7 +107,7 @@ public class GeneratingJson {
 		JSONObject jsonForms = null;
 		JSONArray arr_of_forms = new JSONArray();
 		try {
-			addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
+			getChartSearchService().addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
 		}
 		catch (APIAuthenticationException e) {
 			
@@ -107,7 +118,7 @@ public class GeneratingJson {
 		JSONObject jsonEncounters = null;
 		JSONArray arr_of_encounters = new JSONArray();
 		try {
-			addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
+			getChartSearchService().addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
 		}
 		catch (APIAuthenticationException e) {
 			System.out.println("chartsearch.privileges.failedPrivileges.noEncounters");
@@ -135,104 +146,7 @@ public class GeneratingJson {
 		return jsonToReturn.toString();
 	}
 	
-	@Authorized(value = { PrivilegeConstants.VIEW_ENCOUNTERS })
-	private static void addEncountersToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonEncounters,
-	                                                JSONArray arr_of_encounters) {
-		for (Encounter encounter : generateEncountersFromSearchResults()) {
-			if (encounter != null) {
-				jsonEncounters = createJsonEncounter(encounter);
-			}
-			arr_of_encounters.add(jsonEncounters);
-		}
-		jsonToReturn.put("encounters", arr_of_encounters);
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_FORMS })
-	private static void addFormsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonForms, JSONArray arr_of_forms) {
-		for (Form form : generateFormsFromSearchResults()) {
-			if (form != null) {
-				jsonForms = createJsonForm(form);
-			}
-			arr_of_forms.add(jsonForms);
-		}
-		jsonToReturn.put("forms", arr_of_forms);
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
-	private static void addSingleObsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonObs, JSONArray arr_of_obs) {
-		for (Obs obsSingle : generateObsSinglesFromSearchResults()) {
-			if (obsSingle != null) {
-				jsonObs = createJsonObservation(obsSingle);
-			}
-			arr_of_obs.add(jsonObs);
-		}
-		jsonToReturn.put("obs_singles", arr_of_obs);
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
-	private static void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups) {
-		Set<Set<Obs>> setOfObsGroups = generateObsGroupFromSearchResults();
-		for (Set<Obs> obsGrpSet : setOfObsGroups) { //for each obs group we go through it's obs
-			JSONArray arr_of_obs = new JSONArray(); //array of all the obs in a given obs group
-			JSONObject jsonObs = null;
-			JSONObject jsonGrp = new JSONObject();
-			for (Obs obs : obsGrpSet) { //for each obs in a group we create the single obs and add it to the obs array
-				if (obs != null) {
-					jsonObs = createJsonObservation(obs);
-				}
-				arr_of_obs.add(jsonObs);
-			}
-			int obsGrpId = -1; //init the obs grp id to -1, if there is a grp in
-			if (obsGrpSet.iterator().hasNext()) { //check inside of group an individual obs, if available, what its grp id
-				Obs obsFromObsGrp = obsGrpSet.iterator().next();
-				Obs obsGrp = obsFromObsGrp.getObsGroup();
-				obsGrpId = obsGrp.getObsId();
-				
-				jsonGrp.put("group_Id", obsGrpId);
-				jsonGrp.put("group_name", obsGrp.getConcept().getDisplayString());
-				
-				Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
-				SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				/*String obsDateStr = formatDateJava.format(obsDate);*/
-				String obsDateStr = obsDate.getTime() + "";
-				
-				jsonGrp.put("last_taken_date", obsDateStr);
-				jsonGrp.put("observations", arr_of_obs);
-				arr_of_groups.add(jsonGrp);
-			}
-		}
-		
-		jsonToReturn.put("obs_groups", arr_of_groups); //add the obs groups array to the json
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_CONCEPT_DATATYPES })
-	private static void addDatatypesToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_datatypes) {
-		for (String datatype : generateDatatypesFromResults()) {
-			JSONObject jsonDatatype = generateDatatypeJson(datatype);
-			arr_of_datatypes.add(jsonDatatype);
-		}
-		jsonToReturn.put("datatypes", arr_of_datatypes);
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_PROVIDERS })
-	private static void addProvidersToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_providers) {
-		for (String provider : generateProvidersFromResults()) {
-			JSONObject jsonProvider = generateProviderJson(provider);
-			arr_of_providers.add(jsonProvider);
-		}
-		jsonToReturn.put("providers", arr_of_providers);
-	}
-	
-	@Authorized(value = { PrivilegeConstants.VIEW_LOCATIONS })
-	private static void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations) {
-		for (String location : generateLocationsFromResults()) {
-			JSONObject jsonLoc = generateLocationJson(location);
-			arr_of_locations.add(jsonLoc);
-		}
-		jsonToReturn.put("locations", arr_of_locations);
-	}
-	
-	private static JSONObject createJsonObservation(Obs obs) {
+	public static JSONObject createJsonObservation(Obs obs) {
 		JSONObject jsonObs = new JSONObject();
 		jsonObs.put("observation_id", obs.getObsId());
 		jsonObs.put("concept_name", obs.getConcept().getDisplayString());
@@ -284,7 +198,7 @@ public class GeneratingJson {
 		return jsonObs;
 	}
 	
-	private static JSONObject createJsonForm(Form form) {
+	public static JSONObject createJsonForm(Form form) {
 		JSONObject jsonForm = new JSONObject();
 		jsonForm.put("form_id", form.getFormId());
 		
@@ -309,7 +223,7 @@ public class GeneratingJson {
 		return jsonForm;
 	}
 	
-	private static JSONObject createJsonEncounter(Encounter encounter) {
+	public static JSONObject createJsonEncounter(Encounter encounter) {
 		JSONObject jsonEncounter = new JSONObject();
 		jsonEncounter.put("encounter_id", encounter.getEncounterId());
 		

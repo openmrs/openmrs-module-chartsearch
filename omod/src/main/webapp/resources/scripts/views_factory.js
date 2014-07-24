@@ -903,6 +903,7 @@ function refresh_data() {
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
     displayCategories(jsonAfterParse);
+    displayFailedPrivileges(jsonAfterParse);
 }
 
 /*
@@ -934,4 +935,14 @@ function displayCategories(jsonAfterParse) {
 	for (index in checkedCategories) {
 		jq(checkedCategories[index]).prop('checked', true);
 	}
+}
+
+/*
+ * In-case the has doesn't have privileges to view some results, they are not returned and a message is instead displayed
+ */
+function displayFailedPrivileges(jsonAfterParse) {
+	document.getElementById('failed_privileges').innerHTML == "";
+    for (var i=0; i<jsonAfterParse.failedPrivileges.length; i++) {
+    	document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message + "<br />";
+    }
 }

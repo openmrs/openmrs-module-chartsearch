@@ -46,10 +46,12 @@ public class GeneratingJson {
 	private static ChartSearchService chartSearchService;
 	
 	public static ChartSearchService getChartSearchService() {
-		if (Context.isAuthenticated()) {
+		try {
 			chartSearchService = Context.getService(ChartSearchService.class);
-		} else
+		}
+		catch (APIAuthenticationException e) {
 			System.out.println("Not Authenticated!!!");
+		}
 		return chartSearchService;
 	}
 	

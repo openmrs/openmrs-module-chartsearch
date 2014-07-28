@@ -13,17 +13,19 @@
  */
 package org.openmrs.module.chartsearch.web.dwr;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
+import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroups;
-
-import java.util.List;
 
 public class DWRCommands {
 
@@ -63,6 +65,17 @@ public class DWRCommands {
             return groupName;
         }
         return "-1";
+    }
+    
+    public String indexAllPatientData(Integer numberOfResults) {
+    	String indexingInfo = "";
+    	try {
+    		indexingInfo += ChartSearchCustomIndexer.indexAllPatientData(numberOfResults, indexingInfo);
+        }
+        catch (SQLException e) {
+	        log.error("Error generated", e);
+        }
+    	return indexingInfo;
     }
 
     private <T> T getComponent(Class<T> clazz) {

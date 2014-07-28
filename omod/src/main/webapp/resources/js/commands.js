@@ -5,9 +5,10 @@ $j(document).ready(function() {
 	$j('#clearBtn').click(clearIndex);
 	$j('#startDaemonBtn').click(changeDaemonsCount);
     $j('#deleteSynGrpBtn').click(deleteSynonymGroup);
+    $j('#indexPatientData').click(indexAllPatientData);
 });
 
-function getPatientInfo() {
+function getPatientInfo() {alert("Hi :)");
 	DWRCommands.getPatientInfo($j("#patientId").val(), function(patientInfo) {
 		var text;
 		if (!patientInfo)
@@ -83,9 +84,12 @@ function changeDaemonsCount() {
 		}
 		$j("#daemonsManagementResult").text(text);
 	});
+}
 
-
-
-
-
+function indexAllPatientData() {alert("Hi :)");
+	var numberOfDocs = document.getElementById('numberOfResults').value;
+	//var indexingInfo = DWRCommands.indexAllPatientData(numberOfDocs);
+	//TODO display indexing logs/message or updates at index_patientData_info div
+	document.getElementById('index_patientData_info').innerHTML = DWRCommands.indexAllPatientData(numberOfDocs);
+	document.getElementById('index_patientData_info').innerHTML = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
 }

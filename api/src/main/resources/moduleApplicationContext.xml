@@ -46,7 +46,12 @@
 		</property>
 		<property name="target">
 			<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.ChartSearchServiceImpl">
-
+				
+				 <property name="dao">
+                    <bean class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateChartSearchDAO">
+                        <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+                    </bean>
+                </property>
 
                 <property name="synonymDAO">
                     <bean

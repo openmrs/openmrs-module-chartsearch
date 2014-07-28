@@ -24,6 +24,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Obs;
@@ -33,6 +34,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
+import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
@@ -53,6 +55,8 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     private SynonymGroupDAO synonymGroupDAO;
     
     private CategoryFilterDAO categoryFilterDAO;
+    
+    private ChartSearchDAO dao;
 
     /**
      * Getters and Setters
@@ -81,7 +85,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     public void setCategoryFilterDAO(CategoryFilterDAO categoryFilterDAO) {
     	this.categoryFilterDAO = categoryFilterDAO;
     }
-    
+
 	@Override
     @Transactional(readOnly = true)
     public SynonymGroup getSynonymGroupById(Integer id) {
@@ -172,6 +176,11 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Transactional(readOnly = true)
     public List<CategoryFilter> getAllCategoryFilters() {
 	    return getCategoryFilterDAO().getAllCategoryFilters();
+    }
+
+	
+    public void setDao(ChartSearchDAO dao) {
+    	this.dao = dao;
     }
 
 	@Override
@@ -301,4 +310,9 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		}
 		jsonToReturn.put("locations", arr_of_locations);
 	}
+
+	@Override
+    public String  indexAllPatientData(Integer numberOfResults, SolrServer solrServer, String indexingInfo) {
+	    return dao.indexAllPatientData(numberOfResults, solrServer, indexingInfo);
+    }
 }

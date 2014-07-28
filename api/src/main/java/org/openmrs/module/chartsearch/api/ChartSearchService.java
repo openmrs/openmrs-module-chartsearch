@@ -18,6 +18,7 @@ import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
@@ -175,4 +176,6 @@ public interface ChartSearchService extends OpenmrsService {
 	void addProvidersToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_providers);
 
 	void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations);
+	
+	String indexAllPatientData(Integer numberOfResults, SolrServer solrServer, String indexingInfo);
 }

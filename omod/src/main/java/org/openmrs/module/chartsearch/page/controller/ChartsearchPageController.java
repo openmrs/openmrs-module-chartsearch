@@ -15,12 +15,10 @@ package org.openmrs.module.chartsearch.page.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
@@ -31,7 +29,6 @@ import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
-import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.annotation.BindParams;
@@ -46,15 +43,6 @@ public class ChartsearchPageController {
 	private static final Logger log = LoggerFactory.getLogger(ChartsearchPageController.class);
 	
 	private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
-	
-	/**
-	 * Stores facets returned after running the query
-	 */
-	private List<Count> facets = new ArrayList<Count>();
-	
-	public List<Count> getFacets() {
-		return facets;
-	}
 	
 	public void controller(PageModel model, @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
 	                       @RequestParam("patientId") Patient patient,
@@ -100,7 +88,6 @@ public class ChartsearchPageController {
 			}
 			
 		}
-		
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
 	}

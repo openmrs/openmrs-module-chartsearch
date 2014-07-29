@@ -71,7 +71,7 @@
 <div class="boxHeader">Index Patient Data without specifying a patient</div>
 <div class="box">
 	<input type="text" id="numberOfResults" placeholder="Number of Documents" /><br />
-	<input type="button" id="indexPatientData" value="Index Patient Data" /><br />
+	<input type="button" id="indexPatientData" value="Index Patient Data" onclick="indexAllPatientData()"/><br />
 	<div id="index_patientData_info"></div>
 </div>
 <%@ include file="/WEB-INF/template/footer.jsp"%>

@@ -5,7 +5,6 @@ $j(document).ready(function() {
 	$j('#clearBtn').click(clearIndex);
 	$j('#startDaemonBtn').click(changeDaemonsCount);
     $j('#deleteSynGrpBtn').click(deleteSynonymGroup);
-    $j('#indexPatientData').click(indexAllPatientData);
 });
 
 function getPatientInfo() {
@@ -86,7 +85,7 @@ function changeDaemonsCount() {
 	});
 }
 
-function indexAllPatientData() {
+function indexAllPatientData() {alert("finally here!!!");
 	var numberOfDocs = $j("#numberOfResults").val();alert(numberOfDocs);
 	DWRCommands.indexAllPatientData(numberOfDocs, function(patientInfo) {	
 		var text;
@@ -94,7 +93,7 @@ function indexAllPatientData() {
 			text = "Seems like the indexing process failed!!! Please try again or consult the administrator for help.";
 		else {
 			$j("#index_patientData_info").text(patientInfo);
-			text = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
+			text = patientInfo + "You have finished to index " + numberOfDocs + " documents of patient data";
 		}
 		$j("#index_patientData_info").text(text);
 	});

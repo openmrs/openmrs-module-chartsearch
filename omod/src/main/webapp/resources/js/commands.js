@@ -8,7 +8,7 @@ $j(document).ready(function() {
     $j('#indexPatientData').click(indexAllPatientData);
 });
 
-function getPatientInfo() {alert("Hi :)");
+function getPatientInfo() {
 	DWRCommands.getPatientInfo($j("#patientId").val(), function(patientInfo) {
 		var text;
 		if (!patientInfo)
@@ -86,10 +86,16 @@ function changeDaemonsCount() {
 	});
 }
 
-function indexAllPatientData() {alert("Hi :)");
-	var numberOfDocs = document.getElementById('numberOfResults').value;
-	//var indexingInfo = DWRCommands.indexAllPatientData(numberOfDocs);
-	//TODO display indexing logs/message or updates at index_patientData_info div
-	document.getElementById('index_patientData_info').innerHTML = DWRCommands.indexAllPatientData(numberOfDocs);
-	document.getElementById('index_patientData_info').innerHTML = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
+function indexAllPatientData() {
+	var numberOfDocs = $j("#numberOfResults").val();alert(numberOfDocs);
+	DWRCommands.indexAllPatientData(numberOfDocs, function(patientInfo) {	
+		var text;
+		if (!patientInfo)
+			text = "Seems like the indexing process failed!!! Please try again or consult the administrator for help.";
+		else {
+			$j("#index_patientData_info").text(patientInfo);
+			text = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
+		}
+		$j("#index_patientData_info").text(text);
+	});
 }

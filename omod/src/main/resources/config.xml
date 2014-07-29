@@ -8,7 +8,7 @@
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}
 	</package>
-	<author>Zhaslan Doschanov</author>
+	<author>k-joseph</author>
 	<description>
 		${project.parent.description}
 	</description>
@@ -50,7 +50,7 @@
 				match="${project.parent.groupId}.${project.parent.artifactId}.server.StatisticsInfo" />
 			<create creator="new" javascript="DWRChartSearchService">
 				<param name="class"
-					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.DWRChartSearchService" />
+					value="${project.parent.groupId}.${project.parent.artifactId}.web.dwr.p" />
 				<include method="findObsAndCount" />
 				<include method="getDetails" />
 			</create>

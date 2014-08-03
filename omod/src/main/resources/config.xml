@@ -62,6 +62,7 @@
 				<include method="clearIndex" />
 				<include method="changeDaemonsCount" />
 				<include method="indexAllPatientData" />
+				<include method="getIndexingProgressInfo" />
 			</create>
 		</allow>
 	</dwr>

@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -56,7 +55,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	 * SQL processing to get patient data to be indexed
 	 */
 	@SuppressWarnings({ "deprecation", "unchecked" })
-	//@Override
+	@Override
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		PreparedStatement preparedStatement = null;
 		SolrInputDocument doc = new SolrInputDocument();
@@ -67,30 +66,22 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		        + "WHERE o.voided=0 AND cn1.voided=0 LIMIT " + numberOfResults;
 		
 		try {
-			//Map<String,String> info = (Map<String,String>)showProgressToClass.getMethod("getIndexingProgressInfo", null).invoke(showProgressToClass);
-			Map<String, String> info = (Map<String, String>) showProgressToClass.getMethod("getIndexingProgressInfo")
-			        .invoke(showProgressToClass.newInstance());
+			String info = (String) showProgressToClass.getMethod("getIndexingProgressInfo").invoke(
+			    showProgressToClass.newInstance());
 			
-			info.put(
-			    "progressInfo",
-			    "We are now going to fetch patient data from the database, this can take some time depending on the number of documents you have entered!!!");
+			info = "We are now going to fetch patient data from the database, this can take some time depending on the number of documents you have entered!!!";
 			setIndexingProgressInfo(showProgressToClass, info);
 			
 			log.info("SQL Query for indexing all data is: " + sql);
 			
 			preparedStatement = sessionFactory.getCurrentSession().connection().prepareStatement(sql);
 			ResultSet rs = preparedStatement.executeQuery();
-			info.put("progressInfo",
-			    "We have now finished to fetch all the patient data from th database and beginning the indexing.");
+			info = "We have now finished to fetch all the patient data from th database and beginning the indexing. <br />This can take more time depending on the number of documents entered<br /><b>Indexing...</b>";
 			setIndexingProgressInfo(showProgressToClass, info);
 			
 			while (rs.next()) {
 				setResultsFieldValues(rs);
 				addResultsFieldValuesToADocument(doc);
-				info.put(
-				    "progressInfo",
-				    "Finished adding id, obs_id, person_id, obs_datetime, obs_group_id, concept_name,"
-				            + " coded, value_boolean, value_datetime, value_numeric, value_text, and concept_class_name to the document to be indexed.");
 				setIndexingProgressInfo(showProgressToClass, info);
 				
 				UpdateResponse resp = solrServer.add(doc);
@@ -98,22 +89,10 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 				resp = solrServer.commit(true, true);
 				resp = solrServer.optimize(true, true);
 				
-				info.put("progressInfo", "We have now finished indexing all the data");
 				setIndexingProgressInfo(showProgressToClass, info);
 				doc.clear();
 			}
-		}
-		catch (NoSuchMethodException x) {
-			x.printStackTrace();
-		}
-		catch (IllegalArgumentException e) {
-			System.out.println("*****IllegalArgumentException*****" + e);
-		}
-		catch (IllegalAccessException x) {
-			x.printStackTrace();
-		}
-		catch (InvocationTargetException x) {
-			x.printStackTrace();
+			info = "We have now finished indexing all the data";
 		}
 		catch (Exception e) {
 			throw new DAOException("Error getting mrn log", e);
@@ -131,25 +110,21 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void setIndexingProgressInfo(Class showProgressToClass, Map<String, String> info) throws IllegalAccessException,
+	private void setIndexingProgressInfo(Class showProgressToClass, String info) throws IllegalAccessException,
 	    InvocationTargetException, NoSuchMethodException {
-		//showProgressToClass.getMethod("setIndexingProgressInfo", List.class).invoke(info);
 		try {
-	        showProgressToClass.getMethod("setIndexingProgressInfo", new Class[] { Map.class })
-	                .invoke(showProgressToClass.newInstance(), info);
-        }
-        catch (IllegalArgumentException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
-        catch (SecurityException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
-        catch (InstantiationException e) {
-	        // TODO Auto-generated catch block
-	        log.error("Error generated", e);
-        }
+			showProgressToClass.getMethod("setIndexingProgressInfo", new Class[] { String.class }).invoke(
+			    showProgressToClass.newInstance(), info);
+		}
+		catch (IllegalArgumentException e) {
+			log.error("Error generated", e);
+		}
+		catch (SecurityException e) {
+			log.error("Error generated", e);
+		}
+		catch (InstantiationException e) {
+			log.error("Error generated", e);
+		}
 	}
 	
 	private static void setResultsFieldValues(ResultSet rs) throws SQLException {

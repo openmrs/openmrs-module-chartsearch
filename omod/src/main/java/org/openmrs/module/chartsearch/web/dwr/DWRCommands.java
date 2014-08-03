@@ -14,9 +14,7 @@
 package org.openmrs.module.chartsearch.web.dwr;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,28 +26,26 @@ import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroups;
-import org.openmrs.module.chartsearch.web.controller.CommandsFormController;
-import org.springframework.ui.ModelMap;
 
 public class DWRCommands {
 	
 	protected static final Log log = LogFactory.getLog(DWRCommands.class);
 	
-	private static Map<String,String> indexingProgressInfo = new HashMap<String,String>();
+	private static String indexingProgressInfo = "";
 	
 	private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
 	
 	/**
 	 * @return the indexingProgressInfo
 	 */
-	public Map<String,String> getIndexingProgressInfo() {
+	public String getIndexingProgressInfo() {
 		return indexingProgressInfo;
 	}
 	
 	/**
 	 * @param indexingProgressInfo the indexing progress Information to set
 	 */
-	public void setIndexingProgressInfo(Map<String,String> progressInfo) {
+	public void setIndexingProgressInfo(String progressInfo) {
 		DWRCommands.indexingProgressInfo = progressInfo;
 	}
 	
@@ -87,22 +83,14 @@ public class DWRCommands {
 		return "-1";
 	}
 	
-	public String indexAllPatientData(Integer numberOfResults) {
+	public void indexAllPatientData(Integer numberOfResults) {
 		try {
 			ChartSearchCustomIndexer.indexAllPatientData(numberOfResults, DWRCommands.class);
+			setIndexingProgressInfo("finished");
 		}
 		catch (SQLException e) {
 			log.error("Error generated", e);
 		}
-		ModelMap map = CommandsFormController.MAP;
-		map.put("progressInfo", getIndexingProgressInfo().toString());
-		map.put("dev", "k-joseph");
-		System.out.println(map.toString());
-		return getIndexingProgress();
-	}
-	
-	public String getIndexingProgress() {
-		return getIndexingProgressInfo().toString();
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

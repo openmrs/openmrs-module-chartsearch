@@ -37,7 +37,6 @@ public class  CommandsFormController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void showForm(ModelMap map) {
-		CommandsFormController.MAP = map;
 		Map<IndexClearStrategies,String> clearStrategy = new LinkedHashMap<IndexClearStrategies,String>();
 		clearStrategy.put(IndexClearStrategies.IDS, "By patient ids");
 		clearStrategy.put(IndexClearStrategies.BASIC, "By max patients in index");

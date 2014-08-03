@@ -70,36 +70,31 @@
 </div>
 <div class="boxHeader">Index Patient Data without specifying a patient</div>
 <div class="box">
-	<input type="text" id="numberOfResults" placeholder="Number of Documents" /><br />
-	<input type="button" id="indexPatientData" value="Index Patient Data" onclick="indexAllPatientData()"/><br />
+	<input type="text" id="numberOfResults" placeholder="Number of Documents" size="22" /><br />
+	<input type="button" id="indexPatientData" value="Index Patient Data" onclick="indexAllPatientData();" /><br />
 	<div id="index_patientData_info"></div>
 </div>
 
 <script>
-$(document).ready(function(){
-	 document.getElementById('indexPatientData').onclick = function() {
-	 	document.getElementById("index_patientData_info").innerHTML = "Starting...";
-	 	window.setInterval(function(){getIndexingProgress()}, 2000);
-	}​;
+
+function indexAllPatientData() {
+	document.getElementById("index_patientData_info").innerHTML = "Starting...<br />";
+	window.setInterval(function(){getIndexingProgress();}, 2000);
+	var numberOfDocs = $j("#numberOfResults").val();
+	DWRCommands.indexAllPatientData(numberOfDocs, function() {
+		document.getElementById("index_patientData_info").innerHTML = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
+	});
 }
 
-	function getIndexingProgress() {
-		DWRCommands.getIndexingProgress(function(data) {	    
-			if (data!=null && data!='') {document.getElementById("index_patientData_info").innerHTML += data + "<br />";}else {document.getElementById("index_patientData_info").innerHTML += "No progress any more";}
-		});
-	}
-
-	function indexAllPatientData() {
-		var numberOfDocs = $j("#numberOfResults").val();
-		DWRCommands.indexAllPatientData(numberOfDocs, function(data) {
-			//trying ways of displaying progess messages 
-			document.getElementById("index_patientData_info").innerHTML += data + "<br />";
-			document.getElementById("index_patientData_info").innerHTML += ${progressInfo} "<br />";
-			document.getElementById("index_patientData_info").innerHTML += ${dev} "<br />";
-			document.getElementById("index_patientData_info").innerHTML += ${clearStrategies};
-			document.getElementById("index_patientData_info").innerHTML += "You have finished to index " + numberOfDocs + " documents of patient data";
-		});
-	}
+function getIndexingProgress() {
+	DWRCommands.getIndexingProgressInfo(function(data) {
+		if (data == "finished") {
+			jQuery( "#indexPatientData").unbind( "click");
+		} else {
+			document.getElementById("index_patientData_info").innerHTML = data + "<br />";
+		}
+	});
+}
 </script>
  
 <%@ include file="/WEB-INF/template/footer.jsp"%>

@@ -21,5 +21,6 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
  */
 public interface ChartSearchDAO {
 	
-	public String indexAllPatientData(Integer numberOfResults, SolrServer solrServer, String indexingInfo);
+	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
+	                                Class showProgressToClass);
 }

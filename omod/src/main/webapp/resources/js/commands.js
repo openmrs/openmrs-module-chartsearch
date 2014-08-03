@@ -84,17 +84,3 @@ function changeDaemonsCount() {
 		$j("#daemonsManagementResult").text(text);
 	});
 }
-
-function indexAllPatientData() {alert("finally here!!!");
-	var numberOfDocs = $j("#numberOfResults").val();alert(numberOfDocs);
-	DWRCommands.indexAllPatientData(numberOfDocs, function(patientInfo) {	
-		var text;
-		if (!patientInfo)
-			text = "Seems like the indexing process failed!!! Please try again or consult the administrator for help.";
-		else {
-			$j("#index_patientData_info").text(patientInfo);
-			text = patientInfo + "You have finished to index " + numberOfDocs + " documents of patient data";
-		}
-		$j("#index_patientData_info").text(text);
-	});
-}

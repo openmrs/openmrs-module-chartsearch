@@ -31,10 +31,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/module/chartsearch/commands")
 public class  CommandsFormController {
 	
-	protected final Log log = LogFactory.getLog(getClass());		
+	protected final Log log = LogFactory.getLog(getClass());
+	
+	public static ModelMap MAP;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void showForm(ModelMap map) {
+		CommandsFormController.MAP = map;
 		Map<IndexClearStrategies,String> clearStrategy = new LinkedHashMap<IndexClearStrategies,String>();
 		clearStrategy.put(IndexClearStrategies.IDS, "By patient ids");
 		clearStrategy.put(IndexClearStrategies.BASIC, "By max patients in index");

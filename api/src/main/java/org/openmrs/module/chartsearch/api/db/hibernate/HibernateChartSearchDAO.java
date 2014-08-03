@@ -13,9 +13,11 @@
  */
 package org.openmrs.module.chartsearch.api.db.hibernate;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,13 +55,11 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	/**
 	 * SQL processing to get patient data to be indexed
 	 */
-	@SuppressWarnings("deprecation")
-	@Override
-	public String indexAllPatientData(Integer numberOfResults, SolrServer solrServer, String indexingInfo) {
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	//@Override
+	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		PreparedStatement preparedStatement = null;
 		SolrInputDocument doc = new SolrInputDocument();
-		
-		indexingInfo += "We are now going to fetch patient data from the database, this can take some time depending on the number of documents you have set!!!<br />";
 		String sql = " SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name, cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name FROM openmrs.obs o "
 		        + "inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1 on cn1.concept_id = o.concept_id "
 		        + "LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded  "
@@ -67,24 +67,53 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		        + "WHERE o.voided=0 AND cn1.voided=0 LIMIT " + numberOfResults;
 		
 		try {
-			log.debug("SQL Query for indexing all data is: " + sql);
+			//Map<String,String> info = (Map<String,String>)showProgressToClass.getMethod("getIndexingProgressInfo", null).invoke(showProgressToClass);
+			Map<String, String> info = (Map<String, String>) showProgressToClass.getMethod("getIndexingProgressInfo")
+			        .invoke(showProgressToClass.newInstance());
+			
+			info.put(
+			    "progressInfo",
+			    "We are now going to fetch patient data from the database, this can take some time depending on the number of documents you have entered!!!");
+			setIndexingProgressInfo(showProgressToClass, info);
+			
+			log.info("SQL Query for indexing all data is: " + sql);
 			
 			preparedStatement = sessionFactory.getCurrentSession().connection().prepareStatement(sql);
 			ResultSet rs = preparedStatement.executeQuery();
-			indexingInfo += "We have now finished to fetch all the patient data from th database and beginning the indexing.<br />";
+			info.put("progressInfo",
+			    "We have now finished to fetch all the patient data from th database and beginning the indexing.");
+			setIndexingProgressInfo(showProgressToClass, info);
 			
 			while (rs.next()) {
 				setResultsFieldValues(rs);
-				addResultsFieldValuesToADocument(doc, indexingInfo);
+				addResultsFieldValuesToADocument(doc);
+				info.put(
+				    "progressInfo",
+				    "Finished adding id, obs_id, person_id, obs_datetime, obs_group_id, concept_name,"
+				            + " coded, value_boolean, value_datetime, value_numeric, value_text, and concept_class_name to the document to be indexed.");
+				setIndexingProgressInfo(showProgressToClass, info);
 				
 				UpdateResponse resp = solrServer.add(doc);
 				
 				resp = solrServer.commit(true, true);
 				resp = solrServer.optimize(true, true);
 				
-				indexingInfo += "We have now finished indexing all the data :)<br />";
+				info.put("progressInfo", "We have now finished indexing all the data");
+				setIndexingProgressInfo(showProgressToClass, info);
 				doc.clear();
 			}
+		}
+		catch (NoSuchMethodException x) {
+			x.printStackTrace();
+		}
+		catch (IllegalArgumentException e) {
+			System.out.println("*****IllegalArgumentException*****" + e);
+		}
+		catch (IllegalAccessException x) {
+			x.printStackTrace();
+		}
+		catch (InvocationTargetException x) {
+			x.printStackTrace();
 		}
 		catch (Exception e) {
 			throw new DAOException("Error getting mrn log", e);
@@ -99,7 +128,28 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 				}
 			}
 		}
-		return indexingInfo;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void setIndexingProgressInfo(Class showProgressToClass, Map<String, String> info) throws IllegalAccessException,
+	    InvocationTargetException, NoSuchMethodException {
+		//showProgressToClass.getMethod("setIndexingProgressInfo", List.class).invoke(info);
+		try {
+	        showProgressToClass.getMethod("setIndexingProgressInfo", new Class[] { Map.class })
+	                .invoke(showProgressToClass.newInstance(), info);
+        }
+        catch (IllegalArgumentException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
+        catch (SecurityException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
+        catch (InstantiationException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
 	}
 	
 	private static void setResultsFieldValues(ResultSet rs) throws SQLException {
@@ -117,7 +167,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		ChartSearchCustomIndexer.setConceptClassName(rs.getString("concept_class_name"));
 	}
 	
-	private static void addResultsFieldValuesToADocument(SolrInputDocument doc, String indexingInfo) {
+	private static void addResultsFieldValuesToADocument(SolrInputDocument doc) {
 		doc.addField("id", ChartSearchCustomIndexer.getId());
 		doc.addField("obs_id", ChartSearchCustomIndexer.getObsId());
 		doc.addField("person_id", ChartSearchCustomIndexer.getPersonId());
@@ -130,7 +180,6 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		doc.addField("value_numeric", ChartSearchCustomIndexer.getValueNumeric());
 		doc.addField("value_text", ChartSearchCustomIndexer.getValueText());
 		doc.addField("concept_class_name", ChartSearchCustomIndexer.getConceptClassName());
-		indexingInfo += "Finished adding id, obs_id, person_id, obs_datetime, obs_group_id, concept_name," +
-				" coded, value_boolean, value_datetime, value_numeric, value_text, and concept_class_name to the document to be indexed.<br />";
 	}
+	
 }

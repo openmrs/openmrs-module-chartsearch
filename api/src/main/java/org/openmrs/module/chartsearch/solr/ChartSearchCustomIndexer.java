@@ -286,16 +286,15 @@ public class ChartSearchCustomIndexer {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static String indexAllPatientData(Integer numberOfResults, String indexingInfo) throws SQLException {
+	public static void indexAllPatientData(Integer numberOfResults, Class showProgressToClass)
+	    throws SQLException {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		Collection docs = new ArrayList();
 		
 		if (numberOfResults == null || !(numberOfResults instanceof Integer)) {
 			numberOfResults = 400;
 		}
-		indexingInfo += "Now in Custom indexer before getChartSearchService().indexAllPatientData(numberOfResults, solrServer, indexingInfo)<br />";
-		indexingInfo += getChartSearchService().indexAllPatientData(numberOfResults, solrServer, indexingInfo);
-		indexingInfo += "Now In custom indexer after getChartSearchService().indexAllPatientData(numberOfResults, solrServer, indexingInfo)<br />";
+		getChartSearchService().indexAllPatientData(numberOfResults, solrServer, showProgressToClass);
 		try {
 			solrServer.commit();
 		}
@@ -305,7 +304,6 @@ public class ChartSearchCustomIndexer {
 		catch (IOException e) {
 			log.error("Error generated", e);
 		}
-		return indexingInfo;
 	}
 	
 }

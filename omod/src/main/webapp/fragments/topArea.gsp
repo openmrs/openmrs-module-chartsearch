@@ -84,7 +84,7 @@
 
 <style type="text/css">
     .chart-search-input {
-        background: #3f3d74;
+        background: #00463f;
         text-align: left;
         color: white;
         padding: 20px 30px;

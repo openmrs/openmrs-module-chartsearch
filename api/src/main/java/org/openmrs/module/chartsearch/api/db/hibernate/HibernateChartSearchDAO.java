@@ -24,7 +24,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.hibernate.SessionFactory;
-import org.openmrs.api.db.DAOException;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
@@ -69,14 +69,14 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 			String info = (String) showProgressToClass.getMethod("getIndexingProgressInfo").invoke(
 			    showProgressToClass.newInstance());
 			
-			info = "We are now going to fetch patient data from the database, this can take some time depending on the number of documents you have entered!!!";
+			info = Context.getMessageSourceService().getMessage("chartsearch.indexing.patientData.fetchingData");
 			setIndexingProgressInfo(showProgressToClass, info);
 			
 			log.info("SQL Query for indexing all data is: " + sql);
 			
 			preparedStatement = sessionFactory.getCurrentSession().connection().prepareStatement(sql);
 			ResultSet rs = preparedStatement.executeQuery();
-			info = "We have now finished to fetch all the patient data from th database and beginning the indexing. <br />This can take more time depending on the number of documents entered<br /><b>Indexing...</b>";
+			info = Context.getMessageSourceService().getMessage("chartsearch.indexing.patientData.finishedFetchingData");
 			setIndexingProgressInfo(showProgressToClass, info);
 			
 			while (rs.next()) {
@@ -92,10 +92,10 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 				setIndexingProgressInfo(showProgressToClass, info);
 				doc.clear();
 			}
-			info = "We have now finished indexing all the data";
+			info = Context.getMessageSourceService().getMessage("chartsearch.indexing.patientData.finishedIndexingData");
 		}
 		catch (Exception e) {
-			throw new DAOException("Error getting mrn log", e);
+			System.out.println("Error getting mrn log" + e);
 		}
 		finally {
 			if (preparedStatement != null) {

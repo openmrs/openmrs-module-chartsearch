@@ -10,7 +10,7 @@
 
 <%@ include file="template/localHeader.jsp"%>
 
-<h2>
+<h2 style="text-align: center;">
 	<spring:message code="chartsearch.manage.commands.title" />
 </h2>
 
@@ -68,7 +68,7 @@
 	</table>	
 	<span id="daemonsManagementResult"></span>
 </div>
-<div class="boxHeader">Index Patient Data without specifying a patient</div>
+<div class="boxHeader"><spring:message code="chartsearch.indexing.patientData.ui.index" /></div>
 <div class="box">
 	<input type="text" id="numberOfResults" placeholder="Number of Documents" size="22" /><br />
 	<input type="button" id="indexPatientData" value="Index Patient Data" onclick="indexAllPatientData();" /><br />
@@ -78,11 +78,11 @@
 <script>
 
 function indexAllPatientData() {
-	document.getElementById("index_patientData_info").innerHTML = "Starting...<br />";
+	document.getElementById("index_patientData_info").innerHTML = '<spring:message code="chartsearch.indexing.patientData.ui.starting" /> <br />';
 	window.setInterval(function(){getIndexingProgress();}, 2000);
 	var numberOfDocs = $j("#numberOfResults").val();
 	DWRCommands.indexAllPatientData(numberOfDocs, function() {
-		document.getElementById("index_patientData_info").innerHTML = "<b>You have finished to index " + numberOfDocs + " documents of patient data</b>";
+		document.getElementById("index_patientData_info").innerHTML = '<b>' + numberOfDocs + ' <spring:message code="chartsearch.indexing.patientData.ui.finishedIndexingData" />' + '</b>';
 	});
 }
 
@@ -91,7 +91,7 @@ function getIndexingProgress() {
 		if (data == "finished") {
 			jQuery( "#indexPatientData").unbind( "click");
 		} else {
-			document.getElementById("index_patientData_info").innerHTML = data + "<br />";
+			document.getElementById("index_patientData_info").innerHTML = '<spring:message code="' + data + '" /> <br />';
 		}
 	});
 }

@@ -8,7 +8,7 @@
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}
 	</package>
-	<author>Zhaslan Doschanov</author>
+	<author>k-joseph</author>
 	<description>
 		${project.parent.description}
 	</description>
@@ -61,6 +61,8 @@
 				<include method="getStatistics" />
 				<include method="clearIndex" />
 				<include method="changeDaemonsCount" />
+				<include method="indexAllPatientData" />
+				<include method="getIndexingProgressInfo" />
 			</create>
 		</allow>
 	</dwr>

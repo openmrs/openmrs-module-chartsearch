@@ -13,14 +13,14 @@
  */
 package org.openmrs.module.chartsearch.api.db;
 
+import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 /**
- *  Database methods for {@link ChartSearchService}.
+ * Database methods for {@link ChartSearchService}.
  */
 public interface ChartSearchDAO {
 	
-	/*
-	 * Add DAO methods here
-	 */
+	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
+	                                Class showProgressToClass);
 }

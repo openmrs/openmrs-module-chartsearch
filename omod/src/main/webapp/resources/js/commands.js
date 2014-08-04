@@ -83,9 +83,4 @@ function changeDaemonsCount() {
 		}
 		$j("#daemonsManagementResult").text(text);
 	});
-
-
-
-
-
 }

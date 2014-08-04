@@ -29,12 +29,10 @@ import org.openmrs.Encounter;
 import org.openmrs.EncounterProvider;
 import org.openmrs.Form;
 import org.openmrs.Obs;
-import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
-import org.openmrs.util.PrivilegeConstants;
 
 /**
  * Responsible for generating the JSON object to be returned to the view(s)

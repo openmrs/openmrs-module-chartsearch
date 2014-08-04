@@ -27,6 +27,10 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Handles any other different indexing policies that are not handled by ChartSearchIndexer. e.g.
+ * Indexing any specified number of documents without specifying a given patient
+ */
 public class ChartSearchCustomIndexer {
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartSearchCustomIndexer.class);

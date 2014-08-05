@@ -91,7 +91,7 @@ function getIndexingProgress() {
 		if (data == "finished") {
 			jQuery( "#indexPatientData").unbind( "click");
 		} else {
-			document.getElementById("index_patientData_info").innerHTML = '<spring:message code="' + data + '" /> <br />';
+			document.getElementById("index_patientData_info").innerHTML = data + '<br />';
 		}
 	});
 }

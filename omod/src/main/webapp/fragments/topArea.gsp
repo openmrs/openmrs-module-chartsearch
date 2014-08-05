@@ -24,6 +24,17 @@
 		    return false;
 		});
 		
+		//works for the first time
+		//TODO should work after the second click
+		jq('.select_one_category').click(function (event) {
+		    console.log(jq('.select_one_category'));
+		    jq('.category_check').prop('checked', false);
+		    var id = (this.id).replace("select_", "");
+		    jq("#"+id).prop('checked', true);
+		    submitChartSearchFormWithAjax();
+		    return false;
+		});
+		
 		jq('#searchBtn').click(function(event) {
 			submitChartSearchFormWithAjax();
 			return false;
@@ -31,6 +42,10 @@
 		
 		jq('#submit_selected_categories').click(function(event) {
 			submitChartSearchFormWithAjax();
+			return false;
+		});
+		
+		jq('.filter_method').click(function(event) {
 			return false;
 		});
 		
@@ -50,6 +65,7 @@
 				success: function(results) {
 					jq(".results_table_wrap").fadeOut(500);
 					jq(".obsgroup_view").fadeOut(500);
+					jq(".obsgroup_view").empty();
 					jq(".inside_filter_categories").fadeOut(500);
 					
 					jsonAfterParse = JSON.parse(results);
@@ -70,7 +86,7 @@
 			});
 		}
 		
-		var delay = (function(){
+		var delay = (function() {
 		  var timer = 0;
 		  return function(callback, ms){
 		    clearTimeout (timer);
@@ -203,7 +219,9 @@
         font-weight: bold;
     }
     
+    .category_filter_item {
     
+    }
 
 </style>
 
@@ -225,7 +243,7 @@
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
 								<div class="filter_categories">
-									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
+									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
 									<br /><hr />
 									<div id="inside_filter_categories">
 										<script type="text/javascript">
@@ -275,17 +293,6 @@
                                 </span>
                                 <div class="filter_categories" id="providersOptions">
                                     
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <div class="inside_categories_filter">
-                                <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method" id="dataType_anchor">All Data Types</a>
-                                    <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
-                                </span>
-                                <div class="filter_categories" id="datatypesOptions">
-
                                 </div>
                             </div>
                         </div>

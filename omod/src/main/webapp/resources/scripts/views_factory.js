@@ -291,7 +291,9 @@ function load_single_detailed_obs(obs_id){
     resultText+='<div class="obsgroup_view">';
     resultText+='<h3 class="chartserach_center">';
     resultText+=capitalizeFirstLetter(obsJSON.concept_name);
-    resultText+='<span style="font-weight: normal; display: inline;"> ('+obsJSON.units_of_measurement+') </span>';
+    if (obsJSON.units_of_measurement != undefined) {
+    	resultText+='<span style="font-weight: normal; display: inline;"> ('+obsJSON.units_of_measurement+') </span>';
+	}
     resultText+='</h3>';
     resultText+='<div class="demo-container">' +
         '<div id="placeholder" class="demo-placeholder"></div>' +
@@ -895,10 +897,8 @@ function refresh_data() {
     $("#time_anchor").text('Any Time');
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
-	$("#dataType_anchor").text('All Data Types');
 	filterOptions_providers();
 	filterOptions_locations();
-	filterOptions_datatypes();
 	currentJson = jsonAfterParse;
     addAllObsGroups(jsonAfterParse);
     addAllSingleObs(jsonAfterParse);
@@ -928,7 +928,14 @@ function displayCategories(jsonAfterParse) {
 	for (var i = 0; i < jsonAfterParse.facets.length; i++) {
         var name = jsonAfterParse.facets[i].facet.name;
         var count = jsonAfterParse.facets[i].facet.count;
-        document.getElementById('inside_filter_categories').innerHTML += "<input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name + "' />" + name + " (" + count + ")<br />";
+        var displayName = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+        var displayCount = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
+        
+        if (count == 0) {
+        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' disabled />" + displayCount;
+        } else {
+        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' />" + displayCount;
+        }
     }
 	
 	//now check all previously checked categories

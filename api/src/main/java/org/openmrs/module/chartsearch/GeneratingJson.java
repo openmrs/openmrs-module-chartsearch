@@ -56,92 +56,109 @@ public class GeneratingJson {
 	public static String generateJson() {
 		
 		JSONObject jsonToReturn = new JSONObject(); //returning this object
-		JSONArray arr_of_groups = new JSONArray();
-		
-		JSONArray arr_of_locations = new JSONArray();
-		JSONArray arr_of_providers = new JSONArray();
-		JSONArray arr_of_datatypes = new JSONArray();
-		JSONObject failedPrivilegeMessages = new JSONObject();
-		try {
-			getChartSearchService().addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noLocations");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noLocations");
-		}
-		
-		try {
-			getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noProviders");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noProviders");
-		}
-		
-		try {
-			getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noDatatypes");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noDatatypes");
-		}
-		
-		try {
-			getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noObsGroups");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noObsGroups");
-		}
-		
-		JSONObject jsonObs = null;
-		JSONArray arr_of_obs = new JSONArray();
-		try {
-			getChartSearchService().addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noSingleObs");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noSingleObs");
-		}
-		
-		JSONObject jsonForms = null;
-		JSONArray arr_of_forms = new JSONArray();
-		try {
-			getChartSearchService().addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
-		}
-		catch (APIAuthenticationException e) {
-			
-			System.out.println("chartsearch.privileges.failedPrivileges.noForms");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noForms");
-		}
-		
-		JSONObject jsonEncounters = null;
-		JSONArray arr_of_encounters = new JSONArray();
-		try {
-			getChartSearchService().addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("chartsearch.privileges.failedPrivileges.noEncounters");
-			failedPrivilegeMessages.put("message", "chartsearch.privileges.failedPrivileges.noEncounters");
-		}
-		
+		List returnedResults = SearchAPI.getInstance().getResults();
+		boolean foundNoResults = false;
+		JSONObject noResults = new JSONObject();
 		String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
-		jsonToReturn.put("search_phrase", searchPhrase);
 		
-		//adding facets to the JSON results object
-		JSONArray arr_of_facets = new JSONArray();
-		JSONObject facet = new JSONObject();
-		LinkedList<Count> facets = new LinkedList<Count>();
-		
-		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
-		for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
-			facet.put("facet", generateFacetsJson(facets.get(i)));
-			arr_of_facets.add(facet);
+		//if (!searchPhrase.equals("") && searchPhrase != null) {
+		if (returnedResults == null || returnedResults.isEmpty()) {
+			foundNoResults = true;
+			noResults.put("foundNoResults", foundNoResults);
+			noResults.put("foundNoResultsMessage",
+			    Context.getMessageSourceService().getMessage("chartsearch.results.foundNoResults"));
+		} else {
+			JSONArray arr_of_groups = new JSONArray();
+			
+			JSONArray arr_of_locations = new JSONArray();
+			JSONArray arr_of_providers = new JSONArray();
+			JSONArray arr_of_datatypes = new JSONArray();
+			JSONObject failedPrivilegeMessages = new JSONObject();
+			
+			noResults.put("foundNoResults", foundNoResults);
+			try {
+				getChartSearchService().addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noLocations"));
+			}
+			
+			try {
+				getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noProviders"));
+			}
+			
+			try {
+				getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noDatatypes"));
+			}
+			
+			try {
+				getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noObsGroups"));
+			}
+			
+			JSONObject jsonObs = null;
+			JSONArray arr_of_obs = new JSONArray();
+			try {
+				getChartSearchService().addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noSingleObs"));
+			}
+			
+			JSONObject jsonForms = null;
+			JSONArray arr_of_forms = new JSONArray();
+			try {
+				getChartSearchService().addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noForms"));
+			}
+			
+			JSONObject jsonEncounters = null;
+			JSONArray arr_of_encounters = new JSONArray();
+			try {
+				getChartSearchService().addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
+			}
+			catch (APIAuthenticationException e) {
+				failedPrivilegeMessages.put("message",
+				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noEncounters"));
+			}
+			
+			jsonToReturn.put("search_phrase", searchPhrase);
+			
+			//adding facets to the JSON results object
+			JSONArray arr_of_facets = new JSONArray();
+			JSONObject facet = new JSONObject();
+			LinkedList<Count> facets = new LinkedList<Count>();
+			
+			facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
+			for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
+				facet.put("facet", generateFacetsJson(facets.get(i)));
+				arr_of_facets.add(facet);
+			}
+			jsonToReturn.put("facets", arr_of_facets);
+			
+			//add failed privileges to json to be returned to the view
+			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
-		jsonToReturn.put("facets", arr_of_facets);
-		
-		//add failed privileges to json to be returned to the view
-		jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
+		jsonToReturn.put("noResults", noResults);
+		/*} else {
+			jsonToReturn.put("noSearch", "");
+		}*/
 		
 		return jsonToReturn.toString();
 	}

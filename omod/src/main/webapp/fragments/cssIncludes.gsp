@@ -202,7 +202,13 @@ div.ui-datepicker{
 		font-size:10px;
 	}
 	
-	.dropdown .inside_categories_filter:hover .filter_categories {
+	/*.dropdown .inside_categories_filter:hover .filter_categories {
+		left:-1px;
+		margin-left:0px;
+		width: 140px;
+	}*/
+	
+	.display_filter_onclick {
 		left:-1px;
 		margin-left:0px;
 		width: 140px;

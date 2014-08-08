@@ -2,6 +2,8 @@
  * Views manipulations.
  * Created by Tallevi12
  */
+var firstSingleObs;
+
 var dates = {
     convert:function(d) {
         // Converts the date in d to a date-object. The input can be:
@@ -91,6 +93,10 @@ function addAllSingleObs(obsJSON)
     {
         resultText+='';
         for(var i=0;i<single_obsJSON.length;i++){
+        	if (i == 0) {
+        		firstSingleObs = single_obsJSON[i];
+        		navigationIndex = 1;
+        	}
             resultText+=addSingleObsToResults(single_obsJSON[i], i);
         }
         document.getElementById('obsgroups_results').innerHTML+=resultText;
@@ -285,7 +291,11 @@ function enable_graph(obs_id) {
 
 function load_single_detailed_obs(obs_id){
     removeAllHovering();
-    $( "#obs_single_"+obs_id ).addClass( "obsgroup_current" );
+    if (firstSingleObs.observation_id == obs_id) {
+    	$( "#first_obs_single").addClass("obsgroup_current");
+    } else {
+    	$( "#obs_single_"+obs_id ).addClass("obsgroup_current");
+    }
     var obsJSON = get_single_obs_by_id(obs_id);
     var resultText='';
     resultText+='<div class="obsgroup_view">';
@@ -893,17 +903,23 @@ function filterOptions_datatypes() {
 
 function refresh_data() {
 	var searchText = document.getElementById('searchText');
-	searchText.value = jsonAfterParse.search_phrase;
     $("#time_anchor").text('Any Time');
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
-	filterOptions_providers();
-	filterOptions_locations();
 	currentJson = jsonAfterParse;
-    addAllObsGroups(jsonAfterParse);
-    addAllSingleObs(jsonAfterParse);
     displayCategories(jsonAfterParse);
-    displayFailedPrivileges(jsonAfterParse);
+    //if (searchText != "") {
+		if(jsonAfterParse.noResults.foundNoResults) {
+			document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>" + jsonAfterParse.noResults.foundNoResultsMessage + " <b> " + searchText.value + "</b></div>";
+		} else {
+			searchText.value = jsonAfterParse.search_phrase;
+			filterOptions_providers();
+			filterOptions_locations();
+		    addAllObsGroups(jsonAfterParse);
+		    addAllSingleObs(jsonAfterParse);
+		    displayFailedPrivileges(jsonAfterParse);
+		}
+    //}
 }
 
 /*
@@ -912,35 +928,39 @@ function refresh_data() {
 function displayCategories(jsonAfterParse) {
 	var categories = document.getElementsByClassName('category_check');
 	var checkedCategories = new Object();
-
-	//record previous state
-	for(var i=0; i < categories.length; i++) {
-		var catId = "#"+categories[i].id;
-		if (jq(catId).prop('checked')) {
-			checkedCategories[i] = catId;
+    
+	if(jsonAfterParse.noResults.foundNoResults) {
+		document.getElementById('inside_filter_categories').innerHTML = "";
+	} else {
+		//record previous state
+		for(var i=0; i < categories.length; i++) {
+			var catId = "#"+categories[i].id;
+			if (jq(catId).prop('checked')) {
+				checkedCategories[i] = catId;
+			}
 		}
-	}
-	
-	//delete all categories being shown on the page
-	document.getElementById('inside_filter_categories').innerHTML = "";
-	
-	//now fetch and display new categories from the server
-	for (var i = 0; i < jsonAfterParse.facets.length; i++) {
-        var name = jsonAfterParse.facets[i].facet.name;
-        var count = jsonAfterParse.facets[i].facet.count;
-        var displayName = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
-        var displayCount = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
-        
-        if (count == 0) {
-        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' disabled />" + displayCount;
-        } else {
-        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' />" + displayCount;
-        }
-    }
-	
-	//now check all previously checked categories
-	for (index in checkedCategories) {
-		jq(checkedCategories[index]).prop('checked', true);
+		
+		//delete all categories being shown on the page
+		document.getElementById('inside_filter_categories').innerHTML = "";
+		
+		//now fetch and display new categories from the server
+		for (var i = 0; i < jsonAfterParse.facets.length; i++) {
+	        var name = jsonAfterParse.facets[i].facet.name;
+	        var count = jsonAfterParse.facets[i].facet.count;
+	        var displayName = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+	        var displayCount = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
+	        
+	        if (count == 0) {
+	        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' disabled />" + displayCount;
+	        } else {
+	        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' />" + displayCount;
+	        }
+	    }
+		
+		//now check all previously checked categories
+		for (index in checkedCategories) {
+			jq(checkedCategories[index]).prop('checked', true);
+		}
 	}
 }
 

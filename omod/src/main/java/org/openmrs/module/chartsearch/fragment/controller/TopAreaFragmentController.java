@@ -13,30 +13,18 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.openmrs.Patient;
-import org.openmrs.module.chartsearch.ChartListItem;
-import org.openmrs.module.chartsearch.EncounterItem;
-import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.GeneratingJson;
-import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
-import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
+import org.openmrs.module.chartsearch.page.controller.ChartsearchPageController;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.fragment.FragmentModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class TopAreaFragmentController {
-	
-	private static final Logger log = LoggerFactory.getLogger(TopAreaFragmentController.class);
 	
 	public void controller(FragmentModel model, @RequestParam("patientId") Integer patient) {
 		model.addAttribute("patientId", patient);
@@ -46,30 +34,9 @@ public class TopAreaFragmentController {
 	                                      @RequestParam("patientId") Patient patient, HttpServletRequest request) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
+		String phrase = search_phrase.getPhrase();
 		
-		String[] categories = request.getParameterValues("categories");
-		if (categories == null) {
-			categories = new String[0];
-		}
-		List<String> selectedCategories = Arrays.asList(categories);
-		
-		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
-		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
-		for (ChartListItem chartListItem : items) {
-			if (chartListItem instanceof ObsItem) {
-				int itemObsId = ((ObsItem) chartListItem).getObsId();
-				ChartListItem updatedObservation = DWRChartSearchService.getObservationDetails(itemObsId);
-				updatedItems.add(updatedObservation);
-			}
-			if (chartListItem instanceof FormItem) {
-				updatedItems.add(chartListItem);
-			}
-			if (chartListItem instanceof EncounterItem) {
-				updatedItems.add(chartListItem);
-			}
-		}
-		searchAPIInstance.setResults(updatedItems);
-		
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
 		return GeneratingJson.generateJson();
 	}
 }

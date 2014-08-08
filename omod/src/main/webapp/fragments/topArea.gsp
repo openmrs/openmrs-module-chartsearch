@@ -1,8 +1,12 @@
 <script type="text/javascript">
     var jq = jQuery;
-
-
+    var navigationIndex = 0;
+    var categoryLabel = "Categories";
+    
     jq( document ).ready(function() {
+    
+		jq('#searchText').focus();
+		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
         });
@@ -49,41 +53,87 @@
 			return false;
 		});
 		
-		jq('#searchText').keyup(function(event) {
-			delay(function(){
-				submitChartSearchFormWithAjax();
-		    }, 2000 );
+		jq('#searchText').keyup(function(key) {
+			var searchText = document.getElementById('searchText');
+			if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
+				delay(function(){
+					if (searchText != "") {
+						/* Do Nothing for Now
+						jq(".obsgroup_view").empty();
+					 	jq("#obsgroups_results").html('Press Enter to search.');
+					 	OR submitChartSearchFormWithAjax();
+					 	*/
+				 	}
+			    }, 1000 );
+		    }
 			return false;
 		});
 		
+		jq('#category_dropdown').on('click', function(e){
+		    jq('#filter_categories_categories').addClass('display_filter_onclick');
+		});
+		jq('#hide_categories').on('click', function(e){
+		    jq('#filter_categories_categories').removeClass('display_filter_onclick');
+		    return false;
+		});
+		
+		jq('#time_dropdown').on('click', function(e){
+		    jq('#filter_categories_time').toggleClass('display_filter_onclick');
+		});
+		
+		jq('#location_dropdown').on('click', function(e){
+		    jq('#locationOptions').toggleClass('display_filter_onclick');
+		});
+		
+		jq('#provider_dropdown').on('click', function(e){
+		    jq('#providersOptions').toggleClass('display_filter_onclick');
+		});
+		
+		//Not yet working
+		jq("input[type='checkbox'].category_check").change(function(){
+		    var a = jq("input[type='checkbox'].category_check");
+		    if(a.length == a.filter(":checked").length){
+		        categoryLabel = "All Categories";
+		        alert(categoryLabel);
+		    } else {
+		    	//TODO set to something like Diagnosis...
+		    	categoryLabel = "Categories";
+		    }
+		    jq('#category_label').html(categoryLabel);
+		});
+		
 		function submitChartSearchFormWithAjax() {
-			jq.ajax({
-				type: "POST",
-				 url: "${ ui.actionLink('getResultsFromTheServer') }",
-				data: jq('#chart-search-form-submit').serialize(),
-				dataType: "json",
-				success: function(results) {
-					jq(".results_table_wrap").fadeOut(500);
-					jq(".obsgroup_view").fadeOut(500);
-					jq(".obsgroup_view").empty();
-					jq(".inside_filter_categories").fadeOut(500);
-					
-					jsonAfterParse = JSON.parse(results);
-					
-					refresh_data();
-					jq(".results_table_wrap").fadeIn(500);
-					jq(".obsgroup_view").fadeIn(500);
-					
-					//click the first result to show its details at the right side
-					jq('#first_obs_single').trigger('click');
-					
-					//show updated facets
-					jq(".inside_filter_categories").fadeIn(500);
-				},
-				error: function(e) {
-				  //alert("Error occurred!!! " + e);
-				}
-			});
+			var searchText = document.getElementById('searchText');
+			
+			//if (searchText.value != "") {
+				 jq(".obsgroup_view").empty();
+				 jq("#obsgroups_results").html('<img class="search-spinner" src="/openmrs/ms/uiframework/resource/uicommons/images/spinner.gif">');
+				jq.ajax({
+					type: "POST",
+					 url: "${ ui.actionLink('getResultsFromTheServer') }",
+					data: jq('#chart-search-form-submit').serialize(),
+					dataType: "json",
+					success: function(results) {
+						jq(".inside_filter_categories").fadeOut(500);
+						
+						jsonAfterParse = JSON.parse(results);
+						
+						refresh_data();
+						jq(".results_table_wrap").fadeIn(500);
+						
+						//click the first result to show its details at the right side
+						jq('#first_obs_single').trigger('click');
+						
+						//show updated facets
+						jq(".inside_filter_categories").fadeIn(500);
+						
+						jq('#searchText').focus();
+					},
+					error: function(e) {
+					  //alert("Error occurred!!! " + e);
+					}
+				});
+			//}
 		}
 		
 		var delay = (function() {
@@ -94,6 +144,36 @@
 		  };
 		})();
 		
+		jq(document).keydown(function(key) {
+			//TODO update navigationIndex variable after load_single_detailed_obs(...)
+			var single_obsJSON = jsonAfterParse.obs_singles;
+			var obsId = single_obsJSON[navigationIndex].observation_id;
+			
+			if (typeof single_obsJSON !== 'undefined') {
+				if(key.keyCode == 39) {// =>>
+					if (navigationIndex >= 0) {
+						navigationIndex++;
+					}
+					focusOnCurrentObsAndDisplayItsDetails(obsId);
+				}
+				if(key.keyCode == 37) {// <<=
+					if (navigationIndex > 1) {
+						navigationIndex--;
+					}
+					focusOnCurrentObsAndDisplayItsDetails(obsId);
+				}
+			}
+		});
+		
+		function focusOnCurrentObsAndDisplayItsDetails(obsId) {
+			//TODO not yet working to support verticle scrolling
+			if(navigationIndex-1 == 0) {
+				jq('#first_obs_single').focus();
+			} else {
+				jq('#obs_single_'+obsId).focus();
+			}
+			load_single_detailed_obs(obsId);
+		}
     });
     
 </script>
@@ -222,6 +302,20 @@
     .category_filter_item {
     
     }
+    
+    .search-spinner {
+    	display: block;
+   		margin-left: auto;
+    	margin-right: auto;
+    	padding-top: 230px;
+    	height:120px;
+    	width:120px;
+    }
+    
+    #found_no_results {
+    	text-align:center;
+    	font-size: 25px;
+    }
 
 </style>
 
@@ -236,13 +330,13 @@
                         <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                     </div>
                     <div class="filters_section">
-                    	<div class="dropdown">
+                    	<div class="dropdown" id="category_dropdown">
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
-								<a href="#" class="filter_method">Categories</script></a>
+								<a href="#" class="filter_method">All Categories</a>
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
-								<div class="filter_categories">
+								<div class="filter_categories" id="filter_categories_categories">
 									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
 									<br /><hr />
 									<div id="inside_filter_categories">
@@ -251,17 +345,17 @@
 										</script>
 									</div>
 									<hr />
-									&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="submit_selected_categories" type="submit" value="OK" />
+									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Hide</a>
 								</div>
 							</div>
 						</div>
-                        <div class="dropdown">
+                        <div class="dropdown" id="time_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">
                                     <a href="#" class="filter_method" id="time_anchor">Any Time</a>
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
-                                <div class="filter_categories">
+                                <div class="filter_categories" id="filter_categories_time">
                                     <hr />
                                         <a class="single_filter_option" onclick="time_filter(1, 'Last Day')">Last Day</a>
                                         <a class="single_filter_option" onclick="time_filter(7, 'Last Week')">Last Week</a>
@@ -274,7 +368,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdown" id="location_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
                                     <a href="#" class="filter_method" id="location_anchor">All Locations</a>
@@ -285,7 +379,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="dropdown">
+                        <div class="dropdown" id="provider_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
                                     <a href="#" class="filter_method" id="provider_anchor">All Providers</a>

@@ -76,67 +76,8 @@ public class GeneratingJson {
 			JSONObject failedPrivilegeMessages = new JSONObject();
 			
 			noResults.put("foundNoResults", foundNoResults);
-			try {
-				getChartSearchService().addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noLocations"));
-			}
-			
-			try {
-				getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noProviders"));
-			}
-			
-			try {
-				getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noDatatypes"));
-			}
-			
-			try {
-				getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noObsGroups"));
-			}
-			
-			JSONObject jsonObs = null;
-			JSONArray arr_of_obs = new JSONArray();
-			try {
-				getChartSearchService().addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noSingleObs"));
-			}
-			
-			JSONObject jsonForms = null;
-			JSONArray arr_of_forms = new JSONArray();
-			try {
-				getChartSearchService().addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noForms"));
-			}
-			
-			JSONObject jsonEncounters = null;
-			JSONArray arr_of_encounters = new JSONArray();
-			try {
-				getChartSearchService().addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
-			}
-			catch (APIAuthenticationException e) {
-				failedPrivilegeMessages.put("message",
-				    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noEncounters"));
-			}
+			addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(jsonToReturn, arr_of_groups, arr_of_locations,
+			    arr_of_providers, arr_of_datatypes, failedPrivilegeMessages);
 			
 			jsonToReturn.put("search_phrase", searchPhrase);
 			
@@ -148,6 +89,75 @@ public class GeneratingJson {
 		jsonToReturn.put("noResults", noResults);
 		
 		return jsonToReturn.toString();
+	}
+	
+	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,
+	                                                                            JSONArray arr_of_groups,
+	                                                                            JSONArray arr_of_locations,
+	                                                                            JSONArray arr_of_providers,
+	                                                                            JSONArray arr_of_datatypes,
+	                                                                            JSONObject failedPrivilegeMessages) {
+		try {
+			getChartSearchService().addLocationsToJSONToReturn(jsonToReturn, arr_of_locations);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noLocations"));
+		}
+		
+		try {
+			getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noProviders"));
+		}
+		
+		try {
+			getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noDatatypes"));
+		}
+		
+		try {
+			getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noObsGroups"));
+		}
+		
+		JSONObject jsonObs = null;
+		JSONArray arr_of_obs = new JSONArray();
+		try {
+			getChartSearchService().addSingleObsToJSONToReturn(jsonToReturn, jsonObs, arr_of_obs);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noSingleObs"));
+		}
+		
+		JSONObject jsonForms = null;
+		JSONArray arr_of_forms = new JSONArray();
+		try {
+			getChartSearchService().addFormsToJSONToReturn(jsonToReturn, jsonForms, arr_of_forms);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noForms"));
+		}
+		
+		JSONObject jsonEncounters = null;
+		JSONArray arr_of_encounters = new JSONArray();
+		try {
+			getChartSearchService().addEncountersToJSONToReturn(jsonToReturn, jsonEncounters, arr_of_encounters);
+		}
+		catch (APIAuthenticationException e) {
+			failedPrivilegeMessages.put("message",
+			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noEncounters"));
+		}
 	}
 	
 	private static void addFacetsToJSONObjectToReturn(JSONObject jsonToReturn) {

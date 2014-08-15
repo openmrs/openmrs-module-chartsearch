@@ -84,8 +84,6 @@ public class ChartSearchSyntax {
 	 * Handles all behavior required as described at: https://issues.openmrs.org/browse/CSM-25
 	 */
 	private void handleAllSearchSyntaxBehavior() {
-		//TODO add a check for or refer and use #shouldTakePhraseAsItIs() here
-		
 		LinkedList<String> terms = breakDownASearchPhraseIntoWords();
 		if (terms.isEmpty() || terms.get(0).equals("noSearchPhrase")) {
 			this.searchQuery = getSearchPhrase();

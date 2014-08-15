@@ -91,7 +91,8 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		return (SynonymGroup) getSynonymGroupDAO().getById(id);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional(readOnly = true)
 	public List<SynonymGroup> getAllSynonymGroups() {
 		List<SynonymGroup> list = new ArrayList<SynonymGroup>();
@@ -99,13 +100,15 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		return list;
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional
 	public void purgeSynonymGroup(SynonymGroup synGroup) {
 		getSynonymGroupDAO().delete(synGroup);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional
 	public SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException {
 		return (SynonymGroup) getSynonymGroupDAO().saveOrUpdate(synGroup);
@@ -135,19 +138,22 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		return (Synonym) getSynonymDAO().getById(id);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional(readOnly = true)
 	public List<Synonym> getAllSynonyms() {
 		return getSynonymDAO().getAll();
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional
 	public void purgeSynonym(Synonym synonym) {
 		getSynonymDAO().delete(synonym);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	@Transactional
 	public Synonym saveSynonym(Synonym synonym) throws APIException {
 		return (Synonym) getSynonymDAO().saveOrUpdate(synonym);
@@ -241,7 +247,8 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		jsonToReturn.put("obs_singles", arr_of_obs);
 	}
 	
-	@Override
+	@SuppressWarnings("unused")
+    @Override
 	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
 	public void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups) {
 		Set<Set<Obs>> setOfObsGroups = GeneratingJson.generateObsGroupFromSearchResults();
@@ -266,7 +273,6 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 				
 				Date obsDate = obsGrp.getObsDatetime() == null ? new Date() : obsGrp.getObsDatetime();
 				SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-				/*String obsDateStr = formatDateJava.format(obsDate);*/
 				String obsDateStr = obsDate.getTime() + "";
 				
 				jsonGrp.put("last_taken_date", obsDateStr);
@@ -309,8 +315,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
-	                                Class showProgressToClass) {
+	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		dao.indexAllPatientData(numberOfResults, solrServer, showProgressToClass);
 	}
 }

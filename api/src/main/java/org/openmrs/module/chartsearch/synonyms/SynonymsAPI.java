@@ -1,16 +1,27 @@
+/**
+ * The contents of this file are subject to the OpenMRS Public License
+ * Version 1.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://license.openmrs.org
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ */
 package org.openmrs.module.chartsearch.synonyms;
-
-import org.openmrs.api.context.Context;
-import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 import java.util.List;
 import java.util.Vector;
 
-/**
- * Created by Eli on 31/05/14.
- */
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
+
 public class SynonymsAPI {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void saveNewSynonymGroup(SynonymGroup newGrp) {
 
         if (Context.isAuthenticated()) {
@@ -29,6 +40,7 @@ public class SynonymsAPI {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void updateSynonymGroup(String oldGrpName, SynonymGroup newGrp) {
         if (Context.isAuthenticated()) {
             ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
@@ -50,6 +62,7 @@ public class SynonymsAPI {
         }
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void deleteSynonymGroup(String groupName) {
         if (Context.isAuthenticated()) {
             ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
@@ -70,6 +83,7 @@ public class SynonymsAPI {
             }
         }
     }
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static String getSynonymsForSearch(String phrase){
         String ans = phrase;
         if (Context.isAuthenticated()) {
@@ -89,6 +103,7 @@ public class SynonymsAPI {
         return ans;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static Vector<String> getGroupNamesBySynonym(String phrase){
         Vector<String> ans = new Vector<String>();
         if (Context.isAuthenticated()) {

@@ -16,8 +16,6 @@ package org.openmrs.module.chartsearch.solr;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -186,8 +184,6 @@ public class ChartSearchCustomIndexer {
 	@SuppressWarnings("rawtypes")
 	public static void indexAllPatientData(Integer numberOfResults, Class showProgressToClass) throws SQLException {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
-		Collection docs = new ArrayList();
-		
 		if (numberOfResults == null || !(numberOfResults instanceof Integer)) {
 			numberOfResults = 400;
 		}

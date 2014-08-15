@@ -13,6 +13,11 @@
  */
 package org.openmrs.module.chartsearch.solr;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -25,12 +30,6 @@ import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-//TODO rename, make service
 public class ChartSearchIndexer {
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
@@ -48,8 +47,8 @@ public class ChartSearchIndexer {
 		params.set("personId", personId);
 		try {
 			if (solrServer != null) {
-	            solrServer.query(params);
-            }
+				solrServer.query(params);
+			}
 		}
 		catch (SolrServerException ex) {
 			log.error(String.format("Tried to import patient #%d but failed", personId), ex);
@@ -84,6 +83,7 @@ public class ChartSearchIndexer {
 	/* 
 	 * @return null if something going wrong
 	 */
+	@SuppressWarnings("unchecked")
 	public StatisticsInfo getStatistics() {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
@@ -137,9 +137,8 @@ public class ChartSearchIndexer {
 			return pruneCount;
 		}
 		catch (SolrServerException ex) {
-			log.error(String.format(
-			    "Failed to prune patients\nStrategy: %s\nPatient ids: %s\nMax Patients: %d\nAgo: %d", strategy, ids, 
-			    maxPatients, ago), ex);
+			log.error(String.format("Failed to prune patients\nStrategy: %s\nPatient ids: %s\nMax Patients: %d\nAgo: %d",
+			    strategy, ids, maxPatients, ago), ex);
 			return null;
 		}
 	}
@@ -164,7 +163,7 @@ public class ChartSearchIndexer {
 		catch (SolrServerException ex) {
 			log.error("Failed to change daemons count.");
 			
-			//todo do not use exception code!
+			//TODO do not use exception code!
 			return -1;
 		}
 	}

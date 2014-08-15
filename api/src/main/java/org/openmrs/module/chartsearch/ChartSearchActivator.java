@@ -23,12 +23,12 @@ import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped. * 
+ * This class contains the logic that is run every time this module is either started or stopped. *
  */
-
-public class ChartSearchActivator extends BaseModuleActivator{
+public class ChartSearchActivator extends BaseModuleActivator {
 	
-	protected Log log = LogFactory.getLog(getClass());	
+	protected Log log = LogFactory.getLog(getClass());
+	
 	/**
 	 * @see BaseModuleActivator#willRefreshContext()
 	 */
@@ -83,5 +83,4 @@ public class ChartSearchActivator extends BaseModuleActivator{
 		return list.get(0);
 	}
 	
-		
 }

@@ -14,14 +14,16 @@
 package org.openmrs.module.chartsearch;
 
 import java.io.Serializable;
-import org.openmrs.BaseOpenmrsObject;
+
 import org.openmrs.BaseOpenmrsMetadata;
+import org.openmrs.BaseOpenmrsObject;
 
 /**
- * It is a model class. It should extend either {@link BaseOpenmrsObject} or {@link BaseOpenmrsMetadata}.
+ * It is a model class. It should extend either {@link BaseOpenmrsObject} or
+ * {@link BaseOpenmrsMetadata}.
  */
 public class ChartSearch extends BaseOpenmrsObject implements Serializable {
-
+	
 	private static final long serialVersionUID = 1L;
 	
 	private Integer id;

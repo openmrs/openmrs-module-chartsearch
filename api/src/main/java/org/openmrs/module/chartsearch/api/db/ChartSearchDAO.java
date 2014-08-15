@@ -22,5 +22,5 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 public interface ChartSearchDAO {
 	
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
-	                                Class showProgressToClass);
+	                                @SuppressWarnings("rawtypes") Class showProgressToClass);
 }

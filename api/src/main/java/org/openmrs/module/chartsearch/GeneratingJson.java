@@ -55,13 +55,13 @@ public class GeneratingJson {
 	
 	public static String generateJson() {
 		
-		JSONObject jsonToReturn = new JSONObject(); //returning this object
+		JSONObject jsonToReturn = new JSONObject();
+		@SuppressWarnings("rawtypes")
 		List returnedResults = SearchAPI.getInstance().getResults();
 		boolean foundNoResults = false;
 		JSONObject noResults = new JSONObject();
 		String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
 		
-		//if (!searchPhrase.equals("") && searchPhrase != null) {
 		if (returnedResults == null || returnedResults.isEmpty()) {
 			foundNoResults = true;
 			noResults.put("foundNoResults", foundNoResults);
@@ -140,29 +140,30 @@ public class GeneratingJson {
 			
 			jsonToReturn.put("search_phrase", searchPhrase);
 			
-			//adding facets to the JSON results object
-			JSONArray arr_of_facets = new JSONArray();
-			JSONObject facet = new JSONObject();
-			LinkedList<Count> facets = new LinkedList<Count>();
-			
-			facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
-			for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
-				facet.put("facet", generateFacetsJson(facets.get(i)));
-				arr_of_facets.add(facet);
-			}
-			jsonToReturn.put("facets", arr_of_facets);
+			addFacetsToJSONObjectToReturn(jsonToReturn);
 			
 			//add failed privileges to json to be returned to the view
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		jsonToReturn.put("noResults", noResults);
-		/*} else {
-			jsonToReturn.put("noSearch", "");
-		}*/
 		
 		return jsonToReturn.toString();
 	}
 	
+	private static void addFacetsToJSONObjectToReturn(JSONObject jsonToReturn) {
+		JSONArray arr_of_facets = new JSONArray();
+		JSONObject facet = new JSONObject();
+		LinkedList<Count> facets = new LinkedList<Count>();
+		
+		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
+		for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
+			facet.put("facet", generateFacetsJson(facets.get(i)));
+			arr_of_facets.add(facet);
+		}
+		jsonToReturn.put("facets", arr_of_facets);
+	}
+	
+	@SuppressWarnings("unused")
 	public static JSONObject createJsonObservation(Obs obs) {
 		JSONObject jsonObs = new JSONObject();
 		jsonObs.put("observation_id", obs.getObsId());
@@ -171,7 +172,6 @@ public class GeneratingJson {
 		Date obsDate = obs.getObsDatetime() == null ? new Date() : obs.getObsDatetime();
 		
 		SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		/*String dateStr = formatDateJava.format(obsDate);*/
 		String dateStr = obsDate.getTime() + "";
 		
 		jsonObs.put("date", dateStr);
@@ -222,7 +222,6 @@ public class GeneratingJson {
 		Date formDate = form.getDateCreated() == null ? new Date() : form.getDateCreated();
 		
 		SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		/*String dateStr = formatDateJava.format(formDate);*/
 		String dateStr = formDate.getTime() + "";
 		jsonForm.put("date", dateStr);
 		jsonForm.put("encounter_type", form.getEncounterType().getName());
@@ -231,11 +230,6 @@ public class GeneratingJson {
 		formDate = form.getDateChanged() == null ? new Date() : form.getDateChanged();
 		dateStr = formatDateJava.format(formDate);
 		jsonForm.put("last_changed_date", dateStr);
-		
-		/* for(FormField formField : form.getOrderedFormFields()){
-		     jsonForm.put(formField.getName(),formField.getDescription());
-
-		 }*/
 		
 		return jsonForm;
 	}
@@ -259,7 +253,7 @@ public class GeneratingJson {
 				if (obsGrp != null) {
 					int groupId = obsGrp.getId();
 					Set<Obs> obsGroup = obsGrp.getGroupMembers();
-					boolean found = false; //if found == ture then we don't need to add the group.
+					boolean found = false; //if found == true then we don't need to add the group.
 					for (Set<Obs> grp : obsGroups) {
 						Obs ob = new Obs(-1);
 						if (grp.iterator().hasNext()) {

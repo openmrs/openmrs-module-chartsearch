@@ -17,11 +17,11 @@ package org.openmrs.module.chartsearch;
  *
  */
 public class ChartSearchMainProperties {
+	
 	public static final String MODULE_ID = "chartsearch";
 	
 	public static final String USE_DEDICATED_SOLR_SERVER = MODULE_ID + ".useDedicatedSolrServer";
 	
 	public static final String DEDICATED_SOLR_SERVER_URL = MODULE_ID + ".httpSolrUrl";
-	
 	
 }

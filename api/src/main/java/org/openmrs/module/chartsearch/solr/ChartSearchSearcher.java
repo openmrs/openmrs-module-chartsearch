@@ -84,6 +84,7 @@ public class ChartSearchSearcher {
 		return response.getResults().getNumFound();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
 	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
@@ -220,9 +221,7 @@ public class ChartSearchSearcher {
 		String filterQuery = "";
 		LinkedList<String> selectedCategories = new LinkedList<String>();
 		selectedCategories.addAll(selectedCats);
-		if (selectedCategories == null || selectedCategories.isEmpty()) {
-			System.out.println("Either selectedCategories is null or empty.");
-		} else {
+		if (selectedCategories == null || selectedCategories.isEmpty()) {} else {
 			LinkedList<CategoryFilter> existingCategories = new LinkedList<CategoryFilter>();
 			existingCategories.addAll(getChartSearchService().getAllCategoryFilters());
 			int indexOfFirstSelected = selectedCategories.indexOf(selectedCategories.getFirst());

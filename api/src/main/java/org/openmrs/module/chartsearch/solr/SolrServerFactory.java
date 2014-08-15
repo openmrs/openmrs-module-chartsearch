@@ -27,13 +27,12 @@ public class SolrServerFactory {
 	public static SolrServer getSolrServer() {
 		Boolean useDedicatedSolrServer = Boolean.parseBoolean(Context.getAdministrationService().getGlobalProperty(
 		    ChartSearchMainProperties.USE_DEDICATED_SOLR_SERVER));
-		if (useDedicatedSolrServer){
+		if (useDedicatedSolrServer) {
 			String dedicatedSolrUrl = Context.getAdministrationService().getGlobalProperty(
 			    ChartSearchMainProperties.DEDICATED_SOLR_SERVER_URL);
 			return new HttpSolrServerCreator(dedicatedSolrUrl).createSolrServer();
-		}
-		else {
+		} else {
 			return new EmbeddedSolrServerCreator(SolrUtils.getEmbeddedSolrProperties()).createSolrServer();
-		}		
+		}
 	}
 }

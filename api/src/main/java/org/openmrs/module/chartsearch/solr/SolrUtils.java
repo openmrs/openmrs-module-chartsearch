@@ -20,19 +20,19 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.server.EmbeddedSolrProperties;
 import org.openmrs.util.OpenmrsUtil;
 
-
 /**
  *
  */
 public class SolrUtils {
-	public static EmbeddedSolrProperties getEmbeddedSolrProperties(){
+	
+	public static EmbeddedSolrProperties getEmbeddedSolrProperties() {
 		Properties properties = Context.getRuntimeProperties();
-		String dbUrl =  properties.getProperty("connection.url");
+		String dbUrl = properties.getProperty("connection.url");
 		String dbUser = properties.getProperty("connection.username");
-		String dbPassword =  properties.getProperty("connection.password");
+		String dbPassword = properties.getProperty("connection.password");
 		String solrHome = new File(OpenmrsUtil.getApplicationDataDirectory(), "chartsearch").getAbsolutePath();
 		
 		return new EmbeddedSolrProperties(solrHome, dbUrl, dbUser, dbPassword);
-	}	
+	}
 	
 }

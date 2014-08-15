@@ -11,7 +11,6 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-
 package org.apache.solr.handler.dataimport.custom;
 
 import org.apache.solr.common.params.SolrParams;
@@ -70,11 +69,9 @@ public class SolrConfigParams {
 		return tryGetInteger(INDEX_MAX_PATIENTS, DEFAULT_INDEX_MAX_PATIENTS);
 	}
 	
-
-	
-	public IndexClearStrategy getIndexClearStrategy(int strategyCode){
+	public IndexClearStrategy getIndexClearStrategy(int strategyCode) {
 		//TODO Remove duplications
-		try {			
+		try {
 			if (strategyCode == IndexClearStrategies.BASIC.ordinal())
 				return new IndexClearStrategyBasicImpl(getIndexMaxPatients());
 			else if (strategyCode == IndexClearStrategies.NO_ACTION.ordinal())
@@ -92,8 +89,8 @@ public class SolrConfigParams {
 	}
 	
 	public IndexClearStrategy getIndexClearStrategy() {
-		int strategyCode = Integer.parseInt(getProperty(INDEX_CLEAR_STRATEGY));		
-		return getIndexClearStrategy(strategyCode);		
+		int strategyCode = Integer.parseInt(getProperty(INDEX_CLEAR_STRATEGY));
+		return getIndexClearStrategy(strategyCode);
 	}
 	
 	private int tryGetInteger(String propertyName, int defaultValue) {

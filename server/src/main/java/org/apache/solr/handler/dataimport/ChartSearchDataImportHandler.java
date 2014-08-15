@@ -100,6 +100,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 	
 	private SolrCore core;
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void init(NamedList args) {
 		super.init(args);
@@ -111,6 +112,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		patientInfoTimeout = configParams.getPatientInfoTimeout();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void handleRequestBody(SolrQueryRequest req, SolrQueryResponse rsp) throws Exception {
 		
@@ -186,7 +188,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			handlePruneCommand(rsp, strategy, idsByComma, maxPatients, ago);
 		} else if (ConfigCommands.SHANGE_DAEMONS_COUNT.equals(command)) {
 			Integer count = params.getInt(ConfigCommands.DAEMONS_COUNT);
-			if (core != null && count != null) {				
+			if (core != null && count != null) {
 				handleChangeDaemonsCountCommand(rsp, count);
 			}
 		}
@@ -208,7 +210,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 		IndexClearStrategy strategy = null;
 		if (strategyName.equals(IndexClearStrategies.IDS.toString())) {
 			if (!StringUtils.isBlank(idsByComma)) {
-				idsByComma = idsByComma.replaceAll("\\s+","");
+				idsByComma = idsByComma.replaceAll("\\s+", "");
 				String[] idStrings = idsByComma.split(",");
 				List<Integer> ids = new ArrayList<Integer>();
 				for (String idString : idStrings) {
@@ -376,7 +378,6 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			catch (Exception e) {
 				log.error("Error in DataImporter instantiating", e);
 			}
-			
 		}
 	}
 	
@@ -405,7 +406,6 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 			@Override
 			public void run() {
 				indexSizeManager.clearIndex();
-				
 			}
 		}, 10, timeout, TimeUnit.SECONDS);
 		
@@ -421,7 +421,6 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				
 			}
 		}, 10, timeout, TimeUnit.SECONDS);
-		
 	}
 	
 }

@@ -19,19 +19,18 @@ import java.util.List;
 
 import org.openmrs.module.chartsearch.server.PatientInfo;
 
-
 /**
  *
  */
-public class IndexClearStrategyNoActionImpl implements IndexClearStrategy{
-
+public class IndexClearStrategyNoActionImpl implements IndexClearStrategy {
+	
 	@Override
-    public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
-	    return Collections.emptyList();
-    }
+	public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
+		return Collections.emptyList();
+	}
 	
 	@Override
 	public String toString() {
-	    return "No Action Index Clear Strategy";
+		return "No Action Index Clear Strategy";
 	}
 }

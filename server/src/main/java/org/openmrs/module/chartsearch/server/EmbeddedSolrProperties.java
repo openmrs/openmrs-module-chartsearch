@@ -32,21 +32,21 @@ public class EmbeddedSolrProperties {
 		this.dbUser = dbUser;
 		this.dbPassword = dbPassword;
 	}
-
+	
 	public String getSolrHome() {
-	    return solrHome;
-    }
-
+		return solrHome;
+	}
+	
 	public String getDbUrl() {
-	    return dbUrl;
-    }
-
+		return dbUrl;
+	}
+	
 	public String getDbUser() {
-	    return dbUser;
-    }
-
+		return dbUser;
+	}
+	
 	public String getDbPassword() {
-	    return dbPassword;
-    }
+		return dbPassword;
+	}
 	
 }

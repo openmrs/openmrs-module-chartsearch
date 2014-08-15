@@ -69,6 +69,7 @@ public class DWRCommands {
 		return daemonsCount;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public String deleteSynonymGroup(String groupName) {
 		ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
 		SynonymGroups synonymGroupsInstance = SynonymGroups.getInstance();

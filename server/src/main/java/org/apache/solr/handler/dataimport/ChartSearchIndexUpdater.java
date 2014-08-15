@@ -4,7 +4,6 @@ import static org.apache.solr.handler.dataimport.DataImporter.IMPORT_CMD;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -29,17 +28,18 @@ public class ChartSearchIndexUpdater {
 	
 	private final DataImporter importer;
 	
+	@SuppressWarnings("rawtypes")
 	private final NamedList initArgs;
 	
 	private final PatientInfoHolder patientInfoHolder;
 	
 	private int successCount = 0;
 	
-	//Didn't implemented yet
 	private int failCount = 0;
 	
 	private String status = ConfigCommands.Labels.IDLE;
 	
+	@SuppressWarnings("rawtypes")
 	public ChartSearchIndexUpdater(DataImporter dataImporter, NamedList initArgs, PatientInfoHolder patientInfoHolder) {
 		this.importer = dataImporter;
 		this.initArgs = initArgs;
@@ -50,6 +50,7 @@ public class ChartSearchIndexUpdater {
 	 * Simulates RequestHandlerBase handleRequestBody
 	 * Do only import 
 	 */
+	@SuppressWarnings("rawtypes")
 	public void handleRequest(SolrQueryRequest req, SolrQueryResponse rsp) {
 		status = ConfigCommands.Labels.BUSY;
 		
@@ -68,8 +69,6 @@ public class ChartSearchIndexUpdater {
 			}
 		}
 		Map<String, Object> paramsMap = getParamsMap(params);
-		
-
 		
 		RequestInfo requestParams = new RequestInfo(paramsMap, contentStream);
 		

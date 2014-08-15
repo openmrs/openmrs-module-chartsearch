@@ -20,22 +20,23 @@ import org.apache.solr.response.SolrQueryResponse;
  *
  */
 public final class SolrQueryInfo {
+	
 	private final SolrQueryRequest request;
+	
 	private final SolrQueryResponse response;
 	
 	//TODO do not store response
-	public SolrQueryInfo(SolrQueryRequest request, SolrQueryResponse response){
+	public SolrQueryInfo(SolrQueryRequest request, SolrQueryResponse response) {
 		this.request = request;
 		this.response = response;
 	}
-
+	
 	public SolrQueryRequest getRequest() {
 		return request;
 	}
-
+	
 	public SolrQueryResponse getResponse() {
 		return response;
 	}
-
-
+	
 }

@@ -13,15 +13,15 @@
  */
 package org.openmrs.module.chartsearch.extension.html;
 
-import org.openmrs.module.Extension;
-import org.openmrs.module.web.extension.AdministrationSectionExt;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.openmrs.module.Extension;
+import org.openmrs.module.web.extension.AdministrationSectionExt;
+
 /**
  * This class defines the links that will appear on the administration page under the
- * "chartsearch.title" heading. 
+ * "chartsearch.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {
 	
@@ -46,10 +46,8 @@ public class AdminList extends AdministrationSectionExt {
 		LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 		map.put("/module/chartsearch/settings.form", "chartsearch.manage.settings");
 		map.put("/module/chartsearch/commands.form", "chartsearch.manage.commands");
-        map.put("/module/chartsearch/managesynonymgroups.form", "chartsearch.manage.managesynonymgroups");
-        map.put("/module/chartsearch/manageCategories.form", "chartsearch.manage.manageCategories");
-		/*map.put("/dataimport?command=status", "chartsearch.dataImportStatus");
-		map.put("/dataimport?command=full-import&clean=true", "chartsearch.importData");*/
+		map.put("/module/chartsearch/managesynonymgroups.form", "chartsearch.manage.managesynonymgroups");
+		map.put("/module/chartsearch/manageCategories.form", "chartsearch.manage.manageCategories");
 		
 		return map;
 	}

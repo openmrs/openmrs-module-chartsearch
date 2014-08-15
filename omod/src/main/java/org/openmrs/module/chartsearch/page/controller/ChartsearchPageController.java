@@ -51,18 +51,18 @@ public class ChartsearchPageController {
 		patientDomainWrapper.setPatient(patient);
 		model.addAttribute("patient", patientDomainWrapper);
 		
-		String phrase = search_phrase.getPhrase();
-		//if (!phrase.equals("") && search_phrase != null) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
+		indexPatientData(patient);
+		searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
+	}
+	
+	private void indexPatientData(Patient patient) {
 		log.info("getting patient ID :" + patient);
 		log.info("trying to index a patient");
 		if (chartSearchIndexer != null && patient != null) {
-			//chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), patient.getPatientId()+"", 0, 0);
 			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");
-		searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
-		//}
 	}
 	
 	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, HttpServletRequest request,

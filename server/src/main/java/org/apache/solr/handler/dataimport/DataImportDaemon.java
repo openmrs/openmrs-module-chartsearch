@@ -46,7 +46,7 @@ public class DataImportDaemon implements Runnable {
 				SolrQueryInfo info = queue.take();
 				log.info("Import started in daemon #{}", id);
 				chartSearchIndexUpdater.handleRequest(info.getRequest(), info.getResponse());
-				log.info("Import finished in daemon #{}", id);				
+				log.info("Import finished in daemon #{}", id);
 			}
 			catch (InterruptedException e) {
 				log.info("The import daemon #{} is interrupted", id);

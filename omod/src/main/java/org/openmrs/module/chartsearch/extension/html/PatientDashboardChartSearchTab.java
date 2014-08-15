@@ -19,41 +19,37 @@ import org.openmrs.module.web.extension.PatientDashboardTabExt;
  *
  */
 public class PatientDashboardChartSearchTab extends PatientDashboardTabExt {
-
+	
 	/**
 	 * @see org.openmrs.module.web.extension.PatientDashboardTabExt#getPortletUrl()
 	 */
 	@Override
 	public String getPortletUrl() {
-		// TODO Auto-generated method stub
 		return "patientDashboardChartSearchTab";
 	}
-
+	
 	/**
 	 * @see org.openmrs.module.web.extension.PatientDashboardTabExt#getRequiredPrivilege()
 	 */
 	@Override
 	public String getRequiredPrivilege() {
-		// TODO Auto-generated method stub
 		return "Patient Dashboard - View Chart Search Section";
 	}
-
+	
 	/**
 	 * @see org.openmrs.module.web.extension.PatientDashboardTabExt#getTabId()
 	 */
 	@Override
 	public String getTabId() {
-		// TODO Auto-generated method stub
 		return "ChartSearch";
 	}
-
+	
 	/**
 	 * @see org.openmrs.module.web.extension.PatientDashboardTabExt#getTabName()
 	 */
 	@Override
 	public String getTabName() {
-		// TODO Auto-generated method stub
 		return "Chart Search";
 	}
-
+	
 }

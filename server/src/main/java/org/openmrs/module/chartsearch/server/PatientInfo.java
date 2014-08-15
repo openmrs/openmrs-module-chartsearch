@@ -15,13 +15,13 @@ package org.openmrs.module.chartsearch.server;
 
 import java.util.Date;
 
-
 /**
  *
  */
-public class PatientInfo {	
-
+public class PatientInfo {
+	
 	private final Integer patientId;
+	
 	private final Date lastIndexTime;
 	
 	public PatientInfo(Integer patientId, Date lastIndexTime) {
@@ -32,23 +32,19 @@ public class PatientInfo {
 	public PatientInfo(Integer patientId, Long lastIndexTime) {
 		this.patientId = patientId;
 		this.lastIndexTime = new Date(lastIndexTime);
-	}	
+	}
 	
 	public Integer getPatientId() {
-	    return patientId;
-    }
+		return patientId;
+	}
 	
 	public Date getLastIndexTime() {
 		return new Date(lastIndexTime.getTime());
 	}
-
+	
 	@Override
-    public String toString() {
-	    return "PatientInfo [patientId=" + getPatientId() + ", lastIndexTime=" + getLastIndexTime() + "]";
-    }
-
-	
-	
-
+	public String toString() {
+		return "PatientInfo [patientId=" + getPatientId() + ", lastIndexTime=" + getLastIndexTime() + "]";
+	}
 	
 }

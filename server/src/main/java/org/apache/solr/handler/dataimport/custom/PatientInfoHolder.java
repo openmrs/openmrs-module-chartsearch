@@ -26,9 +26,10 @@ import org.slf4j.LoggerFactory;
 public class PatientInfoHolder {
 	
 	private static final Logger log = LoggerFactory.getLogger(PatientInfoHolder.class);
+	
 	private final PatientInfoCache cache;
-		
-	public PatientInfoHolder(PatientInfoCache cache){
+	
+	public PatientInfoHolder(PatientInfoCache cache) {
 		this.cache = cache;
 	}
 	
@@ -37,13 +38,13 @@ public class PatientInfoHolder {
 			return cache.get(patientId).getLastIndexTime();
 		} else {
 			return null;
-		}		
+		}
 	}
 	
-	public void setLastIndexTime(int patientId){
+	public void setLastIndexTime(int patientId) {
 		Date lastIndexTime = Calendar.getInstance().getTime();
 		cache.put(patientId, new PatientInfo(patientId, lastIndexTime));
-		log.info("Set last index time to: {}", lastIndexTime);	
+		log.info("Set last index time to: {}", lastIndexTime);
 	}
 	
 }

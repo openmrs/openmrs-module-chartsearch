@@ -22,15 +22,15 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 public class HttpSolrServerCreator extends SolrServerCreator {
 	
 	private final String solrHttpAddress;
-
-	public HttpSolrServerCreator(String solrHttpAddress){
-		this.solrHttpAddress = solrHttpAddress;		
+	
+	public HttpSolrServerCreator(String solrHttpAddress) {
+		this.solrHttpAddress = solrHttpAddress;
 	}
 	
-	public String getSolrHttpAddress(){
+	public String getSolrHttpAddress() {
 		return solrHttpAddress;
-	}	
-
+	}
+	
 	/**
 	 * @see org.openmrs.module.chartsearch.server.SolrServerCreator#createSolrServer()
 	 */
@@ -38,5 +38,5 @@ public class HttpSolrServerCreator extends SolrServerCreator {
 	public SolrServer createSolrServer() {
 		return new HttpSolrServer(getSolrHttpAddress());
 	}
-
+	
 }

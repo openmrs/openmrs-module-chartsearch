@@ -25,19 +25,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  *
  */
-
 public class PatientDashBoardChartSearchTabController extends PortletController {
-
+	
 	@Autowired
-	private ChartSearchIndexer chartSearchIndexer;	
-
+	private ChartSearchIndexer chartSearchIndexer;
+	
 	@Override
-	protected void populateModel(HttpServletRequest request,
-			Map<String, Object> model) {
+	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
 		
-		  Integer personId = (Integer) model.get("personId");
-
-		  chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), personId+"", 0, 0);
-		  chartSearchIndexer.indexPatientData(personId);
+		Integer personId = (Integer) model.get("personId");
+		
+		chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), personId + "", 0, 0);
+		chartSearchIndexer.indexPatientData(personId);
 	}
 }

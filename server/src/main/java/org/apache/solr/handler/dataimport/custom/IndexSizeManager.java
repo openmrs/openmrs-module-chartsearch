@@ -50,10 +50,9 @@ public class IndexSizeManager {
 	public IndexSizeManager(SolrCore core, PatientInfoCache cache, IndexClearStrategy strategy) {
 		this.strategy = strategy;
 		this.handler = core.getUpdateHandler();
-		;
+		
 		this.req = new SolrQueryRequestBase(
 		                                    core, new MapSolrParams(new HashMap<String, String>())) {};
-		;
 		this.cache = cache;
 	}
 	
@@ -93,8 +92,7 @@ public class IndexSizeManager {
 			
 			cache.save();
 			
-			log.info("Index cleared, deleted {} patients, {} patients left in the index", pruneCount,
-			    cache.size());
+			log.info("Index cleared, deleted {} patients, {} patients left in the index", pruneCount, cache.size());
 			
 			return pruneCount;
 			
@@ -111,7 +109,6 @@ public class IndexSizeManager {
 			cache.remove(id);
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			log.error("Error generated", e);
 		}
 	}
@@ -121,7 +118,6 @@ public class IndexSizeManager {
 			handler.commit(commitCmd);
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
 			log.error("Error generated", e);
 		}
 	}

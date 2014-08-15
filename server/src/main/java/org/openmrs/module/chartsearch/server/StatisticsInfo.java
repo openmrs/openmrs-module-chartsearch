@@ -47,6 +47,7 @@ public class StatisticsInfo {
 	
 	@Override
 	public String toString() {
-	    return String.format("Strategy name: %s\nPruneCount: %s\nDaemon states: %s", strategyName.toString(), pruneCount, daemonStates.toString()); 
+		return String.format("Strategy name: %s\nPruneCount: %s\nDaemon states: %s", strategyName.toString(), pruneCount,
+		    daemonStates.toString());
 	}
 }

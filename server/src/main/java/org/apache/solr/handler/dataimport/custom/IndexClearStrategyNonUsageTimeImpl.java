@@ -45,7 +45,7 @@ public class IndexClearStrategyNonUsageTimeImpl implements IndexClearStrategy {
 	
 	@Override
 	public String toString() {
-	    return "Non Usage Time Index Clear Strategy";
+		return "Non Usage Time Index Clear Strategy";
 	}
 	
 }

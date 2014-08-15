@@ -43,8 +43,8 @@ public class SettingsFormController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmission(@ModelAttribute("globalPropertiesModel") PropertiesModel propertiesModel,
-	        Errors errors, WebRequest request) {
+	public String handleSubmission(@ModelAttribute("globalPropertiesModel") PropertiesModel propertiesModel, Errors errors,
+	                               WebRequest request) {
 		propertiesModel.validate(propertiesModel, errors);
 		if (errors.hasErrors())
 			return null; // show the form again
@@ -71,7 +71,8 @@ public class SettingsFormController {
 		props.add(ChartSearchMainProperties.DEDICATED_SOLR_SERVER_URL);
 		
 		//remove the properties we dont want to edit
-		for (GlobalProperty gp : Context.getAdministrationService().getGlobalPropertiesByPrefix(ChartSearchMainProperties.MODULE_ID)) {
+		for (GlobalProperty gp : Context.getAdministrationService().getGlobalPropertiesByPrefix(
+		    ChartSearchMainProperties.MODULE_ID)) {
 			if (props.contains(gp.getProperty()))
 				editableProps.add(gp);
 		}

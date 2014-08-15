@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * The main controller.
+ * The main controller for commands page.
  */
 @Controller
 @RequestMapping("/module/chartsearch/commands")
-public class  CommandsFormController {
+public class CommandsFormController {
 	
 	protected final Log log = LogFactory.getLog(getClass());
 	
@@ -37,20 +37,10 @@ public class  CommandsFormController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void showForm(ModelMap map) {
-		Map<IndexClearStrategies,String> clearStrategy = new LinkedHashMap<IndexClearStrategies,String>();
+		Map<IndexClearStrategies, String> clearStrategy = new LinkedHashMap<IndexClearStrategies, String>();
 		clearStrategy.put(IndexClearStrategies.IDS, "By patient ids");
 		clearStrategy.put(IndexClearStrategies.BASIC, "By max patients in index");
 		clearStrategy.put(IndexClearStrategies.NON_USAGE_TIME, "By max non usage time");
 		map.put("clearStrategies", clearStrategy);
 	}
-	
-	
-	/*@RequestMapping(method = RequestMethod.POST)
-	public String handleSubmission(Integer patientId) {
-		
-		PatientInfo patientInfo = indexer.getPatientState(patientId);
-		
-
-		return "redirect:commands.form";
-	}*/
 }

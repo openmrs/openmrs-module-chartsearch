@@ -21,21 +21,20 @@ import java.util.List;
 
 import org.openmrs.module.chartsearch.server.PatientInfo;
 
-
 /**
  *
  */
 public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 	
 	private final int maxPatientsInIndex;
-
-	public IndexClearStrategyBasicImpl(int maxPatientsInIndex){
+	
+	public IndexClearStrategyBasicImpl(int maxPatientsInIndex) {
 		this.maxPatientsInIndex = maxPatientsInIndex;
 		
 	}
-
+	
 	@Override
-    public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
+	public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
 		int deleteCount = patients.size() - maxPatientsInIndex;
 		
 		if (deleteCount <= 0)
@@ -47,7 +46,6 @@ public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 			
 			@Override
 			public int compare(PatientInfo o1, PatientInfo o2) {
-				// TODO Auto-generated method stub
 				return o1.getLastIndexTime().compareTo(o2.getLastIndexTime());
 			}
 			
@@ -57,16 +55,17 @@ public class IndexClearStrategyBasicImpl implements IndexClearStrategy {
 		
 		for (PatientInfo patientInfo : sortedPatients) {
 			deletedPatients.add(patientInfo.getPatientId());
-	        --deleteCount;
-	        if (deleteCount == 0) break;
-        }
+			--deleteCount;
+			if (deleteCount == 0)
+				break;
+		}
 		
 		return deletedPatients;
-    }
+	}
 	
 	@Override
 	public String toString() {
-	    return "Basic Index Clear Strategy";
+		return "Basic Index Clear Strategy";
 	}
 	
 }

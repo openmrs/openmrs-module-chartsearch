@@ -18,25 +18,24 @@ import java.util.List;
 
 import org.openmrs.module.chartsearch.server.PatientInfo;
 
-
 /**
  * This clear strategy uses only on force prunes via commands
  */
-public class IndexClearStrategyWithIdImpl implements IndexClearStrategy{
+public class IndexClearStrategyWithIdImpl implements IndexClearStrategy {
 	
-    private List<Integer> ids;
-
+	private List<Integer> ids;
+	
 	public IndexClearStrategyWithIdImpl(List<Integer> ids) {
-		this.ids = ids; 
-    }
-
+		this.ids = ids;
+	}
+	
 	@Override
-    public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
-	    return ids;
-    }
+	public List<Integer> getPatientsToDelete(Collection<PatientInfo> patients) {
+		return ids;
+	}
 	
 	@Override
 	public String toString() {
-	    return "Id Based Index Clear Strategy";
+		return "Id Based Index Clear Strategy";
 	}
 }

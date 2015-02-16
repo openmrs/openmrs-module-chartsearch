@@ -50,12 +50,11 @@
 
 		<openMRSVersion>1.9.4</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <appframeworkVersion>2.0</appframeworkVersion>
-        <uiframeworkVersion>3.2</uiframeworkVersion>
-	<emrapiVersion>1.1</emrapiVersion>
-        <appuiVersion>1.0</appuiVersion>
-        <uicommonsVersion>1.0</uicommonsVersion>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        	<appframeworkVersion>2.2</appframeworkVersion>
+		<uiframeworkVersion>3.2</uiframeworkVersion>
+		<emrapiVersion>1.4</emrapiVersion>
+		<appuiVersion>1.2</appuiVersion>
+		<uicommonsVersion>1.3</uicommonsVersion>
 	</properties>
 
 	<dependencyManagement>

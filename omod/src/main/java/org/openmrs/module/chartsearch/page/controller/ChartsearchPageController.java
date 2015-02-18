@@ -44,16 +44,17 @@ public class ChartsearchPageController {
 	
 	private ChartSearchIndexer chartSearchIndexer = getComponent(ChartSearchIndexer.class);
 	
-	public void controller(PageModel model, @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
-	                       @RequestParam("patientId") Patient patient,
+	public void controller(@RequestParam("patientId") Patient patient, PageModel model,
+	                       @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper, HttpServletRequest request) {
 		
-		patientDomainWrapper.setPatient(patient);
-		model.addAttribute("patient", patientDomainWrapper);
-		
-		SearchAPI searchAPIInstance = SearchAPI.getInstance();
-		indexPatientData(patient);
-		searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
+		if (patient != null && request != null) {
+			patientDomainWrapper.setPatient(patient);
+			model.addAttribute("patient", patientDomainWrapper);
+			SearchAPI searchAPIInstance = SearchAPI.getInstance();
+			indexPatientData(patient);
+			searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
+		}
 	}
 	
 	private void indexPatientData(Patient patient) {

@@ -414,7 +414,7 @@ public class GeneratingJson {
 		return encounters;
 	}
 	
-	private static JSONObject generateFacetsJson(Count facet) {
+	public static JSONObject generateFacetsJson(Count facet) {
 		JSONObject counts = new JSONObject();
 		counts.put("name", facet.getName());
 		counts.put("count", facet.getCount());

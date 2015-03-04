@@ -166,10 +166,12 @@ public class GeneratingJson {
 		LinkedList<Count> facets = new LinkedList<Count>();
 		
 		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
-		for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
-			facet.put("facet", generateFacetsJson(facets.get(i)));
-			arr_of_facets.add(facet);
-		}
+		if (!facets.isEmpty()) {
+	        for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
+		        facet.put("facet", generateFacetsJson(facets.get(i)));
+		        arr_of_facets.add(facet);
+	        }
+        }
 		jsonToReturn.put("facets", arr_of_facets);
 	}
 	

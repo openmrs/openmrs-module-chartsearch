@@ -9,8 +9,8 @@
                 "extensionPointId": "systemAdministration.apps",
                 "type": "link",
                 "order": 10,
-                "label": "chartsearch.refApp.manageChartSearch",
-                "url": "chartsearch/manageChartSearch.page",
+                "label": "chartsearch.refApp.chartSearchApps",
+                "url": "chartsearch/chartSearchApps.page",
                 "icon": "icon-search",
                 "requiredPrivilege": "Task: Chart Search"
             }

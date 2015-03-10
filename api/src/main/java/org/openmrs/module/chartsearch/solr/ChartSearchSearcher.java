@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -33,6 +34,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
+import org.openmrs.module.chartsearch.NonPatientDataItem;
 import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
@@ -208,6 +210,42 @@ public class ChartSearchSearcher {
 			        + document.get("encounter_type_name"));
 		}
 		
+		return list;
+	}
+	
+	/**
+	 * Fetches documents returned by non patient data searches
+	 * @param searchText
+	 * @return
+	 */
+	public List<ChartListItem> getNonPatientDocumentList(String searchText) {
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+		SolrQuery query = new SolrQuery();
+		List<ChartListItem> list = new ArrayList<ChartListItem>();
+		
+		//Non Patient Data
+		System.out.println("Non-Patient data");
+		SolrQuery query4 = new SolrQuery(String.format("cc_name:(%s)", searchText));
+		QueryResponse response4 = null;
+        try {
+	        response4 = solrServer.query(query4);
+        }
+        catch (SolrServerException e) {
+	        // TODO Auto-generated catch block
+	        log.error("Error generated", e);
+        }
+		Iterator<SolrDocument> iter4 = response4.getResults().iterator();
+		while (iter4.hasNext()) {
+			SolrDocument solrDocument = (SolrDocument) iter4.next();
+			NonPatientDataItem nonPatient = new NonPatientDataItem();
+			nonPatient.setCcName((String) solrDocument.get("cc_name"));
+			nonPatient.setCcDescription((String) solrDocument.get("cc_description"));
+			nonPatient.setCcFilterQuery((String) solrDocument.get("cc_filter_query"));
+			list.add(nonPatient);
+			
+			System.out.println("Name: " + solrDocument.get("cc_name") + ", Description: "
+			        + solrDocument.get("cc_description") + ", FilterQuery: " + solrDocument.get("cc_filter_query"));
+		}
 		return list;
 	}
 	

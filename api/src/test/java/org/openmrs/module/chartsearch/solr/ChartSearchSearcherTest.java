@@ -9,49 +9,9 @@
  */
 package org.openmrs.module.chartsearch.solr;
 
-import java.util.List;
-
-import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Test;
-import org.openmrs.api.context.Context;
 
+@Ignore
 public class ChartSearchSearcherTest {
 	
-	/**
-	 * Testing functionality for the start. TODO to be re-edited or removed
-	 */
-	@Ignore
-	public void getNonPatientDocumentsTest() {
-		ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
-		searcher.getNonPatientDocumentList("*");
-		Assert.assertNotNull("");
-	}
-	
-
-	/**
-	 * TODO testing tika solrj Indexing option
-	 * Auto generated method comment
-	 *
-	 */
-	@Test
-	public void test() {
-		try {
-			SolrjIndexer idxer = new SolrjIndexer();
-			
-			idxer.doSqlDocuments();
-			
-			idxer.endIndexing();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private <T> T getComponent(Class<T> clazz) {
-		List<T> list = Context.getRegisteredComponents(clazz);
-		if (list == null || list.size() == 0)
-			throw new RuntimeException("Cannot find component of " + clazz);
-		return list.get(0);
-	}
 }

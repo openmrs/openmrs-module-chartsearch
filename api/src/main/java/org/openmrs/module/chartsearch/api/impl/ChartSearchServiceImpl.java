@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
@@ -318,4 +320,29 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		dao.indexAllPatientData(numberOfResults, solrServer, showProgressToClass);
 	}
+	
+	@Override
+	public ResultSet executeSQL(String sql) {
+		return dao.executeSQL(sql);
+	}
+
+	@Override
+    public void deleteSearchProject(SearchProject project) {
+	    dao.deleteSearchProject(project);
+    }
+
+	@Override
+    public void saveSearchProject(SearchProject project) {
+	    dao.saveSearchProject(project);
+    }
+
+	@Override
+    public SearchProject getSearchProject(Integer projectId) {
+	    return dao.getSearchProject(projectId);
+    }
+
+	@Override
+    public List<SearchProject> getAllSearchProjects() {
+	    return dao.getAllSearchProjects();
+    }
 }

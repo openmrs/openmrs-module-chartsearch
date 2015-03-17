@@ -13,8 +13,12 @@
  */
 package org.openmrs.module.chartsearch.api.db;
 
+import java.sql.ResultSet;
+import java.util.List;
+
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 
 /**
  * Database methods for {@link ChartSearchService}.
@@ -23,4 +27,14 @@ public interface ChartSearchDAO {
 	
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
 	                                @SuppressWarnings("rawtypes") Class showProgressToClass);
+	
+	public ResultSet executeSQL(String sql);
+
+	void deleteSearchProject(SearchProject project);
+
+	void saveSearchProject(SearchProject project);
+
+	SearchProject getSearchProject(Integer projectId);
+
+	List<SearchProject> getAllSearchProjects();
 }

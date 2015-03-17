@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.chartsearch.api;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -22,6 +23,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
@@ -182,4 +184,14 @@ public interface ChartSearchService extends OpenmrsService {
 	void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations);
 	
 	void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass);
+	
+	public ResultSet executeSQL(String sql);
+	
+	public void deleteSearchProject(SearchProject project);
+
+	public void saveSearchProject(SearchProject project);
+
+	public SearchProject getSearchProject(Integer projectId);
+	
+	public List<SearchProject> getAllSearchProjects();
 }

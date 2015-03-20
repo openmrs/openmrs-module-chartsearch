@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
@@ -37,8 +38,8 @@
 		<connection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</connection>
 		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-chartsearch</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<modules>
 		<module>api</module>
@@ -50,23 +51,20 @@
 
 		<openMRSVersion>1.9.4</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <appframeworkVersion>2.0</appframeworkVersion>
-        <uiframeworkVersion>3.2</uiframeworkVersion>
-	<emrapiVersion>1.1</emrapiVersion>
-        <appuiVersion>1.0</appuiVersion>
-        <uicommonsVersion>1.0</uicommonsVersion>
+		<appframeworkVersion>2.0</appframeworkVersion>
+		<uiframeworkVersion>3.2</uiframeworkVersion>
+		<emrapiVersion>1.1</emrapiVersion>
+		<appuiVersion>1.0</appuiVersion>
+		<uicommonsVersion>1.0</uicommonsVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
-
 			<!-- Libraries to add as dependencies with compile or runtime scope: Find 
 				matching dependencies in the maven central repository. <dependency> <groupId>org.other.library</groupId> 
 				<artifactId>library-name</artifactId> <version>library.version</version> 
 				<scope>compile</scope> </dependency> -->
-
-
 
 			<!-- Begin OpenMRS core -->
 
@@ -112,46 +110,156 @@
 				<scope>test</scope>
 			</dependency>
 			<!-- End OpenMRS core -->
-		
+
 			<!-- New UI Module -->
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>uiframework-api</artifactId>
+				<version>${uiframeworkVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>appui-api</artifactId>
+				<version>${appuiVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>appui-omod</artifactId>
+				<version>${appuiVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>emrapi-api</artifactId>
+				<version>${emrapiVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>emrapi-api</artifactId>
+				<version>${emrapiVersion}</version>
+				<type>test-jar</type>
+				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>1.9.10</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<version>2.4</version>
+				<classifier>jdk15</classifier>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-beanutils</artifactId>
+						<groupId>commons-beanutils</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-collections</artifactId>
+						<groupId>commons-collections</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-lang</artifactId>
+						<groupId>commons-lang</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.solr</groupId>
+				<artifactId>solr-core</artifactId>
+				<version>4.3.1</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-cli</artifactId>
+						<groupId>commons-cli</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-codec</artifactId>
+						<groupId>commons-codec</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-io</artifactId>
+						<groupId>commons-io</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-lang</artifactId>
+						<groupId>commons-lang</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.solr</groupId>
+				<artifactId>solr-solrj</artifactId>
+				<version>4.3.1</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>commons-codec</artifactId>
+						<groupId>commons-codec</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>commons-io</artifactId>
+						<groupId>commons-io</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>slf4j-api</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.solr</groupId>
+				<artifactId>solr-dataimporthandler</artifactId>
+				<version>4.3.1</version>
+			</dependency>
 			
-		<dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>uiframework-api</artifactId>
-            <version>${uiframeworkVersion}</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-                           <groupId>org.openmrs.module</groupId>
-                           <artifactId>appui-api</artifactId>
-                           <version>${appuiVersion}</version>
-                           <scope>provided</scope>
-        </dependency>
-		<dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>emrapi-api</artifactId>
-                <version>${emrapiVersion}</version>
-                <type>jar</type>
-                <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>emrapi-api</artifactId>
-                <version>${emrapiVersion}</version>
-                <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
-
-        	<dependency><!-- jackson -->
-            		<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.10</version>
-        	</dependency>
+			<dependency>
+				<groupId>net.sf.supercsv</groupId>
+				<artifactId>super-csv</artifactId>
+				<version>2.1.0</version>
+			</dependency>
 
 		</dependencies>
 	</dependencyManagement>
+	
+	<dependencies>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.test</groupId>
+			<artifactId>openmrs-test</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<classifier>jdk15</classifier>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<pluginManagement>
@@ -179,10 +287,10 @@
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.3.2</version>
 					<configuration>
-					    <autoVersionSubmodules>true</autoVersionSubmodules>
-					    <tagNameFormat>@{project.version}</tagNameFormat>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<tagNameFormat>@{project.version}</tagNameFormat>
 					</configuration>
-			    	</plugin>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -207,16 +315,15 @@
 	</pluginRepositories>
 
 	<distributionManagement>
-	    <repository>
-		<id>openmrs-repo-modules</id>
-		<name>Modules</name>
-		<url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules/</url>
-	    </repository>
-	    <snapshotRepository>
-		<id>openmrs-repo-snapshots</id>
-		<name>OpenMRS Snapshots</name>
-		<url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
-	    </snapshotRepository>
+		<repository>
+			<id>openmrs-repo-modules</id>
+			<name>Modules</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules/</url>
+		</repository>
+		<snapshotRepository>
+			<id>openmrs-repo-snapshots</id>
+			<name>OpenMRS Snapshots</name>
+			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
 	</distributionManagement>
-
 </project>

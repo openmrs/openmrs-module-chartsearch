@@ -2,7 +2,7 @@
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
 	    <li class="ui-state-default ui-corner-top ui-state-active">
 	    	<a class="ui-tabs-anchor" href="#patient-searches">
-	        	${ ui.message("chartsearch.chartsearch.refApp.patientSearches")}
+	        	${ ui.message("chartsearch.refApp.patientSearches")}
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active">

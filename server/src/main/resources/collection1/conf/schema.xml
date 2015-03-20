@@ -938,13 +938,15 @@
 		<field name="text" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
 
-		<!-- Other Module's		 -->
+		<!-- Other Module's, chartsearch in the first place -->
+		<field name="project_id" type="int" indexed="true"
+			stored="true" required="false" />
 		<field name="cc_name" type="text_general" indexed="true"
-			stored="false" required="false" />
+			stored="true" required="false" />
 		<field name="cc_filter_query" type="text_general" indexed="true"
-			stored="false" required="false" />
+			stored="true" required="false" />
 		<field name="cc_description" type="text_general" indexed="true"
-			stored="false" required="false" />
+			stored="true" required="false" />
 
 	
 		<!-- catchall text field that indexes tokens both normally and in reverse 
@@ -995,11 +997,12 @@
 	<copyField source="value_text" dest="text" />
 	<copyField source="concept_name" dest="text" />
 	<copyField source="concept_class_name" dest="text" />
-
+	
 	<copyField source="cc_name" dest="text" />
 	<copyField source="cc_filter_query" dest="text" />
 	<copyField source="cc_description" dest="text" />
-
+ 
+ 
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 
 		the dynamic field syntax. copyField also supports a maxChars to copy setting. -->

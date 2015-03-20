@@ -194,4 +194,8 @@ public interface ChartSearchService extends OpenmrsService {
 	public SearchProject getSearchProject(Integer projectId);
 	
 	public List<SearchProject> getAllSearchProjects();
+
+	String getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace();
+
+	boolean checkIfColumnExists(String columnName);
 }

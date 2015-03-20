@@ -35,60 +35,58 @@ public class NonPatientDataIndexer {
 		//testing chartsearch in the first place which is id = 1
 		SearchProject project = chartSearchService.getSearchProject(projectId);
 		String sql = project.getSqlQuery();
-		//TODO after using adminService.executeSQL() is done, remove all the above code in this if
 		List<List<Object>> rowsByColumns = adminService.executeSQL(sql, false);
 		Collection docs = new ArrayList();
 		if (!rowsByColumns.isEmpty()) {
 			for (int i = 0; i < rowsByColumns.size(); i++) {
+				SolrInputDocument doc = new SolrInputDocument();
+				doc.addField("id", i);
+				doc.addField("project_id", i);
 				List<Object> columns = rowsByColumns.get(i);
 				String columnNamesWithCommas = project.getColumnNames();
+				
 				if (StringUtils.isNotBlank(columnNamesWithCommas) && !columns.isEmpty()) {
 					//contains column names obtained from chart search module data
-					List<String> columnNamesFromCS = splitLineUsingComma(columnNamesWithCommas);
-					for (int j = 0; j < columns.size(); j++) {
+					List<String> columnNamesFromCS = removeSpacesAndSplitLineUsingComma(columnNamesWithCommas);
+					for (int j = 0; j < columns.size();) {
 						for (int k = 0; k < columnNamesFromCS.size(); k++) {
 							if (j == k) {//this logically implies the column names match
 								//obtained from running SQL query and not necessarily chart search module data
-								SolrInputDocument doc = new SolrInputDocument();
 								Object currentColumnFromDB = columns.get(j);
 								String currentColumnNameFromCS = columnNamesFromCS.get(k);
-								doc.addField("id", k);
+								
 								if (currentColumnFromDB.getClass().equals(int.class)
 								        || currentColumnFromDB.getClass().equals(Integer.class)) {
-									Integer currentColumnValueFromDB = (Integer) currentColumnFromDB;
+									int currentColumnValueFromDB = (Integer) currentColumnFromDB;
 									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 								} else if (currentColumnFromDB.getClass().equals(String.class)) {
 									String currentColumnValueFromDB = (String) currentColumnFromDB;
 									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+									
 								} else if (currentColumnFromDB.getClass().equals(boolean.class)
 								        || currentColumnFromDB.getClass().equals(Boolean.class)) {
-									Boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
+									boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
 									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 								} else {
 									Object currentColumnValueFromDB = currentColumnFromDB;
 									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 								}
-								docs.add(doc);
 							}
+							j++;
 						}
 					}
 				}
+				docs.add(doc);
 			}
 		}
 		try {
 			if (docs.size() > 1000) {
 				// Commit within 5 minutes.
 				UpdateResponse resp = solrServer.add(docs, 300000);
-				if (resp.getStatus() != 0) {
-					System.out.println("Some error has occurred, status is: " + resp.getStatus());
-				}
-				docs.clear();
+				printFailureIfResponseIsNotZeroAndClearDocs(docs, resp);
 			} else {
-				UpdateResponse resp = solrServer.add(docs);
-				if (resp.getStatus() != 0) {
-					System.out.println("Some error has occurred, status is: " + resp.getStatus());
-				}
-				docs.clear();
+				UpdateResponse resp = solrServer.add(docs);//TODO fix: https://groups.google.com/a/openmrs.org/forum/#!topic/dev/N4l1Hj77j98
+				printFailureIfResponseIsNotZeroAndClearDocs(docs, resp);
 			}
 		}
 		catch (SolrServerException e) {
@@ -99,8 +97,22 @@ public class NonPatientDataIndexer {
 		}
 	}
 	
-	public List<String> splitLineUsingComma(String line) {
-		String[] result = line.split(",");
+	private void printFailureIfResponseIsNotZeroAndClearDocs(Collection docs, UpdateResponse resp) {
+		if (resp.getStatus() != 0) {
+			System.out.println("Some error has occurred, status is: " + resp.getStatus());
+		}
+		docs.clear();
+	}
+	
+	/**
+	 * Removes space(s) either at the start or end or line and then split it using commas
+	 * 
+	 * @param line
+	 * @return list of words split from the line
+	 */
+	public static List<String> removeSpacesAndSplitLineUsingComma(String line) {
+		//remove space(s) either at the start or end or line and then split it using commas
+		String[] result = line.replaceAll(" ", "").split(",");
 		List<String> words = new ArrayList<String>();
 		words.addAll(Arrays.asList(result));
 		return words;
@@ -112,5 +124,5 @@ public class NonPatientDataIndexer {
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
 	}
-	
+
 }

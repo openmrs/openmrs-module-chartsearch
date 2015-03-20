@@ -1,5 +1,5 @@
 <%
-    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("chartsearch.refApp.chartSearchApps") ])
+    ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("chartsearch.refApp.chartSearchApps.title") ])
 %>
 
 <script type="text/javascript">

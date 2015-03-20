@@ -10,8 +10,6 @@
 package org.openmrs.module.chartsearch.solr.nonPatient;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +20,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
@@ -29,58 +28,74 @@ public class NonPatientDataIndexer {
 	
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
+	private AdministrationService adminService = Context.getAdministrationService();
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void generateDocumentsAndAddFieldsAndCommitToSolr(SolrServer solrServer, int projectId) {
 		//testing chartsearch in the first place which is id = 1
 		SearchProject project = chartSearchService.getSearchProject(projectId);
-		
 		String sql = project.getSqlQuery();
-		
-		if (StringUtils.isNotBlank(sql) && project != null) {
-			ResultSet rs = chartSearchService.executeSQL(sql);
-			Collection docs = new ArrayList();
-			try {
-				while (rs.next()) {
-					String columnNamesWithCommas = project.getColumnNames();
-					if (StringUtils.isNotBlank(columnNamesWithCommas)) {
-						SolrInputDocument doc = new SolrInputDocument();
-						List<String> columnNames = new ArrayList<String>();
-						columnNames.addAll(splitLineUsingComma(columnNamesWithCommas));
-						for (int j = 0; j < columnNames.size(); j++) {
-							doc.addField(columnNames.get(j), rs.getString(columnNames.get(j)));
-							docs.add(doc);
+		//TODO after using adminService.executeSQL() is done, remove all the above code in this if
+		List<List<Object>> rowsByColumns = adminService.executeSQL(sql, false);
+		Collection docs = new ArrayList();
+		if (!rowsByColumns.isEmpty()) {
+			for (int i = 0; i < rowsByColumns.size(); i++) {
+				List<Object> columns = rowsByColumns.get(i);
+				String columnNamesWithCommas = project.getColumnNames();
+				if (StringUtils.isNotBlank(columnNamesWithCommas) && !columns.isEmpty()) {
+					//contains column names obtained from chart search module data
+					List<String> columnNamesFromCS = splitLineUsingComma(columnNamesWithCommas);
+					for (int j = 0; j < columns.size(); j++) {
+						for (int k = 0; k < columnNamesFromCS.size(); k++) {
+							if (j == k) {//this logically implies the column names match
+								//obtained from running SQL query and not necessarily chart search module data
+								SolrInputDocument doc = new SolrInputDocument();
+								Object currentColumnFromDB = columns.get(j);
+								String currentColumnNameFromCS = columnNamesFromCS.get(k);
+								doc.addField("id", k);
+								if (currentColumnFromDB.getClass().equals(int.class)
+								        || currentColumnFromDB.getClass().equals(Integer.class)) {
+									Integer currentColumnValueFromDB = (Integer) currentColumnFromDB;
+									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+								} else if (currentColumnFromDB.getClass().equals(String.class)) {
+									String currentColumnValueFromDB = (String) currentColumnFromDB;
+									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+								} else if (currentColumnFromDB.getClass().equals(boolean.class)
+								        || currentColumnFromDB.getClass().equals(Boolean.class)) {
+									Boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
+									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+								} else {
+									Object currentColumnValueFromDB = currentColumnFromDB;
+									doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+								}
+								docs.add(doc);
+							}
 						}
 					}
 				}
-				try {
-					if (docs.size() > 1000) {
-						// Commit within 5 minutes.
-						UpdateResponse resp = solrServer.add(docs, 300000);
-						if (resp.getStatus() != 0) {
-							System.out.println("Some error has occurred, status is: " + resp.getStatus());
-						}
-						docs.clear();
-					}
-				}
-				catch (SolrServerException e) {
-					System.out.println("Error generated" + e);
-				}
-				catch (IOException e) {
-					System.out.println("Error generated" + e);
-				}
 			}
-			catch (SQLException e) {
-				System.out.println("Error generated" + e);
+		}
+		try {
+			if (docs.size() > 1000) {
+				// Commit within 5 minutes.
+				UpdateResponse resp = solrServer.add(docs, 300000);
+				if (resp.getStatus() != 0) {
+					System.out.println("Some error has occurred, status is: " + resp.getStatus());
+				}
+				docs.clear();
+			} else {
+				UpdateResponse resp = solrServer.add(docs);
+				if (resp.getStatus() != 0) {
+					System.out.println("Some error has occurred, status is: " + resp.getStatus());
+				}
+				docs.clear();
 			}
-			finally {
-				if (rs != null)
-					try {
-						rs.close();
-					}
-					catch (SQLException e) {
-						System.out.println("Error generated" + e);
-					}
-			}
+		}
+		catch (SolrServerException e) {
+			System.out.println("Error generated" + e);
+		}
+		catch (IOException e) {
+			System.out.println("Error generated" + e);
 		}
 	}
 	

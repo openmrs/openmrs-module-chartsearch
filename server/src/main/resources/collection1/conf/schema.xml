@@ -938,7 +938,7 @@
 		<field name="text" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
 
-		<!-- Other Module's -->
+		<!-- Other Module's		 -->
 		<field name="cc_name" type="text_general" indexed="true"
 			stored="false" required="false" />
 		<field name="cc_filter_query" type="text_general" indexed="true"
@@ -946,6 +946,7 @@
 		<field name="cc_description" type="text_general" indexed="true"
 			stored="false" required="false" />
 
+	
 		<!-- catchall text field that indexes tokens both normally and in reverse 
 			for efficient leading wildcard queries. -->
 		<!-- <field name="text_rev" type="text_general_rev" indexed="true" stored="false" 
@@ -994,6 +995,7 @@
 	<copyField source="value_text" dest="text" />
 	<copyField source="concept_name" dest="text" />
 	<copyField source="concept_class_name" dest="text" />
+
 	<copyField source="cc_name" dest="text" />
 	<copyField source="cc_filter_query" dest="text" />
 	<copyField source="cc_description" dest="text" />

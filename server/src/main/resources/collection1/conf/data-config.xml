@@ -75,8 +75,5 @@
 				INNER JOIN openmrs.encounter_type et ON et.encounter_type_id = f.encounter_type
 				where f.retired = 1">
 		</entity>
-		<entity name="chartsearch_categories"
-			query="SELECT cc.name AS cc_name, cc.filter_query AS cc_filter_query, cc.description AS  cc_description FROM openmrs.chartsearch_categories cc"
-			deltaImportQuery="SELECT cc.name AS cc_name, cc.filter_query AS cc_filter_query, cc.description AS  cc_description FROM openmrs.chartsearch_categories cc">
-		</entity>
+	</document>
 </dataConfig>

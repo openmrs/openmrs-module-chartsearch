@@ -38,7 +38,6 @@
 		<connection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</connection>
 		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-chartsearch</url>
-		<tag>HEAD</tag>
 	</scm>
 
 	<modules>

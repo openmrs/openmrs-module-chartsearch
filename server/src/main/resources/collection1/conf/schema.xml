@@ -938,7 +938,7 @@
 		<field name="text" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
 
-		<!-- Other Module's, chartsearch in the first place -->
+		<!-- Fields from modules and other projects starts here -->
 		<field name="project_id" type="int" indexed="true"
 			stored="true" required="false" />
 		<field name="cc_name" type="text_general" indexed="true"
@@ -948,7 +948,8 @@
 		<field name="cc_description" type="text_general" indexed="true"
 			stored="true" required="false" />
 
-	
+		<!-- Fields from modules and other projects ends here -->
+		
 		<!-- catchall text field that indexes tokens both normally and in reverse 
 			for efficient leading wildcard queries. -->
 		<!-- <field name="text_rev" type="text_general_rev" indexed="true" stored="false" 

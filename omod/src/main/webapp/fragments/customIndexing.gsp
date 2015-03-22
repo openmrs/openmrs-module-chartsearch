@@ -1,15 +1,33 @@
-<!-- Section informative content to be totally removed -->
-<p>Section for managing custom indexing</p>
-
-<br />
-<input type="button" value="Index ChartSearch module Data" id="chartsearch-indexing" />
-
+<div class="customIndexerSection">
+	<div class="customIndexerSubSection1">
+		<h2>Add A New Project/module to Index</h2>
+		
+		<form id="index-new-project-data">
+		   <p>
+		      <input id="projectName" placeholder="${ ui.message("chartsearch.refApp.customIndexing.addNewProjectToIndex.projectName") }" type="text"></input>
+		   </p>
+		   <p>
+		      <input id="projectDesc" placeholder="${ ui.message("chartsearch.refApp.customIndexing.addNewProjectToIndex.projectDesc") }" type="text"></input>
+		   </p>
+		   <p>
+		      <textarea id="mysqlQuery" placeholder="${ ui.message("chartsearch.refApp.customIndexing.addNewProjectToIndex.sql") }"></textarea>
+		   </p>
+		   <p>
+		      <textarea id="columns" placeholder="${ ui.message("chartsearch.refApp.customIndexing.addNewProjectToIndex.columns") }"></textarea>
+		   </p>
+		   <input id="index-project-data" type="submit" value="${ ui.message("chartsearch.refApp.customIndexing.addNewProjectToIndex.indexSubmit")}"></input>
+		</form>
+	</div>
+	<div class="customIndexerSubSection2">
+		<h2>${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex") }</h2>
+	</div>
+</div>
 
 <script type="text/javascript">
  var jq = jQuery;
  
 jq( document ).ready(function() {
-	jq('#chartsearch-indexing').click(function(event) {
+	jq('#index-project-data').click(function(event) {
 		submitChartSearchIndexingFormWithAjax();
 		return false;
 	});
@@ -17,8 +35,8 @@ jq( document ).ready(function() {
 	function submitChartSearchIndexingFormWithAjax() {
 			jq.ajax({
 					type: "POST",
-					 url: "${ ui.actionLink('getSolrResultsFromTheServer') }",
-					data: jq('#chartsearch-indexing').serialize(),
+					 url: "${ ui.actionLink('indexDataForANewProject') }",
+					data: jq('#index-new-project-data').serialize(),
 					dataType: "json",
 					success: function(results) {
 						alert(results);
@@ -32,3 +50,7 @@ jq( document ).ready(function() {
 });
 
 </script>
+
+<style type="text/css">
+	
+</style>

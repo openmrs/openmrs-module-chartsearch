@@ -7,13 +7,17 @@ import org.openmrs.module.chartsearch.solr.SolrSingleton;
 import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataIndexer;
 import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataSearcher;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class CustomIndexingFragmentController {
 	
 	public void controller(FragmentModel model) {
 	}
 	
-	public JSONObject getSolrResultsFromTheServer() {
+	public JSONObject indexDataForANewProject(FragmentModel model, @RequestParam(value="projectName", required=true) String projectName,
+	                                              @RequestParam(value="projectDesc", required=true) String projectDesc,
+	                                              @RequestParam(value="mysqlQuery", required=true) String mysqlQuery,
+	                                              @RequestParam(value="columns", required=true) String columns) {
 		NonPatientDataIndexer nonI = new NonPatientDataIndexer();
 		NonPatientDataSearcher nonS = new NonPatientDataSearcher();
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
@@ -23,7 +27,7 @@ public class CustomIndexingFragmentController {
 		
 		JSONObject json = new JSONObject();
 		//search against solr to obtain the documents returned but return their number instead
-		json.put("noOfDocs", nonS.getNonPatientDocumentList());
+		//json.put("noOfDocs", nonS.getNonPatientDocumentList());
 		
 		return json;
 	}

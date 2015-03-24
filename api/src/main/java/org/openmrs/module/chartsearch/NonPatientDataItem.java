@@ -15,12 +15,23 @@ public class NonPatientDataItem extends ChartListItem {
 	
 	private String databaseName;
 	
-	//Use this at indexing to add an entry for an entity in data-config.xml and schema.xml files
-	private String sqlQuery;
+	private String projectName;
 	
-	private List<String> tableNames;
+	private int projectId;
+	
+	private String projectUuid;
+	
+	private String projectDescription;
 	
 	private List<String> columnNames;
+	
+	public int getProjectId() {
+		return projectId;
+	}
+	
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
+	}
 	
 	public String getDatabaseName() {
 		return databaseName;
@@ -28,22 +39,6 @@ public class NonPatientDataItem extends ChartListItem {
 	
 	public void setDatabaseName(String databaseName) {
 		this.databaseName = databaseName;
-	}
-	
-	public String getSqlQuery() {
-		return sqlQuery;
-	}
-	
-	public void setSqlQuery(String sqlQuery) {
-		this.sqlQuery = sqlQuery;
-	}
-	
-	public List<String> getTableNames() {
-		return tableNames;
-	}
-	
-	public void setTableNames(List<String> tableNames) {
-		this.tableNames = tableNames;
 	}
 	
 	public List<String> getColumnNames() {
@@ -54,35 +49,27 @@ public class NonPatientDataItem extends ChartListItem {
 		this.columnNames = columnNames;
 	}
 	
-	//To be Removed for test purposes {cc refers to concept_class}
-	private String ccName;
-	
-	private String ccFilterQuery;
-	
-	private String ccDescription;
-	
-	public String getCcName() {
-		return ccName;
+	public String getProjectName() {
+		return projectName;
 	}
 	
-	public void setCcName(String ccName) {
-		this.ccName = ccName;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	
-	public String getCcFilterQuery() {
-		return ccFilterQuery;
+	public String getProjectUuid() {
+		return projectUuid;
 	}
 	
-	public void setCcFilterQuery(String ccFilterQuery) {
-		this.ccFilterQuery = ccFilterQuery;
+	public void setProjectUuid(String projectUuid) {
+		this.projectUuid = projectUuid;
 	}
 	
-	public String getCcDescription() {
-		return ccDescription;
+	public String getProjectDescription() {
+		return projectDescription;
 	}
 	
-	public void setCcDescription(String ccDescription) {
-		this.ccDescription = ccDescription;
+	public void setProjectDescription(String projectDescription) {
+		this.projectDescription = projectDescription;
 	}
-	
 }

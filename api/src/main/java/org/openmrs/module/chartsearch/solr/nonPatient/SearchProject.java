@@ -12,8 +12,9 @@ package org.openmrs.module.chartsearch.solr.nonPatient;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
+import org.openmrs.util.OpenmrsConstants;
 
 /**
  * A web project that has database data attached to it. Such as Chart Search Module et-cetera
@@ -24,30 +25,44 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	
 	private String projectName;
 	
+	private String database;
+	
+	private String databaseUser;
+	
+	private String databaseUSerPassword;
+	
+	private String serverName;
+	
+	private String dbms;
+	
+	private String portNumber;
+	
 	private String projectDescription;
 	
 	private String projectUuid;
 	
-	private Integer projectId;
+	private int projectId;
 	
 	/**
 	 * column names separated by commas, these should be unique from one another and the same ones
-	 * as mentioned in the sqlQuery, take use of AS key word in MySQL to make them unique 
+	 * as mentioned in the sqlQuery, take use of AS key word in MySQL to make them unique
 	 */
 	private String columnNames;
 	
 	/**
-	 * Creates a SearchProject object when registering a project
+	 * Creates a SearchProject object when registering a project, must always use this when creating
+	 * this object
 	 * 
 	 * @param projectName
 	 * @param sqlQuery
 	 * @param columnNamesList
 	 */
-	public SearchProject(String projectName, String sqlQuery, List<String> columnNamesList) {
+	public SearchProject(String projectName, String sqlQuery, List<String> columnNamesList, String database) {
 		setProjectName(projectName);
 		setSqlQuery(sqlQuery);
 		setColumnNamesList(columnNamesList);
 		setColumnNames(getColumnNamesSeparatedWithCommas());
+		setDatabase(database);
 	}
 	
 	public SearchProject() {
@@ -89,11 +104,11 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 		this.projectUuid = projectUuid;
 	}
 	
-	public Integer getProjectId() {
+	public int getProjectId() {
 		return projectId;
 	}
 	
-	public void setProjectId(Integer projectId) {
+	public void setProjectId(int projectId) {
 		this.projectId = projectId;
 	}
 	
@@ -155,5 +170,62 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	 */
 	public void setColumnNames(String columnNames) {
 		this.columnNames = columnNames;
+	}
+	
+	public String getDatabase() {
+		return database;
+	}
+	
+	/**
+	 * Sets the database name, if it is empty or whitespace or bull, it sets it to the openmrs
+	 * database
+	 * 
+	 * @param database
+	 */
+	public void setDatabase(String database) {
+		if (StringUtils.isBlank(database)) {
+			database = System.getProperty(OpenmrsConstants.DATABASE_NAME);
+		}
+		this.database = database;
+	}
+	
+	public String getDatabaseUser() {
+		return databaseUser;
+	}
+	
+	public void setDatabaseUser(String databaseUser) {
+		this.databaseUser = databaseUser;
+	}
+	
+	public String getDatabaseUSerPassword() {
+		return databaseUSerPassword;
+	}
+	
+	public void setDatabaseUSerPassword(String databaseUSerPassword) {
+		this.databaseUSerPassword = databaseUSerPassword;
+	}
+	
+	public String getServerName() {
+		return serverName;
+	}
+	
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+	
+	public String getDbms() {
+		return dbms;
+	}
+	
+	public void setDbms(String dbms) {
+		this.dbms = dbms;
+	}
+	
+	public String getPortNumber() {
+		return portNumber;
+	}
+	
+	public void setPortNumber(String portNumber) {
+		this.portNumber = portNumber;
 	}
 }

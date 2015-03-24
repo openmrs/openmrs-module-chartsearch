@@ -12,7 +12,19 @@
 		<discriminator column="project_id" insert="false" />
 
 		<property name="projectName" type="java.lang.String" column="name"
-			length="255" unique="true" />
+			length="255" />
+		<property name="database" type="java.lang.String" column="name"
+			length="50" />
+		<property name="databaseUser" type="java.lang.String" column="name"
+			length="50" />
+		<property name="databaseUSerPassword" type="java.lang.String" column="name"
+			length="255" />
+		<property name="serverName" type="java.lang.String" column="name"
+			length="50" />
+		<property name="dbms" type="java.lang.String" column="name"
+			length="50" />
+		<property name="portNumber" type="java.lang.String" column="name"
+			length="15" />
 		<property name="projectUuid" type="java.lang.String" column="uuid"
 			length="38" unique="true" />
 		<property name="projectDescription" type="java.lang.String"

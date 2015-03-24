@@ -2,6 +2,7 @@ package org.openmrs.module.chartsearch.solr.nonPatient;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -9,30 +10,31 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.ChartSearchSyntax;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 
 public class NonPatientDataSearcher {
 	
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
-	public double getNonPatientDocumentList() {
+	public SolrDocumentList getNonPatientDocumentList(String searchText, int projectId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		SolrQuery query = new SolrQuery();
-		query.setQuery("diagn* tes");
-		//query.addFilterQuery("cat:electronics", "store:amazon.com");
-		
-		String allColumns = chartSearchService.getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace();
-		List<String> allColumnsList = NonPatientDataIndexer.removeSpacesAndSplitLineUsingComma(allColumns);
-		
-		//for (int i = 0; i < allColumnsList.size(); i++) {
-		query.setFields("cc_name", "cc_filter_query", "cc_description");
-		//}
-		//query.addFilterQuery(String.format("project_id:%d", 1));
-		
-		query.setStart(0);
-		query.set("defType", "edismax");
-		
 		QueryResponse response = null;
+		
+		if (StringUtils.isBlank(searchText)) {
+			searchText = "*";
+		}
+		ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
+		searchText = searchSyntax.getSearchQuery();
+		
+		query.setQuery("text:" + searchText);
+		query.addFilterQuery("project_id:" + projectId);
+		query.setStart(0);
+		query.setRows(999999999);
+		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
+		query.setParam("hl.fl", "text");
+		
 		try {
 			response = solrServer.query(query);
 		}
@@ -40,10 +42,17 @@ public class NonPatientDataSearcher {
 			System.out.println("Error generated" + e);
 		}
 		SolrDocumentList results = response.getResults();
-		for (int i = 0; i < results.size(); ++i) {
-			System.out.println(results.get(i));
-		}
-		return response.getResults().getNumFound();
+		/*NonPatientDataItem item = new NonPatientDataItem();
+		List<ChartListItem> items = new ArrayList<ChartListItem>();
+		Iterator<SolrDocument> iterator = results.iterator();
+		while (iterator.hasNext()) {
+			SolrDocument document = iterator.next();
+			SearchProject project = chartSearchService.getSearchProject(projectId);
+			List<String> columns = NonPatientDataIndexer.removeSpacesAndSplitLineUsingComma("");
+			
+		}*/
+		
+		return results;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

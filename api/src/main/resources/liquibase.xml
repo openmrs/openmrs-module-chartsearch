@@ -198,6 +198,21 @@
 			<column name="name" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
+			<column name="database" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="databaseUser" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+			<column name="databaseUSerPassword" type="varchar(50)">
+				<constraints nullable="true" />
+			<column name="serverName" type="varchar(50)">
+				<constraints nullable="true" />
+			<column name="dbms" type="varchar(50)">
+				<constraints nullable="true" />
+			<column name="portNumber" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
 			<column name="description" type="varchar(255)" defaultValue="null" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
@@ -213,6 +228,7 @@
 		<comment>Insert test data into chartsearch_project</comment>
 		<insert tableName="${project.parent.artifactId}_project">
 			<column name="name" value="ChartSearch" />
+			<column name="database" value="openmrs" />
 			<column name="description"
 				value="Defining the ChartSearch module data to be indexed and searched" />
 			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />

@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,6 +84,21 @@ public class AddCustomFieldsToSchema {
 	}
 	
 	/**
+	 * Generates copy field entries to be added to schema.xml file, one would look like: <copyField
+	 * source="concept_class_name" dest="text" />
+	 * 
+	 * @return
+	 */
+	public static String generateWellWrittenCopyFieldEntries(List<String> sources) {
+		//<copyField source="concept_class_name" dest="text" />
+		String copyFieldEntries = "";
+		for (int i = 0; i < sources.size(); i++) {
+			copyFieldEntries += "\t<copyField source=\"" + sources.get(i) + "\" dest=\"text\" />\n";
+		}
+		return copyFieldEntries;
+	}
+	
+	/**
 	 * Reads the schema file line by line and edits it to add a new field entry
 	 * 
 	 * @param schemaFileLocation
@@ -91,7 +107,7 @@ public class AddCustomFieldsToSchema {
 	 * @return new lines of the file in a List
 	 */
 	public static void readSchemaFileLineByLineAndWritNewFieldEntry(String schemaFileLocation, String newSchemaFilePath,
-	                                                                String fieldEntry) {
+	                                                                String fieldEntry, String copyFieldEntry) {
 		//reading file line by line in Java using BufferedReader       
 		FileInputStream fis = null;
 		BufferedReader reader = null;
@@ -113,6 +129,9 @@ public class AddCustomFieldsToSchema {
 				if (line.equals("\t\t<!-- Fields from modules and other projects starts here -->")) {
 					bufferWritter.write("\t\t<!-- Fields from modules and other projects starts here -->\n" + fieldEntry
 					        + "\n");
+					bufferWritter.close();
+				} else if (line.equals("\t<!-- Starting customly added copyfields -->")) {
+					bufferWritter.write("\n\t<!-- Starting customly added copyfields -->\n" + copyFieldEntry + "\n");
 					bufferWritter.close();
 				} else {
 					bufferWritter.write(line + "\n");
@@ -142,45 +161,24 @@ public class AddCustomFieldsToSchema {
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
 	}
 	
-	/*public static void main(String[] args) {
-		/*try {
-			String data = "<field name=\"test_field\" type=\"text_general\" indexed=\"true\" stored=\"true\" required=\"false\" />";
-			
-			File file = new File("/home/k-joseph/Desktop/schema.xml");
-			
-			//if file doesnt exists, then create it
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			
-			//true = append file
-			FileWriter fileWritter = new FileWriter(file.getName(), true);
-			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-			bufferWritter.write(data);
-			bufferWritter.close();
-			
-			System.out.println("Done");
-			
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static void main(String[] args) {
 		
-		*/
-	/*List<String> fieldNames = new ArrayList<String>();
-	fieldNames.add("cc_test1");
-	fieldNames.add("cc_test2");
-	fieldNames.add("cc_test3");
-	fieldNames.add("cc_test4");
-	fieldNames.add("cc_test5");
-	fieldNames.add("cc_test6");
-	fieldNames.add("cc_test7_cc_test7_cc_test7");
-	
-	readSchemaFileLineByLineAndWritNewFieldEntry("/home/k-joseph/Desktop/schema.xml",
-	    "/home/k-joseph/Desktop/new-schema.xml",
-	    generateAWellWrittenFieldEntry(fieldNames, "general_text", true, true, false));
-	copyNewSchemaFileToPreviouslyUsed("/home/k-joseph/Desktop/schema.xml", "/home/k-joseph/Desktop/new-schema.xml");
-	}*/
+		List<String> sources = new ArrayList<String>();
+		sources.add("cc_test1");
+		sources.add("cc_test2");
+		sources.add("cc_test3");
+		sources.add("concept_class_name");
+		sources.add("cc_test5");
+		sources.add("cc_test6");
+		sources.add("cc_test7_cc_test7_cc_test7");
+		
+		readSchemaFileLineByLineAndWritNewFieldEntry("/home/k-joseph/Desktop/schema.xml",
+		    "/home/k-joseph/Desktop/new-schema.xml",
+		    generateAWellWrittenFieldEntry(sources, "text_general", true, true, false),
+		    generateWellWrittenCopyFieldEntries(sources));
+		
+		System.out.println(generateWellWrittenCopyFieldEntries(sources));
+	}
 	
 	/**
 	 * Overwrites the previous schema file with the newly generated

@@ -17,16 +17,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
+import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
@@ -157,4 +161,54 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		doc.addField("concept_class_name", ChartSearchCustomIndexer.getConceptClassName());
 	}
 	
+	/**
+	 * Executes an SQL Query
+	 * 
+	 * @see org.openmrs.module.chartsearch.api.db.ChartSearchDAO#executeSQL(java.lang.String)
+	 */
+	public ResultSet executeSQL(String sql) {
+		ResultSet resultSet = null;
+		try {
+			Statement statement = sessionFactory.getCurrentSession().connection().createStatement();
+			resultSet = statement.executeQuery(sql);
+		}
+		catch (HibernateException e) {
+			log.error("Error generated: ", e);
+		}
+		catch (SQLException e) {
+			log.error("Error generated: ", e);
+		}
+		return resultSet;
+	}
+	
+	@Override
+	public SearchProject getSearchProject(Integer projectId) {
+		log.info("Getting a non patient project with id: " + projectId);
+		return (SearchProject) sessionFactory.getCurrentSession().get(SearchProject.class, projectId);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<SearchProject> getAllSearchProjects() {
+		log.info("Getting all Search projects from the database");
+		List<SearchProject> projects = sessionFactory.getCurrentSession().createCriteria(SearchProject.class).list();
+		//TODO Fix things here, this code is not working
+		return projects;
+	}
+	
+	/**
+	 * Saves either a new or an edited search projects, a Search project is a description of like a
+	 * module etc
+	 * 
+	 * @param project
+	 */
+	@Override
+	public void saveSearchProject(SearchProject project) {
+		sessionFactory.getCurrentSession().saveOrUpdate(project);
+	}
+	
+	@Override
+	public void deleteSearchProject(SearchProject project) {
+		sessionFactory.getCurrentSession().delete(project);
+	}
 }

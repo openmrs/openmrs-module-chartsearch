@@ -55,6 +55,23 @@ public class ChartSearchIndexer {
 		}
 	}
 	
+	public void indexNonPatientData() {
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+		ModifiableSolrParams params = new ModifiableSolrParams();
+		params.set("qt", "/dataimport");
+		params.set("command", "import");
+		//params.set("projectId", "chartsearch");
+		params.set("clean", false);
+		try {
+			if (solrServer != null) {
+				solrServer.query(params);
+			}
+		}
+		catch (SolrServerException ex) {
+			log.error("Tried to import data but failed " + ex);
+		}
+	}
+	
 	/* 
 	 * @return null if something going wrong
 	 */

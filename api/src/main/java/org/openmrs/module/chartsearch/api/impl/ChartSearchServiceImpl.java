@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +39,7 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
@@ -92,7 +94,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional(readOnly = true)
 	public List<SynonymGroup> getAllSynonymGroups() {
 		List<SynonymGroup> list = new ArrayList<SynonymGroup>();
@@ -101,14 +103,14 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public void purgeSynonymGroup(SynonymGroup synGroup) {
 		getSynonymGroupDAO().delete(synGroup);
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException {
 		return (SynonymGroup) getSynonymGroupDAO().saveOrUpdate(synGroup);
@@ -139,21 +141,21 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional(readOnly = true)
 	public List<Synonym> getAllSynonyms() {
 		return getSynonymDAO().getAll();
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public void purgeSynonym(Synonym synonym) {
 		getSynonymDAO().delete(synonym);
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public Synonym saveSynonym(Synonym synonym) throws APIException {
 		return (Synonym) getSynonymDAO().saveOrUpdate(synonym);
@@ -248,7 +250,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unused")
-    @Override
+	@Override
 	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
 	public void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups) {
 		Set<Set<Obs>> setOfObsGroups = GeneratingJson.generateObsGroupFromSearchResults();
@@ -317,5 +319,60 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		dao.indexAllPatientData(numberOfResults, solrServer, showProgressToClass);
+	}
+	
+	@Override
+	public ResultSet executeSQL(String sql) {
+		return dao.executeSQL(sql);
+	}
+	
+	@Override
+	public void deleteSearchProject(SearchProject project) {
+		dao.deleteSearchProject(project);
+	}
+	
+	@Override
+	public void saveSearchProject(SearchProject project) {
+		dao.saveSearchProject(project);
+	}
+	
+	@Override
+	public SearchProject getSearchProject(Integer projectId) {
+		return dao.getSearchProject(projectId);
+	}
+	
+	@Override
+	public List<SearchProject> getAllSearchProjects() {
+		return dao.getAllSearchProjects();
+	}
+	
+	@Override
+	public String getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace() {
+		List<SearchProject> allProjects = getAllSearchProjects();
+		String columnsFromCurrentProject = "";
+		
+		for (int i = 0; i < allProjects.size(); i++) {
+			if (i == allProjects.size() - 1) {//if on the last project
+				columnsFromCurrentProject = allProjects.get(i).getColumnNames();
+			} else {
+				columnsFromCurrentProject = allProjects.get(i).getColumnNames() + ", ";
+			}
+		}
+		return columnsFromCurrentProject;
+	}
+	
+	/**
+	 * Gets all column names from all projects of all projects and checks whether the passed in
+	 * column name is one of the existing columns, should be checked before adding any new column
+	 * 
+	 * @see org.openmrs.module.chartsearch.api.ChartSearchService#checkIfColumnExists(java.lang.String)
+	 */
+	@Override
+	public boolean checkIfColumnExists(String columnName) {
+		String allColumnsFromAllProjects = getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace();
+		if (allColumnsFromAllProjects.contains(columnName)) {
+			return true;
+		} else
+			return false;
 	}
 }

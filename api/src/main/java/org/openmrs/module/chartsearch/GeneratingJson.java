@@ -160,6 +160,12 @@ public class GeneratingJson {
 		}
 	}
 	
+	public JSONObject generateNonPatientJSON() {
+		JSONObject jsonToReturn = new JSONObject();
+		
+		return jsonToReturn;
+	}
+	
 	private static void addFacetsToJSONObjectToReturn(JSONObject jsonToReturn) {
 		JSONArray arr_of_facets = new JSONArray();
 		JSONObject facet = new JSONObject();
@@ -167,11 +173,11 @@ public class GeneratingJson {
 		
 		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
 		if (!facets.isEmpty()) {
-	        for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
-		        facet.put("facet", generateFacetsJson(facets.get(i)));
-		        arr_of_facets.add(facet);
-	        }
-        }
+			for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
+				facet.put("facet", generateFacetsJson(facets.get(i)));
+				arr_of_facets.add(facet);
+			}
+		}
 		jsonToReturn.put("facets", arr_of_facets);
 	}
 	

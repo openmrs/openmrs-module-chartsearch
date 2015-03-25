@@ -1,70 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <!--
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
+	<!-- See http://www.liquibase.org/manual/home#available_database_refactorings 
+		for a list of supported elements and attributes -->
 
-    <changeSet id="1" author="Eli">
-        <comment>added synonym table</comment>
-        <createTable tableName="chartsearch_synonyms">
-            <column name="group_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="1" author="Eli">
+		<comment>added synonym table</comment>
+		<createTable tableName="chartsearch_synonyms">
+			<column name="group_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
 
-    <changeSet id="2" author="Eli">
-        <comment>added synonym groups table and a foreign key</comment>
-        <createTable tableName="chartsearch_synonym_groups">
-            <column name="group_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="group_name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="is_category" type="boolean" defaultValueBoolean="false"/>
-        </createTable>
+	<changeSet id="2" author="Eli">
+		<comment>added synonym groups table and a foreign key</comment>
+		<createTable tableName="chartsearch_synonym_groups">
+			<column name="group_id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="group_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_category" type="boolean" defaultValueBoolean="false" />
+		</createTable>
 
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                />
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="RESTRICT" />
 
-    </changeSet>
+	</changeSet>
 
-    <changeSet id="3" author="Eli">
-        <comment>Added synonym_id column</comment>
-        <addColumn tableName="chartsearch_synonyms">
-            <column name="synonym_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
+	<changeSet id="3" author="Eli">
+		<comment>Added synonym_id column</comment>
+		<addColumn tableName="chartsearch_synonyms">
+			<column name="synonym_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 
-    <changeSet id="4" author="Eli">
-        <comment>Changed cascade options</comment>
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms_cascade"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="CASCADE"
-                />
-    </changeSet>
+	<changeSet id="4" author="Eli">
+		<comment>Changed cascade options</comment>
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms_cascade"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
+	</changeSet>
 
-		
+
 	<changeSet id="CSM-58-18062014-2207" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -88,9 +80,10 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="CSM-58-18062014-2210" author="k-joseph">
-		<comment>Adding category filters for all existing concept classes</comment>
+		<comment>Adding category filters for all existing concept classes
+		</comment>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Test" />
 			<column name="filter_query" value="concept_class_name:Test" />
@@ -133,7 +126,7 @@
 			<column name="description" value="Category item for filtering Question" />
 			<column name="uuid" value="0717136a-5c5f-4d68-b099-cbf1ad820363" />
 		</insert>
-		
+
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="LabSet" />
 			<column name="filter_query" value="concept_class_name:LabSet" />
@@ -187,6 +180,64 @@
 			<column name="filter_query" value="concept_class_name:Frequency" />
 			<column name="description" value="Category item for filtering Frequency" />
 			<column name="uuid" value="21ac0fec-947f-4a76-aeee-2e17d9d0cb13" />
+		</insert>
+	</changeSet>
+	<changeSet id="FINALYEARPROJECT-1603201515011" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="${project.parent.artifactId}_project" />
+			</not>
+		</preConditions>
+		<comment>
+			Create chartsearch_project table
+		</comment>
+		<createTable tableName="${project.parent.artifactId}_project">
+			<column name="project_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="database" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="database_user" type="text">
+				<constraints nullable="true" />
+			</column>
+			<column name="database_user_password" type="text">
+				<constraints nullable="true" />
+			</column>
+			<column name="server_name" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+			<column name="dbms" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+			<column name="port_number" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+			<column name="description" type="text" defaultValue="null" />
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="sql_query" type="text"></column>
+			<column name="column_names" type="text"></column>
+		</createTable>
+	</changeSet>
+	<changeSet id="FINALYEARPROJECT-160320151639" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="${project.parent.artifactId}_project" />
+		</preConditions>
+		<comment>Insert test data into chartsearch_project</comment>
+		<insert tableName="${project.parent.artifactId}_project">
+			<column name="name" value="ChartSearch" />
+			<column name="database" value="openmrs" />
+			<column name="description"
+				value="Defining the ChartSearch module data to be indexed and searched" />
+			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />
+			<column name="sql_query"
+				value="SELECT cc.name AS cc_name, cc.filter_query AS cc_filter_query, cc.description AS  cc_description FROM openmrs.chartsearch_categories cc" />
+			<column name="column_names" value="cc_name, cc_filter_query, cc_description" />
 		</insert>
 	</changeSet>
 

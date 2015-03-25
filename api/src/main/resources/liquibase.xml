@@ -198,22 +198,25 @@
 			<column name="name" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="database" type="varchar(50)">
+			<column name="database" type="text">
 				<constraints nullable="false" />
 			</column>
-			<column name="databaseUser" type="varchar(50)">
+			<column name="database_user" type="text">
 				<constraints nullable="true" />
 			</column>
-			<column name="databaseUSerPassword" type="varchar(50)">
+			<column name="database_user_password" type="text">
 				<constraints nullable="true" />
-			<column name="serverName" type="varchar(50)">
+			</column>
+			<column name="server_name" type="varchar(50)">
 				<constraints nullable="true" />
+			</column>
 			<column name="dbms" type="varchar(50)">
 				<constraints nullable="true" />
-			<column name="portNumber" type="varchar(50)">
+			</column>
+			<column name="port_number" type="varchar(50)">
 				<constraints nullable="true" />
 			</column>
-			<column name="description" type="varchar(255)" defaultValue="null" />
+			<column name="description" type="text" defaultValue="null" />
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>

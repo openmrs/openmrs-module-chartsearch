@@ -10,6 +10,7 @@
 package org.openmrs.module.chartsearch.solr.nonPatient;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,8 +29,6 @@ import org.apache.solr.common.SolrInputDocument;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
-
-import com.mysql.jdbc.Connection;
 
 public class NonPatientDataIndexer {
 	

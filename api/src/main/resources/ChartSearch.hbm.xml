@@ -13,17 +13,17 @@
 
 		<property name="projectName" type="java.lang.String" column="name"
 			length="255" />
-		<property name="database" type="java.lang.String" column="name"
+		<property name="database" type="java.lang.String" column="database"
 			length="50" />
-		<property name="databaseUser" type="java.lang.String" column="name"
+		<property name="databaseUser" type="java.lang.String" column="database_user"
 			length="50" />
-		<property name="databaseUSerPassword" type="java.lang.String" column="name"
+		<property name="databaseUSerPassword" type="java.lang.String" column="database_user_password"
 			length="255" />
-		<property name="serverName" type="java.lang.String" column="name"
+		<property name="serverName" type="java.lang.String" column="server_name"
 			length="50" />
-		<property name="dbms" type="java.lang.String" column="name"
+		<property name="dbms" type="java.lang.String" column="dbms"
 			length="50" />
-		<property name="portNumber" type="java.lang.String" column="name"
+		<property name="portNumber" type="java.lang.String" column="port_number"
 			length="15" />
 		<property name="projectUuid" type="java.lang.String" column="uuid"
 			length="38" unique="true" />

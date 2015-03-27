@@ -375,4 +375,9 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		} else
 			return false;
 	}
+	
+	@Override
+	public SearchProject getSearchProjectByUuid(String uuid) {
+		return dao.getSearchProjectByUuid(uuid);
+	}
 }

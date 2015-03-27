@@ -106,8 +106,8 @@ public class AddCustomFieldsToSchema {
 	 *            {@link #generateAWellWrittenFieldEntry(String, String, boolean, boolean, boolean)}
 	 * @return new lines of the file in a List
 	 */
-	public static void readSchemaFileLineByLineAndWritNewFieldEntry(String schemaFileLocation, String newSchemaFilePath,
-	                                                                String fieldEntry, String copyFieldEntry) {
+	public static void readSchemaFileLineByLineAndWritNewFieldEntries(String schemaFileLocation, String newSchemaFilePath,
+	                                                                  String fieldEntry, String copyFieldEntry) {
 		//reading file line by line in Java using BufferedReader       
 		FileInputStream fis = null;
 		BufferedReader reader = null;
@@ -161,25 +161,6 @@ public class AddCustomFieldsToSchema {
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
 	}
 	
-	public static void main(String[] args) {
-		
-		List<String> sources = new ArrayList<String>();
-		sources.add("cc_test1");
-		sources.add("cc_test2");
-		sources.add("cc_test3");
-		sources.add("concept_class_name");
-		sources.add("cc_test5");
-		sources.add("cc_test6");
-		sources.add("cc_test7_cc_test7_cc_test7");
-		
-		readSchemaFileLineByLineAndWritNewFieldEntry("/home/k-joseph/Desktop/schema.xml",
-		    "/home/k-joseph/Desktop/new-schema.xml",
-		    generateAWellWrittenFieldEntry(sources, "text_general", true, true, false),
-		    generateWellWrittenCopyFieldEntries(sources));
-		
-		System.out.println(generateWellWrittenCopyFieldEntries(sources));
-	}
-	
 	/**
 	 * Overwrites the previous schema file with the newly generated
 	 * 
@@ -194,7 +175,7 @@ public class AddCustomFieldsToSchema {
 			previousSchemaFile.delete();
 			newSchemaFile.renameTo(previousSchemaFile);
 			
-			/**
+			/*
 			 * TODO there might be need to automatically edit the
 			 * appdata/chartsearch/collection1/conf/schema.xml as well so as to avoid the need to
 			 * restart the module, the other way to do this stuff is to automatically restart the

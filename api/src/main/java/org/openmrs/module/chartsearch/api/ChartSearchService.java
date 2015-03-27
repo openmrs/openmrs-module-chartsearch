@@ -188,14 +188,21 @@ public interface ChartSearchService extends OpenmrsService {
 	public ResultSet executeSQL(String sql);
 	
 	public void deleteSearchProject(SearchProject project);
-
+	
+	/**
+	 * @should save a new search project
+	 * @should update a search project
+	 * @param project
+	 */
 	public void saveSearchProject(SearchProject project);
-
+	
 	public SearchProject getSearchProject(Integer projectId);
 	
 	public List<SearchProject> getAllSearchProjects();
-
+	
 	String getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace();
-
+	
 	boolean checkIfColumnExists(String columnName);
+	
+	public SearchProject getSearchProjectByUuid(String uuid);
 }

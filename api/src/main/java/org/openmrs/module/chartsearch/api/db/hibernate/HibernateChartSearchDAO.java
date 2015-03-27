@@ -27,6 +27,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
@@ -210,5 +211,14 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public void deleteSearchProject(SearchProject project) {
 		sessionFactory.getCurrentSession().delete(project);
+	}
+	
+	public SearchProject getSearchProjectByUuid(String uuid) {
+		SearchProject p = null;
+		
+		p = (SearchProject) sessionFactory.getCurrentSession().createQuery("from SearchProject p where p.uuid = :uuid")
+		        .setString("uuid", uuid).uniqueResult();
+		
+		return p;
 	}
 }

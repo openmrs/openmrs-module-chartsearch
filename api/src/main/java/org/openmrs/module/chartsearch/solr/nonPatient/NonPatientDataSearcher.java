@@ -13,8 +13,8 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSyntax;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 
-public class NonPatientDataSearcher {
-	
+public class NonPatientDataSearcher {//TODO may need to add and access this as a bean
+
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
 	public SolrDocumentList getNonPatientDocumentList(String searchText, int projectId) {

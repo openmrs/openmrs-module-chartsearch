@@ -130,6 +130,7 @@
 		Synonym.hbm.xml
 		ChartSearch.hbm.xml
 		ChartSearchCategories.hbm.xml
+		SearchProject.hbm.xml
 
 	</mappingFiles>
 

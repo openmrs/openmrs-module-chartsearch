@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="org.openmrs.module.chartsearch.solr.nonPatient">
+
+	<class name="SearchProject" table="${project.parent.artifactId}_project">
+		<id name="projectId" type="java.lang.Integer" column="project_id"
+			unsaved-value="undefined">
+			<generator
+				class="org.openmrs.api.db.hibernate.NativeIfNotAssignedIdentityGenerator" />
+		</id>
+		<discriminator column="project_id" insert="false" />
+		<property name="uuid" type="java.lang.String" column="uuid"
+			length="38" unique="true" />
+		<property name="projectName" type="java.lang.String" column="name"
+			length="255" unique="true" />
+		<property name="projectDescription" type="java.lang.String"
+			column="description" length="255" />
+		<property name="sqlQuery" type="java.lang.String" column="sql_query" />
+		<property name="columnNames" type="java.lang.String" column="column_names" />
+		<property name="database" type="java.lang.String" column="database"
+			length="50" />
+		<property name="databaseUser" type="java.lang.String" column="database_user"
+			length="50" />
+		<property name="databaseUSerPassword" type="java.lang.String"
+			column="database_user_password" length="255" />
+		<property name="serverName" type="java.lang.String" column="server_name"
+			length="50" />
+		<property name="dbms" type="java.lang.String" column="dbms"
+			length="50" />
+		<property name="portNumber" type="java.lang.String" column="port_number"
+			length="15" />
+	</class>
+
+</hibernate-mapping>

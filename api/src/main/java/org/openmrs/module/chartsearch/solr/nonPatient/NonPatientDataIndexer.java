@@ -29,23 +29,24 @@ import org.apache.solr.common.SolrInputDocument;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.SolrSingleton;
 
-public class NonPatientDataIndexer {
-	
+public class NonPatientDataIndexer {//TODO may need to add and access this as a bean
+
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
 	private AdministrationService adminService = Context.getAdministrationService();
 	
 	/**
-	 * generates the solr documents from the data fetched from an openmrs database, adds it to
-	 * SolrServer for indexing
+	 * generates the solr documents from the data fetched from a database, adds it to SolrServer for
+	 * indexing
 	 * 
 	 * @param solrServer
 	 * @param projectId
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void generateDocumentsAndAddFieldsAndCommitToSolr(SolrServer solrServer, int projectId,
-	                                                         boolean isAnonOpenmrsDatabase) {
+	public Collection generateDocumentsAndAddFieldsAndCommitToSolr(int projectId, boolean isAnonOpenmrsDatabase) {
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		SearchProject project = chartSearchService.getSearchProject(projectId);
 		String sql = project.getSqlQuery();
 		String columnNamesWithCommas = project.getColumnNames();
@@ -137,7 +138,7 @@ public class NonPatientDataIndexer {
 		catch (IOException e) {
 			System.out.println("Error generated" + e);
 		}
-		
+		return docs;
 	}
 	
 	private void addBasicFieldsToSolrDoc(SearchProject project, int i, SolrInputDocument doc) {
@@ -158,12 +159,12 @@ public class NonPatientDataIndexer {
 	}
 	
 	/**
-	 * Removes space(s) either at the start or end or line and then split it using commas
+	 * Removes space(s) either at the start or end of a sentence/line and then split it using commas
 	 * 
 	 * @param line
 	 * @return list of words split from the line
 	 */
-	public static List<String> removeSpacesAndSplitLineUsingComma(String line) {
+	public List<String> removeSpacesAndSplitLineUsingComma(String line) {
 		//remove space(s) either at the start or end or line and then split it using commas
 		String[] result = line.replaceAll(" ", "").split(",");
 		List<String> words = new ArrayList<String>();

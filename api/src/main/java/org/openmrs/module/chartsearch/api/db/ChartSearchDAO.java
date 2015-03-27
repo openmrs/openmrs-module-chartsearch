@@ -29,12 +29,14 @@ public interface ChartSearchDAO {
 	                                @SuppressWarnings("rawtypes") Class showProgressToClass);
 	
 	public ResultSet executeSQL(String sql);
-
+	
 	void deleteSearchProject(SearchProject project);
-
+	
 	void saveSearchProject(SearchProject project);
-
+	
 	SearchProject getSearchProject(Integer projectId);
-
+	
 	List<SearchProject> getAllSearchProjects();
+	
+	public SearchProject getSearchProjectByUuid(String uuid);
 }

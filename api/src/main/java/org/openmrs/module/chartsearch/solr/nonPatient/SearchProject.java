@@ -12,6 +12,16 @@ package org.openmrs.module.chartsearch.solr.nonPatient;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.util.OpenmrsConstants;
@@ -19,35 +29,59 @@ import org.openmrs.util.OpenmrsConstants;
 /**
  * A web project that has database data attached to it. Such as Chart Search Module et-cetera
  */
+@Entity
+@Table(name = "chartsearch_project")
 public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "project_id")
+	private int projectId;
+	
+	@Column(name = "name", length = 38, nullable = false)
 	private String projectName;
 	
-	private String database;
-	
-	private String databaseUser;
-	
-	private String databaseUSerPassword;
-	
-	private String serverName;
-	
-	private String dbms;
-	
-	private String portNumber;
-	
+	@Column(name = "description")
 	private String projectDescription;
 	
-	private String projectUuid;
+	@Column(name = "database", length = 15)
+	private String database;
 	
-	private int projectId;
+	@Column(name = "database_user", length = 15)
+	private String databaseUser;
+	
+	@Column(name = "database_user_password", length = 38)
+	private String databaseUSerPassword;
+	
+	@Column(name = "server_name", length = 15)
+	private String serverName;
+	
+	@Column(name = "dbms", length = 8)
+	private String dbms;
+	
+	@Column(name = "port_number", length = 5)
+	private String portNumber;
+	
+	/**
+	 * The SQL Query to be run to return the data that need to be indexed for this particular
+	 * project
+	 */
+	@Column(name = "sql_query", length = 65535, nullable = false)
+	private String sqlQuery;
 	
 	/**
 	 * column names separated by commas, these should be unique from one another and the same ones
 	 * as mentioned in the sqlQuery, take use of AS key word in MySQL to make them unique
 	 */
+	@Column(name = "column_names", length = 255, nullable = false)
 	private String columnNames;
+	
+	/**
+	 * List of column names that need to be added as fields obtained from the client
+	 */
+	private List<String> columnNamesList;
 	
 	/**
 	 * Creates a SearchProject object when registering a project, must always use this when creating
@@ -70,15 +104,15 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	/**
-	 * The SQL Query to be run to return the data that need to be indexed for this particular
-	 * project
+	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
 	 */
-	private String sqlQuery;
-	
-	/**
-	 * List of column names that need to be added as fields obtained from the client
-	 */
-	private List<String> columnNamesList;
+	@Basic
+	@Access(AccessType.PROPERTY)
+	@Column(name = "uuid", length = 38, unique = true)
+	@Override
+	public String getUuid() {
+		return super.getUuid();
+	}
 	
 	public String getProjectName() {
 		return projectName;
@@ -94,14 +128,6 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	
 	public void setProjectDescription(String projectDescription) {
 		this.projectDescription = projectDescription;
-	}
-	
-	public String getProjectUuid() {
-		return projectUuid;
-	}
-	
-	public void setProjectUuid(String projectUuid) {
-		this.projectUuid = projectUuid;
 	}
 	
 	public int getProjectId() {
@@ -120,6 +146,11 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 		this.sqlQuery = sqlQuery;
 	}
 	
+	/**
+	 * Doesn't return from the database, use {@link #getColumnNames()}
+	 * 
+	 * @return
+	 */
 	public List<String> getColumnNamesList() {
 		return columnNamesList;
 	}
@@ -148,7 +179,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 		String commaSeperateColumnNames = "";
 		List<String> columnNames = getColumnNamesList();
 		for (int i = 0; i < columnNames.size(); i++) {
-			commaSeperateColumnNames += columnNames.get(i) + ", ";
+			if (i != columnNames.size() - 1) {
+				commaSeperateColumnNames += columnNames.get(i) + ", ";
+			} else
+				commaSeperateColumnNames += columnNames.get(i);
 		}
 		if (StringUtils.isBlank(commaSeperateColumnNames)) {
 			commaSeperateColumnNames = null;

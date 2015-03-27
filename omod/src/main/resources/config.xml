@@ -130,9 +130,11 @@
 		Synonym.hbm.xml
 		ChartSearch.hbm.xml
 		ChartSearchCategories.hbm.xml
-		SearchProject.hbm.xml
 
 	</mappingFiles>
+	<packagesWithMappedClasses>
+		org.openmrs.module.chartsearch.solr.nonPatient
+	</packagesWithMappedClasses>
 
 	<!-- Internationalization -->
 	<!-- All message codes should start with ${project.parent.artifactId}. -->

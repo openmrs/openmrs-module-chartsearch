@@ -21,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.BaseOpenmrsObject;
@@ -81,6 +82,7 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	/**
 	 * List of column names that need to be added as fields obtained from the client
 	 */
+	@Transient
 	private List<String> columnNamesList;
 	
 	/**

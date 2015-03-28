@@ -20,3 +20,8 @@
 
 ${ ui.includeFragment("chartsearch", "chartsaerchUITabs") }
 
+
+<style type="text/css">
+
+	
+</style>

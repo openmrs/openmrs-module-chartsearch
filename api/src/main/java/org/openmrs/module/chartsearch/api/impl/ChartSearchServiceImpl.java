@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
-import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -322,11 +321,6 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	public ResultSet executeSQL(String sql) {
-		return dao.executeSQL(sql);
-	}
-	
-	@Override
 	public void deleteSearchProject(SearchProject project) {
 		dao.deleteSearchProject(project);
 	}
@@ -349,16 +343,26 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public String getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace() {
 		List<SearchProject> allProjects = getAllSearchProjects();
-		String columnsFromCurrentProject = "";
+		String columnsFromAllProject = "";
 		
 		for (int i = 0; i < allProjects.size(); i++) {
-			if (i == allProjects.size() - 1) {//if on the last project
-				columnsFromCurrentProject = allProjects.get(i).getColumnNames();
-			} else {
-				columnsFromCurrentProject = allProjects.get(i).getColumnNames() + ", ";
+			if (!columnsFromAllProject.contains(allProjects.get(i).getColumnNames())) {
+				if (i == allProjects.size() - 1) {//if on the last project
+					columnsFromAllProject += allProjects.get(i).getColumnNames();
+				} else {
+					columnsFromAllProject += allProjects.get(i).getColumnNames() + ", ";
+				}
 			}
 		}
-		return columnsFromCurrentProject;
+		return columnsFromAllProject;
+	}
+	
+	public String getAllFieldsSetInSchemaByDefault() {
+		return "id, meta, obs_id, person_id, concept_name, obs_datetime, value_boolean, value_datetime, "
+		        + "text, obs_group_id, value_numeric, coded, value_text, concept_class_name, form_id, form_name, "
+		        + "encounter_type_name, date_created, encounter_id, patient_id, e_form_id, encounter_type, "
+		        + "encounter_datetime, visit_id, _version_, value, project_id, project_name, project_description, "
+		        + "project_uuid, project_db_name, cc_name, cc_filter_query, cc_description";
 	}
 	
 	/**

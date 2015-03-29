@@ -78,26 +78,18 @@
 	   //expand or hide new project indexer section
 	   jq('#expand-indexer1').click(function() {
 	   		if (jq("#expand-indexer1").hasClass("icon-circle-arrow-down")) {
-		   		jq("#expand-indexer1").addClass("icon-circle-arrow-right");
-		      	jq("#expand-indexer1").removeClass("icon-circle-arrow-down");
-		      	jq(".customIndexerSubSection1").hide("fast");
+		   		hideIndexingSection1();
 	      	} else if (jq("#expand-indexer1").hasClass("icon-circle-arrow-right")) {
-	      		jq("#expand-indexer1").addClass("icon-circle-arrow-down");
-		      	jq("#expand-indexer1").removeClass("icon-circle-arrow-right");
-	      		jq(".customIndexerSubSection1").show("fast");
+	      		expandIndexingSection1();
 	      	}
 	   });
 	   
 	   //expand or hide existing project indexer section
 	   jq('#expand-indexer2').click(function() {
 	   		if (jq("#expand-indexer2").hasClass("icon-circle-arrow-down")) {
-		   		jq("#expand-indexer2").addClass("icon-circle-arrow-right");
-		      	jq("#expand-indexer2").removeClass("icon-circle-arrow-down");
-		      	jq(".customIndexerSubSection2").hide("fast");
+		   		hideIndexingSection2();
 	      	} else if (jq("#expand-indexer2").hasClass("icon-circle-arrow-right")) {
-	      		jq("#expand-indexer2").addClass("icon-circle-arrow-down");
-		      	jq("#expand-indexer2").removeClass("icon-circle-arrow-right");
-		      	jq(".customIndexerSubSection2").show("fast");
+	      		expandIndexingSection2();
 	      	}
 	   });
 	   
@@ -107,6 +99,24 @@
 		    jq(".customIndexerSubSection2").hide("fast");
 	   }
 	   
+	   function expandIndexingSection2() {
+	   		jq("#expand-indexer2").addClass("icon-circle-arrow-down");
+		    jq("#expand-indexer2").removeClass("icon-circle-arrow-right");
+		    jq(".customIndexerSubSection2").show("fast");
+	   }
+	   
+	   function hideIndexingSection1() {
+	   		jq("#expand-indexer1").addClass("icon-circle-arrow-right");
+		    jq("#expand-indexer1").removeClass("icon-circle-arrow-down");
+		    jq(".customIndexerSubSection1").hide("fast");
+	   }
+	   
+	   function expandIndexingSection1() {
+	   		jq("#expand-indexer1").addClass("icon-circle-arrow-down");
+		    jq("#expand-indexer1").removeClass("icon-circle-arrow-right");
+	      	jq(".customIndexerSubSection1").show("fast");
+	   }
+	   
 	   function submitNewProjectIndexingFormWithAjax() {
 	   	jq.ajax({
 	   		type: "POST",
@@ -114,8 +124,14 @@
 	   		data: jq('#index-new-project-data').serialize(),
 	   		dataType: "json",
 	   		success: function(results) {
-	   			alert("Number of documents indexed were: " + results.numberOfIndexedDocs);
-	   			//TODO get  the json results from and represent it in html/client side language
+	   			if (!results.failureMessage) {
+	   				//TODO get  the json results from and represent it in html/client side language
+	   				alert("Number of documents indexed were: " + results.numberOfIndexedDocs);
+	   				jq('#index-new-project-data').trigger("reset");
+	   				expandIndexingSection2();
+	   			} else {
+	   				alert(results.failureMessage);
+	   			}
 	   		},
 	   		error: function(e) {
 	   			//alert("Error occurred!!! " + e);

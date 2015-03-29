@@ -17,7 +17,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -25,9 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
@@ -160,26 +157,6 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		doc.addField("value_numeric", ChartSearchCustomIndexer.getValueNumeric());
 		doc.addField("value_text", ChartSearchCustomIndexer.getValueText());
 		doc.addField("concept_class_name", ChartSearchCustomIndexer.getConceptClassName());
-	}
-	
-	/**
-	 * Executes an SQL Query
-	 * 
-	 * @see org.openmrs.module.chartsearch.api.db.ChartSearchDAO#executeSQL(java.lang.String)
-	 */
-	public ResultSet executeSQL(String sql) {
-		ResultSet resultSet = null;
-		try {
-			Statement statement = sessionFactory.getCurrentSession().connection().createStatement();
-			resultSet = statement.executeQuery(sql);
-		}
-		catch (HibernateException e) {
-			log.error("Error generated: ", e);
-		}
-		catch (SQLException e) {
-			log.error("Error generated: ", e);
-		}
-		return resultSet;
 	}
 	
 	@Override

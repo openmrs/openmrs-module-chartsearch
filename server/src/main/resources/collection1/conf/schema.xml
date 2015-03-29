@@ -941,6 +941,14 @@
 		<!-- Fields from modules and other projects starts here -->
 		<field name="project_id" type="int" indexed="true"
 			stored="true" required="false" />
+		<field name="project_name" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="project_description" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="project_uuid" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="project_db_name" type="text_general" indexed="true"
+			stored="true" required="false" />
 		<field name="cc_name" type="text_general" indexed="true"
 			stored="true" required="false" />
 		<field name="cc_filter_query" type="text_general" indexed="true"
@@ -1002,6 +1010,10 @@
 	<copyField source="cc_name" dest="text" />
 	<copyField source="cc_filter_query" dest="text" />
 	<copyField source="cc_description" dest="text" />
+	<copyField source="project_name" dest="text" />
+	<copyField source="project_description" dest="text" />
+	<copyField source="project_uuid" dest="text" />
+	<copyField source="project_db_name" dest="text" />
 	<!-- Starting customly added copyfields -->
  	
  

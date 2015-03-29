@@ -62,7 +62,7 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 					List<Object> columns = rowsByColumns.get(i);
 					
 					if (StringUtils.isNotBlank(columnNamesWithCommas) && !columns.isEmpty()) {
-						//contains column names obtained from chart search module data
+						//contains column names obtained from chart search module data etc
 						for (int j = 0; j < columns.size();) {
 							for (int k = 0; k < columnNamesFromCS.size(); k++) {
 								if (j == k) {//this logically implies the column names match
@@ -70,21 +70,23 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 									Object currentColumnFromDB = columns.get(j);
 									String currentColumnNameFromCS = columnNamesFromCS.get(k);
 									
-									if (currentColumnFromDB.getClass().equals(int.class)
-									        || currentColumnFromDB.getClass().equals(Integer.class)) {
-										int currentColumnValueFromDB = (Integer) currentColumnFromDB;
-										doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
-									} else if (currentColumnFromDB.getClass().equals(String.class)) {
-										String currentColumnValueFromDB = (String) currentColumnFromDB;
-										doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
-										
-									} else if (currentColumnFromDB.getClass().equals(boolean.class)
-									        || currentColumnFromDB.getClass().equals(Boolean.class)) {
-										boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
-										doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
-									} else {
-										Object currentColumnValueFromDB = currentColumnFromDB;
-										doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+									if (currentColumnFromDB != null) {
+										if (currentColumnFromDB.getClass().equals(int.class)
+										        || currentColumnFromDB.getClass().equals(Integer.class)) {
+											int currentColumnValueFromDB = (Integer) currentColumnFromDB;
+											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+										} else if (currentColumnFromDB.getClass().equals(String.class)) {
+											String currentColumnValueFromDB = (String) currentColumnFromDB;
+											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+											
+										} else if (currentColumnFromDB.getClass().equals(boolean.class)
+										        || currentColumnFromDB.getClass().equals(Boolean.class)) {
+											boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
+											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+										} else {
+											Object currentColumnValueFromDB = currentColumnFromDB;
+											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
+										}
 									}
 								}
 								j++;
@@ -125,10 +127,10 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 			if (docs.size() > 1000) {
 				// Commit within 5 minutes.
 				UpdateResponse resp = solrServer.add(docs, 300000);
-				printFailureIfResponseIsNotZeroAndClearDocs(docs, resp);
+				printFailureIfResponseIsNotZero(resp);
 			} else {
 				UpdateResponse resp = solrServer.add(docs);//TODO fix: https://groups.google.com/a/openmrs.org/forum/#!topic/dev/N4l1Hj77j98
-				printFailureIfResponseIsNotZeroAndClearDocs(docs, resp);
+				printFailureIfResponseIsNotZero(resp);
 			}
 			solrServer.commit();
 		}
@@ -144,18 +146,16 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 	private void addBasicFieldsToSolrDoc(SearchProject project, int i, SolrInputDocument doc) {
 		doc.addField("id", i);
 		doc.addField("project_id", i);
-		doc.addField("project_uuid", project.getUuid());
 		doc.addField("project_name", project.getProjectName());
-		doc.addField("database_name", project.getDatabase());
+		doc.addField("project_db_name", project.getDatabase());
 		doc.addField("project_description", project.getProjectDescription());
+		doc.addField("project_uuid", project.getUuid());
 	}
 	
-	private void printFailureIfResponseIsNotZeroAndClearDocs(@SuppressWarnings("rawtypes") Collection docs,
-	                                                         UpdateResponse resp) {
+    private void printFailureIfResponseIsNotZero(UpdateResponse resp) {
 		if (resp.getStatus() != 0) {
 			System.out.println("Some error has occurred, status is: " + resp.getStatus());
 		}
-		docs.clear();
 	}
 	
 	/**

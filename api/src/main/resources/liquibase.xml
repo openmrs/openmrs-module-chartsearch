@@ -198,13 +198,20 @@
 			<column name="name" type="varchar(50)">
 				<constraints nullable="false" />
 			</column>
-			<column name="database" type="text">
+			<column name="description" type="text" defaultValue="null" />
+			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
-			<column name="database_user" type="text">
+			<column name="sql_query" type="text"></column>
+			<column name="field_names" type="text"></column>
+			<column name="fields_exist_in_schema" type="boolean"></column>
+			<column name="db_name" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="db_user" type="text">
 				<constraints nullable="true" />
 			</column>
-			<column name="database_user_password" type="text">
+			<column name="db_user_password" type="text">
 				<constraints nullable="true" />
 			</column>
 			<column name="server_name" type="varchar(50)">
@@ -216,12 +223,6 @@
 			<column name="port_number" type="varchar(50)">
 				<constraints nullable="true" />
 			</column>
-			<column name="description" type="text" defaultValue="null" />
-			<column name="uuid" type="char(38)">
-				<constraints nullable="false" />
-			</column>
-			<column name="sql_query" type="text"></column>
-			<column name="column_names" type="text"></column>
 		</createTable>
 	</changeSet>
 	<changeSet id="FINALYEARPROJECT-160320151639" author="k-joseph">
@@ -230,14 +231,15 @@
 		</preConditions>
 		<comment>Insert test data into chartsearch_project</comment>
 		<insert tableName="${project.parent.artifactId}_project">
-			<column name="name" value="ChartSearch" />
-			<column name="database" value="openmrs" />
+			<column name="name" value="Chart Search" />
+			<column name="db_name" value="openmrs" />
 			<column name="description"
-				value="Defining the ChartSearch module data to be indexed and searched" />
-			<column name="uuid" value="3918-2910-4245-84f4-a9f38648ac60" />
+				value="Defining the basic data required for the Chart Search module to run well, some data is missing" />
+			<column name="uuid" value="95e978f4-fe19-477a-906a-8d61bd3c1e21" />
 			<column name="sql_query"
 				value="SELECT cc.name AS cc_name, cc.filter_query AS cc_filter_query, cc.description AS  cc_description FROM openmrs.chartsearch_categories cc" />
-			<column name="column_names" value="cc_name, cc_filter_query, cc_description" />
+			<column name="field_names" value="cc_name, cc_filter_query, cc_description" />
+			<column name="fields_exist_in_schema" value="1" />
 		</insert>
 	</changeSet>
 

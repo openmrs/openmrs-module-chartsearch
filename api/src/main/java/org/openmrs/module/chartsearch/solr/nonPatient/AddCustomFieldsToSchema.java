@@ -17,10 +17,17 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.request.CoreAdminRequest;
+import org.apache.solr.client.solrj.response.CoreAdminResponse;
+import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+import org.apache.solr.common.util.NamedList;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 /**
  * Contains all functionalities needed to add an entry of a new field into schema.xml file
@@ -38,33 +45,14 @@ public class AddCustomFieldsToSchema {
 	 * @param required, is the field to be required
 	 * @return generated field entry
 	 */
-	public static String generateAWellWrittenFieldEntry(String fieldName, String type, boolean indexed, boolean stored,
-	                                                    boolean required) {
-		String indexedString = "false";
-		String storedString = "false";
-		String requiredString = "false";
-		if (indexed) {
-			indexedString = "true";
-		}
-		if (stored) {
-			storedString = "true";
-		}
-		if (required) {
-			requiredString = "true";
-		}
-		
-		//the two tabs at the start are for proper formatting of the text field after added to the file
-		String fieldEntry = "\t\t<field name=\"" + fieldName + "\" type=\"" + type + "\" indexed=\"" + indexedString
-		        + "\" stored=\"" + storedString + "\" required=\"" + requiredString + "\" />";
-		return fieldEntry;
-	}
-	
 	public static String generateAWellWrittenFieldEntry(List<String> fieldNames, String typeForAllFields,
 	                                                    boolean indexedForAllFields, boolean storedForAllFields,
-	                                                    boolean requiredForAllFields) {
+	                                                    boolean requiredForAllFields, ChartSearchService chartSearchService,
+	                                                    boolean fieldsExistInSchemaAlready) {
 		String indexedString = "false";
 		String storedString = "false";
 		String requiredString = "false";
+		
 		if (indexedForAllFields) {
 			indexedString = "true";
 		}
@@ -76,9 +64,13 @@ public class AddCustomFieldsToSchema {
 		}
 		String fieldEntry = "";
 		for (int i = 0; i < fieldNames.size(); i++) {
-			//the two tabs at the start are for proper formatting of the text field after added to the file
-			fieldEntry += "\t\t<field name=\"" + fieldNames.get(i) + "\" type=\"" + typeForAllFields + "\" indexed=\""
-			        + indexedString + "\" stored=\"" + storedString + "\" required=\"" + requiredString + "\" />\n";
+			if (!fieldsExistInSchemaAlready
+			        && !chartSearchService.getAllFieldsSetInSchemaByDefault().contains(fieldNames.get(i))) {
+				//the two tabs at the start are for proper formatting of the text field after added to the file
+				fieldEntry += "\t\t<field name=\"" + fieldNames.get(i) + "\" type=\"" + typeForAllFields + "\" indexed=\""
+				        + indexedString + "\" stored=\"" + storedString + "\" required=\"" + requiredString + "\" />\n";
+			} else
+				fieldEntry = null;
 		}
 		return fieldEntry;
 	}
@@ -89,11 +81,16 @@ public class AddCustomFieldsToSchema {
 	 * 
 	 * @return
 	 */
-	public static String generateWellWrittenCopyFieldEntries(List<String> sources) {
-		//<copyField source="concept_class_name" dest="text" />
+	public static String generateWellWrittenCopyFieldEntries(List<String> sources, ChartSearchService chartSearchService,
+	                                                         boolean copyFieldsExistInSchemaAlready) {
+		//Entry looks like: <copyField source="concept_class_name" dest="text" />
 		String copyFieldEntries = "";
 		for (int i = 0; i < sources.size(); i++) {
-			copyFieldEntries += "\t<copyField source=\"" + sources.get(i) + "\" dest=\"text\" />\n";
+			if (!copyFieldsExistInSchemaAlready
+			        && !chartSearchService.getAllFieldsSetInSchemaByDefault().contains(sources.get(i))) {
+				copyFieldEntries += "\t<copyField source=\"" + sources.get(i) + "\" dest=\"text\" />\n";
+			} else
+				copyFieldEntries = null;
 		}
 		return copyFieldEntries;
 	}
@@ -107,11 +104,11 @@ public class AddCustomFieldsToSchema {
 	 * @return new lines of the file in a List
 	 */
 	public static void readSchemaFileLineByLineAndWritNewFieldEntries(String schemaFileLocation, String newSchemaFilePath,
-	                                                                  String fieldEntry, String copyFieldEntry) {
+	                                                                  String fieldEntry, String copyFieldEntry,
+	                                                                  SolrServer solrServer) {
 		//reading file line by line in Java using BufferedReader       
 		FileInputStream fis = null;
 		BufferedReader reader = null;
-		
 		try {
 			fis = new FileInputStream(schemaFileLocation);
 			reader = new BufferedReader(new InputStreamReader(fis));
@@ -159,6 +156,19 @@ public class AddCustomFieldsToSchema {
 			}
 		}
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
+		CoreAdminRequest adminRequest = new CoreAdminRequest();
+		adminRequest.setAction(CoreAdminAction.RELOAD);
+		CoreAdminResponse adminResponse;
+		try {
+			adminResponse = adminRequest.process(solrServer);
+			NamedList<NamedList<Object>> coreStatus = adminResponse.getCoreStatus();
+		}
+		catch (SolrServerException e) {
+			System.out.println("Error generated" + e);
+		}
+		catch (IOException e) {
+			System.out.println("Error generated" + e);
+		}
 	}
 	
 	/**

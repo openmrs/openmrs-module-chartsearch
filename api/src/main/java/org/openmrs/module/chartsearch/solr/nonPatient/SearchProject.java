@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Type;
 import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.util.OpenmrsConstants;
 
@@ -41,19 +42,38 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "project_id")
 	private int projectId;
 	
-	@Column(name = "name", length = 38, nullable = false)
+	@Column(name = "name", length = 38, nullable = false, unique = true)
 	private String projectName;
 	
 	@Column(name = "description")
 	private String projectDescription;
 	
-	@Column(name = "database", length = 15)
+	/**
+	 * The SQL Query to be run to return the data that need to be indexed for this particular
+	 * project
+	 */
+	@Column(name = "sql_query", length = 65535, nullable = false)
+	private String sqlQuery;
+	
+	/**
+	 * column or solr field names separated by commas, these should be unique from one another and
+	 * the same ones as mentioned in the sqlQuery, take use of AS key word in MySQL to make them
+	 * unique
+	 */
+	@Column(name = "field_names", length = 255, nullable = false)
+	private String columnNames;
+	
+	@Type(type = "boolean")
+	@Column(name = "fields_exist_in_schema")
+	private boolean fieldsExistInSchema;
+	
+	@Column(name = "db_name", length = 15)
 	private String database;
 	
-	@Column(name = "database_user", length = 15)
+	@Column(name = "db_user", length = 15)
 	private String databaseUser;
 	
-	@Column(name = "database_user_password", length = 38)
+	@Column(name = "db_user_password", length = 38)
 	private String databaseUSerPassword;
 	
 	@Column(name = "server_name", length = 15)
@@ -64,20 +84,6 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	
 	@Column(name = "port_number", length = 5)
 	private String portNumber;
-	
-	/**
-	 * The SQL Query to be run to return the data that need to be indexed for this particular
-	 * project
-	 */
-	@Column(name = "sql_query", length = 65535, nullable = false)
-	private String sqlQuery;
-	
-	/**
-	 * column names separated by commas, these should be unique from one another and the same ones
-	 * as mentioned in the sqlQuery, take use of AS key word in MySQL to make them unique
-	 */
-	@Column(name = "column_names", length = 255, nullable = false)
-	private String columnNames;
 	
 	/**
 	 * List of column names that need to be added as fields obtained from the client
@@ -102,7 +108,6 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public SearchProject() {
-		
 	}
 	
 	/**
@@ -263,5 +268,13 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	
 	public void setPortNumber(String portNumber) {
 		this.portNumber = portNumber;
+	}
+	
+	public boolean fieldsExistInSchema() {
+		return fieldsExistInSchema;
+	}
+	
+	public void setFieldsExistInSchema(boolean fieldsExistInSchema) {
+		this.fieldsExistInSchema = fieldsExistInSchema;
 	}
 }

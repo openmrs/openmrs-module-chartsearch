@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.api.context.Context;
+import org.openmrs.messagesource.MutableMessageSource;
 import org.openmrs.module.chartsearch.SearchProjectAccess;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 
@@ -49,6 +51,13 @@ public class CustomIndexingFragmentController {
 			json.put("savingTime", TimeUnit.MILLISECONDS.toSeconds(savingTime));
 			json.put("indexingTime", TimeUnit.MILLISECONDS.toSeconds(indexingTime));
 			json.put("projectUuid", projectUuid);//returned from the server
+			docs.clear();
+		} else {
+			MutableMessageSource mms = Context.getMessageSourceService().getActiveMessageSource();
+			json.put(
+			    "failureMessage",
+			    mms.getMessage("chartsearch.refApp.customIndexing.addNewProjectToIndex.failureMessage", null,
+			        Context.getLocale()));
 		}
 		
 		return json;

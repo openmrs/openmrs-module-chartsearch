@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.chartsearch.api;
 
-import java.sql.ResultSet;
 import java.util.List;
 
 import net.sf.json.JSONArray;
@@ -185,8 +184,6 @@ public interface ChartSearchService extends OpenmrsService {
 	
 	void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass);
 	
-	public ResultSet executeSQL(String sql);
-	
 	public void deleteSearchProject(SearchProject project);
 	
 	/**
@@ -205,4 +202,6 @@ public interface ChartSearchService extends OpenmrsService {
 	boolean checkIfColumnExists(String columnName);
 	
 	public SearchProject getSearchProjectByUuid(String uuid);
+	
+	public String getAllFieldsSetInSchemaByDefault();
 }

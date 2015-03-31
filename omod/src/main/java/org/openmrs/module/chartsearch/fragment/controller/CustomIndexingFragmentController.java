@@ -11,6 +11,7 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MutableMessageSource;
 import org.openmrs.module.chartsearch.SearchProjectAccess;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class CustomIndexingFragmentController {
 	
@@ -29,7 +31,11 @@ public class CustomIndexingFragmentController {
 	
 	public void controller(FragmentModel model) {
 		JSONObject json = accessSearchProject.generateSearchProjectDetailsToSendToTheClient();
+		List<String> projectNames = accessSearchProject.existingSearchProjectNames();
+		
+		//TODO this was for test purposes, remove it, project details are to be populated from an ajax call after choosing a project from the UI
 		model.put("installedSearchProjects", json);
+		model.put("projectNames", projectNames);
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -66,4 +72,12 @@ public class CustomIndexingFragmentController {
 		return json;
 	}
 	
+	public JSONObject fetchDetailsOfASelectedSearchProject(@RequestParam("selectedSearchProject") String selectedProject) {
+		JSONObject jsonObj = null;
+		
+		if (StringUtils.isNotBlank(selectedProject)) {
+			jsonObj = accessSearchProject.fetchSearchProjectDetails(selectedProject);
+		}
+		return jsonObj;
+	}
 }

@@ -26,8 +26,19 @@
     </div>
     <h2><i class="icon-circle-arrow-right" id="expand-indexer2"></i> ${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex") }</h2>
     <div class="customIndexerSubSection2">
-        List of all Existing Search Project:<br />
-	        <% if (installedSearchProjects) { def projectIndex = 1; %>
+    	<p>
+	    	<select id="installed-search-projects">
+	    		<option value="" name="selectedProject">Choose Search Project</option>
+	    		<% if (projectNames) { %>
+	    			<% projectNames.each { projectName -> %>
+	    				<option class="installed-selected-search-projects" value="$projectName">$projectName</option>
+	    			<% } %>
+	    		<% } %>
+	    	</select>
+    	</p>
+    	<br />
+        List of the first three Existing Search Project:<br />
+	        <% if (installedSearchProjects) { %>
 	        	<table>
 		        	<tr>
 		        		<th>Id</th>
@@ -136,6 +147,10 @@
                 expandIndexingSection2();
             }
         });
+        
+        jq('#installed-search-projects').change(function() {
+           fetchDetailsOfSelectSearchProject();
+        });
 
         function hideIndexingSection2() {
             jq("#expand-indexer2").addClass("icon-circle-arrow-right");
@@ -147,6 +162,7 @@
             jq("#expand-indexer2").removeClass("icon-circle-arrow-right");
             jq("#expand-indexer2").addClass("icon-circle-arrow-down");
             jq(".customIndexerSubSection2").show("fast");
+            hideIndexingSection1();
         }
 
         function hideIndexingSection1() {
@@ -159,6 +175,7 @@
             jq("#expand-indexer1").addClass("icon-circle-arrow-down");
             jq("#expand-indexer1").removeClass("icon-circle-arrow-right");
             jq(".customIndexerSubSection1").show("fast");
+            hideIndexingSection2();
         }
 
         function submitNewProjectIndexingFormWithAjax() {
@@ -184,6 +201,24 @@
                 },
                 error: function(e) {
                     //alert("Error occurred!!! " + e);
+                }
+            });
+        }
+        
+        function fetchDetailsOfSelectSearchProject() {
+        	var selectProject = jq("#installed-search-projects").val();
+        	jq.ajax({
+                type: "POST",
+                url: "${ ui.actionLink('fetchDetailsOfASelectedSearchProject') }",
+                data: { "selectedSearchProject":selectProject },
+                dataType: "json",
+                success: function(project) {
+                	if (project) {//TODO Now replace the three projectDetails spilled over the update section with this response
+                		alert("returned: '" + project.projectName + "' Details :-)");
+                	}
+                },
+                error: function(e) {
+                    alert("Error occurred!!! " + e);
                 }
             });
         }

@@ -179,6 +179,37 @@ public class SearchProjectAccess {
 		return json;
 	}
 	
+	public List<String> existingSearchProjectNames() {
+		List<String> names = new ArrayList<String>();
+		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
+		for (int i = 0; i < existingSearchProjects.size(); i++) {
+			names.add(existingSearchProjects.get(i).getProjectName());
+		}
+		return names;
+	}
+	
+	public JSONObject fetchSearchProjectDetails(String selectedProjectName) {
+		JSONObject projectJson = new JSONObject();
+		
+		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
+		for (int i = 0; i < existingSearchProjects.size(); i++) {
+			SearchProject project = existingSearchProjects.get(i);
+			String projectName = project.getProjectName();
+			
+			if (projectName.equals(selectedProjectName)) {
+				projectJson.put("projectId", project.getProjectId());
+				projectJson.put("projectName", project.getProjectName());
+				projectJson.put("projectDescription", project.getProjectDescription());
+				projectJson.put("projectUuid", project.getUuid());
+				projectJson.put("projectDB", project.getDatabase());
+				projectJson.put("projectFieldsExistInSchema", project.fieldsExistInSchema());
+				projectJson.put("projectDatabaseQuery", project.getSqlQuery());
+				projectJson.put("projectSolrFields", project.getColumnNames());
+			}
+		}
+		return projectJson;
+	}
+	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

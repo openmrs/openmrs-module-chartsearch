@@ -30,11 +30,8 @@ public class CustomIndexingFragmentController {
 	SearchProjectAccess accessSearchProject = new SearchProjectAccess();
 	
 	public void controller(FragmentModel model) {
-		JSONObject json = accessSearchProject.generateSearchProjectDetailsToSendToTheClient();
 		List<String> projectNames = accessSearchProject.existingSearchProjectNames();
 		
-		//TODO this was for test purposes, remove it, project details are to be populated from an ajax call after choosing a project from the UI
-		model.put("installedSearchProjects", json);
 		model.put("projectNames", projectNames);
 	}
 	

@@ -107,6 +107,9 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 		setDatabase(database);
 	}
 	
+	/**
+	 * AVOID USING THIS, preferably use: {@link #SearchProject(String, String, List, String)}
+	 */
 	public SearchProject() {
 	}
 	
@@ -130,7 +133,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getProjectDescription() {
-		return projectDescription;
+		if (StringUtils.isBlank(projectDescription)) {
+			return "";
+		} else
+			return projectDescription;
 	}
 	
 	public void setProjectDescription(String projectDescription) {
@@ -231,7 +237,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getDatabaseUser() {
-		return databaseUser;
+		if (StringUtils.isBlank(databaseUser)) {
+			return "";
+		} else
+			return databaseUser;
 	}
 	
 	public void setDatabaseUser(String databaseUser) {
@@ -239,7 +248,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getDatabaseUSerPassword() {
-		return databaseUSerPassword;
+		if (StringUtils.isBlank(databaseUSerPassword)) {
+			return "";
+		} else
+			return databaseUSerPassword;
 	}
 	
 	public void setDatabaseUSerPassword(String databaseUSerPassword) {
@@ -247,7 +259,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getServerName() {
-		return serverName;
+		if (StringUtils.isBlank(serverName)) {
+			return "";
+		} else
+			return serverName;
 	}
 	
 	public void setServerName(String serverName) {
@@ -255,7 +270,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getDbms() {
-		return dbms;
+		if (StringUtils.isBlank(dbms)) {
+			return "";
+		} else
+			return dbms;
 	}
 	
 	public void setDbms(String dbms) {
@@ -263,7 +281,10 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	public String getPortNumber() {
-		return portNumber;
+		if (StringUtils.isBlank(portNumber)) {
+			return "";
+		} else
+			return portNumber;
 	}
 	
 	public void setPortNumber(String portNumber) {

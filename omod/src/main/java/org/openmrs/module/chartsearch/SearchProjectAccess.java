@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides read, write, create, indexing and searching it's data, save etc ability to a
- * SearchProject
+ * Provides read, write, create, save, delete, indexing and searching SearchProject data et-cetera.
  */
 public class SearchProjectAccess {
 	
@@ -158,27 +157,6 @@ public class SearchProjectAccess {
 		return project;
 	}
 	
-	public JSONObject generateSearchProjectDetailsToSendToTheClient() {
-		JSONObject json = new JSONObject();
-		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
-		for (int i = 0; i < existingSearchProjects.size(); i++) {
-			SearchProject project = existingSearchProjects.get(i);
-			JSONObject projectJson = new JSONObject();
-			projectJson.put("projectId", project.getProjectId());
-			projectJson.put("projectName", project.getProjectName());
-			projectJson.put("projectDescription", project.getProjectDescription());
-			projectJson.put("projectUuid", project.getUuid());
-			projectJson.put("projectDB", project.getDatabase());
-			projectJson.put("projectFieldsExistInSchema", project.fieldsExistInSchema());
-			projectJson.put("projectDatabaseQuery", project.getSqlQuery());
-			projectJson.put("projectSolrFields", project.getColumnNames());
-			int projNo = i + 1;
-			json.put("project" + projNo, projectJson);
-		}
-		json.put("numberOfAllProjects", existingSearchProjects.size());
-		return json;
-	}
-	
 	public List<String> existingSearchProjectNames() {
 		List<String> names = new ArrayList<String>();
 		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
@@ -205,6 +183,11 @@ public class SearchProjectAccess {
 				projectJson.put("projectFieldsExistInSchema", project.fieldsExistInSchema());
 				projectJson.put("projectDatabaseQuery", project.getSqlQuery());
 				projectJson.put("projectSolrFields", project.getColumnNames());
+				projectJson.put("projectDBUser", project.getDatabaseUser());
+				projectJson.put("projectDBUserPassword", project.getDatabaseUSerPassword());
+				projectJson.put("projectServerName", project.getServerName());
+				projectJson.put("projectDBPortNumber", project.getPortNumber());
+				projectJson.put("projectDBManager", project.getDbms());
 			}
 		}
 		return projectJson;

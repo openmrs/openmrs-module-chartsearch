@@ -36,194 +36,205 @@
 	    		<% } %>
 	    	</select>
     	</p>
-    	<br />
-        List of the first three Existing Search Project:<br />
-	        <% if (installedSearchProjects) { %>
-	        	<table>
-		        	<tr>
-		        		<th>Id</th>
-		        		<th>Name</th>
-		        		<th>Description</th>
-		        		<th>UUID</th>
-		        		<th>Database</th>
-		        		<th>Added Fields to Schema</th>
-		        		<th>Database Query</th>
-		        		<th>Solr Fields</th>
-		        	</tr>
-			        	<td>$installedSearchProjects.project1.projectId</td>
-			        	<td>$installedSearchProjects.project1.projectName</td>
-			        	<td>$installedSearchProjects.project1.projectDescription</td>
-			        	<td>$installedSearchProjects.project1.projectUuid</td>
-			        	<td>$installedSearchProjects.project1.projectDB</td>
-			        	<td>$installedSearchProjects.project1.projectFieldsExistInSchema</td>
-			        	<td>$installedSearchProjects.project1.projectDatabaseQuery</td>
-			        	<td>$installedSearchProjects.project1.projectSolrFields</td>
-		        	</tr>
-		        	</tr>
-			        	<td>$installedSearchProjects.project2.projectId</td>
-			        	<td>$installedSearchProjects.project2.projectName</td>
-			        	<td>$installedSearchProjects.project2.projectDescription</td>
-			        	<td>$installedSearchProjects.project2.projectUuid</td>
-			        	<td>$installedSearchProjects.project2.projectDB</td>
-			        	<td>$installedSearchProjects.project2.projectFieldsExistInSchema</td>
-			        	<td>$installedSearchProjects.project2.projectDatabaseQuery</td>
-			        	<td>$installedSearchProjects.project2.projectSolrFields</td>
-		        	</tr>
-		        	</tr>
-			        	<td>$installedSearchProjects.project3.projectId</td>
-			        	<td>$installedSearchProjects.project3.projectName</td>
-			        	<td>$installedSearchProjects.project3.projectDescription</td>
-			        	<td>$installedSearchProjects.project3.projectUuid</td>
-			        	<td>$installedSearchProjects.project3.projectDB</td>
-			        	<td>$installedSearchProjects.project3.projectFieldsExistInSchema</td>
-			        	<td>$installedSearchProjects.project3.projectDatabaseQuery</td>
-			        	<td>$installedSearchProjects.project3.projectSolrFields</td>
-		        	</tr>
-	        	</table>
-	        <% } %>
+    	<p>
+    		<br />
+    		<b>NOTICE:</b>
+    		<br />${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.notice")}<br /><br />
+    	</p>
+    	<form id="update-project-data-index">
+		    <div id="updating-installed-search-projects"></div>
+		    <input hide id="update-index-project-data" type="submit" value="${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.indexSubmit")}"></input>
+	    </form>
     </div>
 </div>
+
+
 
 <script type="text/javascript">
     var jq = jQuery;
 
-    jq(document).ready(function() {
-        jq("#non-openmrs-db-name").hide("fast");
-        jq(".customIndexerSubSection2").hide("fast");
-        //tesing controller returning json on get
-
-        //hide or unhide database field
-        jq('#non-openmrs-db').click(function() {
-            if (jq(this).prop("checked") == true) {
-                jq("#non-openmrs-db-name").show("slow");
-            } else if (jq(this).prop("checked") == false) {
-                jq("#non-openmrs-db-name").hide("fast");
-            }
-        });
-
-        jq('#index-project-data').click(function(event) {
-            var requiredFieldsMsg = "";
-            var projectName = jq(".project_name").val();
-            var mysqlQuery = jq(".mysql_query").val();
-            var columns = jq(".column_names").val();
-
-            if (!projectName) {
-                requiredFieldsMsg += "Project Name is Required<br />";
-            }
-            if (!mysqlQuery) {
-                requiredFieldsMsg += "Database Query is Required<br />";
-            }
-            if (!columns) {
-                requiredFieldsMsg += "Column Names are Required<br />";
-            }
-            if (!projectName || !mysqlQuery || !columns) {
-                if (jq("#non-openmrs-db").prop("checked") == true) {
-                    if (!jq(".db_name").val() || !jq(".db_user").val() || !jq(".db_password").val() || !jq(".db_server").val() || !jq(".db_manager").val() || !jq(".db_port").val()) {
-                        requiredFieldsMsg += "All Fields for Non OpenMRS Database are Required<br />";
-                    }
-                }
-                jq('#enter-required-fields').html(requiredFieldsMsg + "<br />");
-                requiredFieldsMsg = "";
-            } else {
-                submitNewProjectIndexingFormWithAjax();
-            }
-            return false;
-        });
-
-        //expand or hide new project indexer section
-        jq('#expand-indexer1').click(function() {
-            if (jq("#expand-indexer1").hasClass("icon-circle-arrow-down")) {
-                hideIndexingSection1();
-            } else if (jq("#expand-indexer1").hasClass("icon-circle-arrow-right")) {
-                expandIndexingSection1();
-            }
-        });
-
-        //expand or hide existing project indexer section
-        jq('#expand-indexer2').click(function() {
-            if (jq("#expand-indexer2").hasClass("icon-circle-arrow-down")) {
-                hideIndexingSection2();
-            } else if (jq("#expand-indexer2").hasClass("icon-circle-arrow-right")) {
-                expandIndexingSection2();
-            }
-        });
-        
-        jq('#installed-search-projects').change(function() {
-           fetchDetailsOfSelectSearchProject();
-        });
-
-        function hideIndexingSection2() {
-            jq("#expand-indexer2").addClass("icon-circle-arrow-right");
-            jq("#expand-indexer2").removeClass("icon-circle-arrow-down");
-            jq(".customIndexerSubSection2").hide("fast");
-        }
-
-        function expandIndexingSection2() {
-            jq("#expand-indexer2").removeClass("icon-circle-arrow-right");
-            jq("#expand-indexer2").addClass("icon-circle-arrow-down");
-            jq(".customIndexerSubSection2").show("fast");
-            hideIndexingSection1();
-        }
-
-        function hideIndexingSection1() {
-            jq("#expand-indexer1").addClass("icon-circle-arrow-right");
-            jq("#expand-indexer1").removeClass("icon-circle-arrow-down");
-            jq(".customIndexerSubSection1").hide("fast");
-        }
-
-        function expandIndexingSection1() {
-            jq("#expand-indexer1").addClass("icon-circle-arrow-down");
-            jq("#expand-indexer1").removeClass("icon-circle-arrow-right");
-            jq(".customIndexerSubSection1").show("fast");
-            hideIndexingSection2();
-        }
-
-        function submitNewProjectIndexingFormWithAjax() {
-        	jq("#enter-required-fields").html('<img src="/openmrs/ms/uiframework/resource/uicommons/images/spinner.gif">');
-        	jq("#index-new-project-data :input").prop("disabled", true);
-            jq.ajax({
-                type: "POST",
-                url: "${ ui.actionLink('indexDataForANewProject') }",
-                data: jq('#index-new-project-data').serialize(),
-                dataType: "json",
-                success: function(results) {
-                	jq("#index-new-project-data :input").prop("disabled", false);
-                    if (!results.failureMessage) {
-                        //TODO get  the json results from and represent it in html/client side language
-                        alert("Saving the project took: " + results.savingTime + " seconds*****Indexing project data took: " + results.indexingTime + " seconds*****Indexed: " + results.numberOfIndexedDocs + " Documents*****Project assigned UUID is: " + results.projectUuid);
-                        jq('#index-new-project-data').trigger("reset");
-                        hideIndexingSection1();
-                        expandIndexingSection2();
-                        //TODO Reload indexingSection2
-                    } else {
-                        alert(results.failureMessage);
-                    }
-                },
-                error: function(e) {
-                    //alert("Error occurred!!! " + e);
-                }
-            });
-        }
-        
-        function fetchDetailsOfSelectSearchProject() {
-        	var selectProject = jq("#installed-search-projects").val();
-        	jq.ajax({
-                type: "POST",
-                url: "${ ui.actionLink('fetchDetailsOfASelectedSearchProject') }",
-                data: { "selectedSearchProject":selectProject },
-                dataType: "json",
-                success: function(project) {
-                	if (project) {//TODO Now replace the three projectDetails spilled over the update section with this response
-                		alert("returned: '" + project.projectName + "' Details :-)");
-                	}
-                },
-                error: function(e) {
-                    alert("Error occurred!!! " + e);
-                }
-            });
-        }
-    });
+	jq(document).ready(function() {
+	    jq("#non-openmrs-db-name").hide("fast");
+	    jq(".customIndexerSubSection2").hide("fast");
+	    jq("#update-index-project-data").hide();
+	
+	    //hide or unhide database field
+	    jq('#non-openmrs-db').click(function() {
+	        if (jq(this).prop("checked") == true) {
+	            jq("#non-openmrs-db-name").show("slow");
+	        } else if (jq(this).prop("checked") == false) {
+	            jq("#non-openmrs-db-name").hide("fast");
+	        }
+	    });
+	
+	    jq('#index-project-data').click(function(event) {
+	        var requiredFieldsMsg = "";
+	        var projectName = jq(".project_name").val();
+	        var mysqlQuery = jq(".mysql_query").val();
+	        var columns = jq(".column_names").val();
+	
+	        if (!projectName) {
+	            requiredFieldsMsg += "Project Name is Required<br />";
+	        }
+	        if (!mysqlQuery) {
+	            requiredFieldsMsg += "Database Query is Required<br />";
+	        }
+	        if (!columns) {
+	            requiredFieldsMsg += "Column Names are Required<br />";
+	        }
+	        if (!projectName || !mysqlQuery || !columns) {
+	            if (jq("#non-openmrs-db").prop("checked") == true) {
+	                if (!jq(".db_name").val() || !jq(".db_user").val() || !jq(".db_password").val() || !jq(".db_server").val() || !jq(".db_manager").val() || !jq(".db_port").val()) {
+	                    requiredFieldsMsg += "All Fields for Non OpenMRS Database are Required<br />";
+	                }
+	            }
+	            jq('#enter-required-fields').html(requiredFieldsMsg + "<br />");
+	            requiredFieldsMsg = "";
+	        } else {
+	            submitNewProjectIndexingFormWithAjax();
+	        }
+	        return false;
+	    });
+	
+	    //expand or hide new project indexer section
+	    jq('#expand-indexer1').click(function() {
+	        if (jq("#expand-indexer1").hasClass("icon-circle-arrow-down")) {
+	            hideIndexingSection1();
+	        } else if (jq("#expand-indexer1").hasClass("icon-circle-arrow-right")) {
+	            expandIndexingSection1();
+	        }
+	    });
+	
+	    //expand or hide existing project indexer section
+	    jq('#expand-indexer2').click(function() {
+	        if (jq("#expand-indexer2").hasClass("icon-circle-arrow-down")) {
+	            hideIndexingSection2();
+	        } else if (jq("#expand-indexer2").hasClass("icon-circle-arrow-right")) {
+	            expandIndexingSection2();
+	        }
+	    });
+	
+	    jq('#installed-search-projects').change(function() {
+	        fetchDetailsOfSelectSearchProject();
+	    });
+	
+	    jq('#update-index-project-data').click(function(event) {
+	        submitExistingSearchProjectUpdate();
+	        return false;
+	    });
+	
+	    function hideIndexingSection2() {
+	        jq("#expand-indexer2").addClass("icon-circle-arrow-right");
+	        jq("#expand-indexer2").removeClass("icon-circle-arrow-down");
+	        jq(".customIndexerSubSection2").hide("fast");
+	    }
+	
+	    function expandIndexingSection2() {
+	        jq("#expand-indexer2").removeClass("icon-circle-arrow-right");
+	        jq("#expand-indexer2").addClass("icon-circle-arrow-down");
+	        jq(".customIndexerSubSection2").show("fast");
+	        hideIndexingSection1();
+	    }
+	
+	    function hideIndexingSection1() {
+	        jq("#expand-indexer1").addClass("icon-circle-arrow-right");
+	        jq("#expand-indexer1").removeClass("icon-circle-arrow-down");
+	        jq(".customIndexerSubSection1").hide("fast");
+	    }
+	
+	    function expandIndexingSection1() {
+	        jq("#expand-indexer1").addClass("icon-circle-arrow-down");
+	        jq("#expand-indexer1").removeClass("icon-circle-arrow-right");
+	        jq(".customIndexerSubSection1").show("fast");
+	        hideIndexingSection2();
+	    }
+	
+	    function submitNewProjectIndexingFormWithAjax() {
+	        jq("#enter-required-fields").html('<img src="/openmrs/ms/uiframework/resource/uicommons/images/spinner.gif">');
+	        jq("#index-new-project-data :input").prop("disabled", true);
+	        jq.ajax({
+	            type: "POST",
+	            url: "${ ui.actionLink('indexDataForANewProject') }",
+	            data: jq('#index-new-project-data').serialize(),
+	            dataType: "json",
+	            success: function(results) {
+	                jq("#index-new-project-data :input").prop("disabled", false);
+	                if (!results.failureMessage) {
+	                    //TODO get  the json results from and represent it in html/client side language
+	                    alert("Saving the project took: " + results.savingTime + " seconds*****Indexing project data took: " + results.indexingTime + " seconds*****Indexed: " + results.numberOfIndexedDocs + " Documents*****Project assigned UUID is: " + results.projectUuid);
+	                    jq('#index-new-project-data').trigger("reset");
+	                    hideIndexingSection1();
+	                    expandIndexingSection2();
+	                    //TODO Reload indexingSection2
+	                } else {
+	                    alert(results.failureMessage);
+	                }
+	            },
+	            error: function(e) {
+	                //alert("Error occurred!!! " + e);
+	            }
+	        });
+	    }
+	
+	    function displaySearchProjectDetailsFromServer(searchProject) {
+	        var projectHtml = '';
+	        if (searchProject) {
+	            projectHtml += '<p>';
+	            projectHtml += '<b>Name:</b> <input name="projectName" class="project_name" type="text" value="' + searchProject.projectName + '"></input><br />';
+	            projectHtml += '<b>Description:</b> <input name="projectDesc" type="text" value="' + searchProject.projectDescription + '"></input><br />';
+	            projectHtml += '<b>Database Query:</b> <textarea name="mysqlQuery" class="mysql_query">' + searchProject.projectDatabaseQuery + '</textarea><br />';
+	            projectHtml += '<b>Solr Field/Column Names:</b> ' + searchProject.projectSolrFields + '<br />';
+	            projectHtml += '</p>';
+	
+	            if (searchProject.projectDB != "openmrs") {
+	                projectHtml += '<p>';
+	                projectHtml += '<input name="databaseName" class="db_name" type="text" value="' + searchProject.projectDB + '"></input><br />';
+	                projectHtml += '<input name="databaseUser" class="db_user" type="text" value="' + searchProject.projectDBUser + ' "></input><br />';
+	                projectHtml += '<input name="databaseUserPassword" class="db_password" type="password" value="' + searchProject.projectDBUserPassword + '"></input><br />';
+	                projectHtml += '<input name="databaseServer" class="db_server" type="text" value="' + searchProject.projectServerName + '"></input><br />';
+	                projectHtml += '<input name="databaseManager" class="db_manager" type="text" value="' + searchProject.projectDBManager + '"></input><br />';
+	                projectHtml += ' <input name="databasePortNumber" class="db_port" type="text" value="' + searchProject.projectDBPortNumber + '"></input><br />';
+	                projectHtml += '</p>';
+	            }
+	            jq("#update-index-project-data").show();
+	        }
+	
+	        jq("#updating-installed-search-projects").html(projectHtml);
+	    }
+	
+	    function fetchDetailsOfSelectSearchProject() {
+	        var selectProject = jq("#installed-search-projects").val();
+	        if (selectProject) {
+		        jq.ajax({
+		            type: "POST",
+		            url: "${ ui.actionLink('fetchDetailsOfASelectedSearchProject') }",
+		            data: {
+		                "selectedSearchProject": selectProject
+		            },
+		            dataType: "json",
+		            success: function(project) {
+		                if (project) {
+		                    displaySearchProjectDetailsFromServer(project);
+		                }
+		            },
+		            error: function(e) {
+		                //alert("Error occurred!!! " + e);
+		            }
+		        });
+	        } else {
+	        	jq("#updating-installed-search-projects").html("");
+	        	jq("#update-index-project-data").hide();
+	        }
+	    }
+	
+	    function submitExistingSearchProjectUpdate() {
+	        alert("Saving update will soon be supported! WORK IN PROGRESS :-)");
+	    }
+	
+	});
 </script>
+
+
 
 <style type="text/css">
     #enter-required-fields {

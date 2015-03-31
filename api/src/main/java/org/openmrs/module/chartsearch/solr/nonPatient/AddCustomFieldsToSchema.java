@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
@@ -28,6 +29,7 @@ import org.apache.solr.client.solrj.response.CoreAdminResponse;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
 import org.apache.solr.common.util.NamedList;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.solr.SolrUtils;
 
 /**
  * Contains all functionalities needed to add an entry of a new field into schema.xml file
@@ -109,6 +111,10 @@ public class AddCustomFieldsToSchema {
 		//reading file line by line in Java using BufferedReader       
 		FileInputStream fis = null;
 		BufferedReader reader = null;
+		boolean replacedSchemaWithBackUp = replaceSchemaFileWithItsBackup(schemaFileLocation);
+		if (replacedSchemaWithBackUp) {
+			System.out.println("Successfully replaced the schema.xml file with a previously backed-up copy");
+		}
 		try {
 			fis = new FileInputStream(schemaFileLocation);
 			reader = new BufferedReader(new InputStreamReader(fis));
@@ -121,7 +127,6 @@ public class AddCustomFieldsToSchema {
 			while (line != null) {
 				FileWriter fileWritter = new FileWriter(newSchemaFile, true);
 				BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-				System.out.println(line);
 				//write to the file from here.
 				if (line.equals("\t\t<!-- Fields from modules and other projects starts here -->")) {
 					bufferWritter.write("\t\t<!-- Fields from modules and other projects starts here -->\n" + fieldEntry
@@ -157,6 +162,41 @@ public class AddCustomFieldsToSchema {
 		}
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
 		CoreAdminRequest adminRequest = new CoreAdminRequest();
+		reloadSolrServer(solrServer, adminRequest);
+	}
+	
+	/**
+	 * Replace the schema file with a previously backed up copy that contains newly added fields and
+	 * copyfields, Invoking this method needs to be followed by
+	 * {@link #reloadSolrServer(SolrServer, CoreAdminRequest)}
+	 * 
+	 * @param schemaFileLocation
+	 */
+	public static boolean replaceSchemaFileWithItsBackup(String schemaFileLocation) {
+		String currentBackupSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup"
+		        + File.separator + "schema.xml";
+		boolean replaced = false;
+		File currentBackupSchemaFile = new File(currentBackupSchemaLocation);
+		if (currentBackupSchemaFile.exists()) {
+			try {
+				FileUtils.copyFile(new File(currentBackupSchemaLocation), new File(schemaFileLocation));
+				replaced = true;
+			}
+			catch (IOException e) {
+				System.out.println("Error generated" + e);
+			}
+		}
+		return replaced;
+	}
+	
+	/**
+	 * Used to Reload the SolrServer after changes are made to the schema.xml among other
+	 * configuration files
+	 * 
+	 * @param solrServer
+	 * @param adminRequest
+	 */
+	public static void reloadSolrServer(SolrServer solrServer, CoreAdminRequest adminRequest) {
 		adminRequest.setAction(CoreAdminAction.RELOAD);
 		CoreAdminResponse adminResponse;
 		try {
@@ -182,15 +222,22 @@ public class AddCustomFieldsToSchema {
 		File newSchemaFile = new File(newSchema);
 		
 		if (previousSchemaFile.exists() && newSchemaFile.exists()) {
+			String chartSearchBackUpPath = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup";
+			File chartSearchBackUp = new File(chartSearchBackUpPath);
+			if (!chartSearchBackUp.exists()) {
+				chartSearchBackUp.mkdir();
+			}
 			previousSchemaFile.delete();
 			newSchemaFile.renameTo(previousSchemaFile);
-			
-			/*
-			 * TODO there might be need to automatically edit the
-			 * appdata/chartsearch/collection1/conf/schema.xml as well so as to avoid the need to
-			 * restart the module, the other way to do this stuff is to automatically restart the
-			 * chartsearch module
-			 */
+			try {
+				//Backing up the new schema file for easy retrieval after restarting or upgrading the module
+				//TODO support an option clickat the UI where by the user can Reload the solrserver, 
+				//this would mean updating the schema file with back-up before the Reloading is done
+				FileUtils.copyFileToDirectory(newSchemaFile, chartSearchBackUp);
+			}
+			catch (IOException e) {
+				System.out.println("Error generated" + e);
+			}
 		}
 	}
 }

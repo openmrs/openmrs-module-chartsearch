@@ -1,20 +1,19 @@
 /**
- * Views manipulations.
- * Created by Tallevi12
+ * Views manipulations. Created by Tallevi12
  */
 var firstSingleObs;
 
 var dates = {
     convert:function(d) {
         // Converts the date in d to a date-object. The input can be:
-        //   a date object: returned without modification
-        //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
-        //   a number     : Interpreted as number of milliseconds
-        //                  since 1 Jan 1970 (a timestamp)
-        //   a string     : Any format supported by the javascript engine, like
-        //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
-        //  an object     : Interpreted as an object with year, month and date
-        //                  attributes.  **NOTE** month is 0-11.
+        // a date object: returned without modification
+        // an array : Interpreted as [year,month,day]. NOTE: month is 0-11.
+        // a number : Interpreted as number of milliseconds
+        // since 1 Jan 1970 (a timestamp)
+        // a string : Any format supported by the javascript engine, like
+        // "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+        // an object : Interpreted as an object with year, month and date
+        // attributes. **NOTE** month is 0-11.
         return (
             d.constructor === Date ? d :
                 d.constructor === Array ? new Date(d[0],d[1],d[2]) :
@@ -27,9 +26,9 @@ var dates = {
     compare:function(a,b) {
         // Compare two dates (could be of any type supported by the convert
         // function above) and returns:
-        //  -1 : if a < b
-        //   0 : if a = b
-        //   1 : if a > b
+        // -1 : if a < b
+        // 0 : if a = b
+        // 1 : if a > b
         // NaN : if a or b is an illegal date
         // NOTE: The code inside isFinite does an assignment (=).
         return (
@@ -42,9 +41,9 @@ var dates = {
     inRange:function(d,start,end) {
         // Checks if date in d is between dates in start and end.
         // Returns a boolean or NaN:
-        //    true  : if d is between start and end (inclusive)
-        //    false : if d is before start or after end
-        //    NaN   : if one or more of the dates is illegal.
+        // true : if d is between start and end (inclusive)
+        // false : if d is before start or after end
+        // NaN : if one or more of the dates is illegal.
         // NOTE: The code inside isFinite does an assignment (=).
         return (
             isFinite(d=this.convert(d).valueOf()) &&
@@ -56,9 +55,10 @@ var dates = {
     }
 }
 
-        /*Function that gets a string as a parameter
-        The function capitalize the first char in that string
-        The function decapitalize the rest*/
+        /*
+		 * Function that gets a string as a parameter The function capitalize
+		 * the first char in that string The function decapitalize the rest
+		 */
 
 function capitalizeFirstLetter(string)
 {
@@ -308,20 +308,22 @@ function load_single_detailed_obs(obs_id){
     resultText+='<div class="demo-container">' +
         '<div id="placeholder" class="demo-placeholder"></div>' +
         '</div>';
-    // resultText+='<div class="demo-container"><h1 class="graph_title">Graph</h1> <div id="placeholder" class="demo-placeholder" style="width:550px;height:300px;margin:0 auto;"></div></div>';
-    /*resultText+='<div class="obsgroup_all_wrapper">';*/
+    // resultText+='<div class="demo-container"><h1
+	// class="graph_title">Graph</h1> <div id="placeholder"
+	// class="demo-placeholder" style="width:550px;height:300px;margin:0
+	// auto;"></div></div>';
+    /* resultText+='<div class="obsgroup_all_wrapper">'; */
     resultText+=load_single_obs_history(obs_id);
-    /*resultText+='</div>';*/
+    /* resultText+='</div>'; */
 
     resultText+='<div class="obsgroup_all_wrapper">';
 
-    /*resultText+='<label class="cs_label">';
-    resultText+='Date: ';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=getDateStr(obsJSON.date);
-    resultText+='</span>';
-    resultText+='<br />';*/
+    /*
+	 * resultText+='<label class="cs_label">'; resultText+='Date: ';
+	 * resultText+='</label>'; resultText+='<span class="cs_span">';
+	 * resultText+=getDateStr(obsJSON.date); resultText+='</span>';
+	 * resultText+='<br />';
+	 */
     resultText+='<label class="cs_label">';
     resultText+='Value Type:';
     resultText+='</label>';
@@ -335,19 +337,16 @@ function load_single_detailed_obs(obs_id){
     resultText+='<span class="cs_span">';
     resultText+=obsJSON.location;
     resultText+='</span>';
-    /*resultText+='<br />';*/
-    /*resultText+='<label class="cs_label">';
-    resultText+='Value:';
-    resultText+='</label>';
-
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value;
-    if (obsJSON.units_of_measurement) {
-        resultText+='<span class="cs_span_measure">';
-    	resultText+=' '+obsJSON.units_of_measurement;
-    	resultText+='</span>';
-    }
-    resultText+='</span>';*/
+    /* resultText+='<br />'; */
+    /*
+	 * resultText+='<label class="cs_label">'; resultText+='Value:';
+	 * resultText+='</label>';
+	 * 
+	 * resultText+='<span class="cs_span">'; resultText+=obsJSON.value; if
+	 * (obsJSON.units_of_measurement) { resultText+='<span
+	 * class="cs_span_measure">'; resultText+=' '+obsJSON.units_of_measurement;
+	 * resultText+='</span>'; } resultText+='</span>';
+	 */
 
     resultText+='<br />';
     if (obsJSON.absolute_high) {
@@ -459,8 +458,11 @@ function get_obs_history_json_by_name(obs_name) {
 function compare(a,b) {
     var first_date = new Date(parseInt(a.date));
     var second_date = new Date(parseInt(b.date));
-    /*console.log(first_date.toLocaleString() + ' against: ' + second_date.toLocaleString());
-    console.log(dates.compare(first_date, second_date));*/
+    /*
+	 * console.log(first_date.toLocaleString() + ' against: ' +
+	 * second_date.toLocaleString()); console.log(dates.compare(first_date,
+	 * second_date));
+	 */
     return dates.compare(second_date, first_date);
 }
 
@@ -675,7 +677,7 @@ function load_detailed_obs(obs_id)
 }
 
 
-/* #############  Filters ###############*/
+/* ############# Filters ############### */
 
 var currentJson = jsonAfterParse;
 
@@ -702,7 +704,7 @@ function time_filter(time_back, lbl) {
     {
         for(var i=0;i<single_obsJSON.length;i++){
             myDate = new Date(parseInt(single_obsJSON[i].date));
-           /* console.log('try to compare today: '+today+' with: '+ myDate);*/
+           /* console.log('try to compare today: '+today+' with: '+ myDate); */
             if(dates.compare(today, myDate) <= 0) {
                 console.log('pass!!');
                 newJSON.obs_singles[json_counter]=single_obsJSON[i];
@@ -908,7 +910,7 @@ function refresh_data() {
 	$("#provider_anchor").text('All Providers');
 	currentJson = jsonAfterParse;
     displayCategories(jsonAfterParse);
-    //if (searchText != "") {
+    // if (searchText != "") {
 		if(jsonAfterParse.noResults.foundNoResults) {
 			document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>" + jsonAfterParse.noResults.foundNoResultsMessage + " <b> " + searchText.value + "</b></div>";
 		} else {
@@ -919,7 +921,7 @@ function refresh_data() {
 		    addAllSingleObs(jsonAfterParse);
 		    displayFailedPrivileges(jsonAfterParse);
 		}
-    //}
+    // }
 }
 
 /*
@@ -932,7 +934,7 @@ function displayCategories(jsonAfterParse) {
 	if(jsonAfterParse.noResults.foundNoResults) {
 		document.getElementById('inside_filter_categories').innerHTML = "";
 	} else {
-		//record previous state
+		// record previous state
 		for(var i=0; i < categories.length; i++) {
 			var catId = "#"+categories[i].id;
 			if (jq(catId).prop('checked')) {
@@ -940,10 +942,10 @@ function displayCategories(jsonAfterParse) {
 			}
 		}
 		
-		//delete all categories being shown on the page
+		// delete all categories being shown on the page
 		document.getElementById('inside_filter_categories').innerHTML = "";
 		
-		//now fetch and display new categories from the server
+		// now fetch and display new categories from the server
 		for (var i = 0; i < jsonAfterParse.facets.length; i++) {
 	        var name = jsonAfterParse.facets[i].facet.name;
 	        var count = jsonAfterParse.facets[i].facet.count;
@@ -957,15 +959,44 @@ function displayCategories(jsonAfterParse) {
 	        }
 	    }
 		
-		//now check all previously checked categories
+		// now check all previously checked categories
 		for (index in checkedCategories) {
 			jq(checkedCategories[index]).prop('checked', true);
 		}
 	}
 }
 
+funtion displayExistingSearchProjects(installedSearchProjects) {
+	installedSearchProjects = JSON.parse(installedSearchProjects);
+	var numberOfAllSearchProjects = installedSearchProjects.numberOfAllProjects;
+	var existingProjectDisplay = "";
+	
+	for (int i = 0; i < numberOfAllSearchProjects; i++) {
+		var project = installedSearchProjects.project + i;
+		var projectId = project.projectId;
+		var projectName = project.projectName;
+		var projectDesc = project.projectDescription;
+		var projectUuid = project.projectUuid;
+		var projectDB = project.projectDB;
+		var fieldsExist = project.projectFieldsExistInSchema;
+		var projectDBQuery = project.projectDatabaseQuery;
+		var projectSolrFields = project.projectSolrFields;
+		
+		existingProjectDisplay += "<td>" + projectId + "</td>"+
+								"<td>" + projectName + "</td>"+
+								"<td>" + projectDesc + "</td>"
+								"<td>" + projectUuid + "</td>"
+								"<td>" + projectDB + "</td>"
+								"<td>" + fieldsExist + "</td>"
+								"<td>" + projectDBQuery + "</td>"
+								"<td>" + projectSolrFields + "</td>";
+	}
+	document.getElementById('project-table-values').innerHTML = existingProjectDisplay;
+}
+
 /*
- * In-case the has doesn't have privileges to view some results, they are not returned and a message is instead displayed
+ * In-case the has doesn't have privileges to view some results, they are not
+ * returned and a message is instead displayed
  */
 function displayFailedPrivileges(jsonAfterParse) {
 	document.getElementById('failed_privileges').innerHTML == "";

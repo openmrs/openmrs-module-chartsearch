@@ -25,7 +25,11 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 
 public class CustomIndexingFragmentController {
 	
+	SearchProjectAccess accessSearchProject = new SearchProjectAccess();
+	
 	public void controller(FragmentModel model) {
+		JSONObject json = accessSearchProject.generateSearchProjectDetailsToSendToTheClient();
+		model.put("installedSearchProjects", json);
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -33,7 +37,6 @@ public class CustomIndexingFragmentController {
 		JSONObject json = new JSONObject();
 		long savingTime;
 		long indexingTime;
-		SearchProjectAccess accessSearchProject = new SearchProjectAccess();
 		long startSavingTime = new Date().getTime();// start search project saving time
 		String projectUuid = accessSearchProject.createAndSaveANewSearchProject(request);
 		long endSavingTime = new Date().getTime();// end saving time

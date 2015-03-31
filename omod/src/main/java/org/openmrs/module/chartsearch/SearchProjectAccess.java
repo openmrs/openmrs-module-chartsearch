@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.api.context.Context;
@@ -154,6 +156,27 @@ public class SearchProjectAccess {
 			}
 		}
 		return project;
+	}
+	
+	public JSONObject generateSearchProjectDetailsToSendToTheClient() {
+		JSONObject json = new JSONObject();
+		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
+		for (int i = 0; i < existingSearchProjects.size(); i++) {
+			SearchProject project = existingSearchProjects.get(i);
+			JSONObject projectJson = new JSONObject();
+			projectJson.put("projectId", project.getProjectId());
+			projectJson.put("projectName", project.getProjectName());
+			projectJson.put("projectDescription", project.getProjectDescription());
+			projectJson.put("projectUuid", project.getUuid());
+			projectJson.put("projectDB", project.getDatabase());
+			projectJson.put("projectFieldsExistInSchema", project.fieldsExistInSchema());
+			projectJson.put("projectDatabaseQuery", project.getSqlQuery());
+			projectJson.put("projectSolrFields", project.getColumnNames());
+			int projNo = i + 1;
+			json.put("project" + projNo, projectJson);
+		}
+		json.put("numberOfAllProjects", existingSearchProjects.size());
+		return json;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

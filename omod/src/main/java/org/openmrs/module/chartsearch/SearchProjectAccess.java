@@ -16,16 +16,19 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.common.SolrDocumentList;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 import org.openmrs.module.chartsearch.solr.SolrUtils;
 import org.openmrs.module.chartsearch.solr.nonPatient.AddCustomFieldsToSchema;
 import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataIndexer;
+import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataSearcher;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.util.OpenmrsConstants;
 import org.slf4j.Logger;
@@ -47,7 +50,7 @@ public class SearchProjectAccess {
 	 * @param request
 	 * @return
 	 */
-	public String createAndSaveANewSearchProject(HttpServletRequest request) {
+	public String createAndSaveANewSearchProjectOrReturnPrevious(HttpServletRequest request) {
 		String projectName = request.getParameter("projectName");
 		String projectDescription = request.getParameter("projectDesc");
 		String mysqlQuery = request.getParameter("mysqlQuery");
@@ -58,17 +61,28 @@ public class SearchProjectAccess {
 		String databaseServer = request.getParameter("databaseServer");
 		String databaseManager = request.getParameter("databaseManager");
 		String databasePortNumber = request.getParameter("databasePortNumber");
+		String databaseType = request.getParameter("databaseType");
+		
 		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
 		SearchProject project;
 		String existingColumns = chartSearchService.getAllColumnNamesFromAllProjectsSeperatedByCommaAndSpace();
 		String projectUuid = null;
+		boolean isADefaultDb = StringUtils.isBlank(databaseName) && "default".equals(databaseType);
+		boolean isImportedDB = StringUtils.isNotBlank(databaseName) && "imported".equals(databaseType);
 		
-		if (StringUtils.isBlank(databaseName)) {//is openmrs database
+		if (isADefaultDb || isImportedDB) {//is openmrs or imported database
 			project = checkNonExistingColumnsAndCreateBasicSearchProject(projectName, projectDescription, mysqlQuery,
 			    columns, indexer, existingColumns);
+			project.setDatabaseType(databaseType);
+			if (isImportedDB) {
+				project.setDatabase(databaseName);
+			} else {
+				project.setDatabase(OpenmrsConstants.DATABASE_NAME);
+			}
 		} else {
 			project = checkNonExistingColumnsAndCreateBasicSearchProject(projectName, projectDescription, mysqlQuery,
 			    columns, indexer, existingColumns);
+			project.setDatabaseType("remote");
 			project.setDatabase(databaseName);
 			project.setDatabaseUser(databaseUser);
 			project.setDatabaseUSerPassword(databaseUserPassword);
@@ -91,12 +105,13 @@ public class SearchProjectAccess {
 			chartSearchService.saveSearchProject(project);
 			projectUuid = project.getUuid();
 		}
+		
 		return projectUuid;
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public Collection indexSearchProjectData(String uuid, boolean isAnonOpenmrsDatabase) {
-		SearchProject project = chartSearchService.getSearchProjectByUuid(uuid);
+	public Collection indexSearchProjectData(String projectUuid, boolean isAnonOpenmrsDatabase) {
+		SearchProject project = chartSearchService.getSearchProjectByUuid(projectUuid);
 		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
 		List<String> fields = indexer.removeSpacesAndSplitLineUsingComma(project.getColumnNames());
 		boolean fieldsExistInSchemaAlready = project.fieldsExistInSchema();
@@ -106,7 +121,7 @@ public class SearchProjectAccess {
 		    false, chartSearchService, fieldsExistInSchemaAlready);
 		String currentSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "collection1"
 		        + File.separator + "conf" + File.separator + "schema.xml";
-		String newSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "new-schema.xml";
+		String newSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "schema.xml";
 		boolean fieldsExistInSchema = true;
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		
@@ -115,12 +130,16 @@ public class SearchProjectAccess {
 		}
 		if (!StringUtils.isBlank(fieldsEntries) && !StringUtils.isBlank(copyFieldsEntries) && !fieldsExistInSchema) {
 			AddCustomFieldsToSchema.readSchemaFileLineByLineAndWritNewFieldEntries(currentSchemaLocation, newSchemaLocation,
-			    fieldsEntries, copyFieldsEntries, solrServer);
+			    fieldsEntries, copyFieldsEntries, solrServer, chartSearchService, project);
 			project.setFieldsExistInSchema(true);//now solr fields have been added to schema file
 			chartSearchService.saveSearchProject(project);
 		}
 		Collection docs = indexer
 		        .generateDocumentsAndAddFieldsAndCommitToSolr(project.getProjectId(), isAnonOpenmrsDatabase);
+		if (null != docs) {
+			project.setInitiallyIndexed(true);
+			chartSearchService.saveSearchProject(project);
+		}
 		return docs;
 	}
 	
@@ -157,7 +176,7 @@ public class SearchProjectAccess {
 		return project;
 	}
 	
-	public List<String> existingSearchProjectNames() {
+	public List<String> getExistingSearchProjectNames() {
 		List<String> names = new ArrayList<String>();
 		List<SearchProject> existingSearchProjects = chartSearchService.getAllSearchProjects();
 		for (int i = 0; i < existingSearchProjects.size(); i++) {
@@ -188,9 +207,82 @@ public class SearchProjectAccess {
 				projectJson.put("projectServerName", project.getServerName());
 				projectJson.put("projectDBPortNumber", project.getPortNumber());
 				projectJson.put("projectDBManager", project.getDbms());
+				projectJson.put("projectDBType", project.getDatabaseType());
 			}
 		}
 		return projectJson;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List getAllExistingDatabases() {
+		List listDAtabases = chartSearchService.getAllExistingDabases();
+		return listDAtabases;
+	}
+	
+	public boolean createAndDumpToNonExistingDatabase(String dbName, String sqlSourcePath) {
+		return chartSearchService.createAndDumpToNonExistingDatabase(dbName, sqlSourcePath);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List getPersonalDatabases() {
+		List allDbs = getAllExistingDatabases();
+		List personalDBs = new ArrayList<String>();
+		
+		for (int i = 0; i < allDbs.size(); i++) {
+			String curDb = (String) allDbs.get(i);
+			
+			if (!curDb.equals("information_schema") && !curDb.equals("performance_schema") && !curDb.equals("mysql")
+			        && !curDb.equals(OpenmrsConstants.DATABASE_NAME)) {
+				personalDBs.add(curDb);
+			}
+		}
+		return personalDBs;
+	}
+	
+	public JSONObject getTablesAndColumnsOfDatabase(String databaseName) {
+		return chartSearchService.getAllTablesAndColumnNamesOfADatabase(databaseName);
+	}
+	
+	public void deleteImportedDatabase(String dbName) {
+		chartSearchService.deleteImportedDatabase(dbName);
+	}
+	
+	public String getAllFieldsSetInSchemaByDefault() {
+		return chartSearchService.getAllFieldsSetInSchemaByDefault();
+	}
+	
+	public List<String> getInitiallyIndexedSearchProjectNames() {
+		List<String> names = new ArrayList<String>();
+		List<SearchProject> allSProjects = chartSearchService.getAllSearchProjects();
+		
+		for (int i = 0; i < allSProjects.size(); i++) {
+			SearchProject sp = allSProjects.get(i);
+			if (sp.wasInitiallyIndexed()) {
+				names.add(sp.getProjectName());
+			}
+		}
+		
+		return names;
+	}
+	
+	public JSONArray searchNonPatientSpecificDataForAlreadyIndexed(String searchText, String selectedProject) {
+		NonPatientDataSearcher searcher = new NonPatientDataSearcher();
+		List<SearchProject> allSProjs = chartSearchService.getAllSearchProjects();
+		JSONArray jsonToReturn = null;
+		Integer projectId = null;
+		
+		for (int i = 0; i < allSProjs.size(); i++) {
+			SearchProject proj = allSProjs.get(i);
+			if (selectedProject.equals(proj.getProjectName())) {
+				projectId = proj.getProjectId();
+			}
+		}
+		
+		if(null != projectId) {
+			SolrDocumentList solrDocList = searcher.getNonPatientDocumentList(searchText, projectId);
+			jsonToReturn = GeneratingJson.generateNonPatientSpecificJSON(solrDocList);
+		}
+		return jsonToReturn;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

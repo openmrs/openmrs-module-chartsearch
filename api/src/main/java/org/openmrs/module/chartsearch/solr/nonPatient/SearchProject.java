@@ -40,7 +40,7 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "project_id")
-	private int projectId;
+	private Integer projectId;
 	
 	@Column(name = "name", length = 38, nullable = false, unique = true)
 	private String projectName;
@@ -67,8 +67,16 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "fields_exist_in_schema")
 	private boolean fieldsExistInSchema;
 	
+	@Type(type = "boolean")
+	@Column(name = "initially_indexed")
+	private boolean initiallyIndexed;
+	
+	
 	@Column(name = "db_name", length = 15)
 	private String database;
+	
+	@Column(name = "db_type", length = 15, nullable = false)
+	private String databaseType;
 	
 	@Column(name = "db_user", length = 15)
 	private String databaseUser;
@@ -236,6 +244,14 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 		this.database = database;
 	}
 	
+	public String getDatabaseType() {
+		return databaseType;
+	}
+	
+	public void setDatabaseType(String databaseType) {
+		this.databaseType = databaseType;
+	}
+	
 	public String getDatabaseUser() {
 		if (StringUtils.isBlank(databaseUser)) {
 			return "";
@@ -298,4 +314,14 @@ public class SearchProject extends BaseOpenmrsObject implements Serializable {
 	public void setFieldsExistInSchema(boolean fieldsExistInSchema) {
 		this.fieldsExistInSchema = fieldsExistInSchema;
 	}
+
+	
+    public boolean wasInitiallyIndexed() {
+    	return initiallyIndexed;
+    }
+
+	
+    public void setInitiallyIndexed(boolean initiallyIndexed) {
+    	this.initiallyIndexed = initiallyIndexed;
+    }
 }

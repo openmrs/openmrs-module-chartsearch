@@ -53,38 +53,40 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 		List<String> columnNamesFromCS = removeSpacesAndSplitLineUsingComma(columnNamesWithCommas);
 		Collection docs = new ArrayList();
 		
-		if (!isAnonOpenmrsDatabase) {
+		if (!isAnonOpenmrsDatabase && "default".equals(project.getDatabaseType())) {
 			List<List<Object>> rowsByColumns = adminService.executeSQL(sql, false);
 			if (!rowsByColumns.isEmpty()) {
 				for (int i = 0; i < rowsByColumns.size(); i++) {
 					SolrInputDocument doc = new SolrInputDocument();
 					addBasicFieldsToSolrDoc(project, i + 1, doc);
-					List<Object> columns = rowsByColumns.get(i);
+					List<Object> currentRow = rowsByColumns.get(i);//looks like:[1, Outpatient, Out-patient care setting, OUTPATIENT, 2013-12-27 00:00:00.0, null] 
 					
-					if (StringUtils.isNotBlank(columnNamesWithCommas) && !columns.isEmpty()) {
+					if (StringUtils.isNotBlank(columnNamesWithCommas) && !currentRow.isEmpty()) {
 						//contains column names obtained from chart search module data etc
-						for (int j = 0; j < columns.size();) {
+						for (int j = 0; j < currentRow.size();) {
 							for (int k = 0; k < columnNamesFromCS.size(); k++) {
 								if (j == k) {//this logically implies the column names match
 									//obtained from running SQL query and not necessarily chart search module data
-									Object currentColumnFromDB = columns.get(j);
+									Object currentColumnValue = currentRow.get(j);//TODO should be column value
 									String currentColumnNameFromCS = columnNamesFromCS.get(k);
 									
-									if (currentColumnFromDB != null) {
-										if (currentColumnFromDB.getClass().equals(int.class)
-										        || currentColumnFromDB.getClass().equals(Integer.class)) {
-											int currentColumnValueFromDB = (Integer) currentColumnFromDB;
+									if (null == currentColumnValue) {//works well, excluding fields whose values are blank
+										currentColumnValue = "";
+									} else {
+										if (currentColumnValue.getClass().equals(int.class)
+										        || currentColumnValue.getClass().equals(Integer.class)) {
+											int currentColumnValueFromDB = (Integer) currentColumnValue;
 											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
-										} else if (currentColumnFromDB.getClass().equals(String.class)) {
-											String currentColumnValueFromDB = (String) currentColumnFromDB;
+										} else if (currentColumnValue.getClass().equals(String.class)) {
+											String currentColumnValueFromDB = (String) currentColumnValue;
 											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 											
-										} else if (currentColumnFromDB.getClass().equals(boolean.class)
-										        || currentColumnFromDB.getClass().equals(Boolean.class)) {
-											boolean currentColumnValueFromDB = (Boolean) currentColumnFromDB;
+										} else if (currentColumnValue.getClass().equals(boolean.class)
+										        || currentColumnValue.getClass().equals(Boolean.class)) {
+											boolean currentColumnValueFromDB = (Boolean) currentColumnValue;
 											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 										} else {
-											Object currentColumnValueFromDB = currentColumnFromDB;
+											Object currentColumnValueFromDB = currentColumnValue;
 											doc.addField(currentColumnNameFromCS, currentColumnValueFromDB);
 										}
 									}
@@ -97,31 +99,70 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 				}
 			}
 		} else {//Non OpenMRS database
-			//Contains code that would have been in a hibernate dao file if ResultSet would be returned by a method
-			String dbUser = project.getDatabaseUser();
-			String dbPassword = project.getDatabaseUSerPassword();
-			String serverName = project.getServerName();
-			String dbms = project.getDbms();
 			String dbName = project.getDatabase();
-			String portNumber = project.getPortNumber();
-			try {
-				Connection connection = getConnection(serverName, dbms, dbUser, dbPassword, dbName, portNumber);
-				Statement statement = connection.createStatement();
-				ResultSet rs = statement.executeQuery(sql);
+			if ("imported".equals(project.getDatabaseType())) {
+				List rowResults = chartSearchService.getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(dbName, sql);
 				
-				while (rs.next()) {
+				for (int i = 0; i < rowResults.size(); i++) {
 					SolrInputDocument doc = new SolrInputDocument();
-					addBasicFieldsToSolrDoc(project, rs.getRow(), doc);
-					for (int i = 0; i < columnNamesFromCS.size(); i++) {
-						//Object object = rs.getString(columnNamesFromCS.get(i));
-						doc.addField(columnNamesFromCS.get(i), rs.getString(columnNamesFromCS.get(i)));
+					
+					addBasicFieldsToSolrDoc(project, i + 1, doc);
+					
+					Object currentRow = rowResults.get(i);
+					if (null != currentRow) {
+						if (currentRow instanceof Object[]) {
+							Object[] currentObjs = (Object[]) currentRow;
+							for (int j = 0; j < currentObjs.length;) {
+								for (int k = 0; k < columnNamesFromCS.size(); k++) {
+									if (j == k) {
+										Object currentColumnValue = currentObjs[j];
+										if (null == currentColumnValue) {
+											currentColumnValue = "";
+										}
+										String currentColumnNameFromCS = columnNamesFromCS.get(k);
+										doc.addField(currentColumnNameFromCS, currentColumnValue);
+									}
+									j++;
+								}
+							}
+						} else {//This means that the search project has only one column
+							Object obj = rowResults.get(i);
+							if (null == obj) {
+								obj = "";
+							}
+							if (columnNamesFromCS.size() == 1) {
+								doc.addField(columnNamesFromCS.get(0), obj);
+							}
+						}
 					}
 					docs.add(doc);
 				}
+			} else {
+				//TODO needs to fix, NOT YET SUPPORTED
+				String dbUser = project.getDatabaseUser();
+				String dbPassword = project.getDatabaseUSerPassword();
+				String serverName = project.getServerName();
+				String dbms = project.getDbms();
+				String portNumber = project.getPortNumber();
+				try {
+					Connection connection = getConnection(serverName, dbms, dbUser, dbPassword, dbName, portNumber);
+					Statement statement = connection.createStatement();
+					ResultSet rs = statement.executeQuery(sql);
+					
+					while (rs.next()) {
+						SolrInputDocument doc = new SolrInputDocument();
+						addBasicFieldsToSolrDoc(project, rs.getRow(), doc);
+						for (int i = 0; i < columnNamesFromCS.size(); i++) {
+							//Object object = rs.getString(columnNamesFromCS.get(i));
+							doc.addField(columnNamesFromCS.get(i), rs.getString(columnNamesFromCS.get(i)));
+						}
+						docs.add(doc);
+					}
+				}
+				catch (SQLException e) {
+					System.out.println("Error generated" + e);
+				}//connection.url
 			}
-			catch (SQLException e) {
-				System.out.println("Error generated" + e);
-			}//connection.url
 		}
 		try {
 			if (docs.size() > 1000) {
@@ -152,7 +193,7 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 		doc.addField("project_uuid", project.getUuid());
 	}
 	
-    private void printFailureIfResponseIsNotZero(UpdateResponse resp) {
+	private void printFailureIfResponseIsNotZero(UpdateResponse resp) {
 		if (resp.getStatus() != 0) {
 			System.out.println("Some error has occurred, status is: " + resp.getStatus());
 		}
@@ -173,7 +214,8 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 	}
 	
 	/**
-	 * Only to be used when indexing data outside openmrs current running database
+	 * Only to be used when indexing data outside openmrs current running database, Remotely
+	 * connected to databases
 	 */
 	public Connection getConnection(String serverName, String dbms, String dbUser, String dbPassword, String dbName,
 	                                String portNumber) throws SQLException {

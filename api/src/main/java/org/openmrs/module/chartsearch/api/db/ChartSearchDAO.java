@@ -15,6 +15,8 @@ package org.openmrs.module.chartsearch.api.db;
 
 import java.util.List;
 
+import net.sf.json.JSONObject;
+
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
@@ -36,4 +38,15 @@ public interface ChartSearchDAO {
 	List<SearchProject> getAllSearchProjects();
 	
 	public SearchProject getSearchProjectByUuid(String uuid);
+
+	@SuppressWarnings("rawtypes")
+    public List getAllExistingDatabases();
+	
+	public boolean createAndDumpToNonExistingDatabase(String dbName, String sqlSourcePath);
+	
+	public JSONObject getAllTablesAndColumnNamesOfADatabase(String databaseName);
+	
+	public void deleteImportedDatabase(String dbName);
+
+	List getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String databaseName, String sqlQuery);
 }

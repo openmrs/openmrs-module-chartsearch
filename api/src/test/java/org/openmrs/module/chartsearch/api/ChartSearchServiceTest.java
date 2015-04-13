@@ -1,13 +1,21 @@
 package org.openmrs.module.chartsearch.api;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.solr.SolrUtils;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
@@ -17,6 +25,7 @@ import org.openmrs.test.Verifies;
  * as at: {@linkplain https
  * ://github.com/openmrs/openmrs-module-allergyapi/tree/master/api/src/test/resources}
  */
+@Ignore
 public class ChartSearchServiceTest extends BaseModuleContextSensitiveTest {
 	
 	/**

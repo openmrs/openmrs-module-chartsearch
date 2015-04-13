@@ -205,7 +205,11 @@
 			<column name="sql_query" type="text"></column>
 			<column name="field_names" type="text"></column>
 			<column name="fields_exist_in_schema" type="boolean"></column>
+			<column name="initially_indexed" type="boolean"></column>
 			<column name="db_name" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="db_type" type="text">
 				<constraints nullable="false" />
 			</column>
 			<column name="db_user" type="text">
@@ -233,6 +237,7 @@
 		<insert tableName="${project.parent.artifactId}_project">
 			<column name="name" value="Chart Search" />
 			<column name="db_name" value="openmrs" />
+			<column name="db_type" value="default" />
 			<column name="description"
 				value="Defining the basic data required for the Chart Search module to run well, some data is missing" />
 			<column name="uuid" value="95e978f4-fe19-477a-906a-8d61bd3c1e21" />
@@ -240,6 +245,7 @@
 				value="SELECT cc.name AS cc_name, cc.filter_query AS cc_filter_query, cc.description AS  cc_description FROM openmrs.chartsearch_categories cc" />
 			<column name="field_names" value="cc_name, cc_filter_query, cc_description" />
 			<column name="fields_exist_in_schema" value="1" />
+			<column name="initially_indexed" value="1" />
 		</insert>
 	</changeSet>
 

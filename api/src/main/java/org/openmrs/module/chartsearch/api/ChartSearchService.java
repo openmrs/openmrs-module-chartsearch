@@ -204,4 +204,18 @@ public interface ChartSearchService extends OpenmrsService {
 	public SearchProject getSearchProjectByUuid(String uuid);
 	
 	public String getAllFieldsSetInSchemaByDefault();
+	
+	@SuppressWarnings("rawtypes")
+	public List getAllExistingDabases();
+	
+	public boolean createAndDumpToNonExistingDatabase(String dbName, String sqlSourcePath);
+	
+	public JSONObject getAllTablesAndColumnNamesOfADatabase(String databaseName);
+	
+	public void deleteImportedDatabase(String dbName);
+
+	@SuppressWarnings("rawtypes")
+    public List getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String databaseName, String sqlQuery);
+
+	public void appendFieldsToAlreadyExistingInSchema(String newFieldsOrColumns);
 }

@@ -76,4 +76,15 @@
 				where f.retired = 1">
 		</entity>
 	</document>
+	<document>
+		<entity name="chartsearch"
+			query="SELECT name AS cc_name, filter_query AS cc_filter_query, description AS cc_description FROM multisearch.chartsearch_categories"
+
+			deltaImportQuery="SELECT name AS cc_name, filter_query AS cc_filter_query, description AS cc_description FROM multisearch.chartsearch_categories"
+
+			deltaQuery="SELECT name AS cc_name, filter_query AS cc_filter_query, description AS cc_description FROM multisearch.chartsearch_categories"
+
+			deletedPkQuery="SELECT name AS cc_name, filter_query AS cc_filter_query, description AS cc_description FROM multisearch.chartsearch_categories">
+			</entity>
+	</document>
 </dataConfig>

@@ -30,40 +30,55 @@ public class CustomIndexingFragmentController {
 	SearchProjectAccess accessSearchProject = new SearchProjectAccess();
 	
 	public void controller(FragmentModel model) {
-		List<String> projectNames = accessSearchProject.existingSearchProjectNames();
+		List<String> projectNames = accessSearchProject.getExistingSearchProjectNames();
 		
 		model.put("projectNames", projectNames);
+		model.put("installedDatabases", accessSearchProject.getPersonalDatabases());
+		model.put("currentInstalledFields", accessSearchProject.getAllFieldsSetInSchemaByDefault());
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public JSONObject indexDataForANewProject(HttpServletRequest request) {
 		JSONObject json = new JSONObject();
 		long savingTime;
 		long indexingTime;
 		long startSavingTime = new Date().getTime();// start search project saving time
-		String projectUuid = accessSearchProject.createAndSaveANewSearchProject(request);
+		String projectUuid = accessSearchProject.createAndSaveANewSearchProjectOrReturnPrevious(request);
 		long endSavingTime = new Date().getTime();// end saving time
 		savingTime = endSavingTime - startSavingTime;
 		boolean isNonOpenMRSDB = false;
 		if (!StringUtils.isBlank(projectUuid)) {
-			if (!StringUtils.isBlank(request.getParameter("databaseName"))) {
+			if (!StringUtils.isBlank(request.getParameter("databaseName"))) {//TODO work out for a non openmrs db, to get such data and throw it into solr
 				isNonOpenMRSDB = true;
 			}
 			long startIndexingTime = new Date().getTime();// start search project indexing time
 			Collection docs = accessSearchProject.indexSearchProjectData(projectUuid, isNonOpenMRSDB);
 			long endIndexingTime = new Date().getTime();// end indexing time
 			indexingTime = endIndexingTime - startIndexingTime;
+			List allSPs = accessSearchProject.getExistingSearchProjectNames();
+			String[] existingSPs = new String[allSPs.size()];
+			
+			existingSPs = (String[]) allSPs.toArray(existingSPs);
+			
 			json.put("numberOfIndexedDocs", docs.size());
 			json.put("savingTime", TimeUnit.MILLISECONDS.toSeconds(savingTime));
 			json.put("indexingTime", TimeUnit.MILLISECONDS.toSeconds(indexingTime));
 			json.put("projectUuid", projectUuid);//returned from the server
+			json.put("currentInstalledFields", accessSearchProject.getAllFieldsSetInSchemaByDefault());
+			json.put("projectNames", existingSPs);
+			
+			List indexedSPs = accessSearchProject.getInitiallyIndexedSearchProjectNames();
+			String[] indexedSPsArr = new String[indexedSPs.size()];
+			
+			indexedSPsArr = (String[]) indexedSPs.toArray(indexedSPsArr);
+			json.put("initiallyIndexedProjects", indexedSPsArr);
+			
 			docs.clear();
 		} else {
 			MutableMessageSource mms = Context.getMessageSourceService().getActiveMessageSource();
-			json.put(
-			    "failureMessage",
-			    mms.getMessage("chartsearch.refApp.customIndexing.addNewProjectToIndex.failureMessage", null,
-			        Context.getLocale()));
+			String failMsg = mms.getMessage("chartsearch.refApp.customIndexing.addNewProjectToIndex.failureMessage", null,
+			    Context.getLocale());
+			json.put("failureMessage", failMsg);
 		}
 		
 		return json;

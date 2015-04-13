@@ -1,0 +1,11 @@
+BUGS:
+ - Check entered column names from the UI one by one to leaveout adding each to schema.xml if it is included, but non existing should be added. Or return user feedback to let him/her change the names before submitting to server [DONE]
+ - Don't allow deleting a database whose data has already been added to the index, instead it should only be deleted when the whole search project is deleted which would clear the project from the solr index
+ - Totally disable editting search projects that are installed by default at the UI and API level
+
+
+
+NEW FEATURES:
+ + Support deleting a new search project from the current database; delete the solr fields from schema.xml and reload solr server
+ + Support the user defining one of his/her previously imported databases [DONE]
+

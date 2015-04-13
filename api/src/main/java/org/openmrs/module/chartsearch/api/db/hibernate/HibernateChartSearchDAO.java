@@ -13,26 +13,38 @@
  */
 package org.openmrs.module.chartsearch.api.db.hibernate;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
+import org.openmrs.util.OpenmrsConstants;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
  */
+@Transactional
 public class HibernateChartSearchDAO implements ChartSearchDAO {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
@@ -197,5 +209,109 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		        .setString("uuid", uuid).uniqueResult();
 		
 		return p;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getAllExistingDatabases() {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery("SHOW DATABASES");
+		List result = query.list();
+		return result;
+	}
+	
+	public boolean createAndDumpToNonExistingDatabase(String dbName, String sqlSourcePath) {
+		boolean state = false;
+		Query query1 = sessionFactory.getCurrentSession().createSQLQuery("CREATE DATABASE IF NOT EXISTS " + dbName);
+		
+		if (!getAllExistingDatabases().contains(dbName)) {
+			query1.executeUpdate();
+			
+			Query query2 = sessionFactory.getCurrentSession().createSQLQuery("USE " + dbName);
+			
+			query2.executeUpdate();
+			
+			Connection conn = sessionFactory.getCurrentSession().connection();
+			System.out.println("Current connection is: " + conn.toString());
+			ScriptRunner sr = new ScriptRunner(conn);
+			Reader reader;
+			try {
+				reader = new BufferedReader(new FileReader(sqlSourcePath));
+				sr.runScript(reader);
+				System.out.println("All databases now after creating: " + dbName + " Are: "
+				        + getAllExistingDatabases().toString());
+				state = true;
+				
+				Query query3 = sessionFactory.getCurrentSession().createSQLQuery("USE " + OpenmrsConstants.DATABASE_NAME);
+				query3.executeUpdate();
+			}
+			catch (FileNotFoundException e) {
+				log.error("Error generated", e);
+			}
+		}
+		return state;
+	}
+	
+	@Override
+	@SuppressWarnings("rawtypes")
+	public JSONObject getAllTablesAndColumnNamesOfADatabase(String databaseName) {
+		JSONObject tablesAndColumns = new JSONObject();
+		
+		Query query1 = sessionFactory.getCurrentSession().createSQLQuery("USE " + databaseName);
+		query1.executeUpdate();
+		
+		Query query2 = sessionFactory.getCurrentSession().createSQLQuery(
+		    "SELECT DISTINCT TABLE_NAME from information_schema.columns WHERE table_schema = " + databaseName);
+		List allTableNames = query2.list();
+		
+		for (int i = 0; i < allTableNames.size(); i++) {
+			Query query3 = sessionFactory.getCurrentSession().createSQLQuery(
+			    "SELECT DISTINCT COLUMN_NAME FROM information_schema.columns WHERE table_schema = " + databaseName
+			            + " AND table_name = " + allTableNames.get(i));
+			List columns = query3.list();
+			tablesAndColumns.put(allTableNames.get(i), columns);
+		}
+		
+		Query query4 = sessionFactory.getCurrentSession().createSQLQuery("USE " + OpenmrsConstants.DATABASE_NAME);
+		query4.executeUpdate();
+		
+		return tablesAndColumns;
+	}
+	
+	@Override
+	public void deleteImportedDatabase(String dbName) {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery("DROP DATABASE IF EXISTS " + dbName);
+		query.executeUpdate();
+		
+		Query query2 = sessionFactory.getCurrentSession().createSQLQuery("USE " + OpenmrsConstants.DATABASE_NAME);
+		query2.executeUpdate();
+	}
+	
+	/**
+	 * Usage example at: {@link #getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String, String)}
+	 */
+	private void useNonDefaultDatabase(String databaseName) {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery("USE " + databaseName);
+		query.executeUpdate();
+	}
+	
+	/**
+	 * Must always be invoked every after calling {@link #useDefaultOpenMRSDatabase()} Usage example
+	 * at: {@link #getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String, String)}
+	 */
+	private void useDefaultOpenMRSDatabase() {
+		Query query = sessionFactory.getCurrentSession().createSQLQuery("USE " + OpenmrsConstants.DATABASE_NAME);
+		query.executeUpdate();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String databaseName, String sqlQuery) {
+		useNonDefaultDatabase(databaseName);
+		
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(sqlQuery);
+		List list = query.list();
+		
+		useDefaultOpenMRSDatabase();
+		return list;
 	}
 }

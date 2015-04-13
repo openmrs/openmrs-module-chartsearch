@@ -107,7 +107,9 @@ public class AddCustomFieldsToSchema {
 	 */
 	public static void readSchemaFileLineByLineAndWritNewFieldEntries(String schemaFileLocation, String newSchemaFilePath,
 	                                                                  String fieldEntry, String copyFieldEntry,
-	                                                                  SolrServer solrServer) {
+	                                                                  SolrServer solrServer,
+	                                                                  ChartSearchService chartSearchService,
+	                                                                  SearchProject searchProject) {
 		//reading file line by line in Java using BufferedReader       
 		FileInputStream fis = null;
 		BufferedReader reader = null;
@@ -161,6 +163,7 @@ public class AddCustomFieldsToSchema {
 			}
 		}
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
+		chartSearchService.appendFieldsToAlreadyExistingInSchema(searchProject.getColumnNames());
 		CoreAdminRequest adminRequest = new CoreAdminRequest();
 		reloadSolrServer(solrServer, adminRequest);
 	}
@@ -196,7 +199,8 @@ public class AddCustomFieldsToSchema {
 	 * @param solrServer
 	 * @param adminRequest
 	 */
-	public static void reloadSolrServer(SolrServer solrServer, CoreAdminRequest adminRequest) {
+	@SuppressWarnings("unused")
+    public static void reloadSolrServer(SolrServer solrServer, CoreAdminRequest adminRequest) {
 		adminRequest.setAction(CoreAdminAction.RELOAD);
 		CoreAdminResponse adminResponse;
 		try {
@@ -228,16 +232,13 @@ public class AddCustomFieldsToSchema {
 				chartSearchBackUp.mkdir();
 			}
 			previousSchemaFile.delete();
-			newSchemaFile.renameTo(previousSchemaFile);
 			try {
-				//Backing up the new schema file for easy retrieval after restarting or upgrading the module
-				//TODO support an option clickat the UI where by the user can Reload the solrserver, 
-				//this would mean updating the schema file with back-up before the Reloading is done
 				FileUtils.copyFileToDirectory(newSchemaFile, chartSearchBackUp);
 			}
 			catch (IOException e) {
 				System.out.println("Error generated" + e);
 			}
+			newSchemaFile.renameTo(previousSchemaFile);
 		}
 	}
 }

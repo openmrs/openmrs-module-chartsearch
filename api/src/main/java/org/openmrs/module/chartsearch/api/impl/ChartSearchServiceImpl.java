@@ -13,15 +13,21 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
@@ -38,6 +44,7 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.solr.SolrUtils;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
@@ -357,12 +364,71 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		return columnsFromAllProject;
 	}
 	
-	public String getAllFieldsSetInSchemaByDefault() {
+	private String initiallyInstalledFields() {
 		return "id, meta, obs_id, person_id, concept_name, obs_datetime, value_boolean, value_datetime, "
 		        + "text, obs_group_id, value_numeric, coded, value_text, concept_class_name, form_id, form_name, "
 		        + "encounter_type_name, date_created, encounter_id, patient_id, e_form_id, encounter_type, "
 		        + "encounter_datetime, visit_id, _version_, value, project_id, project_name, project_description, "
 		        + "project_uuid, project_db_name, cc_name, cc_filter_query, cc_description";
+	}
+	
+	public String getAllFieldsSetInSchemaByDefault() {
+		File fieldsBackUp = new File(SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup"
+		        + File.separator + "installedSchemaFields.txt");
+		if (!fieldsBackUp.exists()) {
+			return initiallyInstalledFields();
+		} else {
+			String currentlyExistingFieldsInSchema = initiallyInstalledFields();
+			try {
+				String allFieldsFileContent = FileUtils.readFileToString(fieldsBackUp);
+				Matcher matcher = Pattern.compile("\\[([^\\]]+)").matcher(allFieldsFileContent);
+				
+				int pos = -1;
+				while (matcher.find(pos + 1)) {
+					pos = matcher.start();
+					String current = matcher.group(1);
+					if (!currentlyExistingFieldsInSchema.contains(current)) {
+						currentlyExistingFieldsInSchema += ", " + current;
+					}
+				}
+			}
+			catch (IOException e) {
+				System.out.println("Error generated" + e);
+			}
+			
+			return currentlyExistingFieldsInSchema;
+		}
+	}
+	
+	@Override
+	public void appendFieldsToAlreadyExistingInSchema(String newFieldsOrColumns) {
+		String pathToBackUpDir = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup";
+		String pathToFieldsBackUp = pathToBackUpDir + File.separator + "installedSchemaFields.txt";
+		
+		File backUpDir = new File(pathToBackUpDir);
+		if (!backUpDir.exists()) {
+			backUpDir.mkdir();
+		}
+		File fieldsBackUp = new File(pathToFieldsBackUp);
+		if (!fieldsBackUp.exists()) {
+			try {
+				FileUtils.writeStringToFile(fieldsBackUp,
+				    "This File Contains All currently existing Solr fields within schema.xml file:\nDO NOT MANUALLY EDIT THIS FILE\n\n#Initially Installed Fields:\n["
+				            + initiallyInstalledFields() + "]\n\n#Fields Added after installation:\n");
+			}
+			catch (IOException e) {
+				System.out.println("Error generated" + e);
+			}
+		}
+		try {
+			FileWriter writer = new FileWriter(fieldsBackUp, true);
+			
+			writer.write("At: " + new Date() + " [" + newFieldsOrColumns + "]\n");
+			writer.close();
+		}
+		catch (IOException e) {
+			System.out.println("Error generated" + e);
+		}
 	}
 	
 	/**
@@ -383,5 +449,30 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public SearchProject getSearchProjectByUuid(String uuid) {
 		return dao.getSearchProjectByUuid(uuid);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List getAllExistingDabases() {
+		return dao.getAllExistingDatabases();
+	}
+	
+	public boolean createAndDumpToNonExistingDatabase(String dbName, String sqlSourcePath) {
+		return dao.createAndDumpToNonExistingDatabase(dbName, sqlSourcePath);
+	}
+	
+	@Override
+	public JSONObject getAllTablesAndColumnNamesOfADatabase(String databaseName) {
+		return dao.getAllTablesAndColumnNamesOfADatabase(databaseName);
+	}
+	
+	@Override
+	public void deleteImportedDatabase(String dbName) {
+		dao.deleteImportedDatabase(dbName);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String databaseName, String sqlQuery) {
+		return dao.getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(databaseName, sqlQuery);
 	}
 }

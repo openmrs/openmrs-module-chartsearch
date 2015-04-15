@@ -1,11 +1,18 @@
 BUGS:
- - Check entered column names from the UI one by one to leaveout adding each to schema.xml if it is included, but non existing should be added. Or return user feedback to let him/her change the names before submitting to server [DONE]
- - Don't allow deleting a database whose data has already been added to the index, instead it should only be deleted when the whole search project is deleted which would clear the project from the solr index
+ - Check entered column names from the UI one by one to leaveout adding each to schema.xml if it is included, but non existing should be added. Or return user feedback to let him/her change the names before submitting to server [FIXED]
+ - Don't allow deleting a database whose data has already been added to the index, instead it should only be deleted when the whole search project is deleted which would clear the project from the solr index, Alert that delete search project first
  - Totally disable editting search projects that are installed by default at the UI and API level
+ - Yesterday, embedded solr failed to add documents to Update response and also failed to run a commit on it, throwing an I/O exception which after investigation would most likely be fixed externally by http://askubuntu.com/questions/162229/how-do-i-increase-the-open-files-limit-for-a-non-root-user [FIXED]
+ - Do not copy field numeric fields.
+ - Solr instead of returning a whole document where a match was found, return only that mathing part
+ - After selecting search ptoject on search tab, then focus on search text box
 
 
 
 NEW FEATURES:
  + Support deleting a new search project from the current database; delete the solr fields from schema.xml and reload solr server
  + Support the user defining one of his/her previously imported databases [DONE]
+ + Provide an option on the custom indexing tab to let the user not to copy all but some of the fields to text for grouped retrieval
+ + Update the search tab with newwly added search project automatically whenever added
+ + Support Remote databases, use connection object to secure a connection and index and search data contributed by remote databases
 

@@ -57,7 +57,12 @@ An abstract view of your previously added database structures and Ability to un-
 	    });
 	    
 	    jq("#delete-database").click(function(event) {
-	    	deleteSelectedDatabase();
+	    	var yesOrNo = confirm("Are you sure you want to delete this Database!");
+	    	if(yesOrNo) {
+	    		deleteSelectedDatabase();
+	    	} else {
+	    		//alert("No action taken"); Do nothing
+	    	}
 	    	return false;
 	    });
 	    

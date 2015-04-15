@@ -113,13 +113,19 @@
 	        if (!columns) {
 	            requiredFieldsMsg += "Column Names are Required<br />";
 	        }
+	        
 	        //TODO get the existing columns on get page and do a check for their existence to avoid calling into the server before validating their existance
-	        if (!projectName || !mysqlQuery || !columns) {
+	        if (!projectName || !mysqlQuery || !columns || columns.indexOf(".") > -1 || columns.indexOf(":") > -1 || columns.indexOf("*") > -1 || columns.indexOf("<") > -1 || columns.indexOf(">") > -1 || columns.indexOf("|") > -1 || columns.indexOf("'") > -1) {
 	            if (jq("#non-openmrs-db").prop("checked") == true) {
 	                if (!jq(".db_name").val() || !jq(".db_user").val() || !jq(".db_password").val() || !jq(".db_server").val() || !jq(".db_manager").val() || !jq(".db_port").val()) {
 	                    requiredFieldsMsg += "All Fields for Non OpenMRS Database are Required<br />";
 	                }
 	            }
+	            
+	            if(columns.indexOf(".") > -1 || columns.indexOf(":") > -1 || columns.indexOf("*") > -1 || columns.indexOf("<") > -1 || columns.indexOf(">") > -1 || columns.indexOf("|") > -1 || columns.indexOf("'") > -1) {
+		        	requiredFieldsMsg += "DONOT use illegal characters such as: /, :, *, ?, \", <, |, >, ' et-cetera Mainly for column names<br />";
+		        }
+	        
 	            jq('#enter-required-fields').html(requiredFieldsMsg + "<br />");
 	            requiredFieldsMsg = "";
 	        } else {

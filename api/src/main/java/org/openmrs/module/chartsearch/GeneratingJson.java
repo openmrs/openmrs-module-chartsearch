@@ -163,35 +163,6 @@ public class GeneratingJson {
 		}
 	}
 	
-	/**
-	 * Returns Returned results as a JSON Object, otherwise returns it empty if the results were
-	 * none
-	 * 
-	 * @param solrDocList
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked" })
-    public static JSONArray generateNonPatientSpecificJSON(SolrDocumentList solrDocList) {
-		JSONArray jsonToReturn = new JSONArray();
-		;
-		if (!solrDocList.isEmpty()) {//TODO Fix things, this is not working as expected
-			for (int i = 0; i < solrDocList.size(); i++) {
-				JSONObject curDocJson = new JSONObject();
-				SolrDocument curDoc = solrDocList.get(i);
-				Map<Integer, String> fieldNames = (Map<Integer, String>) curDoc.getFieldNames();
-				
-				for (Map.Entry<Integer, String> entry : fieldNames.entrySet()) {
-					Integer curIndex = entry.getKey();
-					String curField = entry.getValue();
-					curDocJson.put(curIndex, curField);
-				}
-				jsonToReturn.add(curDocJson);
-			}
-		}
-		
-		return jsonToReturn;
-	}
-	
 	private static void addFacetsToJSONObjectToReturn(JSONObject jsonToReturn) {
 		JSONArray arr_of_facets = new JSONArray();
 		JSONObject facet = new JSONObject();

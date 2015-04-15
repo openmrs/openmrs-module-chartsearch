@@ -20,12 +20,16 @@ public class NonPatientDataSearcher {//TODO may need to add and access this as a
 		QueryResponse response = null;
 		
 		if (StringUtils.isBlank(searchText)) {
-			searchText = "*";
+			searchText = "*:*";
 		}
-		ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
-		searchText = searchSyntax.getSearchQuery();
-		
-		query.setQuery("text:" + searchText);
+		if (searchText.contains(":")) {
+			query.setQuery(searchText);
+		} else {
+			ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
+			searchText = searchSyntax.getSearchQuery();
+			
+			query.setQuery("text:" + searchText);
+		}
 		query.addFilterQuery("project_id:" + projectId);
 		query.setStart(0);
 		query.setRows(999999999);

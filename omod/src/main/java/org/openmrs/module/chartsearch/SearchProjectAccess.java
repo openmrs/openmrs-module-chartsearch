@@ -265,24 +265,44 @@ public class SearchProjectAccess {
 		return names;
 	}
 	
-	public JSONArray searchNonPatientSpecificDataForAlreadyIndexed(String searchText, String selectedProject) {
+	public SolrDocumentList searchNonPatientSpecificDataForAlreadyIndexed(String searchText, String selectedProject) {
 		NonPatientDataSearcher searcher = new NonPatientDataSearcher();
+		SolrDocumentList solrDocList = null;
+		Integer projectId = fetchProjectIdThatMatchesName(selectedProject);
+		
+		if (null != projectId) {
+			solrDocList = searcher.getNonPatientDocumentList(searchText, projectId);
+		}
+		return solrDocList;
+	}
+	
+	private Integer fetchProjectIdThatMatchesName(String selectedProject) {
 		List<SearchProject> allSProjs = chartSearchService.getAllSearchProjects();
-		JSONArray jsonToReturn = null;
 		Integer projectId = null;
+		SearchProject proj;
 		
 		for (int i = 0; i < allSProjs.size(); i++) {
-			SearchProject proj = allSProjs.get(i);
+			proj = allSProjs.get(i);
 			if (selectedProject.equals(proj.getProjectName())) {
 				projectId = proj.getProjectId();
 			}
 		}
+		return projectId;
+	}
+	
+	public String[] getAllFieldsOfASearchProject(String projectName) {
+		Integer projectId = fetchProjectIdThatMatchesName(projectName);
+		SearchProject project = chartSearchService.getSearchProject(projectId);
+		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
+		String[] fields = null;
 		
-		if(null != projectId) {
-			SolrDocumentList solrDocList = searcher.getNonPatientDocumentList(searchText, projectId);
-			jsonToReturn = GeneratingJson.generateNonPatientSpecificJSON(solrDocList);
+		if (null != project) {
+			List<String> fieldsList = indexer.removeSpacesAndSplitLineUsingComma(project.getColumnNames());
+			fields = new String[fieldsList.size()];
+			fields = (String[]) fieldsList.toArray(fields);
 		}
-		return jsonToReturn;
+		
+		return fields;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

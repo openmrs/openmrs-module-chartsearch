@@ -2,10 +2,10 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 import java.util.List;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.common.SolrDocumentList;
 import org.openmrs.module.chartsearch.SearchProjectAccess;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,16 +20,19 @@ public class NonPatientSearchesFragmentController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-    public JSONObject searchNonPatientSpecificDataForAlreadyIndexed(@RequestParam("selectedProject") String selectedProject,
+	public JSONObject searchNonPatientSpecificDataForAlreadyIndexed(@RequestParam("selectedProject") String selectedProject,
 	                                                                @RequestParam("searchText") String searchText) {
 		JSONObject json = new JSONObject();
 		if (StringUtils.isNotBlank(searchText) && StringUtils.isNotBlank(selectedProject)) {
-			JSONArray results = accessSearchProject.searchNonPatientSpecificDataForAlreadyIndexed(searchText,
+			SolrDocumentList results = accessSearchProject.searchNonPatientSpecificDataForAlreadyIndexed(searchText,
 			    selectedProject);
-			if(results.isEmpty()) {
-				json.put("noResultsReturned", "No Results were found to match: <b>" + searchText + "<> Or there was no index to search against.()[1, Outpatient, Out-patient care setting, OUTPATIENT, 2013-12-27 00:00:00.0, null]");
+			
+			if (results.isEmpty()) {
+				json.put("noResultsReturned", "No Results were found to match: <b>" + searchText
+				        + "</b> Or there was no index to search against.");
 			}
 			json.put("returnedSearchedResults", results);
+			json.put("solrFieldNames", accessSearchProject.getAllFieldsOfASearchProject(selectedProject));
 		}
 		List indexedSPs = accessSearchProject.getInitiallyIndexedSearchProjectNames();
 		String[] indexedSPsArr = new String[indexedSPs.size()];

@@ -58,8 +58,9 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 			if (!rowsByColumns.isEmpty()) {
 				for (int i = 0; i < rowsByColumns.size(); i++) {
 					SolrInputDocument doc = new SolrInputDocument();
-					addBasicFieldsToSolrDoc(project, i + 1, doc);
 					List<Object> currentRow = rowsByColumns.get(i);//looks like:[1, Outpatient, Out-patient care setting, OUTPATIENT, 2013-12-27 00:00:00.0, null] 
+					
+					addBasicFieldsToSolrDoc(project, i + 1, doc);
 					
 					if (StringUtils.isNotBlank(columnNamesWithCommas) && !currentRow.isEmpty()) {
 						//contains column names obtained from chart search module data etc
@@ -105,10 +106,10 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 				
 				for (int i = 0; i < rowResults.size(); i++) {
 					SolrInputDocument doc = new SolrInputDocument();
+					Object currentRow = rowResults.get(i);
 					
 					addBasicFieldsToSolrDoc(project, i + 1, doc);
 					
-					Object currentRow = rowResults.get(i);
 					if (null != currentRow) {
 						if (currentRow instanceof Object[]) {
 							Object[] currentObjs = (Object[]) currentRow;
@@ -164,16 +165,19 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 				}//connection.url
 			}
 		}
+		UpdateResponse resp;
+		boolean indexed = true;
+		
 		try {
+			System.out.println(docs);
 			if (docs.size() > 1000) {
 				// Commit within 5 minutes.
-				UpdateResponse resp = solrServer.add(docs, 300000);
-				printFailureIfResponseIsNotZero(resp);
+				resp = solrServer.add(docs, 300000);
+				indexed = commitAndOptimize(resp, solrServer);
 			} else {
-				UpdateResponse resp = solrServer.add(docs);//TODO fix: https://groups.google.com/a/openmrs.org/forum/#!topic/dev/N4l1Hj77j98
-				printFailureIfResponseIsNotZero(resp);
+				resp = solrServer.add(docs);//TODO fix: https://groups.google.com/a/openmrs.org/forum/#!topic/dev/N4l1Hj77j98
+				indexed = commitAndOptimize(resp, solrServer);
 			}
-			solrServer.commit();
 		}
 		catch (SolrServerException e) {
 			System.out.println("Error generated" + e);
@@ -181,22 +185,53 @@ public class NonPatientDataIndexer {//TODO may need to add and access this as a 
 		catch (IOException e) {
 			System.out.println("Error generated" + e);
 		}
+		
+		if (!indexed) {//Something went wrong and so need of passing docs as indexed, clear it instead
+			docs.clear();
+		}
+		
 		return docs;
 	}
 	
 	private void addBasicFieldsToSolrDoc(SearchProject project, int i, SolrInputDocument doc) {
 		doc.addField("id", i);
-		doc.addField("project_id", i);
+		doc.addField("project_id", project.getProjectId());
 		doc.addField("project_name", project.getProjectName());
 		doc.addField("project_db_name", project.getDatabase());
 		doc.addField("project_description", project.getProjectDescription());
 		doc.addField("project_uuid", project.getUuid());
 	}
 	
-	private void printFailureIfResponseIsNotZero(UpdateResponse resp) {
+	private boolean commitAndOptimize(UpdateResponse resp, SolrServer server) {
+		boolean indexed = true;
+		
 		if (resp.getStatus() != 0) {
 			System.out.println("Some error has occurred, status is: " + resp.getStatus());
+			indexed = false;
+		} else {
+			System.out.println("ADD: " + resp.getResponse());
+			
+			try {
+				resp = server.commit();
+				if (resp.getStatus() != 0) {
+					System.out.println("Some error has occurred, status is: " + resp.getStatus());
+					indexed = false;
+				} else {
+					resp = server.optimize();
+					if (resp.getStatus() != 0) {
+						System.out.println("Some error has occurred, status is: " + resp.getStatus());
+						indexed = false;
+					}
+				}
+			}
+			catch (SolrServerException e) {
+				System.out.println("Error generated" + e);
+			}
+			catch (IOException e) {
+				System.out.println("Error generated" + e);
+			}
 		}
+		return indexed;
 	}
 	
 	/**

@@ -60,11 +60,16 @@
     	<p>
     		<br />
     		<b>NOTICE:</b>
-    		<br />${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.notice")}<br /><br />
+    		<br />${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.notice")}<br />
     	</p>
+    	<br />
+    	<p id="updated-index-feedback"></p>
+    	
     	<form id="update-project-data-index">
 		    <div id="updating-installed-search-projects"></div>
-		    <input hide id="update-index-project-data" type="submit" value="${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.indexSubmit")}"></input>
+		    <input id="update-index-only" type="button" value="Only Update Index"></input>
+		    <input id="update-index-project-data" type="submit" value="${ ui.message("chartsearch.refApp.customIndexing.updateProjectIndex.indexSubmit")}"></input>
+	    	<input id="delete-search-project" type="button" value="Delete this Search Project"></input>
 	    </form>
     </div>
 </div>
@@ -82,6 +87,8 @@
 	    jq("#installed-p-databases").hide("fast");
 	    jq(".customIndexerSubSection2").hide("fast");
 	    jq("#update-index-project-data").hide();
+	    jq("#update-index-only").hide();
+	    jq("#delete-search-project").hide();
 	
 	    //hide or unhide database field
 	    jq('#non-openmrs-db').click(function() {
@@ -171,7 +178,7 @@
 	    });
 	
 	    jq('#installed-search-projects').change(function() {
-	        fetchDetailsOfSelectSearchProject();
+	    	fetchDetailsOfSelectSearchProject();
 	    });
 	    
 	    jq("#installed-databases2").change(function() {
@@ -200,6 +207,23 @@
 	            jq("#non-openmrs-db").prop("disabled", false);
 	            jq("#installed-databases2").val("");
 	        }
+	    });
+	    
+	    jq("#update-index-only").click(function(event) {
+	    	 onlyUpdateIndexOfSearchProject();
+	    	 return false;
+	    });
+	    
+	    jq("#delete-search-project").click(function(event) {
+	    	if(jq("#installed-search-projects").val() === "Chart Search") {
+	    		jq("#updated-index-feedback").css("color", "red");
+	    		jq("#updated-index-feedback").html("You can not delete <b>Chart Search</b> since it's by default installed for demo purposes!");
+	    	} else {
+	    		if(confirm("Are you sure you want to delete this Search Project?")) {
+	    			deleteSelectedSearchProject();
+	    		}
+	    	}
+	    	return false;
 	    });
 	
 	    function hideIndexingSection2() {
@@ -255,31 +279,24 @@
 	            success: function(results) {
 	                jq("#index-new-project-data :input").prop("disabled", false);
 	                var updatedSProjs = '<option value="" name="selectedDatabase">Choose Search Project</option>';
-	                var indexedSProjs = '<option value="" name="selectedDatabase">Choose Search Project</option>';;
-		                
+	                   
 	                if (!results.failureMessage) {
 	                    jq("#save-project-feedback").html("You have successfully saved and indexed " + projectName + "<br />Saving the project took: " + results.savingTime + " seconds<br />Indexing project data took: " + results.indexingTime + " seconds<br /><b>Indexed: " + results.numberOfIndexedDocs + " Document(s)</b><br />Project assigned UUID is: " + results.projectUuid);
 	                    jq('#index-new-project-data').trigger("reset");
-	                    //TODO rewrite select #installed-search-projects under non patient searches
 	                    
-	                    existingSearchProjects = feedback.projectNames;
+	                    existingSearchProjects = results.projectNames;
 		        		
 		        		for(i = 0; i < existingSearchProjects.length; i++) {
 		        			updatedSProjs += '<option class="installed-database" value="' + existingSearchProjects[i] + '">' + existingSearchProjects[i] + '</option>';
 		        		}
-		        		//installed-search-projects
-		        		jq("#installed-search-projects").empty().append(updatedSProjs);
 		        		
-		        		
-		        		indexedSearchProjects = feedback.initiallyIndexedProjects;
-		        		
-		        		for(i = 0; i < indexedSearchProjects.length; i++) {
-		        			indexedSProjs += '<option class="indexed-search-projects" value="' + indexedSearchProjects[i] + '">' + indexedSearchProjects[i] + '</option>';
-		        		}
-		                
-		                jq("#init-installed-search-projects").empty().append(indexedSProjs);
-		                
 	                    installedFields = results.currentInstalledFields;
+	                    
+		        		jq("#init-installed-search-projects").empty().append(updatedSProjs);
+		                jq("#installed-search-projects").empty().append(updatedSProjs);
+		        		
+		        		indexedSearchProjects = results.initiallyIndexedProjects;
+		        		
 	                } else {
 	                    jq("#enter-required-fields").html(results.failureMessage);
 	                }
@@ -308,10 +325,12 @@
 	                projectHtml += '<b>Database Password:</b> <input name="databaseUserPassword" class="db_password" type="password" value="' + searchProject.projectDBUserPassword + '"></input><br />';
 	                projectHtml += '<b>Database Server Name:</b> <input name="databaseServer" class="db_server" type="text" value="' + searchProject.projectServerName + '"></input><br />';
 	                projectHtml += '<b>Database Manager:</b> <input name="databaseManager" class="db_manager" type="text" value="' + searchProject.projectDBManager + '"></input><br />';
-	                projectHtml += '<b>Database Port Number:</b> <input name="databasePortNumber" class="db_port" type="text" value="' + searchProject.projectDBPortNumber + '"></input><br />';
+	                projectHtml += '<b>Database Port Number:</b> <input name="databasePortNumber" class="db_port" type="text" value="' + searchProject.projectDBPortNumber + '"></input>';
 	                projectHtml += '</p>';
 	            }
 	            jq("#update-index-project-data").show();
+	            jq("#update-index-only").show();
+	            jq("#delete-search-project").show();
 	        }
 	
 	        jq("#updating-installed-search-projects").html(projectHtml);
@@ -339,11 +358,88 @@
 	        } else {
 	        	jq("#updating-installed-search-projects").html("");
 	        	jq("#update-index-project-data").hide();
+	            jq("#update-index-only").hide();
+	            jq("#delete-search-project").hide();
 	        }
 	    }
 	
 	    function submitExistingSearchProjectUpdate() {
+	    	//TODO support this if requested by the users, for now, the user can just delete a search project and add a similar one with changes instead of editing an existing one
 	        alert("Saving update will soon be supported! WORK IN PROGRESS :-)");
+	    }
+	    
+	    function onlyUpdateIndexOfSearchProject() {
+	    	jq("#updated-index-feedback").html("");
+	    	jq("#updated-index-feedback").css("color", "green");
+	    	var selectProject = jq("#installed-search-projects").val();
+	        if (selectProject) {
+		        jq.ajax({
+		            type: "POST",
+		            url: "${ ui.actionLink('onlyUpdateIndexOfSearchProject') }",
+		            data: {
+		                "selectedSearchProject": selectProject
+		            },
+		            dataType: "json",
+		            success: function(feedback) {
+		            	var summary;
+		            	
+		                if(feedback) {
+		                	summary = "Indexed a total of: <b>" + feedback.numberOfIndexedDocs + "</b> Document(s) Within: <b>" + feedback.indexingTime + "</b> second(s)";
+			               	jq("#updated-index-feedback").html(summary);
+		                }
+		                jq("html, body").animate({scrollTop: 0 }, "slow");
+		            },
+		            error: function(e) {
+		                //alert("Error occurred!!! " + e);
+		            }
+		        });
+	        } else {
+	        	jq("#updating-installed-search-projects").html("");
+	        	jq("#update-index-project-data").hide();
+	        }
+	    }
+	    
+	    function deleteSelectedSearchProject() {
+	    	jq("#updated-index-feedback").html("");
+	    	jq("#updated-index-feedback").css("color", "green");
+	    	var selectProject = jq("#installed-search-projects").val();
+	        if (selectProject) {
+		        jq.ajax({
+		            type: "POST",
+		            url: "${ ui.actionLink('deleteSelectedSearchProject') }",
+		            data: {
+		                "selectedSearchProject": selectProject
+		            },
+		            dataType: "json",
+		            success: function(feedback) {
+		            	var updatedSProjs = '<option value="" name="selectedDatabase">Choose Search Project</option>';
+		            	
+		            	existingSearchProjects = feedback.projectNames;
+		        		installedFields = feedback.currentInstalledFields;
+		        		
+		        		for(i = 0; i < existingSearchProjects.length; i++) {
+		        			updatedSProjs += '<option class="installed-database" value="' + existingSearchProjects[i] + '">' + existingSearchProjects[i] + '</option>';
+		        		}
+		        		//installed-search-projects
+		        		jq("#installed-search-projects").empty().append(updatedSProjs);
+		        		jq("#init-installed-search-projects").empty().append(updatedSProjs);
+		        		
+		                if(feedback) {
+		                	if(feedback.failedToDetete) {
+		                		jq("#updated-index-feedback").css("color", "red");
+		                	}
+		                	jq("#updated-index-feedback").html(feedback.message);
+		                	jq("#update-project-data-index").html("");
+		                }
+		            },
+		            error: function(e) {
+		                //alert("Error occurred!!! " + e);
+		            }
+		        });
+	        } else {
+	        	jq("#updating-installed-search-projects").html("");
+	        	jq("#update-index-project-data").hide();
+	        }
 	    }
 	
 	});
@@ -355,8 +451,12 @@
     #enter-required-fields {
         color: red;
     }
-    #save-project-feedback {
+    #save-project-feedback, #updated-index-feedback {
     	color:green;
+    }
+    
+    #update-index-project-data #update-index-only #delete-search-project {
+    	display-inline:block;
     }
     
 </style>

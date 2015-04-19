@@ -92,4 +92,38 @@ public class CustomIndexingFragmentController {
 		}
 		return jsonObj;
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public JSONObject onlyUpdateIndexOfSearchProject(@RequestParam("selectedSearchProject") String selectedProject) {
+		JSONObject json = new JSONObject();
+		
+		long startSavingTime = new Date().getTime();
+		Collection docs = accessSearchProject.onlyUpdateIndexOfSearchProject(selectedProject);
+		long endSavingTime = new Date().getTime();
+		
+		json.put("numberOfIndexedDocs", docs.size());
+		json.put("indexingTime", TimeUnit.MILLISECONDS.toSeconds(endSavingTime - startSavingTime));
+		
+		return json;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    public JSONObject deleteSelectedSearchProject(@RequestParam("selectedSearchProject") String selectedProject) {
+		JSONObject json = new JSONObject();
+		boolean sPDeleted = accessSearchProject.deleteSearchProjectTotally(selectedProject);
+		if (!sPDeleted) {
+			json.put("failedToDetete", sPDeleted);
+			json.put("message", "Failed to Delete search Project, check server logs for what went wrong");
+		} else {
+			json.put("message", "You have successfully deleted: <b>" + selectedProject + "</b>");
+		}
+		List allSPs = accessSearchProject.getExistingSearchProjectNames();
+		String[] existingSPs = new String[allSPs.size()];
+		
+		existingSPs = (String[]) allSPs.toArray(existingSPs);
+		json.put("projectNames", existingSPs);
+		json.put("currentInstalledFields", accessSearchProject.getAllFieldsSetInSchemaByDefault());
+		
+		return json;
+	}
 }

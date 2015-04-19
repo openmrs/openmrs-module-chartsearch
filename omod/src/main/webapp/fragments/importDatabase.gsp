@@ -189,6 +189,8 @@ An abstract view of your previously added database structures and Ability to un-
 	    }
 	    
 	    function deleteSelectedDatabase() {
+	    	jq("#upload-sql-feedback").html("");
+	    	jq("#failed-to-upload-sql").html("");
 	    	var selectedDatabase = jq("#installed-databases").val();
 		    if(selectedDatabase) {
 		    	jq.ajax({
@@ -205,13 +207,16 @@ An abstract view of your previously added database structures and Ability to un-
 		        		for(i = 0; i < existingPersonalDatabases.length; i++) {
 		        			updatedDatabase += '<option class="installed-database" value="' + existingPersonalDatabases[i] + '">' + existingPersonalDatabases[i] + '</option><br />';
 		        		}
-		        	
-		        		jq("#upload-sql-feedback").html(feedback.message);
-		        		jq("#installed-databases").empty().append(updatedDatabase);
-		        		jq("#installed-databases2").empty().append(updatedDatabase);
-		        		jq("html, body").animate({scrollTop: 0 }, "slow");
-		        		jq("#delete-database").hide();
-		        		//alert"You have successfully deleted Database Named: " + selectedDatabase);
+		        		
+		        		if(feedback.successfullyDeleted) {
+			        		jq("#upload-sql-feedback").html(feedback.message);
+			        		jq("#installed-databases").empty().append(updatedDatabase);
+			        		jq("#installed-databases2").empty().append(updatedDatabase);
+			        		jq("html, body").animate({scrollTop: 0 }, "slow");
+			        		jq("#delete-database").hide();
+		        		} else {
+		        			jq("#failed-to-upload-sql").html("Failed to delete Database named: <b>" + selectedDatabase + "</b> bacause it is attached to existing Search Project(s)");
+		        		}
 			        },
 			        error: function(e) {
 			        	

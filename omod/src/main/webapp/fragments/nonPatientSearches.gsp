@@ -28,7 +28,7 @@
 <script type="text/javascript">
     var jq = jQuery;
     var indexedSearchProjects;
-    jq("#search_phrase").focus();
+    jq("#init-installed-search-projects").focus();
     
     jq(document).ready(function() {
     	jq("#submit_search_non-p-specific").click(function() {
@@ -56,6 +56,12 @@
     		}
     		
     		return false;
+    	});
+    	
+    	jq("#init-installed-search-projects").change(function(event) {
+    		if(jq("#init-installed-search-projects").val()) {
+    			jq("#search_phrase").focus();
+    		}
     	});
     	
     	function searchNonPatientSpecificData(selectedProj, searchText) {
@@ -118,12 +124,27 @@
 	    		for(i = 0; i < fieldNames.length; i++) {
 	    			var curField = fieldNames[i];
 	    			var curIndexedField = result[curField];
-	    				
-	    			if(!doneFieldNames.indexOf(curField) > -1) {
+					var fieldNameSubs = curField.split("_");
+					var fieldName = "";
+					var finalIndexNames = "";
+					
+					for(j=0; j < fieldNameSubs.length; j++) {
+						fieldName = fieldNameSubs[j];
+						fieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);//capitalize the first letter of solr field name
+						if(fieldName !== "Cs" && fieldName !== "Cc" && fieldName !== "Ms") {
+							if(i != fieldNameSubs.length - 1) {
+								finalIndexNames += fieldName + " ";
+							} else {
+								finalIndexNames += fieldName;
+							}
+						}
+					}
+	
+	    			if(!doneFieldNames.indexOf(curField) > -1 && curIndexedField) {
 	    				if(curIndexedField === searchPhrase || curIndexedField.indexOf(searchPhrase) > -1 || searchPhrase.indexOf(curIndexedField) > -1) {
-	    					resultsDisplay += "<tr style='background-color:#009384'><td>" + curField + "</td><td><em><b>" + curIndexedField + "</b></em></td></tr>";
+	    					resultsDisplay += "<tr style='background-color:#009384'><td>" + finalIndexNames + "</td><td><em><b>" + curIndexedField + "</b></em></td></tr>";
 	    				} else {
-	    					resultsDisplay += "<tr><td>" + curField + "</td><td>" + curIndexedField + "</td></tr>";
+	    					resultsDisplay += "<tr><td>" + finalIndexNames + "</td><td>" + curIndexedField + "</td></tr>";
 	    				}
 	    			}
 	    			doneFieldNames += curField + ", ";

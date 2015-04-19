@@ -1010,10 +1010,6 @@
 	<copyField source="cc_name" dest="text" />
 	<copyField source="cc_filter_query" dest="text" />
 	<copyField source="cc_description" dest="text" />
-	<copyField source="project_name" dest="text" />
-	<copyField source="project_description" dest="text" />
-	<copyField source="project_uuid" dest="text" />
-	<copyField source="project_db_name" dest="text" />
 	<!-- Starting customly added copyfields -->
  	
  

@@ -102,11 +102,13 @@ public class ImportDatabaseFragmentController {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-    public JSONObject deletePreviouslyImportedDatabase(@RequestParam("selectedDatabase") String dbName) {
+	public JSONObject deletePreviouslyImportedDatabase(@RequestParam("selectedDatabase") String dbName) {
 		JSONObject json = new JSONObject();
 		if (StringUtils.isNotBlank(dbName)) {
-			access.deleteImportedDatabase(dbName);
-			json.put("message", "Successfully Deleted Database Named: <b>" + dbName + "</b>");
+			json.put("successfullyDeleted", access.deleteImportedDatabase(dbName));
+			if (access.deleteImportedDatabase(dbName)) {
+				json.put("message", "Successfully Deleted Database Named: <b>" + dbName + "</b>");
+			}
 		}
 		List allDbs = access.getAllExistingDatabases();
 		String[] existingDbs = new String[allDbs.size()];

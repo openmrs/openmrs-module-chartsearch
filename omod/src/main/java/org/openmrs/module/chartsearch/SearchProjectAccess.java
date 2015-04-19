@@ -16,7 +16,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,7 +25,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 import org.openmrs.module.chartsearch.solr.SolrUtils;
-import org.openmrs.module.chartsearch.solr.nonPatient.AddCustomFieldsToSchema;
+import org.openmrs.module.chartsearch.solr.nonPatient.CustomFieldsToAndFromSchema;
 import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataIndexer;
 import org.openmrs.module.chartsearch.solr.nonPatient.NonPatientDataSearcher;
 import org.openmrs.module.chartsearch.solr.nonPatient.SearchProject;
@@ -115,10 +114,10 @@ public class SearchProjectAccess {
 		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
 		List<String> fields = indexer.removeSpacesAndSplitLineUsingComma(project.getColumnNames());
 		boolean fieldsExistInSchemaAlready = project.fieldsExistInSchema();
-		String copyFieldsEntries = AddCustomFieldsToSchema.generateWellWrittenCopyFieldEntries(fields, chartSearchService,
-		    fieldsExistInSchemaAlready);
-		String fieldsEntries = AddCustomFieldsToSchema.generateAWellWrittenFieldEntry(fields, "text_general", true, true,
-		    false, chartSearchService, fieldsExistInSchemaAlready);
+		String copyFieldsEntries = CustomFieldsToAndFromSchema.generateWellWrittenCopyFieldEntries(fields,
+		    chartSearchService, fieldsExistInSchemaAlready);
+		String fieldsEntries = CustomFieldsToAndFromSchema.generateWellWrittenFieldEntries(fields, "text_general", true,
+		    true, false, chartSearchService, fieldsExistInSchemaAlready);
 		String currentSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "collection1"
 		        + File.separator + "conf" + File.separator + "schema.xml";
 		String newSchemaLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "schema.xml";
@@ -129,8 +128,8 @@ public class SearchProjectAccess {
 			fieldsExistInSchema = false;
 		}
 		if (!StringUtils.isBlank(fieldsEntries) && !StringUtils.isBlank(copyFieldsEntries) && !fieldsExistInSchema) {
-			AddCustomFieldsToSchema.readSchemaFileLineByLineAndWritNewFieldEntries(currentSchemaLocation, newSchemaLocation,
-			    fieldsEntries, copyFieldsEntries, solrServer, chartSearchService, project);
+			CustomFieldsToAndFromSchema.readSchemaFileLineByLineAndWritNewFieldEntries(currentSchemaLocation,
+			    newSchemaLocation, fieldsEntries, copyFieldsEntries, solrServer, chartSearchService, project);
 			project.setFieldsExistInSchema(true);//now solr fields have been added to schema file
 			chartSearchService.saveSearchProject(project);
 		}
@@ -140,6 +139,16 @@ public class SearchProjectAccess {
 			project.setInitiallyIndexed(true);
 			chartSearchService.saveSearchProject(project);
 		}
+		return docs;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public Collection onlyUpdateIndexOfSearchProject(String searchProject) {
+		Integer projectId = fetchProjectIdThatMatchesName(searchProject);
+		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
+		SearchProject project = chartSearchService.getSearchProject(projectId);
+		Collection docs = indexer.generateDocumentsAndAddFieldsAndCommitToSolr(project.getProjectId(),
+		    !OpenmrsConstants.DATABASE_NAME.equals(project.getDatabase()) && !"default".equals(project.getDatabaseType()));
 		return docs;
 	}
 	
@@ -243,8 +252,8 @@ public class SearchProjectAccess {
 		return chartSearchService.getAllTablesAndColumnNamesOfADatabase(databaseName);
 	}
 	
-	public void deleteImportedDatabase(String dbName) {
-		chartSearchService.deleteImportedDatabase(dbName);
+	public boolean deleteImportedDatabase(String dbName) {
+		return chartSearchService.deleteImportedDatabase(dbName);
 	}
 	
 	public String getAllFieldsSetInSchemaByDefault() {
@@ -303,6 +312,34 @@ public class SearchProjectAccess {
 		}
 		
 		return fields;
+	}
+	
+	/**
+	 * @param searchProjectName
+	 */
+	public boolean deleteSearchProjectTotally(String searchProjectName) {
+		Integer pId = fetchProjectIdThatMatchesName(searchProjectName);
+		SearchProject project = chartSearchService.getSearchProject(pId);
+		SolrServer solrServer = SolrSingleton.getInstance().getServer();
+		boolean deleted = false;
+		
+		chartSearchService.removeFieldsFromAlreadyExistingInSchema(project.getColumnNames());
+		String pathToBackUpDir = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup";
+		String pathToSchemaBackUp = pathToBackUpDir + File.separator + "schema.xml";
+		File shemaBackup = new File(pathToSchemaBackUp);
+		String pathToBackUpDirSchema = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "schema.xml";
+		
+		if (shemaBackup.exists() && project.fieldsExistInSchema()) {
+			boolean fieldsRemoved = CustomFieldsToAndFromSchema.removeCustomAndCopyFieldsFromSchema(pathToSchemaBackUp,
+			    pathToBackUpDirSchema, project, chartSearchService, solrServer);
+			if (fieldsRemoved) {
+				project.setFieldsExistInSchema(false);//useless after the next delete line is executed
+				chartSearchService.deleteSearchProject(project);
+				deleted = true;
+			}
+		}
+		
+		return deleted;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

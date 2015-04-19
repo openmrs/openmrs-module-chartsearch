@@ -25,7 +25,7 @@ import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
 import org.openmrs.module.chartsearch.solr.SolrSingleton;
 import org.openmrs.module.chartsearch.solr.SolrUtils;
-import org.openmrs.module.chartsearch.solr.nonPatient.AddCustomFieldsToSchema;
+import org.openmrs.module.chartsearch.solr.nonPatient.CustomFieldsToAndFromSchema;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped. *
@@ -67,9 +67,9 @@ public class ChartSearchActivator extends BaseModuleActivator {
 		String schemaFileLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "collection1"
 		        + File.separator + "conf" + File.separator + "schema.xml";
 		CoreAdminRequest adminRequest = new CoreAdminRequest();
-		if (AddCustomFieldsToSchema.replaceSchemaFileWithItsBackup(schemaFileLocation)) {
+		if (CustomFieldsToAndFromSchema.replaceSchemaFileWithItsBackup(schemaFileLocation)) {
 			System.out.println("Successfully replaced the schema.xml file with a previously backed-up copy");
-			AddCustomFieldsToSchema.reloadSolrServer(SolrSingleton.getInstance().getServer(), adminRequest);
+			CustomFieldsToAndFromSchema.reloadSolrServer(SolrSingleton.getInstance().getServer(), adminRequest);
 			System.out.println("Successfully Reloaded SolrServer :-)");
 		}
 	}

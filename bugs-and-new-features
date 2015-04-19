@@ -6,6 +6,7 @@ BUGS:
  - Do not copy field numeric fields.
  - Solr instead of returning a whole document where a match was found, return only that mathing part
  - After selecting search ptoject on search tab, then focus on search text box
+ - Deleting a database should check whether there are any associated search projects, and if so, fail to delete the project
 
 
 

@@ -34,7 +34,7 @@ import org.openmrs.module.chartsearch.solr.SolrUtils;
 /**
  * Contains all functionalities needed to add an entry of a new field into schema.xml file
  */
-public class AddCustomFieldsToSchema {
+public class CustomFieldsToAndFromSchema {
 	
 	/**
 	 * Generates a field entry to be added to the schema.xml file that looks like: <field
@@ -47,10 +47,11 @@ public class AddCustomFieldsToSchema {
 	 * @param required, is the field to be required
 	 * @return generated field entry
 	 */
-	public static String generateAWellWrittenFieldEntry(List<String> fieldNames, String typeForAllFields,
-	                                                    boolean indexedForAllFields, boolean storedForAllFields,
-	                                                    boolean requiredForAllFields, ChartSearchService chartSearchService,
-	                                                    boolean fieldsExistInSchemaAlready) {
+	public static String generateWellWrittenFieldEntries(List<String> fieldNames, String typeForAllFields,
+	                                                     boolean indexedForAllFields, boolean storedForAllFields,
+	                                                     boolean requiredForAllFields,
+	                                                     ChartSearchService chartSearchService,
+	                                                     boolean fieldsExistInSchemaAlready) {
 		String indexedString = "false";
 		String storedString = "false";
 		String requiredString = "false";
@@ -135,7 +136,7 @@ public class AddCustomFieldsToSchema {
 					        + "\n");
 					bufferWritter.close();
 				} else if (line.equals("\t<!-- Starting customly added copyfields -->")) {
-					bufferWritter.write("\n\t<!-- Starting customly added copyfields -->\n" + copyFieldEntry + "\n");
+					bufferWritter.write("\t<!-- Starting customly added copyfields -->\n" + copyFieldEntry + "\n");
 					bufferWritter.close();
 				} else {
 					bufferWritter.write(line + "\n");
@@ -147,10 +148,10 @@ public class AddCustomFieldsToSchema {
 			
 		}
 		catch (FileNotFoundException ex) {
-			Logger.getLogger(AddCustomFieldsToSchema.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
 		}
 		catch (IOException ex) {
-			Logger.getLogger(AddCustomFieldsToSchema.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
 			
 		}
 		finally {
@@ -159,7 +160,7 @@ public class AddCustomFieldsToSchema {
 				fis.close();
 			}
 			catch (IOException ex) {
-				Logger.getLogger(AddCustomFieldsToSchema.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 		copyNewSchemaFileToPreviouslyUsed(schemaFileLocation, newSchemaFilePath);
@@ -200,7 +201,7 @@ public class AddCustomFieldsToSchema {
 	 * @param adminRequest
 	 */
 	@SuppressWarnings("unused")
-    public static void reloadSolrServer(SolrServer solrServer, CoreAdminRequest adminRequest) {
+	public static void reloadSolrServer(SolrServer solrServer, CoreAdminRequest adminRequest) {
 		adminRequest.setAction(CoreAdminAction.RELOAD);
 		CoreAdminResponse adminResponse;
 		try {
@@ -240,5 +241,76 @@ public class AddCustomFieldsToSchema {
 			}
 			newSchemaFile.renameTo(previousSchemaFile);
 		}
+	}
+	
+	public static boolean removeCustomAndCopyFieldsFromSchema(String pathToBackedUpSchema, String pathToBackUpSchema,
+	                                                          SearchProject searchProject,
+	                                                          ChartSearchService chartSearchService, SolrServer solrServer) {
+		boolean successfullyRemoved = false;
+		NonPatientDataIndexer indexer = new NonPatientDataIndexer();
+		List<String> fields = indexer.removeSpacesAndSplitLineUsingComma(searchProject.getColumnNames());
+		
+		String copyFieldsEntries = CustomFieldsToAndFromSchema.generateWellWrittenCopyFieldEntries(fields,
+		    chartSearchService, false);//fields may exist but i pass in false so as to have the entries generated
+		String fieldsEntries = CustomFieldsToAndFromSchema.generateWellWrittenFieldEntries(fields, "text_general", true,
+		    true, false, chartSearchService, false);
+		FileInputStream fis = null;
+		BufferedReader reader = null;
+		
+		try {
+			fis = new FileInputStream(pathToBackedUpSchema);
+			reader = new BufferedReader(new InputStreamReader(fis));
+			
+			System.out.println("Reading " + pathToBackedUpSchema + " file line by line using BufferedReader");
+			File newSchemaFile = new File(pathToBackUpSchema);//a temporary back up copy,
+			if (newSchemaFile.exists())
+				newSchemaFile.delete();
+			String line = reader.readLine();
+			while (line != null) {
+				FileWriter fileWritter = new FileWriter(newSchemaFile, true);
+				BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+				//write to the file from here.
+				if (fieldsEntries.contains(line)) {
+					bufferWritter.write("");//remove the field entry from the schema file
+					bufferWritter.close();
+				} else if (copyFieldsEntries.contains(line)) {
+					bufferWritter.write("");//remove the copy field from schema file
+					bufferWritter.close();
+				} else {
+					bufferWritter.write(line + "\n");
+					bufferWritter.close();
+				}
+				
+				line = reader.readLine();
+			}
+			String schemaFileLocation = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "collection1" + File.separator + "conf"
+		        + File.separator + "schema.xml";
+			
+			copyNewSchemaFileToPreviouslyUsed(pathToBackedUpSchema, pathToBackUpSchema);
+			replaceSchemaFileWithItsBackup(schemaFileLocation);
+			chartSearchService.removeFieldsFromAlreadyExistingInSchema(searchProject.getColumnNames());
+			
+			CoreAdminRequest adminRequest = new CoreAdminRequest();
+			reloadSolrServer(solrServer, adminRequest);
+			successfullyRemoved = true;
+		}
+		catch (FileNotFoundException ex) {
+			Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		catch (IOException ex) {
+			Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
+			
+		}
+		finally {
+			try {
+				reader.close();
+				fis.close();
+			}
+			catch (IOException ex) {
+				Logger.getLogger(CustomFieldsToAndFromSchema.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		
+		return successfullyRemoved;
 	}
 }

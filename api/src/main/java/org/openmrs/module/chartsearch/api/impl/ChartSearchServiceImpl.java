@@ -13,9 +13,14 @@
  */
 package org.openmrs.module.chartsearch.api.impl;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -412,9 +417,11 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		File fieldsBackUp = new File(pathToFieldsBackUp);
 		if (!fieldsBackUp.exists()) {
 			try {
-				FileUtils.writeStringToFile(fieldsBackUp,
-				    "This File Contains All currently existing Solr fields within schema.xml file:\nDO NOT MANUALLY EDIT THIS FILE\n\n#Initially Installed Fields:\n["
-				            + initiallyInstalledFields() + "]\n\n#Fields Added after installation:\n");
+				FileUtils
+				        .writeStringToFile(
+				            fieldsBackUp,
+				            "This File Contains All currently existing Solr fields within schema.xml file:\nDO NOT MANUALLY EDIT THIS FILE\n\n#Initially Installed Fields:\n["
+				                    + initiallyInstalledFields() + "]\n\n#Fields Added after installation:\n");
 			}
 			catch (IOException e) {
 				System.out.println("Error generated" + e);
@@ -428,6 +435,60 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		}
 		catch (IOException e) {
 			System.out.println("Error generated" + e);
+		}
+	}
+	
+	public void removeFieldsFromAlreadyExistingInSchema(String columnsOrFields) {
+		String pathToBackUpDir = SolrUtils.getEmbeddedSolrProperties().getSolrHome() + File.separator + "backup";
+		String pathToFieldsBackUp = pathToBackUpDir + File.separator + "installedSchemaFields.txt";
+		String pathToFieldsBackUpBackup = pathToBackUpDir + File.separator + "installedSchemaFieldsBackup.txt";
+		
+		File backUpDir = new File(pathToBackUpDir);
+		if (!backUpDir.exists()) {
+			backUpDir.mkdir();
+		}
+		File fieldsBackUp = new File(pathToFieldsBackUp);
+		if (!fieldsBackUp.exists()) {
+			//Do nothing.
+		} else {
+			FileInputStream fis = null;
+			BufferedReader reader = null;
+			
+			try {
+				fis = new FileInputStream(pathToFieldsBackUp);
+				reader = new BufferedReader(new InputStreamReader(fis));
+				
+				System.out.println("Reading " + pathToFieldsBackUp + " file line by line using BufferedReader");
+				File newFieldsFile = new File(pathToFieldsBackUpBackup);
+				
+				if (newFieldsFile.exists()) {
+					newFieldsFile.delete();
+				}
+				
+				String line = reader.readLine();
+				while (line != null) {
+					FileWriter fileWritter = new FileWriter(newFieldsFile, true);
+					BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+					//write to the file from here.
+					if (line.contains("[" + columnsOrFields + "]")) {
+						bufferWritter.write("");
+						bufferWritter.close();
+					} else {
+						bufferWritter.write(line + "\n");
+						bufferWritter.close();
+					}
+					
+					line = reader.readLine();
+				}
+				FileUtils.copyFile(newFieldsFile, fieldsBackUp);
+				newFieldsFile.delete();
+			}
+			catch (FileNotFoundException e) {
+				log.error("Error generated", e);
+			}
+			catch (IOException e) {
+				log.error("Error generated", e);
+			}
 		}
 	}
 	
@@ -466,8 +527,21 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	public void deleteImportedDatabase(String dbName) {
-		dao.deleteImportedDatabase(dbName);
+	public boolean deleteImportedDatabase(String dbName) {
+		List<SearchProject> projects = getAllSearchProjects();
+		boolean databaseIsAssociatedToProject = false;
+		
+		for (int i = 0; i < projects.size(); i++) {
+			if (dbName.equals(projects.get(i).getDatabase())) {
+				databaseIsAssociatedToProject = true;
+				break;
+			}
+		}
+		if (!databaseIsAssociatedToProject) {
+			dao.deleteImportedDatabase(dbName);
+			return true;
+		} else
+			return false;
 	}
 	
 	@SuppressWarnings("rawtypes")

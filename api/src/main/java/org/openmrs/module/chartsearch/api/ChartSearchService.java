@@ -212,10 +212,12 @@ public interface ChartSearchService extends OpenmrsService {
 	
 	public JSONObject getAllTablesAndColumnNamesOfADatabase(String databaseName);
 	
-	public void deleteImportedDatabase(String dbName);
+	public boolean deleteImportedDatabase(String dbName);
 
 	@SuppressWarnings("rawtypes")
     public List getResultsFromSQLRunOnANonDefaultOpenMRSDatabase(String databaseName, String sqlQuery);
 
 	public void appendFieldsToAlreadyExistingInSchema(String newFieldsOrColumns);
+	
+	public void removeFieldsFromAlreadyExistingInSchema(String columnsOrFields);
 }

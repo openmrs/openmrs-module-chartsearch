@@ -7,6 +7,8 @@
     
 		jq('#searchText').focus();
 		
+		jq("#chart-previous-searches-display").hide();
+		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
         });
@@ -100,6 +102,14 @@
 		    	categoryLabel = "Categories";
 		    }
 		    jq('#category_label').html(categoryLabel);
+		});
+		
+		jq("#chart-previous-searches").click(function(event) {
+			if(jq("#chart-previous-searches-display").is(':visible')) {
+				jq("#chart-previous-searches-display").hide();
+			} else {
+				jq("#chart-previous-searches-display").show();
+			}
 		});
 		
 		function submitChartSearchFormWithAjax() {
@@ -328,6 +338,24 @@
     #searchBtn {
     	margin-left:45px;
     }
+    
+    #chart-previous-searches {
+    	cursor: pointer;
+    }
+    
+    .filters_section, #category_dropdown, #time_dropdown, #location_dropdown, #provider_dropdown {
+    	z-index: 0;
+    }
+    
+    #chart-previous-searches-display {
+    	position: absolute;
+		z-index: 1;
+		height: 250px;
+		width: 784px;
+		overflow: scroll;
+		background-color: white;
+		padding-left: 10px;
+    }
 
 </style>
 
@@ -342,6 +370,9 @@
                         	<input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         	<i id="chart-previous-searches" class="icon-arrow-down medium"></i>
                         	<input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
+                        </div>
+                        <div id="chart-previous-searches-display">
+                        	<!-- All, search phrases searched to be stored and displayed here -->
                         </div>
                     </div>
                     <div class="filters_section">

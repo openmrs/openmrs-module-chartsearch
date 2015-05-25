@@ -10,7 +10,7 @@
                 "type": "link",
                 "order": 10,
                 "label": "chartsearch.chartSearch",
-                "url": "chartsearch/chartSearchApps.page",
+                "url": "chartsearch/chartSearchManager.page",
                 "icon": "icon-search",
                 "requiredPrivilege": "Task: Chart Search"
             }

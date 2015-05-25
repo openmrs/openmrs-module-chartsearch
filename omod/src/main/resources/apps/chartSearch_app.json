@@ -1,0 +1,19 @@
+[
+    {
+        "id": "${project.parent.artifactId}.chartSearchApp",
+        "description": "${project.parent.artifactId}.refApp.description",
+        "order": 10,
+        "extensions": [
+            {
+                "id": "${project.parent.artifactId}.launcheManager",
+                "extensionPointId": "systemAdministration.apps",
+                "type": "link",
+                "order": 10,
+                "label": "chartsearch.chartSearch",
+                "url": "chartsearch/chartSearchApps.page",
+                "icon": "icon-search",
+                "requiredPrivilege": "Task: Chart Search"
+            }
+        ]
+    }
+]

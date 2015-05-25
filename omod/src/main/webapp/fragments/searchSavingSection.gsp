@@ -10,6 +10,15 @@
 	.search-record-dialog-content {
 		display:none;
 	}
+	
+	.ui-dialog > .ui-widget-header {
+		background: #00463f;
+		color:white;
+	}
+	
+	.ui-widget-header .ui-icon {
+		background-image: url(../scripts/jquery-ui/css/green/images/ui-icons_ffffff_256x240.png);
+	}
 
 </style>
 
@@ -49,14 +58,15 @@
 
 
 <i id="delete-search-record" class="icon-remove medium"></i>
-<div class="search-record-dialog-content" id="delete-search-record-dialog">Do you want to delete?</div>
+${ ui.includeFragment("chartsearch", "deleteSearchRecord") }
 
 <i id="favorite-search-record" class="icon-star-empty medium"></i>
-<div class="search-record-dialog-content" id="favorite-search-record-dialog">Favoriting or bookmarking Search Results</div>
+${ ui.includeFragment("chartsearch", "favoriteSearchRecord") }
 
 <i id="comment-on-search-record" class="icon-comment medium"></i>
-<div class="search-record-dialog-content" id="comment-on-search-record-dialog">Add Notes to a search</div>
+${ ui.includeFragment("chartsearch", "commentOnSearchRecord") }
 
 
 <a id="quick-searches" href="">QuickSearch</a>
-<div class="search-record-dialog-content" id="quick-searches-dialog-message"></div>
+${ ui.includeFragment("chartsearch", "quickSearches") }
+

@@ -481,7 +481,7 @@ function addAllObsGroups(obsJSON)
         for(var i=0;i<obsgroupJSON.length;i++){
             resultText+=addObsGroupToResults(obsgroupJSON[i]);
         }
-        document.getElementById('obsgroups_results').innerHTML=resultText;
+        document.getElementById('obsgroups_results').innerHTML+=resultText;
     }
 }
 
@@ -913,6 +913,8 @@ function refresh_data() {
 			document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>" + jsonAfterParse.noResults.foundNoResultsMessage + " <b> " + searchText.value + "</b></div>";
 		} else {
 			searchText.value = jsonAfterParse.search_phrase;
+			var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+			document.getElementById('found-results-summary').innerHTML = "FOUND <b>" + numberOfResults + "</b> Results (t seconds)";
 			filterOptions_providers();
 			filterOptions_locations();
 		    addAllObsGroups(jsonAfterParse);

@@ -117,13 +117,15 @@
 			
 			//if (searchText.value != "") {
 				 jq(".obsgroup_view").empty();
-				 jq("#obsgroups_results").html('<img class="search-spinner" src="/openmrs/ms/uiframework/resource/uicommons/images/spinner.gif">');
+				 jq("#found-results-summary").html('');
+				 jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
 				jq.ajax({
 					type: "POST",
 					 url: "${ ui.actionLink('getResultsFromTheServer') }",
 					data: jq('#chart-search-form-submit').serialize(),
 					dataType: "json",
 					success: function(results) {
+						jq("#obsgroups_results").html('');
 						jq(".inside_filter_categories").fadeOut(500);
 						
 						jsonAfterParse = JSON.parse(results);

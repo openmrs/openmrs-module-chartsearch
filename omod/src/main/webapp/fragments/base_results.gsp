@@ -102,6 +102,7 @@
 </style>
 
 <div class="results_box_container">
+	<div id="found-results-summary"></div>
     <div class="results_table_wrap" id="obsgroups_results">
 
     </div>

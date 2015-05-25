@@ -1,0 +1,1 @@
+<div class="search-record-dialog-content" id="delete-search-record-dialog">Do you want to delete?</div>

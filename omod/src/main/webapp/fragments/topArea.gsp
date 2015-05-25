@@ -316,6 +316,18 @@
     	text-align:center;
     	font-size: 25px;
     }
+    
+    #chart_search_form_inputs-searchPhrase {
+    	position:relative;
+    }
+    
+    #chart-previous-searches {
+    	position:absolute;
+    }
+    
+    #searchBtn {
+    	margin-left:45px;
+    }
 
 </style>
 
@@ -326,8 +338,11 @@
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
                         <input type="text" name="patientId" id="patient_id" value=${patientId} hidden>
-                        <input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
-                        <input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
+                        <div id="chart_search_form_inputs-searchPhrase">
+                        	<input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
+                        	<i id="chart-previous-searches" class="icon-arrow-down medium"></i>
+                        	<input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
+                        </div>
                     </div>
                     <div class="filters_section">
                     	<div class="dropdown" id="category_dropdown">
@@ -390,6 +405,9 @@
                                 </div>
                             </div>
                         </div>
+                    	<div id="search-saving-section">
+							${ ui.includeFragment("chartsearch", "searchSavingSection") }
+						</div>
                     </div>
                 </div>
     			${ ui.includeFragment("chartsearch", "main_results") }

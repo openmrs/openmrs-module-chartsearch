@@ -405,7 +405,7 @@
     	position: absolute;
 		z-index: 2;
 		height: 105px;
-		width: 766px;
+		width: 764px;
 		background-color: white;
 		padding-left: 10px;
 		border: 2px solid #007fff;

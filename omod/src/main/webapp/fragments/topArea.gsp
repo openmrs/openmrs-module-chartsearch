@@ -58,7 +58,7 @@
 		jq('#searchText').keyup(function(key) {
 			var searchText = document.getElementById('searchText');
 			if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
-				delay(function(){
+				delay(function() {
 					if (searchText != "") {
 						/* Do Nothing for Now
 						jq(".obsgroup_view").empty();

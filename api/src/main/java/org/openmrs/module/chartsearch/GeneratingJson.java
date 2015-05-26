@@ -87,6 +87,7 @@ public class GeneratingJson {
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		jsonToReturn.put("noResults", noResults);
+		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		
 		return jsonToReturn.toString();
 	}
@@ -167,11 +168,11 @@ public class GeneratingJson {
 		
 		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
 		if (!facets.isEmpty()) {
-	        for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
-		        facet.put("facet", generateFacetsJson(facets.get(i)));
-		        arr_of_facets.add(facet);
-	        }
-        }
+			for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
+				facet.put("facet", generateFacetsJson(facets.get(i)));
+				arr_of_facets.add(facet);
+			}
+		}
 		jsonToReturn.put("facets", arr_of_facets);
 	}
 	

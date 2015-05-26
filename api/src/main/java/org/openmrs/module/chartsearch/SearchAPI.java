@@ -14,7 +14,9 @@
 package org.openmrs.module.chartsearch;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
@@ -31,6 +33,8 @@ public class SearchAPI {
 	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 	
 	private static List<String> selectedCategoryNames;
+	
+	private static double retrievalTime;
 	
 	public static SearchAPI getInstance() {
 		if (instance == null) {
@@ -79,12 +83,17 @@ public class SearchAPI {
 		
 		System.out.println("finalPhrase :" + finalPhrase);
 		
+		double startSearchingTime = new Date().getTime();
 		try {
 			items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames()); //searching for the phrase.
 		}
+		
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		double endSearchingTime = new Date().getTime();
+		
+		SearchAPI.retrievalTime = (endSearchingTime - startSearchingTime) / 1000.0;
 		
 		return items;
 	}
@@ -110,6 +119,13 @@ public class SearchAPI {
 		if (list == null || list.size() == 0)
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
+	}
+	
+	/**
+	 * Time taken to retrieve results in seconds
+	 */
+	public static double getRetrievalTime() {
+		return retrievalTime;
 	}
 	
 }

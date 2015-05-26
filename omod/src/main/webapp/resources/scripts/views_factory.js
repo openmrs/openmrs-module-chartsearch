@@ -949,13 +949,12 @@ function displayCategories(jsonAfterParse) {
 		for (var i = 0; i < jsonAfterParse.facets.length; i++) {
 	        var name = jsonAfterParse.facets[i].facet.name;
 	        var count = jsonAfterParse.facets[i].facet.count;
-	        var displayName = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
-	        var displayCount = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
 	        
-	        if (count == 0) {
-	        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' disabled />" + displayCount;
-	        } else {
-	        	document.getElementById('inside_filter_categories').innerHTML += displayName + "' />" + displayCount;
+	        if (count != 0) {
+		        var displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+		        var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
+		        
+		        document.getElementById('inside_filter_categories').innerHTML += displaycheckBox + "' />" + displayDetail;
 	        }
 	    }
 		

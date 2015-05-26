@@ -32,15 +32,19 @@
 		    return false;
 		});
 		
-		//works for the first time
-		//TODO should work after the second click
-		jq('.select_one_category').click(function (event) {
-		    console.log(jq('.select_one_category'));
-		    jq('.category_check').prop('checked', false);
-		    var id = (this.id).replace("select_", "");
-		    jq("#"+id).prop('checked', true);
-		    submitChartSearchFormWithAjax();
-		    return false;
+		jq("body").on("click", "#inside_filter_categories", function (event) {
+			var currCatLinkId = event.target.id;
+			
+			if(event.target.localName === "a") {
+				var currCatCheckId = currCatLinkId.replace('select_','');
+			
+				jq('#inside_filter_categories').find('input[type=checkbox]:checked').prop('checked', false);;
+			    jq("#" + currCatCheckId).prop('checked', true);
+			    submitChartSearchFormWithAjax();
+				jq('#filter_categories_categories').removeClass('display_filter_onclick');
+				
+				return false;
+			}
 		});
 		
 		jq('#searchBtn').click(function(event) {
@@ -50,6 +54,8 @@
 		
 		jq('#submit_selected_categories').click(function(event) {
 			submitChartSearchFormWithAjax();
+			jq('#filter_categories_categories').removeClass('display_filter_onclick');
+			
 			return false;
 		});
 		
@@ -78,7 +84,7 @@
 		});
 		
 		//Not yet working
-		jq("input[type='checkbox'].category_check").change(function(){
+		/*jq("input[type='checkbox'].category_check").change(function(){
 		    var a = jq("input[type='checkbox'].category_check");
 		    if(a.length == a.filter(":checked").length){
 		        categoryLabel = "All Categories";
@@ -88,7 +94,7 @@
 		    	categoryLabel = "Categories";
 		    }
 		    jq('#category_label').html(categoryLabel);
-		});
+		});*/
 		
 		jq("#chart-previous-searches").click(function(event) {
 			if(jq("#chart-previous-searches-display").is(':visible')) {

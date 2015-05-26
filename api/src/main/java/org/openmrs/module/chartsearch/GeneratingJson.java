@@ -86,11 +86,22 @@ public class GeneratingJson {
 			//add failed privileges to json to be returned to the view
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
+		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
+		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
+		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		
 		return jsonToReturn.toString();
 	}
+
+	private static String[] getAllPossibleSuggestionsAsArray() {
+	    List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getInstance()
+		        .getPatientId());
+		String[] searchSuggestions = new String[allPossibleSuggestions.size()];
+		searchSuggestions = (String[]) allPossibleSuggestions.toArray(searchSuggestions);
+	    return searchSuggestions;
+    }
 	
 	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,
 	                                                                            JSONArray arr_of_groups,

@@ -182,4 +182,6 @@ public interface ChartSearchService extends OpenmrsService {
 	void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations);
 	
 	void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass);
+	
+	public List<String> getAllPossibleSearchSuggestions(Integer patientId);
 }

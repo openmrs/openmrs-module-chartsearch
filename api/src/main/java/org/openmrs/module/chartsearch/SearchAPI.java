@@ -16,7 +16,6 @@ package org.openmrs.module.chartsearch;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
@@ -35,6 +34,8 @@ public class SearchAPI {
 	private static List<String> selectedCategoryNames;
 	
 	private static double retrievalTime;
+	
+	private static Integer patientId;
 	
 	public static SearchAPI getInstance() {
 		if (instance == null) {
@@ -67,6 +68,7 @@ public class SearchAPI {
 	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames) {
 		SearchAPI.searchPhrase = searchPhrase;
 		SearchAPI.setSelectedCategoryNames(selectedCategoryNames);
+		SearchAPI.patientId = patientId;
 		System.out.println("phrase :" + searchPhrase.getPhrase());
 		if (searchPhrase.getPhrase().equals(",")) {
 			searchPhrase.setPhrase("");
@@ -126,6 +128,10 @@ public class SearchAPI {
 	 */
 	public static double getRetrievalTime() {
 		return retrievalTime;
+	}
+	
+	public static Integer getPatientId() {
+		return patientId;
 	}
 	
 }

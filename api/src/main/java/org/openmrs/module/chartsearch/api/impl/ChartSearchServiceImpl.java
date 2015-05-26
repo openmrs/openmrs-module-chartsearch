@@ -28,8 +28,11 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
+import org.openmrs.api.ObsService;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
@@ -92,7 +95,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional(readOnly = true)
 	public List<SynonymGroup> getAllSynonymGroups() {
 		List<SynonymGroup> list = new ArrayList<SynonymGroup>();
@@ -101,14 +104,14 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public void purgeSynonymGroup(SynonymGroup synGroup) {
 		getSynonymGroupDAO().delete(synGroup);
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public SynonymGroup saveSynonymGroup(SynonymGroup synGroup) throws APIException {
 		return (SynonymGroup) getSynonymGroupDAO().saveOrUpdate(synGroup);
@@ -139,21 +142,21 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional(readOnly = true)
 	public List<Synonym> getAllSynonyms() {
 		return getSynonymDAO().getAll();
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public void purgeSynonym(Synonym synonym) {
 		getSynonymDAO().delete(synonym);
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	@Transactional
 	public Synonym saveSynonym(Synonym synonym) throws APIException {
 		return (Synonym) getSynonymDAO().saveOrUpdate(synonym);
@@ -248,7 +251,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@SuppressWarnings("unused")
-    @Override
+	@Override
 	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
 	public void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups) {
 		Set<Set<Obs>> setOfObsGroups = GeneratingJson.generateObsGroupFromSearchResults();
@@ -317,5 +320,21 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		dao.indexAllPatientData(numberOfResults, solrServer, showProgressToClass);
+	}
+	
+	@Override
+	public List<String> getAllPossibleSearchSuggestions(Integer patientId) {
+		ObsService obsService = Context.getObsService();
+		List<String> conceptNameSuggestions = new ArrayList<String>();
+		
+		List<Obs> allPatientObs = obsService.getObservationsByPerson(new Patient(patientId));
+		
+		for (Obs currentObs : allPatientObs) {
+			String currentConceptName = currentObs.getConcept().getName().getName();
+			conceptNameSuggestions.add(currentConceptName);
+		}
+		//TODO add  previous search terms, allergies and appointments to conceptNameSuggestions list
+		
+		return conceptNameSuggestions;
 	}
 }

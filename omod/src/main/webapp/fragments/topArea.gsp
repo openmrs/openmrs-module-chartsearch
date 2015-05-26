@@ -12,6 +12,8 @@
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
         });
+        
+        jq("#chart-searches-suggestions").hide();
 
         jq( "#date_filter_options" ).click(function(e) {
             jq( "#date_filter_options" ).hide();
@@ -52,22 +54,6 @@
 		});
 		
 		jq('.filter_method').click(function(event) {
-			return false;
-		});
-		
-		jq('#searchText').keyup(function(key) {
-			var searchText = document.getElementById('searchText');
-			if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
-				delay(function() {
-					if (searchText != "") {
-						/* Do Nothing for Now
-						jq(".obsgroup_view").empty();
-					 	jq("#obsgroups_results").html('Press Enter to search.');
-					 	OR submitChartSearchFormWithAjax();
-					 	*/
-				 	}
-			    }, 1000 );
-		    }
 			return false;
 		});
 		
@@ -112,10 +98,35 @@
 			}
 		});
 		
+		jq("#searchText").keyup(function(key) {
+			var searchText = document.getElementById('searchText').value;
+			if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
+				delay(function() {
+					if (searchText != "" && searchText.length >= 2) {
+						showSearchSuggestions();
+				 	} else {
+				 		hideSearchSuggestions();
+				 	}
+			    }, 50 );
+		    }
+			return false;
+		});
+		
+		/*USES http://learn.jquery.com/events/event-delegation/ and https://api.jquery.com/event.target/*/
+		jq("body").on("click", "#chart-searches-suggestions", function (event) {
+			var selectedSuggestion = event.target.innerText;
+			
+			jq('#searchText').val(selectedSuggestion);
+			submitChartSearchFormWithAjax();
+			
+			return false;
+		});
+		
 		function submitChartSearchFormWithAjax() {
 			var searchText = document.getElementById('searchText');
 			
 			//if (searchText.value != "") {
+				 hideSearchSuggestions();
 				 jq(".obsgroup_view").empty();
 				 jq("#found-results-summary").html('');
 				 jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
@@ -156,7 +167,7 @@
 		  };
 		})();
 		
-		jq(document).keydown(function(key) {
+		/*jq(document).keydown(function(key) {//TODO https://issues.openmrs.org/browse/CSM-101
 			//TODO update navigationIndex variable after load_single_detailed_obs(...)
 			var single_obsJSON = jsonAfterParse.obs_singles;
 			var obsId = single_obsJSON[navigationIndex].observation_id;
@@ -175,7 +186,7 @@
 					focusOnCurrentObsAndDisplayItsDetails(obsId);
 				}
 			}
-		});
+		});*/
 		
 		function focusOnCurrentObsAndDisplayItsDetails(obsId) {
 			//TODO not yet working to support verticle scrolling
@@ -186,6 +197,36 @@
 			}
 			load_single_detailed_obs(obsId);
 		}
+		
+		function hideSearchSuggestions() {
+			jq("#chart-searches-suggestions").hide();
+		}
+		
+		function showSearchSuggestions() {
+			var suggestionsArray = jsonAfterParse.searchSuggestions;
+			var searchSuggestions = "";
+			var searchText = jq('#searchText').val();
+			
+			for(i = 0; i < suggestionsArray.length; i++) {
+				var suggestion = suggestionsArray[i];
+				
+				if(strStartsWith(suggestion.toUpperCase(), searchText.toUpperCase()) && searchSuggestions.indexOf(suggestion) < 0) {
+					searchSuggestions += "<a class='search-text-suggestion' href=''>" + suggestion + "</a><br/>";
+				}
+			}
+			
+			document.getElementById('chart-searches-suggestions').innerHTML = searchSuggestions;
+			if(searchSuggestions) {
+				jq("#chart-searches-suggestions").show();
+			} else {
+				jq("#chart-searches-suggestions").hide();
+			}
+		}
+		
+		function strStartsWith(str, prefix) {
+		    return str.indexOf(prefix) === 0;
+		}
+		
     });
     
 </script>
@@ -357,6 +398,23 @@
 		overflow: scroll;
 		background-color: white;
 		padding-left: 10px;
+		border-left: 2px solid #9C9A9A;
+    }
+    
+    #chart-searches-suggestions {
+    	position: absolute;
+		z-index: 2;
+		height: 105px;
+		width: 766px;
+		background-color: white;
+		padding-left: 10px;
+		border: 2px solid #007fff;
+		color: black;
+		overflow: hidden;
+    }
+    
+    .search-text-suggestion {
+    	cursor: pointer;
     }
 
 </style>
@@ -375,6 +433,8 @@
                         </div>
                         <div id="chart-previous-searches-display">
                         	<!-- All, search phrases searched to be stored and displayed here -->
+                        </div>
+                        <div id="chart-searches-suggestions">
                         </div>
                     </div>
                     <div class="filters_section">

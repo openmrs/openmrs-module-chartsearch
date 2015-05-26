@@ -22,6 +22,7 @@ import java.util.Set;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
@@ -330,8 +331,12 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		List<Obs> allPatientObs = obsService.getObservationsByPerson(new Patient(patientId));
 		
 		for (Obs currentObs : allPatientObs) {
-			String currentConceptName = currentObs.getConcept().getName().getName();
-			conceptNameSuggestions.add(currentConceptName);
+			if (currentObs != null && currentObs.getConcept() != null && currentObs.getConcept().getName() != null) {
+				String currentConceptName = currentObs.getConcept().getName().getName();
+				if (StringUtils.isNotBlank(currentConceptName)) {
+					conceptNameSuggestions.add(currentConceptName);
+				}
+			}
 		}
 		//TODO add  previous search terms, allergies and appointments to conceptNameSuggestions list
 		

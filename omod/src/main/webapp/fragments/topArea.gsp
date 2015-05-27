@@ -1,7 +1,7 @@
 <script type="text/javascript">
     var jq = jQuery;
     var navigationIndex = 0;
-    var categoryLabel = "Categories";
+    var categoryFilterLabel = "";
     
     jq( document ).ready(function() {
     
@@ -29,21 +29,47 @@
 		
 		jq('#deselectAll_categories').click(function (event) {
 		    jq('.category_check').prop('checked', false);
+		    
 		    return false;
 		});
 		
 		jq("body").on("click", "#inside_filter_categories", function (event) {
 			var currCatLinkId = event.target.id;
+			var currCatCheckId = currCatLinkId.replace("select_","");
 			
 			if(event.target.localName === "a") {
-				var currCatCheckId = currCatLinkId.replace('select_','');
-			
 				jq('#inside_filter_categories').find('input[type=checkbox]:checked').prop('checked', false);;
 			    jq("#" + currCatCheckId).prop('checked', true);
 			    submitChartSearchFormWithAjax();
 				jq('#filter_categories_categories').removeClass('display_filter_onclick');
 				
 				return false;
+			} else if(event.target.localName === "input" && currCatLinkId) {
+				/*
+				jq('#inside_filter_categories :checked').each(function() {
+					var cat = jq(this).val();
+					var bothCombined = categoryFilterLabel + cat;
+					if(categoryFilterLabel.indexOf(cat) < 0) {
+						if(bothCombined.length <= 14) {
+			    			categoryFilterLabel += cat + ",";
+			    		} else {
+			    			if(bothCombined.length <= 16) {
+			    				categoryFilterLabel += "..";
+			    			}
+			    		}
+			    	}
+			    });
+			    
+			    if(categoryFilterLabel.indexOf("...") >= 0) {
+					categoryFilterLabel = categoryFilterLabel.replace("...", "") + "...";
+				}
+				
+				if(categoryFilterLabel === "..." || categoryFilterLabel === "") {
+					categoryFilterLabel = "Categories";
+				}
+				
+				jq("#category-filter_method").text(categoryFilterLabel);
+				*/
 			}
 		});
 		
@@ -83,19 +109,6 @@
 		    jq('#providersOptions').toggleClass('display_filter_onclick');
 		});
 		
-		//Not yet working
-		/*jq("input[type='checkbox'].category_check").change(function(){
-		    var a = jq("input[type='checkbox'].category_check");
-		    if(a.length == a.filter(":checked").length){
-		        categoryLabel = "All Categories";
-		        alert(categoryLabel);
-		    } else {
-		    	//TODO set to something like Diagnosis...
-		    	categoryLabel = "Categories";
-		    }
-		    jq('#category_label').html(categoryLabel);
-		});*/
-		
 		jq("#chart-previous-searches").click(function(event) {
 			if(jq("#chart-previous-searches-display").is(':visible')) {
 				jq("#chart-previous-searches-display").hide();
@@ -106,7 +119,11 @@
 		
 		jq("#searchText").keyup(function(key) {
 			var searchText = document.getElementById('searchText').value;
-			if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
+			
+			if(key.keyCode == 27) {
+		    	hideSearchSuggestions();
+		    	submitChartSearchFormWithAjax();
+		    } else if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
 				delay(function() {
 					if (searchText != "" && searchText.length >= 2) {
 						showSearchSuggestions();
@@ -115,10 +132,10 @@
 				 	}
 			    }, 50 );
 		    }
+		    
 			return false;
 		});
 		
-		/*USES http://learn.jquery.com/events/event-delegation/ and https://api.jquery.com/event.target/*/
 		jq("body").on("click", "#chart-searches-suggestions", function (event) {
 			var selectedSuggestion = event.target.innerText;
 			
@@ -216,7 +233,7 @@
 			for(i = 0; i < suggestionsArray.length; i++) {
 				var suggestion = suggestionsArray[i];
 				
-				if(strStartsWith(suggestion.toUpperCase(), searchText.toUpperCase()) && searchSuggestions.indexOf(suggestion) < 0) {
+				if(strStartsWith(suggestion.toUpperCase(), searchText.toUpperCase()) && searchSuggestions.indexOf(suggestion) <= 0) {
 					searchSuggestions += "<a class='search-text-suggestion' href=''>" + suggestion + "</a><br/>";
 				}
 			}
@@ -422,6 +439,10 @@
     .search-text-suggestion {
     	cursor: pointer;
     }
+    
+    .category_filter_item-disabled {
+    	pointer-events:none;
+    }
 
 </style>
 
@@ -447,11 +468,11 @@
                     	<div class="dropdown" id="category_dropdown">
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
-								<a href="#" class="filter_method">All Categories</a>
+								<a href="#" class="filter_method" id="category-filter_method">Categories</a>
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">
-									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Deselect All</a>
+									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
 									<br /><hr />
 									<div id="inside_filter_categories">
 										<script type="text/javascript">
@@ -459,7 +480,7 @@
 										</script>
 									</div>
 									<hr />
-									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Hide</a>
+									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Cancel</a>
 								</div>
 							</div>
 						</div>

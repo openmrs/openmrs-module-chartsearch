@@ -487,6 +487,11 @@
     .category_filter_item-disabled {
     	pointer-events:none;
     }
+    
+    #found-results-summary {
+    	color:rgb(131, 128, 128);
+    	text-align:center;
+    }
 
 </style>
 

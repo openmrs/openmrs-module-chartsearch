@@ -938,7 +938,7 @@ function refresh_data() {
 		} else {
 			searchText.value = jsonAfterParse.search_phrase;
 			var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
-			document.getElementById('found-results-summary').innerHTML = "FOUND <b>" + numberOfResults + "</b> Results (<b>" + jsonAfterParse.retrievalTime + "</b> seconds)";
+			document.getElementById('found-results-summary').innerHTML = "<b>" + numberOfResults + "</b> Results (<b>" + jsonAfterParse.retrievalTime + "</b> seconds)";
 			filterOptions_providers();
 			filterOptions_locations();
 		    addAllObsGroups(jsonAfterParse);

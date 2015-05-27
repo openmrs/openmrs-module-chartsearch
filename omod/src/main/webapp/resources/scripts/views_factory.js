@@ -954,8 +954,12 @@ function displayCategories(jsonAfterParse) {
 		        var displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
 		        var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
 		        
-		        document.getElementById('inside_filter_categories').innerHTML += displaycheckBox + "' />" + displayDetail;
+	        } else {
+	        	var displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+		        var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
 	        }
+	        
+	        document.getElementById('inside_filter_categories').innerHTML += displaycheckBox + "' />" + displayDetail;
 	    }
 		
 		//now check all previously checked categories

@@ -1,7 +1,7 @@
 <script type="text/javascript">
     var jq = jQuery;
-    var navigationIndex = 0;
-    var peviousIndex = -1;
+    var navigationIndex = 1;
+    var peviousIndex = 0;
     var wasGoingNext = true;
     var categoryFilterLabel = "";
     
@@ -203,7 +203,7 @@
 					
 					if(wasGoingNext) {
 						if(navigationIndex != numberOfResults) {
-							if(navigationIndex > 0 && diffBtnIndecs == 1) {
+							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
 								var obsId = single_obsJSON[navigationIndex].observation_id;
 								
 								peviousIndex = navigationIndex;
@@ -216,7 +216,7 @@
 						navigationIndex  = navigationIndex + 2;
 						if(peviousIndex == 0) {
 							diffBtnIndecs = -1;
-							navigationIndex = navigationIndex - 2;
+							navigationIndex = 1;
 						}
 						if(navigationIndex >= 0 && diffBtnIndecs == -1) {
 							var obsId = single_obsJSON[navigationIndex].observation_id;

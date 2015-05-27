@@ -1,6 +1,8 @@
 <script type="text/javascript">
     var jq = jQuery;
     var navigationIndex = 0;
+    var peviousIndex = -1;
+    var wasGoingNext = true;
     var categoryFilterLabel = "";
     
     jq( document ).ready(function() {
@@ -123,6 +125,8 @@
 			if(key.keyCode == 27) {
 		    	hideSearchSuggestions();
 		    	submitChartSearchFormWithAjax();
+		    } else if(key.keyCode == 39 || key.keyCode == 37) {
+		    	//DO NOTHING, since here we are doing
 		    } else if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
 				delay(function() {
 					if (searchText != "" && searchText.length >= 2) {
@@ -172,8 +176,6 @@
 						
 						//show updated facets
 						jq(".inside_filter_categories").fadeIn(500);
-						
-						jq('#searchText').focus();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);
@@ -190,34 +192,76 @@
 		  };
 		})();
 		
-		/*jq(document).keydown(function(key) {//TODO https://issues.openmrs.org/browse/CSM-101
+		jq(document).keydown(function(key) {//TODO https://issues.openmrs.org/browse/CSM-101
 			//TODO update navigationIndex variable after load_single_detailed_obs(...)
 			var single_obsJSON = jsonAfterParse.obs_singles;
-			var obsId = single_obsJSON[navigationIndex].observation_id;
 			
 			if (typeof single_obsJSON !== 'undefined') {
 				if(key.keyCode == 39) {// =>>
-					if (navigationIndex >= 0) {
-						navigationIndex++;
+					var diffBtnIndecs = navigationIndex - peviousIndex;
+					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+					
+					if(wasGoingNext) {
+						if(navigationIndex != numberOfResults) {
+							if(navigationIndex > 0 && diffBtnIndecs == 1) {
+								var obsId = single_obsJSON[navigationIndex].observation_id;
+								
+								peviousIndex = navigationIndex;
+								navigationIndex++;
+								wasGoingNext = true;
+								focusOnNextObsAndDisplayItsDetails(obsId);
+							}
+						}
+					} else {
+						navigationIndex  = navigationIndex + 2;
+						if(peviousIndex == 0) {
+							diffBtnIndecs = -1;
+							navigationIndex = navigationIndex - 2;
+						}
+						if(navigationIndex >= 0 && diffBtnIndecs == -1) {
+							var obsId = single_obsJSON[navigationIndex].observation_id;
+								
+							peviousIndex = navigationIndex;
+							navigationIndex++;
+							wasGoingNext = true;
+							focusOnNextObsAndDisplayItsDetails(obsId);
+						}
 					}
-					focusOnCurrentObsAndDisplayItsDetails(obsId);
 				}
 				if(key.keyCode == 37) {// <<=
-					if (navigationIndex > 1) {
-						navigationIndex--;
+					if(peviousIndex != 0) {
+						var diffBtnIndecs = navigationIndex - peviousIndex;
+						
+						if(wasGoingNext) {
+							navigationIndex  = navigationIndex - 2;
+							
+							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
+								var obsId = single_obsJSON[navigationIndex].observation_id;
+								
+								peviousIndex = navigationIndex;
+								navigationIndex--;
+								wasGoingNext = false;
+								
+								focusOnNextObsAndDisplayItsDetails(obsId);
+							}
+						} else {
+							if(navigationIndex >= 0 && diffBtnIndecs == -1) {
+								var obsId = single_obsJSON[navigationIndex].observation_id;
+								
+								peviousIndex = navigationIndex;
+								navigationIndex--;
+								wasGoingNext = false;
+								
+								focusOnNextObsAndDisplayItsDetails(obsId);
+							}
+						}
 					}
-					focusOnCurrentObsAndDisplayItsDetails(obsId);
 				}
 			}
-		});*/
+		});
 		
-		function focusOnCurrentObsAndDisplayItsDetails(obsId) {
-			//TODO not yet working to support verticle scrolling
-			if(navigationIndex-1 == 0) {
-				jq('#first_obs_single').focus();
-			} else {
-				jq('#obs_single_'+obsId).focus();
-			}
+		function focusOnNextObsAndDisplayItsDetails(obsId) {
+			jq('#obs_single_'+obsId).focus();
 			load_single_detailed_obs(obsId);
 		}
 		

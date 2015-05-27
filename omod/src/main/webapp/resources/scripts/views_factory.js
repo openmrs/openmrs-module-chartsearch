@@ -95,7 +95,6 @@ function addAllSingleObs(obsJSON)
         for(var i=0;i<single_obsJSON.length;i++){
         	if (i == 0) {
         		firstSingleObs = single_obsJSON[i];
-        		navigationIndex = 1;
         	}
             resultText+=addSingleObsToResults(single_obsJSON[i], i);
         }
@@ -114,7 +113,7 @@ function addSingleObsToResults(obsJSON, i)
     	}
     }
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="load_single_detailed_obs('+obsJSON.observation_id+');">';
+    resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="updateNavigationIndicesToClicked('+obsJSON.observation_id+');load_single_detailed_obs('+obsJSON.observation_id+');">';
     resultText+='<div class="obsgroup_first_row">';
     resultText+='<div class="obsgroup_titleBox">';
     resultText+='<h3 class="obsgroup_title">';
@@ -293,8 +292,6 @@ function load_single_detailed_obs(obs_id){
     removeAllHovering();
     if (firstSingleObs.observation_id == obs_id) {
     	$( "#first_obs_single").addClass("obsgroup_current");
-    	peviousIndex = 0;
-    	navigationIndex = 1;
     } else {
     	$( "#obs_single_"+obs_id ).addClass("obsgroup_current");
     }
@@ -396,6 +393,31 @@ function load_single_detailed_obs(obs_id){
     {
         enable_graph(obs_id);
     }
+}
+
+function updateNavigationIndicesToClicked(obs_id) {
+	var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+	var allPossibleIndices = new Array(numberOfResults);
+	
+	for(i = 0; i < allPossibleIndices.length; i++) {
+		if(jsonAfterParse.obs_singles[i].observation_id === obs_id) {
+			peviousIndex = i;
+			if(wasGoingNext) {
+				if(peviousIndex === numberOfResults) {
+					peviousIndex = -1;
+					navigationIndex = 0;
+				} else {
+					navigationIndex = i + 1;
+				}
+			} else {
+				if(peviousIndex !== 0) {
+					navigationIndex = i - 1;
+					wasGoingNext = false;
+				}
+			}
+		}
+	}
+	
 }
 
 function load_single_obs_history(obs_id) {
@@ -646,7 +668,7 @@ function load_detailed_obs(obs_id)
         {
             isBold=' bold ';
         }
-        resultText+='<div class="obsgroup_item_row' + isBold +'" onclick="load_single_detailed_obs('+singleObs[i].observation_id+')">';
+        resultText+='<div class="obsgroup_item_row' + isBold +'" onclick="updateNavigationIndicesToClicked('+singleObs[i].observation_id+');load_single_detailed_obs('+singleObs[i].observation_id+');">';
         resultText+='<div class="obsgroup_item_first inline">';
         resultText+=capitalizeFirstLetter(singleObs[i].concept_name);
         resultText+='</div>';

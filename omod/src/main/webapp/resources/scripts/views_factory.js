@@ -293,6 +293,8 @@ function load_single_detailed_obs(obs_id){
     removeAllHovering();
     if (firstSingleObs.observation_id == obs_id) {
     	$( "#first_obs_single").addClass("obsgroup_current");
+    	peviousIndex = 0;
+    	navigationIndex = 1;
     } else {
     	$( "#obs_single_"+obs_id ).addClass("obsgroup_current");
     }

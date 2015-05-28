@@ -26,12 +26,15 @@
         jq('#selectAll_categories').click(function (event) {
 		    console.log(jq('.category_check'));
 		    jq('.category_check').prop('checked', true);
+		    categoryFilterLabel = "All Categories";
+		    jq("#category-filter_method").text(categoryFilterLabel);
 		    return false;
 		});
 		
 		jq('#deselectAll_categories').click(function (event) {
 		    jq('.category_check').prop('checked', false);
-		    
+		    categoryFilterLabel = "All Categories";
+		    jq("#category-filter_method").text(categoryFilterLabel);
 		    return false;
 		});
 		
@@ -47,31 +50,41 @@
 				
 				return false;
 			} else if(event.target.localName === "input" && currCatLinkId) {
-				/*
-				jq('#inside_filter_categories :checked').each(function() {
-					var cat = jq(this).val();
-					var bothCombined = categoryFilterLabel + cat;
-					if(categoryFilterLabel.indexOf(cat) < 0) {
-						if(bothCombined.length <= 14) {
-			    			categoryFilterLabel += cat + ",";
-			    		} else {
-			    			if(bothCombined.length <= 16) {
-			    				categoryFilterLabel += "..";
-			    			}
-			    		}
+					var cat = jq("#" + currCatCheckId).val();
+					
+					if(jq("#" + currCatCheckId).attr('checked')) {
+						var checkedCats = jq('#inside_filter_categories :checked');
+						checkedCats.each(function() {
+							if(categoryFilterLabel === "All Categories") {
+								categoryFilterLabel = "";
+							}
+							var bothCombined = categoryFilterLabel + cat;
+							if(categoryFilterLabel.indexOf(capitalizeFirstLetter(cat)) < 0) {
+								if(bothCombined.length <= 14) {
+					    			categoryFilterLabel += capitalizeFirstLetter(cat) + ",";
+					    		} else {
+					    			if(categoryFilterLabel.indexOf(capitalizeFirstLetter("...")) < 0) {
+					    				categoryFilterLabel += "...";
+					    			}
+					    		}
+					    	}
+					    });
+			    } else {
+			    	if(categoryFilterLabel.indexOf(capitalizeFirstLetter(cat)) >= 0) {
+			    		var cat2 = capitalizeFirstLetter(cat) + ",";
+			    		categoryFilterLabel = categoryFilterLabel.replace(cat2, "");
 			    	}
-			    });
+			    }
 			    
 			    if(categoryFilterLabel.indexOf("...") >= 0) {
 					categoryFilterLabel = categoryFilterLabel.replace("...", "") + "...";
 				}
 				
-				if(categoryFilterLabel === "..." || categoryFilterLabel === "") {
-					categoryFilterLabel = "Categories";
+				if(categoryFilterLabel === "..." || categoryFilterLabel === "" || categoryFilterLabel === ",...") {
+					categoryFilterLabel = "All Categories";
 				}
 				
 				jq("#category-filter_method").text(categoryFilterLabel);
-				*/
 			}
 		});
 		
@@ -517,7 +530,7 @@
                     	<div class="dropdown" id="category_dropdown">
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
-								<a href="#" class="filter_method" id="category-filter_method">Categories</a>
+								<a href="#" class="filter_method" id="category-filter_method">All Categories</a>
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">

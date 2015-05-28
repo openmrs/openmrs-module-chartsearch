@@ -132,6 +132,10 @@
 		ChartSearchCategories.hbm.xml
 
 	</mappingFiles>
+	
+	<packagesWithMappedClasses>
+		com.openmrs.module.chartsearch.saving
+	</packagesWithMappedClasses>
 
 	<!-- Internationalization -->
 	<!-- All message codes should start with ${project.parent.artifactId}. -->

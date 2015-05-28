@@ -26,6 +26,8 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured
  * in moduleApplicationContext.xml.
@@ -184,4 +186,14 @@ public interface ChartSearchService extends OpenmrsService {
 	void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass);
 	
 	public List<String> getAllPossibleSearchSuggestions(Integer patientId);
+	
+	public ChartSearchHistory getSearchHistory(Integer searchId);
+	
+	public void saveSearchHistory(ChartSearchHistory searchHistory);
+	
+	public void deleteSearchHistory(ChartSearchHistory searchHistory);
+	
+	public ChartSearchHistory getSearchHistoryByIUuid(String uuid);
+	
+	public List<ChartSearchHistory> getAllSearchesInHistory();
 }

@@ -23,6 +23,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.ObsItem;
@@ -94,6 +95,10 @@ public class ChartsearchPageController {
 		}
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
+		
+		//saving search record where necessary.
+		ChartSearchCache csCache = new ChartSearchCache();
+		csCache.saveOrUpdateSearchHistory(search_phrase.getPhrase(), patient.getPatientId());
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

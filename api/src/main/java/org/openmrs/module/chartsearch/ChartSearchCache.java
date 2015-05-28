@@ -9,11 +9,15 @@
  */
 package org.openmrs.module.chartsearch;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
  * This basically provides access to chart-search module stored records such as notes on searches,
@@ -22,22 +26,41 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
  */
 public class ChartSearchCache {
 	
+	//addHistory
 	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
-	/**
-	 * TODO remove if not used, added to JSONToReturn already from {@link GeneratingJson}
-	 * 
-	 * @param patientId
-	 * @return
-	 */
-	public List<String> getAllSearchSuggestions(Integer patientId) {
-		List<String> allSuggestions = chartSearchService.getAllPossibleSearchSuggestions(patientId);
+	public void saveOrUpdateSearchHistory(String searchText, Integer patientId) {
+		ChartSearchHistory history = new ChartSearchHistory();
+		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(searchText);
 		
-		logger.info("Available possible search suggestions ARE: " + allSuggestions);
+		if (StringUtils.isNotBlank(searchText) && null != patientId) {
+			history.setHistoryOwner(Context.getAuthenticatedUser());
+			history.setPatient(Context.getPatientService().getPatient(patientId));
+			history.setSearchPhrase(searchText);
+			
+			if (null != exisitingHistory) {
+				history = exisitingHistory;
+			}
+			history.setLastSearchedAt(new Date());//Date was duplicated, probably use Calendar
+			
+			chartSearchService.saveSearchHistory(history);
+		}
+	}
+	
+	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(String searchText) {
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchesInHistory();
 		
-		return allSuggestions;
+		if (!allHistory.isEmpty()) {
+			for (int i = 0; i < allHistory.size(); i++) {
+				ChartSearchHistory history = allHistory.get(i);
+				if (searchText.equals(history.getSearchPhrase())) {
+					return history;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

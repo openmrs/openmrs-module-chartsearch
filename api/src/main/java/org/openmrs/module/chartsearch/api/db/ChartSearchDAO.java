@@ -13,8 +13,12 @@
  */
 package org.openmrs.module.chartsearch.api.db;
 
+import java.util.List;
+
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
  * Database methods for {@link ChartSearchService}.
@@ -23,4 +27,14 @@ public interface ChartSearchDAO {
 	
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer,
 	                                @SuppressWarnings("rawtypes") Class showProgressToClass);
+	
+	public ChartSearchHistory getSearchHistory(Integer searchId);
+	
+	public void saveSearchHistory(ChartSearchHistory searchHistory);
+	
+	public void deleteSearchHistory(ChartSearchHistory searchHistory);
+	
+	public ChartSearchHistory getSearchHistoryByIUuid(String uuid);
+	
+	public List<ChartSearchHistory> getAllSearchesInHistory();
 }

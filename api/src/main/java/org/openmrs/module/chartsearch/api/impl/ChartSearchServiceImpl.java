@@ -47,6 +47,8 @@ import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+
 /**
  * It is a default implementation of {@link ChartSearchService}.
  */
@@ -342,4 +344,29 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		
 		return conceptNameSuggestions;
 	}
+
+	@Override
+    public ChartSearchHistory getSearchHistory(Integer searchId) {
+	    return dao.getSearchHistory(searchId);
+    }
+
+	@Override
+    public void saveSearchHistory(ChartSearchHistory searchHistory) {
+	    dao.saveSearchHistory(searchHistory);
+    }
+
+	@Override
+    public void deleteSearchHistory(ChartSearchHistory searchHistory) {
+	    dao.deleteSearchHistory(searchHistory);
+    }
+
+	@Override
+    public ChartSearchHistory getSearchHistoryByIUuid(String uuid) {
+	    return dao.getSearchHistoryByIUuid(uuid);
+    }
+
+	@Override
+    public List<ChartSearchHistory> getAllSearchesInHistory() {
+	    return dao.getAllSearchesInHistory();
+    }
 }

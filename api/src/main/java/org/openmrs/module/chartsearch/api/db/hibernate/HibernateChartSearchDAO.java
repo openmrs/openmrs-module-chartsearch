@@ -17,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +28,8 @@ import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
+
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
@@ -155,6 +158,35 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		doc.addField("value_numeric", ChartSearchCustomIndexer.getValueNumeric());
 		doc.addField("value_text", ChartSearchCustomIndexer.getValueText());
 		doc.addField("concept_class_name", ChartSearchCustomIndexer.getConceptClassName());
+	}
+	
+	@Override
+	public ChartSearchHistory getSearchHistory(Integer searchId) {
+		return (ChartSearchHistory) sessionFactory.getCurrentSession().get(ChartSearchHistory.class, searchId);
+	}
+	
+	@Override
+	public void saveSearchHistory(ChartSearchHistory searchHistory) {
+		sessionFactory.getCurrentSession().saveOrUpdate(searchHistory);
+	}
+	
+	@Override
+	public void deleteSearchHistory(ChartSearchHistory searchHistory) {
+		sessionFactory.getCurrentSession().delete(searchHistory);
+	}
+	
+	@Override
+	public ChartSearchHistory getSearchHistoryByIUuid(String uuid) {
+		ChartSearchHistory history = (ChartSearchHistory) sessionFactory.getCurrentSession()
+		        .createQuery("from ChartSearchHistory h where h.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		
+		return history;
+	}
+	
+	@SuppressWarnings("unchecked")
+    @Override
+	public List<ChartSearchHistory> getAllSearchesInHistory() {
+		return sessionFactory.getCurrentSession().createCriteria(ChartSearchHistory.class).list();
 	}
 	
 }

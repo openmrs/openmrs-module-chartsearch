@@ -189,5 +189,42 @@
 			<column name="uuid" value="21ac0fec-947f-4a76-aeee-2e17d9d0cb13" />
 		</insert>
 	</changeSet>
+	
+	<changeSet id="CSM-102_28052015_1742" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="chartsearch_history" />
+			</not>
+		</preConditions>
+		<comment>
+			Create chartsearch_history table
+		</comment>
+		<createTable tableName="chartsearch_history">
+			<column name="search_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="search_phrase" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="last_searched_at" type="date">
+				<constraints nullable="false" />
+			</column>
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_id" type="int(11)" >
+				<constraints nullable="false" />
+			</column>
+			<column name="patient_id" type="int(11)" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="history_owner-fk"
+			baseTableName="chartsearch_history" baseColumnNames="user_id"
+			referencedTableName="users" referencedColumnNames="user_id"/>
+		<addForeignKeyConstraint constraintName="patient-fk"
+			baseTableName="chartsearch_history" baseColumnNames="patient_id"
+			referencedTableName="patient" referencedColumnNames="patient_id"/>
+	</changeSet>
 
 </databaseChangeLog>

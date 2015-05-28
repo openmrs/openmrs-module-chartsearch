@@ -167,6 +167,7 @@
 			
 			//if (searchText.value != "") {
 				 hideSearchSuggestions();
+				 jq("#chart-previous-searches-display").hide();
 				 jq(".obsgroup_view").empty();
 				 jq("#found-results-summary").html('');
 				 jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
@@ -474,7 +475,7 @@
     	position: absolute;
 		z-index: 1;
 		height: 250px;
-		width: 784px;
+		width: 781px;
 		overflow: scroll;
 		background-color: white;
 		padding-left: 10px;

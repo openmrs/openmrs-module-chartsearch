@@ -34,6 +34,8 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+
 /**
  * Responsible for generating the JSON object to be returned to the view(s)
  */
@@ -87,21 +89,41 @@ public class GeneratingJson {
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
+		JSONArray history = getAllSearchHistoriesToSendToTheUI();
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
+		jsonToReturn.put("searchHistory", history);
 		
 		return jsonToReturn.toString();
 	}
-
+	
 	private static String[] getAllPossibleSuggestionsAsArray() {
-	    List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getInstance()
+		List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getInstance()
 		        .getPatientId());
 		String[] searchSuggestions = new String[allPossibleSuggestions.size()];
 		searchSuggestions = (String[]) allPossibleSuggestions.toArray(searchSuggestions);
-	    return searchSuggestions;
-    }
+		return searchSuggestions;
+	}
+	
+	private static JSONArray getAllSearchHistoriesToSendToTheUI() {
+		JSONArray histories = new JSONArray();
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchesInHistory();
+		
+		for (ChartSearchHistory history : allHistory) {
+			JSONObject json = new JSONObject();
+			if (Context.getAuthenticatedUser().equals(history.getHistoryOwner())) {
+				json.put("searchPhrase", history.getSearchPhrase());
+				json.put("lastSearhedAt", history.getLastSearchedAt());
+				json.put("uuid", history.getUuid());
+				json.put("patientId", history.getPatient().getPatientId());
+			}
+			histories.add(json);
+		}
+		
+		return histories;
+	}
 	
 	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,
 	                                                                            JSONArray arr_of_groups,

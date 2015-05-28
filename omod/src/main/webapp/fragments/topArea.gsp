@@ -11,6 +11,8 @@
 		
 		jq("#chart-previous-searches-display").hide();
 		
+		updateSearchHistoryDisplay();
+		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
         });
@@ -164,16 +166,17 @@
 		
 		function submitChartSearchFormWithAjax() {
 			var searchText = document.getElementById('searchText');
+			var searchHistory = jsonAfterParse.searchHistory;
 			
-			//if (searchText.value != "") {
-				 hideSearchSuggestions();
-				 jq("#chart-previous-searches-display").hide();
-				 jq(".obsgroup_view").empty();
-				 jq("#found-results-summary").html('');
-				 jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+				hideSearchSuggestions();
+				jq("#chart-previous-searches-display").hide();
+				jq(".obsgroup_view").empty();
+				jq("#found-results-summary").html('');
+				jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+				
 				jq.ajax({
 					type: "POST",
-					 url: "${ ui.actionLink('getResultsFromTheServer') }",
+					url: "${ ui.actionLink('getResultsFromTheServer') }",
 					data: jq('#chart-search-form-submit').serialize(),
 					dataType: "json",
 					success: function(results) {
@@ -190,12 +193,13 @@
 						
 						//show updated facets
 						jq(".inside_filter_categories").fadeIn(500);
+						
+						updateSearchHistoryDisplay();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);
 					}
 				});
-			//}
 		}
 		
 		var delay = (function() {
@@ -306,6 +310,32 @@
 		
 		function strStartsWith(str, prefix) {
 		    return str.indexOf(prefix) === 0;
+		}
+		
+		function updateSearchHistoryDisplay() {//TODO Rename this method to mention that it's for main page since we shall provide another for preference page
+			var history = jsonAfterParse.searchHistory;
+			var historyToDisplay = "";
+			
+			for(i = 0; i < history.length; i++) {
+				historyToDisplay += "'<b>" + history[i].searchPhrase + "</b>' At: " + formatDate(history[i].lastSearhedAt) + "<br />";
+			}
+			
+			jq("#chart-previous-searches-display").html(historyToDisplay);
+		}
+		
+		function formatDate(dateToFormat) {//TODO Write a better method
+			var dd = dateToFormat.date;
+		    var mm = dateToFormat.month + 1; //January is 0!
+		
+		    var yyyy = dateToFormat.year;
+		    if(dd<10){
+		        dd='0'+dd
+		    } 
+		    if(mm<10){
+		        mm='0'+mm
+		    } 
+		    
+			return dd+'/'+mm+'/'+yyyy;
 		}
 		
     });
@@ -480,6 +510,7 @@
 		background-color: white;
 		padding-left: 10px;
 		border-left: 2px solid #9C9A9A;
+		color:black;
     }
     
     #chart-searches-suggestions {

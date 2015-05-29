@@ -361,12 +361,12 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
     }
 
 	@Override
-    public ChartSearchHistory getSearchHistoryByIUuid(String uuid) {
-	    return dao.getSearchHistoryByIUuid(uuid);
+    public ChartSearchHistory getSearchHistoryByUuid(String uuid) {
+	    return dao.getSearchHistoryByUuid(uuid);
     }
 
 	@Override
-    public List<ChartSearchHistory> getAllSearchesInHistory() {
-	    return dao.getAllSearchesInHistory();
+    public List<ChartSearchHistory> getAllSearchHistory() {
+	    return dao.getAllSearchHistory();
     }
 }

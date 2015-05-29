@@ -4,6 +4,7 @@
     var peviousIndex = 0;
     var wasGoingNext = true;
     var categoryFilterLabel = "";
+    var reversed = false;
     
     jq( document ).ready(function() {
     
@@ -11,7 +12,7 @@
 		
 		jq("#chart-previous-searches-display").hide();
 		
-		updateSearchHistoryDisplay();
+		showHistorySuggestionsOnLoad();
 		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -137,30 +138,62 @@
 		jq("#searchText").keyup(function(key) {
 			var searchText = document.getElementById('searchText').value;
 			
-			if(key.keyCode == 27) {
-		    	hideSearchSuggestions();
-		    	submitChartSearchFormWithAjax();
-		    } else if(key.keyCode == 39 || key.keyCode == 37) {
-		    	//DO NOTHING, since here we are doing
-		    } else if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
-				delay(function() {
-					if (searchText != "" && searchText.length >= 2) {
-						showSearchSuggestions();
-				 	} else {
-				 		hideSearchSuggestions();
-				 	}
-			    }, 50 );
+			if(jq("#chart-previous-searches-display").is(':visible')) {//Suggest History
+				if(key.keyCode == 27) {
+					submitChartSearchFormWithAjax();
+				} else if(key.keyCode == 39 || key.keyCode == 37) {
+			    	//DO NOTHING, since here we are doing
+			    } else if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
+			    	delay(function() {
+						if (searchText != "" && searchText.length >= 1) {
+							updateSearchHistoryDisplay();
+					 	} else {
+					 		updateSearchHistoryDisplay();
+					 	}
+				    }, 50 );
+			    }
+			} else {//Suggest from default search suggestions
+				updateSearchHistoryDisplay();
+				if(key.keyCode == 27) {
+			    	submitChartSearchFormWithAjax();
+			    } else if(key.keyCode == 39 || key.keyCode == 37) {
+			    	//DO NOTHING, since here we are doing
+			    } else if ((key.keyCode >= 48 && key.keyCode <= 90) || key.keyCode != 13 || key.keyCode == 8) {//use numbers and letters plus backspace only
+					delay(function() {
+						if (searchText != "" && searchText.length >= 2) {
+							showSearchSuggestions();
+					 	} else {
+					 		hideSearchSuggestions();
+					 	}
+				    }, 50 );
+			    }
 		    }
 		    
 			return false;
 		});
 		
 		jq("body").on("click", "#chart-searches-suggestions", function (event) {
-			var selectedSuggestion = event.target.innerText;
-			
-			jq('#searchText').val(selectedSuggestion);
-			submitChartSearchFormWithAjax();
-			
+			if(event.target.localName === "a") {
+				var selectedSuggestion = event.target.innerText;
+				
+				jq('#searchText').val(selectedSuggestion);
+				submitChartSearchFormWithAjax();
+			}
+			return false;
+		});
+		
+		jq("body").on("click", "#chart-previous-searches-display", function (event) {
+			if(event.target.localName === "a") {
+				var selectedHistory = event.target.innerText;
+				
+				jq('#searchText').val(selectedHistory);
+				submitChartSearchFormWithAjax();
+			} else if(event.target.localName === "i") {
+				var uuid = event.target.id;
+				if(uuid) {
+					deleteSearchHistory(uuid);
+				}
+			}
 			return false;
 		});
 		
@@ -194,7 +227,7 @@
 						//show updated facets
 						jq(".inside_filter_categories").fadeIn(500);
 						
-						updateSearchHistoryDisplay();
+						showHistorySuggestionsOnLoad();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);
@@ -312,30 +345,61 @@
 		    return str.indexOf(prefix) === 0;
 		}
 		
-		function updateSearchHistoryDisplay() {//TODO Rename this method to mention that it's for main page since we shall provide another for preference page
-			var history = jsonAfterParse.searchHistory;
+		function showHistorySuggestionsOnLoad() {//TODO Rename this method to mention that it's for main page since we shall provide another for preference page
 			var historyToDisplay = "";
+			var history = jsonAfterParse.searchHistory.reverse();
+			
+			reversed = true;
 			
 			for(i = 0; i < history.length; i++) {
-				historyToDisplay += "'<b>" + history[i].searchPhrase + "</b>' At: " + formatDate(history[i].lastSearhedAt) + "<br />";
+				//TODO use; var lastSearchedAt = new Date(1432892071355), history[i].lastSearchedAt for re-formatting date
+				historyToDisplay += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history[i].searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history[i].formattedLastSearchedAt + "</em><i id='" + history[i].uuid + "' class='icon-remove delete-search-history'></i></div>"; 
 			}
 			
 			jq("#chart-previous-searches-display").html(historyToDisplay);
 		}
 		
-		function formatDate(dateToFormat) {//TODO Write a better method
-			var dd = dateToFormat.date;
-		    var mm = dateToFormat.month + 1; //January is 0!
+		function updateSearchHistoryDisplay() {
+			var historyArray;
+			var historySuggestions = "";
+			var searchText = jq('#searchText').val();
+			
+			if(reversed === true) {
+				historyArray = jsonAfterParse.searchHistory
+			} else {
+				historyArray = jsonAfterParse.searchHistory.reverse();
+				reversed = true;
+			}
+			
+			for(i = 0; i < historyArray.length; i++) {
+				var history = historyArray[i];
+				
+				if(strStartsWith(history.searchPhrase.toUpperCase(), searchText.toUpperCase()) && historySuggestions.indexOf(history) <= 0) {
+					historySuggestions += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history.searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history.formattedLastSearchedAt + "</em><i id='" + history.uuid + "' class='icon-remove delete-search-history'></i></div>";
+				}
+			}
+			
+			document.getElementById('chart-previous-searches-display').innerHTML = historySuggestions;
+		}
 		
-		    var yyyy = dateToFormat.year;
-		    if(dd<10){
-		        dd='0'+dd
-		    } 
-		    if(mm<10){
-		        mm='0'+mm
-		    } 
-		    
-			return dd+'/'+mm+'/'+yyyy;
+		function deleteSearchHistory(historyUuid) {
+			if(historyUuid) {
+				jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('deleteSearchHistory') }",
+					data: {"historyUuid":historyUuid},
+					dataType: "json",
+					success: function(updatedHistory) {
+						var history = updatedHistory.searchHistory;
+						
+						jsonAfterParse.searchHistory = history;
+						showHistorySuggestionsOnLoad();
+					},
+					error: function(e) {
+						//DO Nothing
+					}
+				});
+			}
 		}
 		
     });
@@ -505,12 +569,13 @@
     	position: absolute;
 		z-index: 1;
 		height: 250px;
-		width: 781px;
+		width: 775px;
 		overflow: scroll;
 		background-color: white;
 		padding-left: 10px;
+		padding-right: 5px;
 		border-left: 2px solid #9C9A9A;
-		color:black;
+		color: black;
     }
     
     #chart-searches-suggestions {
@@ -537,7 +602,17 @@
     	color:rgb(131, 128, 128);
     	text-align:center;
     }
-
+    
+    .search-history-item {
+		height: 25px;
+		border-bottom: 1px solid #A8ACAC;
+	}
+	
+    .delete-search-history {
+    	float:right;
+    	cursor: pointer;
+    }
+	
 </style>
 
 <article id="search-box">

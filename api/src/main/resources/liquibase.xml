@@ -212,10 +212,10 @@
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
-			<column name="user_id" type="int(11)" >
+			<column name="user_id" type="int" >
 				<constraints nullable="false" />
 			</column>
-			<column name="patient_id" type="int(11)" >
+			<column name="patient_id" type="int" >
 				<constraints nullable="false" />
 			</column>
 		</createTable>

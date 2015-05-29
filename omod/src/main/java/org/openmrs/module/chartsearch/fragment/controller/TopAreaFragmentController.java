@@ -15,7 +15,10 @@ package org.openmrs.module.chartsearch.fragment.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.sf.json.JSONObject;
+
 import org.openmrs.Patient;
+import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
@@ -34,9 +37,20 @@ public class TopAreaFragmentController {
 	                                      @RequestParam("patientId") Patient patient, HttpServletRequest request) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
-		String phrase = search_phrase.getPhrase();
 		
 		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
 		return GeneratingJson.generateJson();
+	}
+	
+	public JSONObject deleteSearchHistory(@RequestParam("historyUuid") String historyUuid) {
+		JSONObject json = new JSONObject();
+		ChartSearchCache cache = new ChartSearchCache();
+		
+		if (cache.deleteSearchHistory(historyUuid)) {
+			json.put("searchHistory", GeneratingJson.getAllSearchHistoriesToSendToTheUI());
+			
+			return json;
+		} else
+			return null;
 	}
 }

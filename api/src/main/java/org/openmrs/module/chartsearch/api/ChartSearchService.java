@@ -193,7 +193,7 @@ public interface ChartSearchService extends OpenmrsService {
 	
 	public void deleteSearchHistory(ChartSearchHistory searchHistory);
 	
-	public ChartSearchHistory getSearchHistoryByIUuid(String uuid);
+	public ChartSearchHistory getSearchHistoryByUuid(String uuid);
 	
-	public List<ChartSearchHistory> getAllSearchesInHistory();
+	public List<ChartSearchHistory> getAllSearchHistory();
 }

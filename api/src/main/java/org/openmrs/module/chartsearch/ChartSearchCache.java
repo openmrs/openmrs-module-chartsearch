@@ -33,25 +33,23 @@ public class ChartSearchCache {
 	
 	public void saveOrUpdateSearchHistory(String searchText, Integer patientId) {
 		ChartSearchHistory history = new ChartSearchHistory();
-		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(searchText);
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
+		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText);
 		
 		if (StringUtils.isNotBlank(searchText) && null != patientId) {
 			history.setHistoryOwner(Context.getAuthenticatedUser());
 			history.setPatient(Context.getPatientService().getPatient(patientId));
 			history.setSearchPhrase(searchText);
-			
-			if (null != exisitingHistory) {
-				history = exisitingHistory;
-			}
 			history.setLastSearchedAt(new Date());//Date was duplicated, probably use Calendar
 			
+			if (null != exisitingHistory) {
+				chartSearchService.deleteSearchHistory(exisitingHistory);
+			}
 			chartSearchService.saveSearchHistory(history);
 		}
 	}
 	
-	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(String searchText) {
-		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchesInHistory();
-		
+	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(List<ChartSearchHistory> allHistory, String searchText) {
 		if (!allHistory.isEmpty()) {
 			for (int i = 0; i < allHistory.size(); i++) {
 				ChartSearchHistory history = allHistory.get(i);
@@ -61,6 +59,23 @@ public class ChartSearchCache {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Deletes a search history whose uuid is provided
+	 * 
+	 * @see ChartSearchService#deleteSearchHistory(ChartSearchHistory)
+	 * @param historyUuid
+	 * @return deleted, whether the history was or not deleted
+	 */
+	public boolean deleteSearchHistory(String historyUuid) {
+		ChartSearchHistory history = chartSearchService.getSearchHistoryByUuid(historyUuid);
+		
+		if (StringUtils.isNotBlank(historyUuid)) {
+			chartSearchService.deleteSearchHistory(history);
+			return true;
+		} else
+			return false;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

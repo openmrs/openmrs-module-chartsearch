@@ -107,15 +107,16 @@ public class GeneratingJson {
 		return searchSuggestions;
 	}
 	
-	private static JSONArray getAllSearchHistoriesToSendToTheUI() {
+	public static JSONArray getAllSearchHistoriesToSendToTheUI() {
 		JSONArray histories = new JSONArray();
-		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchesInHistory();
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		
 		for (ChartSearchHistory history : allHistory) {
 			JSONObject json = new JSONObject();
 			if (Context.getAuthenticatedUser().equals(history.getHistoryOwner())) {
 				json.put("searchPhrase", history.getSearchPhrase());
-				json.put("lastSearhedAt", history.getLastSearchedAt());
+				json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
+				json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
 				json.put("uuid", history.getUuid());
 				json.put("patientId", history.getPatient().getPatientId());
 			}

@@ -176,7 +176,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	}
 	
 	@Override
-	public ChartSearchHistory getSearchHistoryByIUuid(String uuid) {
+	public ChartSearchHistory getSearchHistoryByUuid(String uuid) {
 		ChartSearchHistory history = (ChartSearchHistory) sessionFactory.getCurrentSession()
 		        .createQuery("from ChartSearchHistory h where h.uuid = :uuid").setString("uuid", uuid).uniqueResult();
 		
@@ -185,7 +185,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	
 	@SuppressWarnings("unchecked")
     @Override
-	public List<ChartSearchHistory> getAllSearchesInHistory() {
+	public List<ChartSearchHistory> getAllSearchHistory() {
 		return sessionFactory.getCurrentSession().createCriteria(ChartSearchHistory.class).list();
 	}
 	

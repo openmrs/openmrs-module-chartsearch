@@ -575,7 +575,7 @@
 		padding-left: 10px;
 		padding-right: 5px;
 		border-left: 2px solid #9C9A9A;
-		color: black;
+		color: #949494;
     }
     
     #chart-searches-suggestions {

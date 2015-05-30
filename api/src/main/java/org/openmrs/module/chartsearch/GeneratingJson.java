@@ -112,15 +112,20 @@ public class GeneratingJson {
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		
 		for (ChartSearchHistory history : allHistory) {
-			JSONObject json = new JSONObject();
-			if (Context.getAuthenticatedUser().equals(history.getHistoryOwner())) {
+			JSONObject json = null;
+			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
+			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
+				json = new JSONObject();
+				
 				json.put("searchPhrase", history.getSearchPhrase());
 				json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
 				json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
 				json.put("uuid", history.getUuid());
 				json.put("patientId", history.getPatient().getPatientId());
 			}
-			histories.add(json);
+			if(null != json) {
+				histories.add(json);
+			}
 		}
 		
 		return histories;

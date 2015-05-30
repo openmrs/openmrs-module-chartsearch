@@ -138,7 +138,7 @@
 		jq("#searchText").keyup(function(key) {
 			var searchText = document.getElementById('searchText').value;
 			
-			if(jq("#chart-previous-searches-display").is(':visible')) {//Suggest History
+			if(jq("#chart-previous-searches-display").is(':visible') && jsonAfterParse.searchHistory.length !== 0) {//Suggest History
 				if(key.keyCode == 27) {
 					submitChartSearchFormWithAjax();
 				} else if(key.keyCode == 39 || key.keyCode == 37) {

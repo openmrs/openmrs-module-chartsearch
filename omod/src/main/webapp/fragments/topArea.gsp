@@ -6,7 +6,7 @@
     var categoryFilterLabel = "";
     var reversed = false;
     
-    jq( document ).ready(function() {
+    jq(document).ready(function() {
     
 		jq('#searchText').focus();
 		
@@ -377,6 +377,11 @@
 				if(strStartsWith(history.searchPhrase.toUpperCase(), searchText.toUpperCase()) && historySuggestions.indexOf(history) <= 0) {
 					historySuggestions += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history.searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history.formattedLastSearchedAt + "</em><i id='" + history.uuid + "' class='icon-remove delete-search-history'></i></div>";
 				}
+			}
+			if(historySuggestions === "") {
+				showSearchSuggestions();
+			} else {
+				hideSearchSuggestions();
 			}
 			
 			document.getElementById('chart-previous-searches-display').innerHTML = historySuggestions;

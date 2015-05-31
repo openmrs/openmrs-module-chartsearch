@@ -6,23 +6,23 @@
 		user="openmrs" />
 	<document>
 		<entity name="obs"
-			query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
-			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name
-			  FROM openmrs.obs o 
-			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1 on cn1.concept_id = o.concept_id 
-			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded
-			  LEFT join (SELECT DISTINCT o.concept_id, class.name AS concept_class_name FROM concept_class class JOIN concept c ON c.class_id = class.concept_class_id
-							JOIN obs o ON o.concept_id = c.concept_id) AS cc ON cc.concept_id = o.concept_id 
-			  WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn1.voided=0"
+			query="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name, cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name, cn3.name AS concept_synonym FROM openmrs.obs o 
+				INNER JOIN (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') AS cn1 ON cn1.concept_id = o.concept_id 
+				LEFT JOIN (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') AS cn2 ON cn2.concept_id = o.value_coded
+				LEFT JOIN  (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type IS NULL) AS cn3 ON cn3.concept_id = o.concept_id
+				LEFT JOIN (SELECT DISTINCT o.concept_id, class.name AS concept_class_name FROM concept_class class 
+				JOIN concept c ON c.class_id = class.concept_class_id
+				JOIN obs o ON o.concept_id = c.concept_id) AS cc ON cc.concept_id = o.concept_id 
+			WHERE person_id='${dataimporter.request.personId}' AND o.voided=0 AND cn1.voided=0"
 
-			deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name,   
-			  cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name
-			  FROM openmrs.obs o 
-			  inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1  on cn1.concept_id = o.concept_id 
-			  LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded
-			  LEFT join (SELECT DISTINCT o.concept_id, class.name AS concept_class_name FROM concept_class class JOIN concept c ON c.class_id = class.concept_class_id
-							JOIN obs o ON o.concept_id = c.concept_id) AS cc ON cc.concept_id = o.concept_id  
-			  WHERE o.uuid='${dih.delta.id}' AND o.voided=0 AND cn1.voided=0"
+			deltaImportQuery="SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name, cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name, cn3.name AS concept_synonym FROM openmrs.obs o 
+				INNER JOIN (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') AS cn1 ON cn1.concept_id = o.concept_id 
+				LEFT JOIN (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') AS cn2 ON cn2.concept_id = o.value_coded
+				LEFT JOIN  (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type IS NULL) AS cn3 ON cn3.concept_id = o.concept_id
+				LEFT JOIN (SELECT DISTINCT o.concept_id, class.name AS concept_class_name FROM concept_class class 
+				JOIN concept c ON c.class_id = class.concept_class_id
+				JOIN obs o ON o.concept_id = c.concept_id) AS cc ON cc.concept_id = o.concept_id 
+			WHERE o.uuid='${dih.delta.id}' AND o.voided=0 AND cn1.voided=0"
 
 			deltaQuery="select o.uuid as id from openmrs.obs o 
 				inner join concept_name cn on cn.concept_id = o.concept_id

@@ -228,6 +228,8 @@
 						jq(".inside_filter_categories").fadeIn(500);
 						
 						showHistorySuggestionsOnLoad();
+						hideSearchSuggestions();
+						jq("#chart-previous-searches-display").hide();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

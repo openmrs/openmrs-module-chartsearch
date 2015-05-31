@@ -29,6 +29,7 @@ import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
+import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
@@ -259,5 +260,12 @@ public class ChartSearchSearcher {
 		//TODO use iteration when adding other facet fields rather than concept class
 		FacetField conceptNameFacet = conceptNameFacets.get(0);
 		return conceptNameFacet.getValues();
+	}
+	
+	public Obs getObservationOfSynonym(String synonym) {
+		Obs obs = null;
+		
+		
+		return obs;
 	}
 }

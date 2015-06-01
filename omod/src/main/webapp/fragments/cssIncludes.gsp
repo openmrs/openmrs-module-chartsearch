@@ -165,12 +165,15 @@ div.ui-datepicker{
 	
 	.dropdown .inside_categories_filter:hover a {
 		color:#161616;
-		height:27px;
 		text-shadow: 1px 1px 1px #ffffff;
 	}
 	
-	.dropdown-name i {
+	.dropdown .inside_categories_filter a {
+		height:27px;
+	}
 	
+	.dropdown .inside_categories_filter i {
+		color:black;
 	}
 
 	.single_filter_option {

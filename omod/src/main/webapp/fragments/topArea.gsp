@@ -108,7 +108,7 @@
 		});
 		
 		jq('#category_dropdown').on('click', function(e){
-		    jq('#filter_categories_categories').addClass('display_filter_onclick');
+		    jq('#filter_categories_categories').toggleClass('display_filter_onclick');
 		});
 		jq('#hide_categories').on('click', function(e){
 		    jq('#filter_categories_categories').removeClass('display_filter_onclick');

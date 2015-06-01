@@ -55,7 +55,7 @@ public class GeneratingJson {
 		return chartSearchService;
 	}
 	
-	public static String generateJson() {
+	public static String generateJson(boolean wholePageIsToBeLoaded) {
 		
 		JSONObject jsonToReturn = new JSONObject();
 		@SuppressWarnings("rawtypes")
@@ -89,7 +89,7 @@ public class GeneratingJson {
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
-		JSONArray history = getAllSearchHistoriesToSendToTheUI();
+		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
@@ -107,7 +107,7 @@ public class GeneratingJson {
 		return searchSuggestions;
 	}
 	
-	public static JSONArray getAllSearchHistoriesToSendToTheUI() {
+	public static JSONArray getAllSearchHistoriesToSendToTheUI(boolean wholePageIsToBeLoaded) {
 		JSONArray histories = new JSONArray();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		
@@ -117,13 +117,17 @@ public class GeneratingJson {
 			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
 				json = new JSONObject();
 				
-				json.put("searchPhrase", history.getSearchPhrase());
+				if(wholePageIsToBeLoaded) {
+					json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
+				} else {
+					json.put("searchPhrase", history.getSearchPhrase());	
+				}
 				json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
 				json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
 				json.put("uuid", history.getUuid());
 				json.put("patientId", history.getPatient().getPatientId());
 			}
-			if(null != json) {
+			if (null != json) {
 				histories.add(json);
 			}
 		}
@@ -461,5 +465,12 @@ public class GeneratingJson {
 		counts.put("name", facet.getName());
 		counts.put("count", facet.getCount());
 		return counts;
+	}
+	
+	private static String appendBackwardSlashBeforeDoubleQuotes(String str) {
+		if (str.contains("\"")) {
+			str = str.replace("\"", "\\\"");
+		}
+		return str;
 	}
 }

@@ -37,13 +37,19 @@ public class ChartSearchCache {
 		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText);
 		
 		if (StringUtils.isNotBlank(searchText) && null != patientId) {
-			history.setHistoryOwner(Context.getAuthenticatedUser());
-			history.setPatient(Context.getPatientService().getPatient(patientId));
-			history.setSearchPhrase(searchText);
 			history.setLastSearchedAt(new Date());//Date was duplicated, probably use Calendar
 			
-			if (null != exisitingHistory) {
+			if (null != exisitingHistory) {//change only the date to current and generate new searchId
+				history.setHistoryOwner(exisitingHistory.getHistoryOwner());
+				history.setPatient(exisitingHistory.getPatient());
+				history.setSearchPhrase(exisitingHistory.getSearchPhrase());
+				history.setUuid(exisitingHistory.getUuid());
+				
 				chartSearchService.deleteSearchHistory(exisitingHistory);
+			} else {
+				history.setHistoryOwner(Context.getAuthenticatedUser());
+				history.setPatient(Context.getPatientService().getPatient(patientId));
+				history.setSearchPhrase(searchText);
 			}
 			chartSearchService.saveSearchHistory(history);
 		}

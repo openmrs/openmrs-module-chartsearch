@@ -24,7 +24,7 @@ public class ResultBoxFragmentController {
 	public void controller(FragmentModel fragmentModel) {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		ArrayList<String> resultList = new ArrayList<String>();
-		resultList.add(GeneratingJson.generateJson());
+		resultList.add(GeneratingJson.generateJson(true));
 		searchAPI.clearResults();
 		fragmentModel.addAttribute("resultList", resultList);//bind the result list for the view
 	}

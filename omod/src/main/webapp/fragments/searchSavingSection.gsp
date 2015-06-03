@@ -439,7 +439,7 @@
 		            jq("#favorite-search-record").addClass("icon-star");
 		            if(cats.length !== 0) {
 		            	if(cats[0] !== "") {
-		            		jq("#category-filter_method").text(cats[0] + "...");
+		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");
 		            	}
 		            }
 		        },

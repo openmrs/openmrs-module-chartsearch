@@ -26,6 +26,7 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -196,4 +197,14 @@ public interface ChartSearchService extends OpenmrsService {
 	public ChartSearchHistory getSearchHistoryByUuid(String uuid);
 	
 	public List<ChartSearchHistory> getAllSearchHistory();
+	
+	public ChartSearchBookmark getSearchBookmark(Integer bookmarkId);
+	
+	public void saveSearchBookmark(ChartSearchBookmark bookmark);
+	
+	public void deleteSearchBookmark(ChartSearchBookmark bookmark);
+	
+	public List<ChartSearchBookmark> getAllSearchBookmarks();
+	
+	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid);
 }

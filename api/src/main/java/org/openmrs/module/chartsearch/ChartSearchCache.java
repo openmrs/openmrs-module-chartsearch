@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -26,7 +27,6 @@ import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
  */
 public class ChartSearchCache {
 	
-	//addHistory
 	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
 	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
@@ -82,6 +82,57 @@ public class ChartSearchCache {
 			return true;
 		} else
 			return false;
+	}
+	
+	public boolean checkIfPhraseExisitsInHistory(String searchPhrase) {
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
+		boolean exists = false;
+		
+		for (ChartSearchHistory history : allHistory) {
+			if (history.getSearchPhrase().equals(searchPhrase)) {
+				exists = true;
+			}
+		}
+		
+		return exists;
+	}
+	
+	public String saveOrUpdateBookmark(String selectedCategories, String searchPhrase, String bookmarkName, Integer patientId) {
+		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId) {
+			ChartSearchBookmark bookmark = new ChartSearchBookmark();
+			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, bookmarkName,
+			    selectedCategories);
+			
+			if (null != existingBookmark) {
+				return existingBookmark.getUuid();
+			} else {
+				bookmark.setBookmarkName(bookmarkName);
+				bookmark.setSearchPhrase(searchPhrase);
+				bookmark.setPatient(Context.getPatientService().getPatient(patientId));
+				bookmark.setSelectedCategories(selectedCategories);
+				bookmark.setBookmarkOwner(Context.getAuthenticatedUser());
+				chartSearchService.saveSearchBookmark(bookmark);
+				
+				return chartSearchService.getSearchBookmarkByUuid(bookmark.getUuid()).getUuid();
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	public ChartSearchBookmark checkIfBookmarkExistsForPhrase(String phrase, String bookmarkName, String categories) {
+		List<ChartSearchBookmark> existingBookmarks = chartSearchService.getAllSearchBookmarks();
+		
+		if (!existingBookmarks.isEmpty()) {
+			for (ChartSearchBookmark bookmark : existingBookmarks) {
+				if (bookmark.getSearchPhrase().equals(phrase) && bookmark.getBookmarkName().equals(bookmark)
+				        && bookmark.getSelectedCategories().equals(categories)) {
+					return bookmark;
+				}
+			}
+		}
+		
+		return null;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

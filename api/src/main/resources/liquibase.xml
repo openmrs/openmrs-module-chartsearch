@@ -226,5 +226,45 @@
 			baseTableName="chartsearch_history" baseColumnNames="patient_id"
 			referencedTableName="patient" referencedColumnNames="patient_id"/>
 	</changeSet>
+	
+	<changeSet id="CSM-81_02062015_1446" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="chartsearch_bookmark" />
+			</not>
+		</preConditions>
+		<comment>
+			Create chartsearch_bookmark table
+		</comment>
+		<createTable tableName="chartsearch_bookmark">
+			<column name="bookmark_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="bookmark_name" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="search_phrase" type="text">
+				<constraints nullable="false" />
+			</column>
+			<column name="selected_categories" type="text">
+				<constraints nullable="true" />
+			</column>
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="user_id" type="int" >
+				<constraints nullable="false" />
+			</column>
+			<column name="patient_id" type="int" >
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="bookmark_owner-fk"
+			baseTableName="chartsearch_bookmark" baseColumnNames="user_id"
+			referencedTableName="users" referencedColumnNames="user_id"/>
+		<addForeignKeyConstraint constraintName="patient-fk"
+			baseTableName="chartsearch_bookmark" baseColumnNames="patient_id"
+			referencedTableName="patient" referencedColumnNames="patient_id"/>
+	</changeSet>
 
 </databaseChangeLog>

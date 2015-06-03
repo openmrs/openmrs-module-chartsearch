@@ -190,6 +190,7 @@
     			var bookmarkUuid = event.target.id;
     			deleteSearchBookmark(bookmarkUuid, false);
     		} else if(event.target.localName === "a") {
+    			window.open('../chartsearch/chartSearchManager.page?tab=2', '_blank');
     			return false;
     		} else if(event.target.localName === "div" || event.target.localName === "b" || event.target.localName === "em") {
     			var bookmarkUuid = event.target.id;
@@ -198,6 +199,22 @@
     				searchUsingBookmark(bookmarkUuid);
     			}
     		}
+    	});
+    	
+    	jq("#history-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=3', '_blank');
+    	});
+    	
+    	jq("#preferences-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=1', '_blank');
+    	});
+    	
+    	jq("#commands-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=4', '_blank');
+    	});
+    	
+    	jq("#settings-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=5', '_blank');
     	});
     	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
@@ -492,6 +509,6 @@
 	<div class="possible-task-list-item" id="history-task-list-item">History Manager</div>
 	<div class="possible-task-list-item" id="bookmark-task-list-item">Bookmarks</div>
 	<div class="possible-task-list-item" id="preferences-task-list-item">Preferences</div>
-	<div class="possible-task-list-item">Commands</div>
-	<div class="possible-task-list-item">Settings</div>
+	<div class="possible-task-list-item" id="commands-task-list-item">Commands</div>
+	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
 </div>

@@ -194,7 +194,7 @@
     			var bookmarkUuid = event.target.id;
     			
     			if(bookmarkUuid !== "lauche-stored-bookmark") {
-	    			searchUsingBookmark();
+    				searchUsingBookmark(bookmarkUuid);
     			}
     		}
     	});
@@ -347,29 +347,102 @@
 			}
     	}
     	
-    });
+	    function displayExistingBookmarks() {
+	    	var bookmarks;
+	    	var bookmarksToDisplay = "";
+	    	
+	    	//if(wholePageIsToBeLoaded) {
+	    		bookmarks = jsonAfterParse.searchBookmarks.reverse();
+	    	/*} else {
+	    		bookmarks = jsonAfterParse.searchBookmarks;
+	    	}*/
+	    	
+	    	for(i = 0; i < bookmarks.length; i++) {
+	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
+	    	}
+	    	
+	    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");
+	    }
+	    
+	    function searchUsingBookmark(bookmarkUuid) {
+	    	if(bookmarkUuid) {
+	    		jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('getSearchBookmarkSearchDetailsByUuid') }",
+					data: {"uuid":bookmarkUuid},
+					dataType: "json",
+					success: function(bookmarks) {
+						var phrase = bookmarks.searchPhrase;
+						var cats = bookmarks.categories;
+						var bkName = bookmarks.bookmarkName;
+						var commaCats = bookmarks.commaCategories;
+						
+						autoFillSearchForm(phrase, cats, bkName);
+						submitChartSearchFormWithAjax2(phrase, cats);
+					},
+					error: function(e) {
+					}
+				});
+	    	}
+	    }
+	    
+	    function autoFillSearchForm(searchPhrase, categories) {
+		    if (searchPhrase) {
+		        jq("#searchText").val(searchPhrase);
+		
+		        if (categories && categories.length !== 0) {
+		            jq('input:checkbox.category_check').each(function() {
+		                jq(this).prop('checked', false);
+		            });
+		
+		            for (i = 0; i < categories.length; i++) {
+		                jq('input:checkbox.category_check').each(function() {
+		                    if (categories[i] === jq(this).val()) {
+		                        jq(this).prop('checked', true);
+		                    }
+		                });
+		            }
+		        }
+		    }
+		}
+		
+		function submitChartSearchFormWithAjax2(phrase, cats, bkName) {
+		    var searchText = document.getElementById('searchText');
+		
+		    jq("#lauche-stored-bookmark").hide();
+		    jq("#lauche-other-chartsearch-features").hide();
+		    jq("#chart-previous-searches-display").hide();
+		    jq(".obsgroup_view").empty();
+		    jq("#found-results-summary").html('');
+		    jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+		
+		    jq.ajax({
+		        type: "POST",
+		        url: "${ ui.actionLink('getResultsFromTheServer') }",
+		        data: jq('#chart-search-form-submit').serialize(),
+		        dataType: "json",
+		        success: function(results) {
+		            jq("#obsgroups_results").html('');
+		            jq(".inside_filter_categories").fadeOut(500);
+		
+		            jsonAfterParse = JSON.parse(results);
+		            refresh_data();
+		
+		            jq(".results_table_wrap").fadeIn(500);
+		            jq('#first_obs_single').trigger('click');
+		            jq(".inside_filter_categories").fadeIn(500);
+		            jq("#current-bookmark-name").val(bkName);
+		            jq("#bookmark-category-names").text(cats);
+		            jq("#bookmark-search-phrase").text(phrase);
+		            jq("#favorite-search-record").removeClass("icon-star-empty");
+		            jq("#favorite-search-record").addClass("icon-star");
+		        },
+		        error: function(e) {}
+		    });
+		}
     
-    function displayExistingBookmarks() {
-    	var bookmarks;
-    	var bookmarksToDisplay = "";
-    	
-    	//if(wholePageIsToBeLoaded) {
-    		bookmarks = jsonAfterParse.searchBookmarks.reverse();
-    	/*} else {
-    		bookmarks = jsonAfterParse.searchBookmarks;
-    	}*/
-    	
-    	for(i = 0; i < bookmarks.length; i++) {
-    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
-    	}
-    	
-    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");
-    }
+	});
     
-    function searchUsingBookmark() {
-    	//TODO, set app the categories parameter etc by auto filling stuff in the search form and call submitChartSearchFormWithAjax()
-    	//TODO after then show search as already bookmarked after search
-    }
        
 </script>
 

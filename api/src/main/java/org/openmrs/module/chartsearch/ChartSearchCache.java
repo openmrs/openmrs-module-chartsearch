@@ -178,6 +178,22 @@ public class ChartSearchCache {
 			return null;
 	}
 	
+	public JSONObject getSearchBookmarkSearchDetailsByUuid(String uuid) {
+		if (StringUtils.isNotBlank(uuid)) {
+			ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
+			JSONObject json = new JSONObject();
+			String[] categories = bookmark.getSelectedCategories().split(", ");
+			
+			json.put("searchPhrase", bookmark.getSearchPhrase());
+			json.put("bookmarkName", bookmark.getBookmarkName());
+			json.put("commaCategories", bookmark.getSelectedCategories());
+			json.put("categories", categories);
+			
+			return json;
+		} else
+			return null;
+	}
+	
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)

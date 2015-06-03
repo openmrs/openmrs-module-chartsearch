@@ -233,10 +233,10 @@
 						hideSearchSuggestions();
 						jq("#chart-previous-searches-display").hide();
 						
-						displayExistingBookmarks();
 						jq("#lauche-stored-bookmark").hide();
     					jq("#lauche-other-chartsearch-features").hide();
-    					removeBookmarkAtUIlayer();
+			            jq("#favorite-search-record").removeClass("icon-star");
+			            jq("#favorite-search-record").addClass("icon-star-empty");
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

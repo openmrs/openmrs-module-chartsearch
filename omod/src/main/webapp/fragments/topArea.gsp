@@ -232,6 +232,11 @@
 						showHistorySuggestionsOnLoad();
 						hideSearchSuggestions();
 						jq("#chart-previous-searches-display").hide();
+						
+						displayExistingBookmarks();
+						jq("#lauche-stored-bookmark").hide();
+    					jq("#lauche-other-chartsearch-features").hide();
+    					removeBookmarkAtUIlayer();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

@@ -12,6 +12,12 @@ package org.openmrs.module.chartsearch;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.openmrs.api.context.Context;
@@ -26,6 +32,9 @@ import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
  * the normal cache/buffer
  */
 public class ChartSearchCache {
+	
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer uniqueNumber;
 	
 	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
@@ -97,15 +106,23 @@ public class ChartSearchCache {
 		return exists;
 	}
 	
-	public String saveOrUpdateBookmark(String selectedCategories, String searchPhrase, String bookmarkName, Integer patientId) {
+	public JSONObject saveOrUpdateBookmark(String selectedCategories, String searchPhrase, String bookmarkName,
+	                                       Integer patientId) {
+		JSONObject json = new JSONObject();
+		
 		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId) {
 			ChartSearchBookmark bookmark = new ChartSearchBookmark();
-			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, bookmarkName,
-			    selectedCategories);
+			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, selectedCategories);
 			
 			if (null != existingBookmark) {
-				return existingBookmark.getUuid();
+				existingBookmark.setBookmarkName(bookmarkName);
+				chartSearchService.saveSearchBookmark(existingBookmark);
+				
+				json.put("currentUuid", chartSearchService.getSearchBookmarkByUuid(existingBookmark.getUuid()));
 			} else {
+				if (bookmarkNameExists(bookmarkName)) {
+					bookmarkName += uniqueNumber;
+				}
 				bookmark.setBookmarkName(bookmarkName);
 				bookmark.setSearchPhrase(searchPhrase);
 				bookmark.setPatient(Context.getPatientService().getPatient(patientId));
@@ -113,26 +130,52 @@ public class ChartSearchCache {
 				bookmark.setBookmarkOwner(Context.getAuthenticatedUser());
 				chartSearchService.saveSearchBookmark(bookmark);
 				
-				return chartSearchService.getSearchBookmarkByUuid(bookmark.getUuid()).getUuid();
+				json.put("currentUuid", chartSearchService.getSearchBookmarkByUuid(bookmark.getUuid()).getUuid());
 			}
+			json.put("allBookmarks", GeneratingJson.getAllSearchBookmarksToReturnToUI(false));
+			
+			return json;
 		} else {
 			return null;
 		}
 	}
 	
-	public ChartSearchBookmark checkIfBookmarkExistsForPhrase(String phrase, String bookmarkName, String categories) {
+	private boolean bookmarkNameExists(String bookmarkName) {
 		List<ChartSearchBookmark> existingBookmarks = chartSearchService.getAllSearchBookmarks();
 		
 		if (!existingBookmarks.isEmpty()) {
 			for (ChartSearchBookmark bookmark : existingBookmarks) {
-				if (bookmark.getSearchPhrase().equals(phrase) && bookmark.getBookmarkName().equals(bookmark)
-				        && bookmark.getSelectedCategories().equals(categories)) {
+				if (bookmark.getBookmarkName().equals(bookmarkName)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public ChartSearchBookmark checkIfBookmarkExistsForPhrase(String phrase, String categories) {
+		List<ChartSearchBookmark> existingBookmarks = chartSearchService.getAllSearchBookmarks();
+		
+		if (!existingBookmarks.isEmpty()) {
+			for (ChartSearchBookmark bookmark : existingBookmarks) {
+				if (bookmark.getSearchPhrase().equals(phrase) && bookmark.getSelectedCategories().equals(categories)) {
 					return bookmark;
 				}
 			}
 		}
 		
 		return null;
+	}
+	
+	public JSONArray deleteSearchBookmark(String uuid) {
+		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
+		
+		if (StringUtils.isNotBlank(uuid) && null != bookmark) {
+			chartSearchService.deleteSearchBookmark(bookmark);
+			return GeneratingJson.getAllSearchBookmarksToReturnToUI(false);
+		} else
+			return null;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

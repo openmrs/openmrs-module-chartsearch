@@ -11,9 +11,7 @@ package org.openmrs.module.chartsearch;
 
 import java.util.Date;
 import java.util.List;
-
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import java.util.Random;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -33,8 +31,9 @@ import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
  */
 public class ChartSearchCache {
 	
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer uniqueNumber;
+	Random randomGenerator = new Random();
+	
+	private Integer uniqueNumber = randomGenerator.nextInt(100);
 	
 	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
@@ -121,7 +120,7 @@ public class ChartSearchCache {
 				json.put("currentUuid", chartSearchService.getSearchBookmarkByUuid(existingBookmark.getUuid()));
 			} else {
 				if (bookmarkNameExists(bookmarkName)) {
-					bookmarkName += uniqueNumber;
+					bookmarkName += "(" + uniqueNumber + ")";
 				}
 				bookmark.setBookmarkName(bookmarkName);
 				bookmark.setSearchPhrase(searchPhrase);

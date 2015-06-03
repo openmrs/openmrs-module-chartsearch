@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -37,4 +38,14 @@ public interface ChartSearchDAO {
 	public ChartSearchHistory getSearchHistoryByUuid(String uuid);
 	
 	public List<ChartSearchHistory> getAllSearchHistory();
+	
+	public ChartSearchBookmark getSearchBookmark(Integer bookmarkId);
+	
+	public void saveSearchBookmark(ChartSearchBookmark bookmark);
+	
+	public void deleteSearchBookmark(ChartSearchBookmark bookmark);
+	
+	public List<ChartSearchBookmark> getAllSearchBookmarks();
+	
+	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid);
 }

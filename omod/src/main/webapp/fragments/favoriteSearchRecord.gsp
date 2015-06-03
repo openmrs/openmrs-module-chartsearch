@@ -1,1 +1,0 @@
-<div class="search-record-dialog-content" id="favorite-search-record-dialog">Favoriting or bookmarking Search Results</div>

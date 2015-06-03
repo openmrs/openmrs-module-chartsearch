@@ -108,7 +108,9 @@
 		});
 		
 		jq('#category_dropdown').on('click', function(e){
-		    jq('#filter_categories_categories').toggleClass('display_filter_onclick');
+			if(e.target.localName !== "a" && e.target.localName !== "input") {
+		    	jq('#filter_categories_categories').toggleClass('display_filter_onclick');
+		    }
 		});
 		jq('#hide_categories').on('click', function(e){
 		    jq('#filter_categories_categories').removeClass('display_filter_onclick');
@@ -631,7 +633,7 @@
                         <input type="text" name="patientId" id="patient_id" value=${patientId} hidden>
                         <div id="chart_search_form_inputs-searchPhrase">
                         	<input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
-                        	<i id="chart-previous-searches" class="icon-arrow-down medium"></i>
+                        	<i id="chart-previous-searches" class="icon-arrow-down medium" title="History"></i>
                         	<input type="submit" id="searchBtn" class="button inline chart_search_form_button" value="search"/>
                         </div>
                         <div id="chart-previous-searches-display">
@@ -673,7 +675,7 @@
 										<a class="single_filter_option" onclick="time_filter(14, 'Last 2 Weeks')">Last 2 Weeks</a>
                                         <a class="single_filter_option" onclick="time_filter(31, 'Last Month')">Last Month</a>
 										<a class="single_filter_option" onclick="time_filter(93, 'Last 3 Months')">Last 3 Months</a>
-                                    <a class="single_filter_option" onclick="time_filter(183, 'Last 6 Months')">Last 6 Months</a>
+                                    	<a class="single_filter_option" onclick="time_filter(183, 'Last 6 Months')">Last 6 Months</a>
                                         <a class="single_filter_option" onclick="time_filter(365, 'Last Year')">Last Year</a>
                                         <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
                                 </div>

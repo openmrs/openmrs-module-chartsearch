@@ -47,6 +47,7 @@ import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -344,29 +345,54 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		
 		return conceptNameSuggestions;
 	}
-
+	
 	@Override
-    public ChartSearchHistory getSearchHistory(Integer searchId) {
-	    return dao.getSearchHistory(searchId);
-    }
-
+	public ChartSearchHistory getSearchHistory(Integer searchId) {
+		return dao.getSearchHistory(searchId);
+	}
+	
 	@Override
-    public void saveSearchHistory(ChartSearchHistory searchHistory) {
-	    dao.saveSearchHistory(searchHistory);
-    }
-
+	public void saveSearchHistory(ChartSearchHistory searchHistory) {
+		dao.saveSearchHistory(searchHistory);
+	}
+	
 	@Override
-    public void deleteSearchHistory(ChartSearchHistory searchHistory) {
-	    dao.deleteSearchHistory(searchHistory);
-    }
-
+	public void deleteSearchHistory(ChartSearchHistory searchHistory) {
+		dao.deleteSearchHistory(searchHistory);
+	}
+	
 	@Override
-    public ChartSearchHistory getSearchHistoryByUuid(String uuid) {
-	    return dao.getSearchHistoryByUuid(uuid);
-    }
-
+	public ChartSearchHistory getSearchHistoryByUuid(String uuid) {
+		return dao.getSearchHistoryByUuid(uuid);
+	}
+	
 	@Override
-    public List<ChartSearchHistory> getAllSearchHistory() {
-	    return dao.getAllSearchHistory();
-    }
+	public List<ChartSearchHistory> getAllSearchHistory() {
+		return dao.getAllSearchHistory();
+	}
+	
+	@Override
+	public ChartSearchBookmark getSearchBookmark(Integer bookmarkId) {
+		return dao.getSearchBookmark(bookmarkId);
+	}
+	
+	@Override
+	public void saveSearchBookmark(ChartSearchBookmark bookmark) {
+		dao.saveSearchBookmark(bookmark);
+	}
+	
+	@Override
+	public void deleteSearchBookmark(ChartSearchBookmark bookmark) {
+		dao.deleteSearchBookmark(bookmark);
+	}
+	
+	@Override
+	public List<ChartSearchBookmark> getAllSearchBookmarks() {
+		return dao.getAllSearchBookmarks();
+	}
+	
+	@Override
+	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid) {
+		return dao.getSearchBookmarkByUuid(uuid);
+	}
 }

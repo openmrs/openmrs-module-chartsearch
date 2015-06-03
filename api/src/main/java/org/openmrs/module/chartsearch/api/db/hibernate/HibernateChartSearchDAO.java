@@ -29,6 +29,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -184,9 +185,38 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	public List<ChartSearchHistory> getAllSearchHistory() {
 		return sessionFactory.getCurrentSession().createCriteria(ChartSearchHistory.class).list();
+	}
+	
+	@Override
+	public ChartSearchBookmark getSearchBookmark(Integer bookmarkId) {
+		return (ChartSearchBookmark) sessionFactory.getCurrentSession().get(ChartSearchBookmark.class, bookmarkId);
+	}
+	
+	@Override
+	public void saveSearchBookmark(ChartSearchBookmark bookmark) {
+		sessionFactory.getCurrentSession().save(bookmark);
+	}
+	
+	@Override
+	public void deleteSearchBookmark(ChartSearchBookmark bookmark) {
+		sessionFactory.getCurrentSession().delete(bookmark);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChartSearchBookmark> getAllSearchBookmarks() {
+		return sessionFactory.getCurrentSession().createCriteria(ChartSearchBookmark.class).list();
+	}
+	
+	@Override
+	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid) {
+		ChartSearchBookmark bookmark = (ChartSearchBookmark) sessionFactory.getCurrentSession()
+		        .createQuery("from ChartSearchBookmark b where b.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		
+		return bookmark;
 	}
 	
 }

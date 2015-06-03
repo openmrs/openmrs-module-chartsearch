@@ -34,6 +34,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
+import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 
 /**
@@ -90,11 +91,13 @@ public class GeneratingJson {
 		}
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
 		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
+		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		jsonToReturn.put("searchHistory", history);
+		jsonToReturn.put("searchBookmarks", bookmarks);
 		
 		return jsonToReturn.toString();
 	}
@@ -117,10 +120,10 @@ public class GeneratingJson {
 			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
 				json = new JSONObject();
 				
-				if(wholePageIsToBeLoaded) {
+				if (wholePageIsToBeLoaded) {
 					json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
 				} else {
-					json.put("searchPhrase", history.getSearchPhrase());	
+					json.put("searchPhrase", history.getSearchPhrase());
 				}
 				json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
 				json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
@@ -133,6 +136,36 @@ public class GeneratingJson {
 		}
 		
 		return histories;
+	}
+	
+	public static JSONArray getAllSearchBookmarksToReturnToUI(boolean wholePageIsToBeLoaded) {
+		JSONArray bookmarks = new JSONArray();
+		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
+		
+		for (ChartSearchBookmark curBookmark : allBookmarks) {
+			JSONObject json = null;
+			
+			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())
+			        && curBookmark.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
+				json = new JSONObject();
+				
+				if (wholePageIsToBeLoaded) {
+					json.put("bookmarkName", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getBookmarkName()));
+					json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getSearchPhrase()));
+				} else {
+					json.put("bookmarkName", curBookmark.getBookmarkName());
+					json.put("searchPhrase", curBookmark.getSearchPhrase());
+				}
+				json.put("categories", curBookmark.getSelectedCategories());
+				json.put("uuid", curBookmark.getUuid());
+			}
+			
+			if (null != json) {
+				bookmarks.add(json);
+			}
+		}
+		
+		return bookmarks;
 	}
 	
 	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,

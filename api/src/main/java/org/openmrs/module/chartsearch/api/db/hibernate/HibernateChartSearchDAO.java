@@ -31,6 +31,7 @@ import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
@@ -217,6 +218,35 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		        .createQuery("from ChartSearchBookmark b where b.uuid = :uuid").setString("uuid", uuid).uniqueResult();
 		
 		return bookmark;
+	}
+	
+	@Override
+	public void saveSearchNote(ChartSearchNote note) {
+		sessionFactory.getCurrentSession().save(note);
+	}
+	
+	@Override
+	public void deleteSearchNote(ChartSearchNote note) {
+		sessionFactory.getCurrentSession().delete(note);
+	}
+	
+	@Override
+	public ChartSearchNote getSearchNote(Integer noteId) {
+		return (ChartSearchNote) sessionFactory.getCurrentSession().get(ChartSearchNote.class, noteId);
+	}
+	
+	@Override
+	public ChartSearchNote getSearchNoteByUuid(String uuid) {
+		ChartSearchNote note = (ChartSearchNote) sessionFactory.getCurrentSession()
+		        .createQuery("from ChartSearchNote n where n.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		
+		return note;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ChartSearchNote> getAllSearchNotes() {
+		return sessionFactory.getCurrentSession().createCriteria(ChartSearchNote.class).list();
 	}
 	
 }

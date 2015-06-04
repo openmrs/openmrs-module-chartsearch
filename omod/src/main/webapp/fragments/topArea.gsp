@@ -365,7 +365,7 @@
 			
 			for(i = 0; i < history.length; i++) {
 				//TODO use; var lastSearchedAt = new Date(1432892071355), history[i].lastSearchedAt for re-formatting date
-				historyToDisplay += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history[i].searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history[i].formattedLastSearchedAt + "</em><i id='" + history[i].uuid + "' class='icon-remove delete-search-history'></i></div>"; 
+				historyToDisplay += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history[i].searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history[i].formattedLastSearchedAt + "</em><i id='" + history[i].uuid + "' class='icon-remove delete-search-history' title='Delete This History'></i></div>"; 
 			}
 			
 			jq("#chart-previous-searches-display").html(historyToDisplay);

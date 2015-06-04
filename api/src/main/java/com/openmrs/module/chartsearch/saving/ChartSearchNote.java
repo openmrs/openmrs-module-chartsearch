@@ -28,24 +28,31 @@ import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
+/**
+ * Represents a user's observation or comments on a specific set of results after a search
+ */
 @Entity
-@Table(name = "chartsearch_history")
-@SuppressWarnings("serial")
-public class ChartSearchHistory extends BaseOpenmrsObject implements Serializable {
+@Table(name = "chartsearch_note")
+public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "search_id")
-	private Integer searchId;
+	@Column(name = "note_id")
+	private Integer noteId;
 	
-	/**
-	 * Phrase or text searched for
-	 */
-	@Column(name = "search_phrase", nullable = false, unique = true)
+	@Column(name = "comment", nullable = false)
+	private String comment;
+	
+	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
-	@Column(name = "last_searched_at", nullable = false)
-	private Date lastSearchedAt;
+	@Column(name = "priority", nullable = false)
+	private String priority = "LOW";
+	
+	@Column(name = "created_or_last_modified_at", nullable = false)
+	private Date createdOrLastModifiedAt;
 	
 	@ManyToOne
 	@JoinColumn(name = "patient_id", nullable = false)
@@ -53,7 +60,20 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
-	private User historyOwner;
+	private User noteOwner;
+	
+	@Column(name = "display_color", length = 10)
+	private String displayColor;
+	
+	@Override
+	public Integer getId() {
+		return getNoteId();
+	}
+	
+	@Override
+	public void setId(Integer id) {
+		setNoteId(id);
+	}
 	
 	/**
 	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
@@ -66,22 +86,20 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 		return super.getUuid();
 	}
 	
-	@Override
-	public Integer getId() {
-		return getSearchId();
+	public Integer getNoteId() {
+		return noteId;
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		setSearchId(id);
+	public void setNoteId(Integer noteId) {
+		this.noteId = noteId;
 	}
 	
-	public Integer getSearchId() {
-		return searchId;
+	public String getComment() {
+		return comment;
 	}
 	
-	public void setSearchId(Integer searchId) {
-		this.searchId = searchId;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 	
 	public String getSearchPhrase() {
@@ -92,12 +110,26 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 		this.searchPhrase = searchPhrase;
 	}
 	
-	public Date getLastSearchedAt() {
-		return lastSearchedAt;
+	/**
+	 * LOW(default)/HIGH severity
+	 */
+	public String getPriority() {
+		return priority;
 	}
 	
-	public void setLastSearchedAt(Date lastSearchedAt) {
-		this.lastSearchedAt = lastSearchedAt;
+	/**
+	 * LOW(default)/HIGH severity
+	 */
+	public void setPriority(String priority) {
+		this.priority = priority;
+	}
+	
+	public Date getCreatedOrLastModifiedAt() {
+		return createdOrLastModifiedAt;
+	}
+	
+	public void setCreatedOrLastModifiedAt(Date createdOrLastModifiedAt) {
+		this.createdOrLastModifiedAt = createdOrLastModifiedAt;
 	}
 	
 	public Patient getPatient() {
@@ -108,12 +140,20 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 		this.patient = patient;
 	}
 	
-	public User getHistoryOwner() {
-		return historyOwner;
+	public User getNoteOwner() {
+		return noteOwner;
 	}
 	
-	public void setHistoryOwner(User historyOwner) {
-		this.historyOwner = historyOwner;
+	public void setNoteOwner(User noteOwner) {
+		this.noteOwner = noteOwner;
+	}
+	
+	public String getDisplayColor() {
+		return displayColor;
+	}
+	
+	public void setDisplayColor(String displayColor) {
+		this.displayColor = displayColor;
 	}
 	
 }

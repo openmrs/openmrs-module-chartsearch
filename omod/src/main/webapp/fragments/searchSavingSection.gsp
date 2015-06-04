@@ -376,7 +376,7 @@
 	    	}*/
 	    	
 	    	for(i = 0; i < bookmarks.length; i++) {
-	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
+	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "' title='Delete This Bookmark'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
 	    	}
 	    	
 	    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");

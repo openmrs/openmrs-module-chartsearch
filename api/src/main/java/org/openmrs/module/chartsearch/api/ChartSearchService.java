@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured
@@ -207,4 +208,14 @@ public interface ChartSearchService extends OpenmrsService {
 	public List<ChartSearchBookmark> getAllSearchBookmarks();
 	
 	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid);
+	
+	public void saveSearchNote(ChartSearchNote note);
+	
+	public void deleteSearchNote(ChartSearchNote note);
+	
+	public ChartSearchNote getSearchNote(Integer noteId);
+	
+	public ChartSearchNote getSearchNoteByUuid(String uuid);
+	
+	public List<ChartSearchNote> getAllSearchNotes();
 }

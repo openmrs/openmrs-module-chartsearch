@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -394,5 +395,30 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid) {
 		return dao.getSearchBookmarkByUuid(uuid);
+	}
+	
+	@Override
+	public void saveSearchNote(ChartSearchNote note) {
+		dao.saveSearchNote(note);
+	}
+	
+	@Override
+	public void deleteSearchNote(ChartSearchNote note) {
+		dao.deleteSearchNote(note);
+	}
+	
+	@Override
+	public ChartSearchNote getSearchNote(Integer noteId) {
+		return dao.getSearchNote(noteId);
+	}
+	
+	@Override
+	public ChartSearchNote getSearchNoteByUuid(String uuid) {
+		return dao.getSearchNoteByUuid(uuid);
+	}
+	
+	@Override
+	public List<ChartSearchNote> getAllSearchNotes() {
+		return dao.getAllSearchNotes();
 	}
 }

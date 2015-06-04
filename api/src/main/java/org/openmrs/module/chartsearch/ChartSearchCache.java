@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.chartsearch;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -191,6 +192,26 @@ public class ChartSearchCache {
 			return json;
 		} else
 			return null;
+	}
+	
+	public String fetchLastHistorySearchPhrase(Integer patientId) {
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
+		List<ChartSearchHistory> rightHistory = new ArrayList<ChartSearchHistory>();
+		String rightHistoryLastSearchPhrase = null;
+		
+		if (null != allHistory && !allHistory.isEmpty() && null != patientId) {
+			for (ChartSearchHistory history : allHistory) {
+				if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
+				        && history.getPatient().getPatientId().equals(patientId)) {
+					rightHistory.add(history);
+				}
+			}
+			if (null != rightHistory && !rightHistory.isEmpty()) {
+				ChartSearchHistory lastRightHistory = rightHistory.get(rightHistory.size() - 1);
+				rightHistoryLastSearchPhrase = lastRightHistory.getSearchPhrase();
+			}
+		}
+		return rightHistoryLastSearchPhrase;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

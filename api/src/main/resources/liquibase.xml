@@ -295,6 +295,9 @@
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
+			<column name="display_color" type="char(10)">
+				<constraints nullable="true" />
+			</column>
 			<column name="user_id" type="int" >
 				<constraints nullable="false" />
 			</column>

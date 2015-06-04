@@ -45,7 +45,7 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "comment", nullable = false)
 	private String comment;
 	
-	@Column(name = "search_phrase", nullable = false, unique = true)
+	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
 	@Column(name = "priority", nullable = false)
@@ -61,6 +61,9 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User noteOwner;
+	
+	@Column(name = "display_color", length = 10)
+	private String displayColor;
 	
 	@Override
 	public Integer getId() {
@@ -143,6 +146,14 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	
 	public void setNoteOwner(User noteOwner) {
 		this.noteOwner = noteOwner;
+	}
+	
+	public String getDisplayColor() {
+		return displayColor;
+	}
+	
+	public void setDisplayColor(String displayColor) {
+		this.displayColor = displayColor;
 	}
 	
 }

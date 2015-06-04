@@ -61,6 +61,11 @@
 	             Settings
 	        </a>
 	    </li>
+	    <li class="ui-state-default ui-corner-top ui-state-active" >
+	        <a class="ui-tabs-anchor" href="#manage-notes" >
+	             Notes
+	        </a>
+	    </li>
     </ul>
     
     <div id="manage-preferences">
@@ -77,6 +82,9 @@
     </div>
     <div id="manage-settings">
     	<h1>Manage Settings</h1>
+    </div>
+    <div id="manage-notes">
+    	<h1>Manage Notes</h1>
     </div>
     
 </div>

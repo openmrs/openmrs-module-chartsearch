@@ -91,6 +91,15 @@
 		margin-right: 10px;
 	}
 	
+	#add-new-note-on-this-search {
+		border-bottom: 1px solid #888888;
+		padding-bottom: 8px;
+	}
+	
+	#new-comment-or-note {
+		margin-bottom: 5px;
+	}
+	
 </style>
 
 <script type="text/javascript">
@@ -150,16 +159,24 @@
     	jq("#comment-on-search-record").click(function(event) {
     		var phrase = jq("#searchText").val();
     		
-    		invokeDialog("#comment-on-search-record-dialog", "Add Notes to This Search");
-    		/*
-    		if(historyExists) {//TODO search should be automatically bookmarked
-				invokeDialog("#comment-on-search-record-dialog", "Add Notes to This Search", "300px");
+    		if(phrase) {
+	    		checkIfPhraseExisitsInHistory(phrase, function(exists) {
+		    		if(exists) {
+		    			displayNotesAtUILevel();
+	    			} else {
+						failedToShowNotes("Notes are only added and accessed for a search, enter search phrase and search first");
+					}
+				});
 			} else {
-				jq("#dialogFailureMessage").html("Search first to add Notes to your search");
-				invokeDialog("#dialogFailureMessage", "Adding Notes is disabled Now", "300px");
+				failedToShowNotes("Notes are only added and accessed for a search, enter search phrase and search first");
 			}
-			*/
     	});
+    	
+    	function displayNotesAtUILevel() {
+    		//TODO scroll to comments text field
+    		//TODO check every after search for existence of notes on a search and change it icon-comment-alt to icon-comment
+			invokeDialog("#comment-on-search-record-dialog", "Notes on this Search for this Patient", "550px");
+    	}
     	
     	jq("#quick-searches").click(function(event){
     		invokeDialog("#quick-searches-dialog-message", "Quick Searches", "300px");
@@ -215,6 +232,10 @@
     	
     	jq("#settings-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page?tab=5', '_blank');
+    	});
+    	
+    	jq("#notes-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=6', '_blank');
     	});
     	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
@@ -341,6 +362,11 @@
     	function failedToShowBookmark(message) {
 	    	jq("#dialogFailureMessage").html(message);
 			invokeDialog("#dialogFailureMessage", "Bookmarks are disabled!");
+    	}
+    	
+    	function failedToShowNotes(message) {
+	    	jq("#dialogFailureMessage").html(message);
+			invokeDialog("#dialogFailureMessage", "Notes are disabled!");
     	}
     	
     	function deleteSearchBookmark(bookmarkUuid, bookmarkIsOpen) {
@@ -493,8 +519,40 @@
 	</div>
 </div>
 
-<i id="comment-on-search-record" class="icon-comment medium" title="Comment on Search"></i>
-<div class="search-record-dialog-content" id="comment-on-search-record-dialog">Add Notes to a search</div>
+<i id="comment-on-search-record" class="icon-comment-alt medium" title="Comment on Search"></i>
+<div class="search-record-dialog-content" id="comment-on-search-record-dialog">
+	<b>Add a new Note:</b>
+	<div id="add-new-note-on-this-search">
+		Comment:
+		<textarea id="new-comment-or-note" style="height: 80px; width: 512px;"></textarea>
+		<br />
+		<i class="icon-user-md medium"></i>&nbsp
+		<select id="new-note-priority" title="Priority/Severity of this note">
+			<option>Priority</option>
+			<option>LOW</option>
+			<option>HIGH</option>
+		</select>&nbsp&nbsp&nbsp&nbsp
+		<select id="new-note-color" title="Background color for this Note">
+			<option>Color</option>
+			<option>Orange</option>
+			<option>Yellow</option>
+			<option>Violet</option>
+			<option>Lime</option>
+			<option>HotPink</option>
+			<option>Cyan</option>
+			<option>Aqua</option>
+			<option>DeepPink</option>
+			<option>Magenta</option>
+			<option>Red</option>
+		</select>&nbsp&nbsp&nbsp&nbsp
+		<input type="button" value="Save Note" />&nbsp&nbsp&nbsp&nbsp
+		<input type="button" value="Cancel" />
+	</div>
+	<b>Previous Notes:</b>
+	<div id="previous-notes-on-this-search">
+		
+	</div>
+</div>
 
 <div id="dialogFailureMessage"></div>
 
@@ -511,4 +569,5 @@
 	<div class="possible-task-list-item" id="preferences-task-list-item">Preferences</div>
 	<div class="possible-task-list-item" id="commands-task-list-item">Commands</div>
 	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
+	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
 </div>

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.synonyms.SynonymsAPI;
@@ -74,6 +75,8 @@ public class SearchAPI {
 			searchPhrase.setPhrase("");
 		}
 		
+		searchPhrase.setPhrase(returnDefaultSearchPhrase(searchPhrase.getPhrase(), SearchAPI.getPatientId()));
+		
 		String searchPhraseStr = searchPhrase.getPhrase();
 		
 		Integer length = Integer.valueOf(999999999); //amount of obs we want - all of them
@@ -98,6 +101,24 @@ public class SearchAPI {
 		SearchAPI.retrievalTime = (endSearchingTime - startSearchingTime) / 1000.0;
 		
 		return items;
+	}
+	
+	/**
+	 * TODO Support defining a default search from a user's configured bookmark as default
+	 * 
+	 * @return searchPhrase
+	 */
+	public String returnDefaultSearchPhrase(String currentSPhrase, Integer patientId) {
+		if (StringUtils.isBlank(currentSPhrase)) {
+			ChartSearchCache cache = new ChartSearchCache();
+			String lastSearchPhraseFromHistory = cache.fetchLastHistorySearchPhrase(patientId);
+			
+			if (StringUtils.isNotBlank(lastSearchPhraseFromHistory)) {
+				return lastSearchPhraseFromHistory;
+			} else
+				return currentSPhrase;
+		} else
+			return currentSPhrase;
 	}
 	
 	public SearchPhrase getSearchPhrase() {

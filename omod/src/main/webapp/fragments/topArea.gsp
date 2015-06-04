@@ -46,7 +46,10 @@
 			var currCatCheckId = currCatLinkId.replace("select_","");
 			
 			if(event.target.localName === "a") {
-				jq('#inside_filter_categories').find('input[type=checkbox]:checked').prop('checked', false);;
+				var currCatLabel = currCatCheckId.replace("_category", "");
+				
+				jq('#inside_filter_categories').find('input[type=checkbox]:checked').prop('checked', false);
+				jq("#category-filter_method").text(capitalizeFirstLetter(currCatLabel));
 			    jq("#" + currCatCheckId).prop('checked', true);
 			    submitChartSearchFormWithAjax();
 				jq('#filter_categories_categories').removeClass('display_filter_onclick');

@@ -111,17 +111,23 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	}
 	
 	/**
-	 * LOW(default)/HIGH severity
+	 * LOW(default)/HIGH severity, LOW priority are personal notes whereas HIGH priority are seen by
+	 * other users
 	 */
 	public String getPriority() {
 		return priority;
 	}
 	
 	/**
-	 * LOW(default)/HIGH severity
+	 * LOW(default)/HIGH severity, LOW priority are personal notes whereas HIGH priority are seen by
+	 * other users
 	 */
 	public void setPriority(String priority) {
-		this.priority = priority;
+		if ("LOW".equals(priority) || "HIGH".equals(priority)) {
+			this.priority = priority;
+		} else {
+			this.priority = "LOW";
+		}
 	}
 	
 	public Date getCreatedOrLastModifiedAt() {
@@ -152,8 +158,19 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 		return displayColor;
 	}
 	
+	/**
+	 * Supports only ten light colors that can better give background to black text
+	 * 
+	 * @param displayColor
+	 */
 	public void setDisplayColor(String displayColor) {
-		this.displayColor = displayColor;
+		if ("orange".equals(displayColor) || "yellow".equals(displayColor)|| "violet".equals(displayColor) || "lime".equals(displayColor)
+		        || "beige".equals(displayColor) || "cyan".equals(displayColor) || "aqua".equals(displayColor)
+		        || "deeppink".equals(displayColor) || "magenta".equals(displayColor) || "red".equals(displayColor)) {//don't persist the first option
+			this.displayColor = displayColor;
+		} else {
+			this.displayColor = "white";
+		}
 	}
 	
 }

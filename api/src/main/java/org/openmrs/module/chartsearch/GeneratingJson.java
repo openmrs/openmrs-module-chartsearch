@@ -14,6 +14,7 @@
 package org.openmrs.module.chartsearch;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,6 +37,7 @@ import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * Responsible for generating the JSON object to be returned to the view(s)
@@ -90,14 +92,20 @@ public class GeneratingJson {
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
+		Integer patientId = SearchAPI.getInstance().getPatientId();
+		
 		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
+		JSONArray personalNotes = getAllPersonalNotesOnASearch(searchPhrase, patientId);
+		JSONArray globalNotes = getAllGlobalNotesOnASearch(searchPhrase, patientId);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		jsonToReturn.put("searchHistory", history);
 		jsonToReturn.put("searchBookmarks", bookmarks);
+		jsonToReturn.put("personalNotes", personalNotes);
+		jsonToReturn.put("globalNotes", globalNotes);
 		
 		return jsonToReturn.toString();
 	}
@@ -136,6 +144,68 @@ public class GeneratingJson {
 		}
 		
 		return histories;
+	}
+	
+	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
+		JSONArray jsonArr = new JSONArray();
+		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
+		List<ChartSearchNote> allPersonalNotes = new ArrayList<ChartSearchNote>();
+		
+		for (ChartSearchNote note : allNotes) {
+			if (note.getPatient().getPatientId().equals(patientId) && note.getSearchPhrase().equals(searchPhrase)
+			        && note.getPriority().equals("LOW")
+			        && Context.getAuthenticatedUser().getUserId().equals(note.getNoteOwner().getUserId())) {
+				allPersonalNotes.add(note);
+			}
+		}
+		
+		if (!allPersonalNotes.isEmpty()) {
+			for (ChartSearchNote note : allPersonalNotes) {
+				JSONObject json = new JSONObject();
+				
+				json.put("uuid", note.getUuid());
+				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt());
+				json.put("comment", note.getComment());
+				json.put("backgroundColor", note.getDisplayColor());
+				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
+				        .format(note.getCreatedOrLastModifiedAt()));
+				
+				jsonArr.add(json);
+			}
+		}
+		return jsonArr;
+	}
+	
+	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId) {
+		JSONArray jsonArr = new JSONArray();
+		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
+		List<ChartSearchNote> allGlobalNotes = new ArrayList<ChartSearchNote>();
+		
+		for (ChartSearchNote note : allNotes) {
+			if (note.getPatient().getPatientId().equals(patientId) && note.getSearchPhrase().equals(searchPhrase)
+			        && note.getPriority().equals("HIGH")) {
+				allGlobalNotes.add(note);
+			}
+		}
+		
+		if (!allGlobalNotes.isEmpty()) {
+			for (ChartSearchNote note : allGlobalNotes) {
+				JSONObject json = new JSONObject();
+				String userName = note.getNoteOwner().getUsername();
+				String systemId = note.getNoteOwner().getSystemId();
+				
+				json.put("uuid", note.getUuid());
+				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt());
+				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
+				        .format(note.getCreatedOrLastModifiedAt()));
+				json.put("comment", note.getComment());
+				json.put("backgroundColor", note.getDisplayColor());
+				json.put("noteOwner", null == userName ? systemId : userName);
+				
+				jsonArr.add(json);
+			}
+		}
+		return jsonArr;
 	}
 	
 	public static JSONArray getAllSearchBookmarksToReturnToUI(boolean wholePageIsToBeLoaded) {

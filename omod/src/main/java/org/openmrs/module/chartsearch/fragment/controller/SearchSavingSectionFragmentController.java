@@ -80,4 +80,12 @@ public class SearchSavingSectionFragmentController {
 		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
 		return GeneratingJson.generateJson(false);
 	}
+	
+	public JSONObject saveANewNoteOnToASearch(@RequestParam("searchPhrase") String searchPhrase,
+	                                          @RequestParam("patientId") Integer patientId,
+	                                          @RequestParam("comment") String comment,
+	                                          @RequestParam("priority") String priority,
+	                                          @RequestParam("backgroundColor") String backgroundColor) {
+		return cache.saveANewNoteOrCommentOnToASearch(searchPhrase, patientId, comment, priority, backgroundColor);
+	}
 }

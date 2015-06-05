@@ -24,6 +24,7 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * This basically provides access to chart-search module stored records such as notes on searches,
@@ -212,6 +213,37 @@ public class ChartSearchCache {
 			}
 		}
 		return rightHistoryLastSearchPhrase;
+	}
+	
+	public JSONObject saveANewNoteOrCommentOnToASearch(String searchPhrase, Integer patientId, String comment,
+	                                                   String priority, String backgroundColor) {
+		if (null != patientId && StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(comment)) {
+			JSONObject json = new JSONObject();
+			ChartSearchNote note = new ChartSearchNote();
+			
+			note.setSearchPhrase(searchPhrase);
+			note.setComment(comment);
+			note.setDisplayColor(backgroundColor);
+			note.setCreatedOrLastModifiedAt(new Date());
+			note.setNoteOwner(Context.getAuthenticatedUser());
+			note.setPatient(Context.getPatientService().getPatient(patientId));
+			note.setPriority(priority);
+			
+			chartSearchService.saveSearchNote(note);
+			
+			if (null != chartSearchService.getSearchNote(note.getNoteId())) {
+				JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
+				JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
+				
+				json.put("personalNotes", allPersonalNotes);
+				json.put("globalNotes", allGlobalNotes);
+			} else {
+				json = null;
+			}
+			
+			return json;
+		} else
+			return null;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

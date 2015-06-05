@@ -92,12 +92,21 @@
 	}
 	
 	#add-new-note-on-this-search {
-		border-bottom: 1px solid #888888;
-		padding-bottom: 8px;
+		border-top: 1px solid #888888;
+		padding-top: 8px;
 	}
 	
 	#new-comment-or-note {
 		margin-bottom: 5px;
+	}
+	
+	#previous-notes-on-this-search {
+		border: 1px solid #888888;
+		border-radius: 5px;
+		padding: 8px 8px 8px 8px;
+		margin-bottom: 10px;
+		height: 250px;
+		overflow-y: scroll;
 	}
 	
 </style>
@@ -111,6 +120,8 @@
     	jq("#lauche-other-chartsearch-features").hide();
     	
     	displayExistingBookmarks();
+    	
+    	displayBothPersonalAndGlobalNotes();
     	
     	jq("#delete-search-record").click(function(event) {
     		invokeDialog("#delete-search-record-dialog", "Delete this Search Record", "300px");
@@ -236,6 +247,19 @@
     	
     	jq("#notes-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page?tab=6', '_blank');
+    	});
+    	
+    	jq("#new-note-color").change(function(event) {
+    		var bgColor = jq("#new-note-color option:selected").text();
+    		if(bgColor !== "Color") {
+    			changeNotesBgColor("#new-comment-or-note", bgColor);
+    		} else {
+    			changeNotesBgColor("#new-comment-or-note", "white");
+    		}
+    	});
+    	
+    	jq("#save-a-new-note").click(function(event) {
+    		saveSearchNote();
     	});
     	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
@@ -489,6 +513,66 @@
 		        error: function(e) {}
 		    });
 		}
+    	
+    	function changeNotesBgColor(element, color) {
+    		jq(element).css('color', 'black');
+    		jq(element).css('background-color', color);
+    	}
+    	
+    	function saveSearchNote() {
+    		var searchPhrase = jq("#searchText").val();
+    		var patientId = jq("#patient_id").val();
+    		var comment = jq("#new-comment-or-note").val();
+    		var priority = jq("#new-note-priority option:selected").text();
+    		var backgroundColor = jq("#new-note-color option:selected").text();
+    	
+    		if(searchPhrase && patientId && comment) {
+	    		jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('saveANewNoteOnToASearch') }",
+					data: {"searchPhrase":searchPhrase, "patientId":patientId, "comment":comment, "priority":priority, "backgroundColor":backgroundColor},
+					dataType: "json",
+					success: function(allNotes) {
+						if(allNotes) {
+							jsonAfterParse.personalNotes = allNotes.personalNotes;
+							jsonAfterParse.globalNotes = allNotes.globalNotes;
+							
+							displayBothPersonalAndGlobalNotes();
+						}
+					},
+					error: function(e) {
+					}
+				});
+			}
+    	}
+    	
+    	function displayBothPersonalAndGlobalNotes() {
+    		var personalNotes = jsonAfterParse.personalNotes;
+    		var globalNotes = jsonAfterParse.globalNotes;
+    		var displayPersonalNotes = "";
+    		var displayGlobalNotes = "";
+    		var displayAllNotes;
+    		
+    		if(personalNotes && personalNotes.length !== 0) {
+    			for(i = 0; i < personalNotes.length; i++) {
+	    			var note = personalNotes[i];
+	    			
+	    			displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt +  "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + "</p><i class='icon-remove' id='" + note.uuid + "'></i>";
+	    		}
+    		}
+    		
+    		if(globalNotes && globalNotes.length !== 0) {
+    			for(i = 0; i < globalNotes.length; i++) {
+	    			var note = globalNotes[i];
+	    			
+	    			displayGlobalNotes += "By <b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt +  "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + "</p><i class='icon-remove' id='" + note.uuid + "'></i>";
+    			}
+    		}
+    		if(displayPersonalNotes || displayGlobalNotes) {
+    			displayAllNotes = displayPersonalNotes + "<br /><hr />" + displayGlobalNotes;
+    			jq("#previous-notes-on-this-search").html(displayAllNotes);
+    		}
+    	}
     
 	});
     
@@ -514,43 +598,41 @@
             <b>Categories:</b> <label id="bookmark-category-names"></label><br /><br />
             <input type="button" id="cancel-edit-bookmark" value="Cancel" />
             <input type="button" id="submit-edit-bookmark" value="Done" /><br />
-            <a id="all-bookmarks" href="">All Bookmarks</a>
         </div>
 	</div>
 </div>
 
 <i id="comment-on-search-record" class="icon-comment-alt medium" title="Comment on Search"></i>
 <div class="search-record-dialog-content" id="comment-on-search-record-dialog">
-	<b>Add a new Note:</b>
+	<b>Previous Notes:</b>
+	<div id="previous-notes-on-this-search">
+		
+	</div>
 	<div id="add-new-note-on-this-search">
+		<b>Add a new Note:</b><br />
 		Comment:
 		<textarea id="new-comment-or-note" style="height: 80px; width: 512px;"></textarea>
 		<br />
-		<i class="icon-user-md medium"></i>&nbsp
+		<i class="icon-user-md medium"></i>&nbsp&nbsp&nbsp&nbsp&nbsp
 		<select id="new-note-priority" title="Priority/Severity of this note">
 			<option>Priority</option>
 			<option>LOW</option>
 			<option>HIGH</option>
-		</select>&nbsp&nbsp&nbsp&nbsp
+		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<select id="new-note-color" title="Background color for this Note">
 			<option>Color</option>
-			<option>Orange</option>
-			<option>Yellow</option>
-			<option>Violet</option>
-			<option>Lime</option>
-			<option>HotPink</option>
-			<option>Cyan</option>
-			<option>Aqua</option>
-			<option>DeepPink</option>
-			<option>Magenta</option>
-			<option>Red</option>
-		</select>&nbsp&nbsp&nbsp&nbsp
-		<input type="button" value="Save Note" />&nbsp&nbsp&nbsp&nbsp
-		<input type="button" value="Cancel" />
-	</div>
-	<b>Previous Notes:</b>
-	<div id="previous-notes-on-this-search">
-		
+			<option>orange</option>
+			<option>yellow</option>
+			<option>violet</option>
+			<option>lime</option>
+			<option>beige</option>
+			<option>cyan</option>
+			<option>aqua</option>
+			<option>deeppink</option>
+			<option>magenta</option>
+			<option>red</option>
+		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		<input type="button" id="save-a-new-note" value="Save Note" />
 	</div>
 </div>
 

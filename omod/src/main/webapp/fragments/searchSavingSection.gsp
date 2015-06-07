@@ -124,8 +124,8 @@
     	jq("#lauche-other-chartsearch-features").hide();
     	
     	displayExistingBookmarks();
-    	
     	displayBothPersonalAndGlobalNotes();
+    	updateBookmarksAndNotesUI();
     	
     	jq("#delete-search-record").click(function(event) {
     		invokeDialog("#delete-search-record-dialog", "Delete this Search Record", "300px");
@@ -143,6 +143,7 @@
 	    	} else {
 		    	saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
 			}
+			updateBookmarksAndNotesUI();
     	});
     	
     	jq("#submit-edit-bookmark").click(function(event) {
@@ -153,6 +154,7 @@
 			
 			saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId);
 			jq("#favorite-search-record-dialog").dialog("close");
+			updateBookmarksAndNotesUI();
     	});
     	
     	jq("#remove-current-bookmark").click(function(event) {
@@ -160,20 +162,21 @@
     		
     		if(bookmarkUuid) {
     			deleteSearchBookmark(bookmarkUuid, true);
+    			jq("#favorite-search-record-dialog").dialog("close");
+    			updateBookmarksAndNotesUI();
     		}
     		return false;
     	});
     	
     	jq("#cancel-edit-bookmark").click(function(event) {
 	    	jq("#favorite-search-record-dialog").dialog("close");
-	    	jq("#favorite-search-record").prop('disabled', false);
 	    	
     		return false;
     	});
     	
     	jq("#comment-on-search-record").click(function(event) {
     		var phrase = jq("#searchText").val();
-    		displayBothPersonalAndGlobalNotes();
+    		refreshSearchNotes();
     		
     		if(phrase) {
 	    		checkIfPhraseExisitsInHistory(phrase, function(exists) {
@@ -186,12 +189,11 @@
 			} else {
 				failedToShowNotes("Notes are only added and accessed for a search, enter search phrase and search first");
 			}
+			updateBookmarksAndNotesUI();
     	});
     	
     	function displayNotesAtUILevel() {
-    		//TODO scroll to comments text field
-    		//TODO check every after search for existence of notes on a search and change it icon-comment-alt to icon-comment
-			invokeDialog("#comment-on-search-record-dialog", "Notes on this Search for this Patient", "550px");
+    		invokeDialog("#comment-on-search-record-dialog", "Notes on this Search for this Patient", "550px");
     	}
     	
     	jq("#quick-searches").click(function(event){
@@ -512,11 +514,10 @@
 		            jq("#current-bookmark-name").val(bkName);
 		            jq("#bookmark-category-names").text(cats);
 		            jq("#bookmark-search-phrase").text(phrase);
-		            //jq(".ui-dialog-content").dialog("close");
+		           	
 		            
 		            updateBookmarksAndNotesUI();
-		            displayBothPersonalAndGlobalNotes();
-		            if(cats.length !== 0) {
+		            if(cats.length === 1) {
 		            	if(cats[0] !== "") {
 		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");
 		            	}

@@ -946,6 +946,7 @@ function refresh_data() {
 		    displayFailedPrivileges(jsonAfterParse);
 		}
     //}
+		displayBothPersonalAndGlobalNotes();
 }
 
 /*
@@ -1037,7 +1038,7 @@ function updateBookmarksAndNotesUI() {
     }
 	
 	
-    if(pNoteDoesnotExist || gNoteDoesnotExist) {
+    if(pNoteDoesnotExist && gNoteDoesnotExist) {
     	$("#comment-on-search-record").removeClass("icon-comment");
     	$("#comment-on-search-record").addClass("icon-comment-alt");
     } else {
@@ -1094,6 +1095,7 @@ function displayBothPersonalAndGlobalNotes() {
 	} else {
 		$("#comment-on-search-record").removeClass("icon-comment");
 		$("#comment-on-search-record").addClass("icon-comment-alt");
+		$("#previous-notes-on-this-search").html("");
 	}
 }
 
@@ -1101,4 +1103,9 @@ function scrollToBottomOfDiv(element) {
 	var wtf = jq(element);
     var height = wtf[0].scrollHeight;
     wtf.scrollTop(height);
+}
+
+function closeAllActiveDialogs() {
+	jq("#favorite-search-record-dialog").dialog("close");
+	jq("#comment-on-search-record-dialog").dialog("close");
 }

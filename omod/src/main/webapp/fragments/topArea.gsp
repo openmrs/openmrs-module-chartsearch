@@ -13,7 +13,7 @@
 		jq("#chart-previous-searches-display").hide();
 		
 		showHistorySuggestionsOnLoad();
-		updateBookmarksAndNotesUI();
+		displayBothPersonalAndGlobalNotes();
 		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -244,10 +244,8 @@
 						jq("#lauche-stored-bookmark").hide();
     					jq("#lauche-other-chartsearch-features").hide();
     					
-    					updateBookmarksAndNotesUI();
     					displayBothPersonalAndGlobalNotes();
-			            
-			            //jq(".ui-dialog-content").dialog("close");
+			            closeAllActiveDialogs();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

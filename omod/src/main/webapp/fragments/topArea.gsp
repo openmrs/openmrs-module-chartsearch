@@ -344,7 +344,7 @@
 			var searchSuggestions = "";
 			var searchText = jq('#searchText').val();
 			
-			searchSuggestions += "<br /><a id='hide-search-suggestions-ui' style='float:right;padding-right:10px;cursor:pointer;'>Close</a>";
+			searchSuggestions += "<a id='hide-search-suggestions-ui'>Close</a>";
 			
 			for(i = 0; i < suggestionsArray.length; i++) {
 				var suggestion = suggestionsArray[i];
@@ -607,7 +607,7 @@
     #chart-searches-suggestions {
     	position: absolute;
 		z-index: 2;
-		height: 105px;
+		height: 108px;
 		width: 764px;
 		background-color: white;
 		padding-left: 10px;
@@ -637,6 +637,13 @@
     .delete-search-history {
     	float:right;
     	cursor: pointer;
+    }
+    
+    #hide-search-suggestions-ui {
+    	float:right;
+    	padding-right:10px;
+    	cursor:pointer;
+    	color:rgb(79, 100, 155);
     }
     
 	

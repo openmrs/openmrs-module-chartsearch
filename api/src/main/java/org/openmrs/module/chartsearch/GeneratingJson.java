@@ -180,6 +180,7 @@ public class GeneratingJson {
 				json.put("backgroundColor", note.getDisplayColor());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
+				json.put("searchPhrase", note.getSearchPhrase());
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);
@@ -212,6 +213,7 @@ public class GeneratingJson {
 				        .format(note.getCreatedOrLastModifiedAt()));
 				json.put("comment", note.getComment());
 				json.put("backgroundColor", note.getDisplayColor());
+				json.put("searchPhrase", note.getSearchPhrase());
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);

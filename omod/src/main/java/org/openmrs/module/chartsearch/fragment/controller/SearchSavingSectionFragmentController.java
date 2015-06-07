@@ -64,7 +64,7 @@ public class SearchSavingSectionFragmentController {
 		if (null != bookmark) {
 			return bookmark.getUuid();
 		} else
-			return null;
+			return "";
 	}
 	
 	public JSONObject getSearchBookmarkSearchDetailsByUuid(@RequestParam("uuid") String uuid) {

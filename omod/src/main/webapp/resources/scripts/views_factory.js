@@ -988,7 +988,7 @@ function displayCategories(jsonAfterParse) {
 		
 		//now check all previously checked categories
 		for (index in checkedCategories) {
-			jq(checkedCategories[index]).prop('checked', true);
+			$(checkedCategories[index]).prop('checked', true);
 		}
 	}
 }
@@ -1000,5 +1000,48 @@ function displayFailedPrivileges(jsonAfterParse) {
 	document.getElementById('failed_privileges').innerHTML == "";
     for (var i=0; i<jsonAfterParse.failedPrivileges.length; i++) {
     	document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message + "<br />";
+    }
+}
+
+function updateBookmarksAndNotesUI() {
+	var bookmarks = jsonAfterParse.searchBookmarks;
+	var pNotes = jsonAfterParse.personalNotes;
+	var gNotes = jsonAfterParse.globalNotes;
+	var bookmarkDoesnotExist = true;
+	var pNoteDoesnotExist = true;
+	var gNoteDoesnotExist = true;
+	var sPhrase = jsonAfterParse.search_phrase;
+	
+	for(i = 0; i < bookmarks.length; i++) {
+		if(bookmarks[i].searchPhrase === sPhrase) {
+			bookmarkDoesnotExist = false;
+		}
+	}
+	for(i = 0; i < pNotes.length; i++) {
+		if(pNotes[i].searchPhrase === sPhrase) {
+			pNoteDoesnotExist = false;
+		}
+	}
+	for(i = 0; i < gNotes.length; i++) {
+		if(gNotes[i].searchPhrase === sPhrase) {
+			gNoteDoesnotExist = false;
+		}
+	}
+	
+	if(bookmarkDoesnotExist) {
+        $("#favorite-search-record").removeClass("icon-star");
+        $("#favorite-search-record").addClass("icon-star-empty");
+    } else {
+    	$("#favorite-search-record").removeClass("icon-star-empty");
+        $("#favorite-search-record").addClass("icon-star");
+    }
+	
+	
+    if(pNoteDoesnotExist || gNoteDoesnotExist) {
+    	$("#comment-on-search-record").removeClass("icon-comment");
+    	$("#comment-on-search-record").addClass("icon-comment-alt");
+    } else {
+    	$("#comment-on-search-record").removeClass("icon-comment-alt");
+    	$("#comment-on-search-record").addClass("icon-comment");
     }
 }

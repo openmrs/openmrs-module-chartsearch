@@ -282,13 +282,12 @@
     		checkIfPhraseExisitsInHistory(phrase, function(exists) {
     			if(exists) {
 	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, function(bookmarkUuid) {
-	    				addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
-		    			
-	    				if(!bookmarkUuid) {
+	    				if(bookmarkUuid === "") {
 	    					saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
 	    				} else {
 	    					jq("#current-bookmark-object").val(bookmarkUuid);
 	    				}
+	    				addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
 	    			});
     			} else {
 					failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
@@ -524,9 +523,9 @@
 		            jq("#current-bookmark-name").val(bkName);
 		            jq("#bookmark-category-names").text(cats);
 		            jq("#bookmark-search-phrase").text(phrase);
-		            jq("#favorite-search-record").removeClass("icon-star-empty");
-		            jq("#favorite-search-record").addClass("icon-star");
 		            jq(".ui-dialog-content").dialog("close");
+		            
+		            updateBookmarksAndNotesUI();
 		            if(cats.length !== 0) {
 		            	if(cats[0] !== "") {
 		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");

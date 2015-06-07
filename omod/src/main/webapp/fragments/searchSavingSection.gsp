@@ -418,11 +418,9 @@
 					data: {"bookmarkUuid":bookmarkUuid},
 					dataType: "json",
 					success: function(bookmarks) {
+						//removeBookmarkAtUIlayer();
 						if(bookmarks) {
 							jsonAfterParse.searchBookmarks = bookmarks;
-							if(bookmarkIsOpen) {
-								removeBookmarkAtUIlayer();
-							}
 							displayExistingBookmarks();
 						}
 					},
@@ -435,19 +433,10 @@
 	    function displayExistingBookmarks() {
 	    	var bookmarks;
 	    	var bookmarksToDisplay = "";
-	    	
-	    	//if(wholePageIsToBeLoaded) {
-	    		bookmarks = jsonAfterParse.searchBookmarks.reverse();
-	    	/*} else {
-	    		bookmarks = jsonAfterParse.searchBookmarks;
-	    	}*/
+	    	bookmarks = jsonAfterParse.searchBookmarks.reverse();
 	    	
 	    	for(i = 0; i < bookmarks.length; i++) {
 	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "' title='Delete This Bookmark'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
-	    	}
-	    	if(bookmarksToDisplay !== "") {
-		    	jq("#favorite-search-record").removeClass("icon-star-empty");
-			    jq("#favorite-search-record").addClass("icon-star");
 	    	}
 	    	
 	    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");
@@ -523,7 +512,7 @@
 		            jq("#current-bookmark-name").val(bkName);
 		            jq("#bookmark-category-names").text(cats);
 		            jq("#bookmark-search-phrase").text(phrase);
-		            jq(".ui-dialog-content").dialog("close");
+		            //jq(".ui-dialog-content").dialog("close");
 		            
 		            updateBookmarksAndNotesUI();
 		            displayBothPersonalAndGlobalNotes();
@@ -630,12 +619,6 @@
 				error: function(e) {
 				}
 			});
-    	}
-    	
-    	function scrollToBottomOfDiv(element) {
-    		var wtf = jq(element);
-		    var height = wtf[0].scrollHeight;
-		    wtf.scrollTop(height);
     	}
     
 	});

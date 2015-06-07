@@ -247,7 +247,7 @@
     					updateBookmarksAndNotesUI();
     					displayBothPersonalAndGlobalNotes();
 			            
-			            jq(".ui-dialog-content").dialog("close");
+			            //jq(".ui-dialog-content").dialog("close");
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

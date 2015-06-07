@@ -1096,3 +1096,9 @@ function displayBothPersonalAndGlobalNotes() {
 		$("#comment-on-search-record").addClass("icon-comment-alt");
 	}
 }
+
+function scrollToBottomOfDiv(element) {
+	var wtf = jq(element);
+    var height = wtf[0].scrollHeight;
+    wtf.scrollTop(height);
+}

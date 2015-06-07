@@ -526,6 +526,7 @@
 		            jq(".ui-dialog-content").dialog("close");
 		            
 		            updateBookmarksAndNotesUI();
+		            displayBothPersonalAndGlobalNotes();
 		            if(cats.length !== 0) {
 		            	if(cats[0] !== "") {
 		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");
@@ -572,57 +573,6 @@
 					}
 				});
 			}
-    	}
-    	
-    	function displayBothPersonalAndGlobalNotes() {
-    		var personalNotes = jsonAfterParse.personalNotes;
-    		var globalNotes = jsonAfterParse.globalNotes;
-    		var displayPersonalNotes = "";
-    		var displayGlobalNotes = "";
-    		var displayAllNotes;
-    		var owner;
-    		var curUser = jsonAfterParse.currentUser;
-    		
-    		if(personalNotes && personalNotes.length !== 0) {
-    			displayPersonalNotes += "<u>Personal Notes (LOW priority):</u><br />";
-    			
-    			for(i = 0; i < personalNotes.length; i++) {
-	    			var note = personalNotes[i];
-	    			owner = note.noteOwner;
-	    			
-	    			if(owner === curUser) {
-	    				displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
-	    			}
-	    		}
-    		}
-    		
-    		if(globalNotes && globalNotes.length !== 0) {
-    			displayGlobalNotes += "<u>Global Notes (HIGH priority):</u><br />";
-    			
-    			for(i = 0; i < globalNotes.length; i++) {
-	    			var note = globalNotes[i];
-	    			owner = note.noteOwner;
-	    			
-	    			displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
-	    			
-	    			if(owner === curUser) {
-	    				displayGlobalNotes += "<i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i>";
-	    			}
-	    			
-	    			displayGlobalNotes += "</p><hr>";
-    			}
-    		}
-    		if(displayPersonalNotes || displayGlobalNotes) {
-    			displayAllNotes = displayPersonalNotes + "<br /><hr />" + displayGlobalNotes;
-    			
-    			jq("#comment-on-search-record").removeClass("icon-comment-alt");
-    			jq("#comment-on-search-record").addClass("icon-comment");
-    			jq("#previous-notes-on-this-search").html(displayAllNotes);
-    			scrollToBottomOfDiv("#previous-notes-on-this-search");
-    		} else {
-    			jq("#comment-on-search-record").removeClass("icon-comment");
-    			jq("#comment-on-search-record").addClass("icon-comment-alt");
-    		}
     	}
     	
     	function formatTimeToShow(dateObj) {

@@ -245,6 +245,7 @@
     					jq("#lauche-other-chartsearch-features").hide();
     					
     					updateBookmarksAndNotesUI();
+    					displayBothPersonalAndGlobalNotes();
 			            
 			            jq(".ui-dialog-content").dialog("close");
 					},

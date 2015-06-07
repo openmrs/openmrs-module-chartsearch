@@ -96,18 +96,27 @@ public class GeneratingJson {
 		
 		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
-		JSONArray personalNotes = getAllPersonalNotesOnASearch(searchPhrase, patientId);
-		JSONArray globalNotes = getAllGlobalNotesOnASearch(searchPhrase, patientId);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		jsonToReturn.put("searchHistory", history);
 		jsonToReturn.put("searchBookmarks", bookmarks);
-		jsonToReturn.put("personalNotes", personalNotes);
-		jsonToReturn.put("globalNotes", globalNotes);
+		
+		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
 		
 		return jsonToReturn.toString();
+	}
+	
+	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json) {
+		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
+		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
+		String userName = Context.getAuthenticatedUser().getUsername();
+		String systemId = Context.getAuthenticatedUser().getSystemId();
+		
+		json.put("personalNotes", allPersonalNotes);
+		json.put("globalNotes", allGlobalNotes);
+		json.put("currentUser", null == userName ? systemId : userName);
 	}
 	
 	private static String[] getAllPossibleSuggestionsAsArray() {
@@ -162,13 +171,17 @@ public class GeneratingJson {
 		if (!allPersonalNotes.isEmpty()) {
 			for (ChartSearchNote note : allPersonalNotes) {
 				JSONObject json = new JSONObject();
+				String userName = note.getNoteOwner().getUsername();
+				String systemId = note.getNoteOwner().getSystemId();
 				
 				json.put("uuid", note.getUuid());
-				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt());
+				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("comment", note.getComment());
 				json.put("backgroundColor", note.getDisplayColor());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
+				json.put("searchPhrase", note.getSearchPhrase());
+				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);
 			}
@@ -195,11 +208,12 @@ public class GeneratingJson {
 				String systemId = note.getNoteOwner().getSystemId();
 				
 				json.put("uuid", note.getUuid());
-				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt());
+				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
 				json.put("comment", note.getComment());
 				json.put("backgroundColor", note.getDisplayColor());
+				json.put("searchPhrase", note.getSearchPhrase());
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);

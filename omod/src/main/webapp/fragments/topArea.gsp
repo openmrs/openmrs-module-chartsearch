@@ -13,6 +13,7 @@
 		jq("#chart-previous-searches-display").hide();
 		
 		showHistorySuggestionsOnLoad();
+		updateBookmarksAndNotesUI();
 		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -179,10 +180,14 @@
 		
 		jq("body").on("click", "#chart-searches-suggestions", function (event) {
 			if(event.target.localName === "a") {
-				var selectedSuggestion = event.target.innerText;
-				
-				jq('#searchText').val(selectedSuggestion);
-				submitChartSearchFormWithAjax();
+				if(event.target.id === "hide-search-suggestions-ui") {
+					jq("#chart-searches-suggestions").hide();
+				} else {
+					var selectedSuggestion = event.target.innerText;
+					
+					jq('#searchText').val(selectedSuggestion);
+					submitChartSearchFormWithAjax();
+				}
 			}
 			return false;
 		});
@@ -238,8 +243,10 @@
 						
 						jq("#lauche-stored-bookmark").hide();
     					jq("#lauche-other-chartsearch-features").hide();
-			            jq("#favorite-search-record").removeClass("icon-star");
-			            jq("#favorite-search-record").addClass("icon-star-empty");
+    					
+    					updateBookmarksAndNotesUI();
+			            
+			            jq(".ui-dialog-content").dialog("close");
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);
@@ -336,6 +343,8 @@
 			var suggestionsArray = jsonAfterParse.searchSuggestions;
 			var searchSuggestions = "";
 			var searchText = jq('#searchText').val();
+			
+			searchSuggestions += "<a id='hide-search-suggestions-ui'>Close</a>";
 			
 			for(i = 0; i < suggestionsArray.length; i++) {
 				var suggestion = suggestionsArray[i];
@@ -598,7 +607,7 @@
     #chart-searches-suggestions {
     	position: absolute;
 		z-index: 2;
-		height: 105px;
+		height: 108px;
 		width: 764px;
 		background-color: white;
 		padding-left: 10px;
@@ -629,6 +638,14 @@
     	float:right;
     	cursor: pointer;
     }
+    
+    #hide-search-suggestions-ui {
+    	float:right;
+    	padding-right:10px;
+    	cursor:pointer;
+    	color:rgb(79, 100, 155);
+    }
+    
 	
 </style>
 

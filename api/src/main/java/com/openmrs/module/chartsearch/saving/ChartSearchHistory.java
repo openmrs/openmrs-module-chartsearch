@@ -41,7 +41,7 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 	/**
 	 * Phrase or text searched for
 	 */
-	@Column(name = "search_phrase", nullable = false, unique = true)
+	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
 	@Column(name = "last_searched_at", nullable = false)

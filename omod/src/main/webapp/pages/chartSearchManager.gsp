@@ -79,29 +79,28 @@
     </ul>
     
     <div id="launcher">
-    	<h1>Select patient to launch their chart search page</h1>
+    	${ ui.includeFragment("chartsearch", "chartsearchLauncher") }
     </div>
     <div id="manage-preferences">
-    	<h1>Manage Preferences</h1>
+    	${ ui.includeFragment("chartsearch", "managePreferences") }
     </div>
     <div id="manage-bookmarks">
-    	<h1>Manage Bookmarks</h1>
+    	${ ui.includeFragment("chartsearch", "manageBookmarks") }
     </div>
     <div id="manage-history">
-    	<h1>Manage History</h1>
+    	${ ui.includeFragment("chartsearch", "manageHistory") }
     </div>
     <div id="manage-commands">
-    	<h1>Manage Commands</h1>
+    	${ ui.includeFragment("chartsearch", "manageCommands") }
     </div>
     <div id="manage-settings">
-    	<h1>Manage Settings</h1>
+    	${ ui.includeFragment("chartsearch", "manageSettings") }
     </div>
     <div id="manage-notes">
-    	<h1>Manage Notes</h1>
+    	${ ui.includeFragment("chartsearch", "manageNotes") }
     </div>
     <div id="aggregate-searches">
-    	<h1>Aggregate Searches</h1>
-    	(e.g., find all visits across all patients during 2014 with a new diagnosis of diabetes).
+    	${ ui.includeFragment("chartsearch", "aggregateSearches") }
     </div>
     
 </div>

@@ -109,7 +109,7 @@
 		overflow-y: scroll;
 	}
 	
-	#refresh-notes-display, .remove-this-sNote {
+	#refresh-notes-display, .remove-this-sNote, #new-note-color, #new-note-priority {
 		cursor: pointer;
 	}
 	
@@ -225,7 +225,7 @@
     			var bookmarkUuid = event.target.id;
     			deleteSearchBookmark(bookmarkUuid, false);
     		} else if(event.target.localName === "a") {
-    			window.open('../chartsearch/chartSearchManager.page?tab=2', '_blank');
+    			window.open('../chartsearch/chartSearchManager.page?tab=3', '_blank');
     			return false;
     		} else if(event.target.localName === "div" || event.target.localName === "b" || event.target.localName === "em") {
     			var bookmarkUuid = event.target.id;
@@ -237,23 +237,27 @@
     	});
     	
     	jq("#history-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=3', '_blank');
-    	});
-    	
-    	jq("#preferences-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=1', '_blank');
-    	});
-    	
-    	jq("#commands-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page?tab=4', '_blank');
     	});
     	
-    	jq("#settings-task-list-item").click(function(event) {
+    	jq("#preferences-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=2', '_blank');
+    	});
+    	
+    	jq("#commands-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page?tab=5', '_blank');
     	});
     	
-    	jq("#notes-task-list-item").click(function(event) {
+    	jq("#settings-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page?tab=6', '_blank');
+    	});
+    	
+    	jq("#notes-task-list-item").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=7', '_blank');
+    	});
+    	
+    	jq("#aggregate-searches").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page?tab=8', '_blank');
     	});
     	
     	jq("#new-note-color").change(function(event) {
@@ -701,4 +705,5 @@
 	<div class="possible-task-list-item" id="commands-task-list-item">Commands</div>
 	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
 	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
+	<div class="possible-task-list-item" id="aggregate-searches">Aggregate Searches</div>
 </div>

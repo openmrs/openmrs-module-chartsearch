@@ -37,6 +37,11 @@
 <div class="ui-tabs">
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
 	    <li class="ui-state-default ui-corner-top">
+	    	<a class="ui-tabs-anchor" href="#launcher">
+	        	Launcher
+	        </a>
+	    </li>
+	    <li class="ui-state-default ui-corner-top">
 	    	<a class="ui-tabs-anchor" href="#manage-preferences">
 	        	Preferences
 	        </a>
@@ -66,8 +71,16 @@
 	             Notes
 	        </a>
 	    </li>
+	    <li class="ui-state-default ui-corner-top ui-state-active" >
+	        <a class="ui-tabs-anchor" href="#aggregate-searches" >
+	             Aggregate Searches
+	        </a>
+	    </li>
     </ul>
     
+    <div id="launcher">
+    	<h1>Select patient to launch their chart search page</h1>
+    </div>
     <div id="manage-preferences">
     	<h1>Manage Preferences</h1>
     </div>
@@ -85,6 +98,10 @@
     </div>
     <div id="manage-notes">
     	<h1>Manage Notes</h1>
+    </div>
+    <div id="aggregate-searches">
+    	<h1>Aggregate Searches</h1>
+    	(e.g., find all visits across all patients during 2014 with a new diagnosis of diabetes).
     </div>
     
 </div>

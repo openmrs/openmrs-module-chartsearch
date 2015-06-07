@@ -41,10 +41,10 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	@Column(name = "bookmark_id")
 	private Integer bookmarkId;
 	
-	@Column(name = "bookmark_name", nullable = false, unique = true)
+	@Column(name = "bookmark_name", nullable = false)
 	private String bookmarkName;
 	
-	@Column(name = "search_phrase", nullable = false, unique = true)
+	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
 	@ManyToOne

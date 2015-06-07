@@ -69,7 +69,8 @@ public class ChartSearchCache {
 		if (!allHistory.isEmpty()) {
 			for (int i = 0; i < allHistory.size(); i++) {
 				ChartSearchHistory history = allHistory.get(i);
-				if (searchText.equals(history.getSearchPhrase())) {
+				if (searchText.equals(history.getSearchPhrase())
+				        && Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
 					return history;
 				}
 			}
@@ -232,11 +233,7 @@ public class ChartSearchCache {
 			chartSearchService.saveSearchNote(note);
 			
 			if (null != chartSearchService.getSearchNote(note.getNoteId())) {
-				JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
-				JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
-				
-				json.put("personalNotes", allPersonalNotes);
-				json.put("globalNotes", allGlobalNotes);
+				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 			} else {
 				json = null;
 			}
@@ -244,6 +241,21 @@ public class ChartSearchCache {
 			return json;
 		} else
 			return null;
+	}
+	
+	public JSONObject deleteSearchNote(String uuid, String searchPhrase, Integer patientId) {
+		JSONObject json = new JSONObject();
+		
+		if (StringUtils.isNotBlank(uuid)) {
+			ChartSearchNote note = chartSearchService.getSearchNoteByUuid(uuid);
+			if (null != note && Context.getAuthenticatedUser().getUserId().equals(note.getNoteOwner().getUserId())) {
+				chartSearchService.deleteSearchNote(note);
+			}
+		}
+		
+		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
+		
+		return json;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

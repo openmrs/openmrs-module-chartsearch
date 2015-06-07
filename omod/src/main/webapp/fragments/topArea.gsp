@@ -240,6 +240,7 @@
     					jq("#lauche-other-chartsearch-features").hide();
 			            jq("#favorite-search-record").removeClass("icon-star");
 			            jq("#favorite-search-record").addClass("icon-star-empty");
+			            jq(".ui-dialog-content").dialog("close");
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

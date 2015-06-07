@@ -109,6 +109,10 @@
 		overflow-y: scroll;
 	}
 	
+	#refresh-notes-display, .remove-this-sNote {
+		cursor: pointer;
+	}
+	
 </style>
 
 <script type="text/javascript">
@@ -152,7 +156,7 @@
     	});
     	
     	jq("#remove-current-bookmark").click(function(event) {
-    		var bookmarkUuid = jq("#current-bookmark-object").attr('name');
+    		var bookmarkUuid = jq("#current-bookmark-object").val();
     		
     		if(bookmarkUuid) {
     			deleteSearchBookmark(bookmarkUuid, true);
@@ -169,6 +173,7 @@
     	
     	jq("#comment-on-search-record").click(function(event) {
     		var phrase = jq("#searchText").val();
+    		displayBothPersonalAndGlobalNotes();
     		
     		if(phrase) {
 	    		checkIfPhraseExisitsInHistory(phrase, function(exists) {
@@ -262,14 +267,27 @@
     		saveSearchNote();
     	});
     	
+    	jq("body").on("click", "#previous-notes-on-this-search", function (event) {
+    		if(event.target.localName === "i") {
+    			var noteUuid = event.target.id;
+    			deleteSearchNote(noteUuid);
+    		}
+    	});
+    	
+    	jq("#refresh-notes-display").click(function(event) {
+    		refreshSearchNotes();
+    	});
+    	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
     		checkIfPhraseExisitsInHistory(phrase, function(exists) {
     			if(exists) {
-	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, function(bookmarkExists) {
+	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, function(bookmarkUuid) {
 	    				addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
-	    				
-	    				if(!bookmarkExists) {
+		    			
+	    				if(!bookmarkUuid) {
 	    					saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
+	    				} else {
+	    					jq("#current-bookmark-object").val(bookmarkUuid);
 	    				}
 	    			});
     			} else {
@@ -289,8 +307,9 @@
 					url: "${ ui.actionLink('checkIfBookmarkExists') }",
 					data: {"phrase":phrase, "bookmarkName":bookmarkName, "categories":categories},
 					dataType: "json",
-					success: function(exists) {
-						taskToRunOnSuccess(exists);
+					success: function(bookmarkUuid) {
+						taskToRunOnSuccess(bookmarkUuid);
+						
 					},
 					error: function(e) {
 					}
@@ -329,8 +348,7 @@
 					success: function(bkObjs) {
 						if(bkObjs) {
 							jsonAfterParse.searchBookmarks = bkObjs.allBookmarks;
-							jq("#current-bookmark-object").attr('name', bkObjs.currentUuid);
-							jq("#current-bookmark-object").val(bookmarkName);
+							jq("#current-bookmark-object").val(bkObjs.currentUuid);
 							displayExistingBookmarks();
 						}
 						jq("#favorite-search-record").prop('disabled', false);
@@ -428,6 +446,10 @@
 	    	for(i = 0; i < bookmarks.length; i++) {
 	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "' title='Delete This Bookmark'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
 	    	}
+	    	if(bookmarksToDisplay !== "") {
+		    	jq("#favorite-search-record").removeClass("icon-star-empty");
+			    jq("#favorite-search-record").addClass("icon-star");
+	    	}
 	    	
 	    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");
 	    }
@@ -504,6 +526,7 @@
 		            jq("#bookmark-search-phrase").text(phrase);
 		            jq("#favorite-search-record").removeClass("icon-star-empty");
 		            jq("#favorite-search-record").addClass("icon-star");
+		            jq(".ui-dialog-content").dialog("close");
 		            if(cats.length !== 0) {
 		            	if(cats[0] !== "") {
 		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");
@@ -525,6 +548,8 @@
     		var comment = jq("#new-comment-or-note").val();
     		var priority = jq("#new-note-priority option:selected").text();
     		var backgroundColor = jq("#new-note-color option:selected").text();
+    		
+    		changeNotesBgColor("#new-comment-or-note", "white");
     	
     		if(searchPhrase && patientId && comment) {
 	    		jq.ajax({
@@ -536,8 +561,12 @@
 						if(allNotes) {
 							jsonAfterParse.personalNotes = allNotes.personalNotes;
 							jsonAfterParse.globalNotes = allNotes.globalNotes;
+							jsonAfterParse.currentUser = allNotes.currentUser;
 							
 							displayBothPersonalAndGlobalNotes();
+							jq("#new-comment-or-note").val("");
+							jq("#new-note-color option:selected").text("Color");
+							jq("#patient_id").val("Priority");
 						}
 					},
 					error: function(e) {
@@ -552,26 +581,112 @@
     		var displayPersonalNotes = "";
     		var displayGlobalNotes = "";
     		var displayAllNotes;
+    		var owner;
+    		var curUser = jsonAfterParse.currentUser;
     		
     		if(personalNotes && personalNotes.length !== 0) {
+    			displayPersonalNotes += "<u>Personal Notes (LOW priority):</u><br />";
+    			
     			for(i = 0; i < personalNotes.length; i++) {
 	    			var note = personalNotes[i];
+	    			owner = note.noteOwner;
 	    			
-	    			displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt +  "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + "</p><i class='icon-remove' id='" + note.uuid + "'></i>";
+	    			if(owner === curUser) {
+	    				displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
+	    			}
 	    		}
     		}
     		
     		if(globalNotes && globalNotes.length !== 0) {
+    			displayGlobalNotes += "<u>Global Notes (HIGH priority):</u><br />";
+    			
     			for(i = 0; i < globalNotes.length; i++) {
 	    			var note = globalNotes[i];
+	    			owner = note.noteOwner;
 	    			
-	    			displayGlobalNotes += "By <b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt +  "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + "</p><i class='icon-remove' id='" + note.uuid + "'></i>";
+	    			displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
+	    			
+	    			if(owner === curUser) {
+	    				displayGlobalNotes += "<i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i>";
+	    			}
+	    			
+	    			displayGlobalNotes += "</p><hr>";
     			}
     		}
     		if(displayPersonalNotes || displayGlobalNotes) {
     			displayAllNotes = displayPersonalNotes + "<br /><hr />" + displayGlobalNotes;
+    			
+    			jq("#comment-on-search-record").removeClass("icon-comment-alt");
+    			jq("#comment-on-search-record").addClass("icon-comment");
     			jq("#previous-notes-on-this-search").html(displayAllNotes);
+    			scrollToBottomOfDiv("#previous-notes-on-this-search");
+    		} else {
+    			jq("#comment-on-search-record").removeClass("icon-comment");
+    			jq("#comment-on-search-record").addClass("icon-comment-alt");
     		}
+    	}
+    	
+    	function formatTimeToShow(dateObj) {
+    		var ctdDate = new Date(parseInt(dateObj));
+		    var hour = ctdDate.getHours() + 1;
+		    var min = ctdDate.getMinutes() + 1;
+		    var sec = ctdDate.getSeconds() + 1;
+		    var timeStr = hour + ":" + min + ":" + sec;
+		    		//toUTCString
+		    return ctdDate.toTimeString();
+    	}
+    	
+    	function deleteSearchNote(uuid) {
+    		var searchPhrase = jq("#searchText").val();
+    		var patientId = jq("#patient_id").val();
+    	
+    		if(uuid) {
+	    		jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('deleteSearchNote') }",
+					data: {"uuid":uuid, "searchPhrase":searchPhrase, "patientId":patientId},
+					dataType: "json",
+					success: function(allNotes) {
+						if(allNotes) {
+							jsonAfterParse.personalNotes = allNotes.personalNotes;
+							jsonAfterParse.globalNotes = allNotes.globalNotes;
+							jsonAfterParse.currentUser = allNotes.currentUser;
+							
+							displayBothPersonalAndGlobalNotes();
+						}
+					},
+					error: function(e) {
+					}
+				});
+			}
+    	}
+    	
+    	function refreshSearchNotes() {
+    		var searchPhrase = jq("#searchText").val();
+    		var patientId = jq("#patient_id").val();
+	    	jq.ajax({
+				type: "POST",
+				url: "${ ui.actionLink('refreshSearchNotes') }",
+				data: {"searchPhrase":searchPhrase, "patientId":patientId},
+				dataType: "json",
+				success: function(allNotes) {
+					if(allNotes) {
+						jsonAfterParse.personalNotes = allNotes.personalNotes;
+						jsonAfterParse.globalNotes = allNotes.globalNotes;
+						jsonAfterParse.currentUser = allNotes.currentUser;
+						
+						displayBothPersonalAndGlobalNotes();
+					}
+				},
+				error: function(e) {
+				}
+			});
+    	}
+    	
+    	function scrollToBottomOfDiv(element) {
+    		var wtf = jq(element);
+		    var height = wtf[0].scrollHeight;
+		    wtf.scrollTop(height);
     	}
     
 	});
@@ -618,7 +733,7 @@
 			<option>Priority</option>
 			<option>LOW</option>
 			<option>HIGH</option>
-		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<select id="new-note-color" title="Background color for this Note">
 			<option>Color</option>
 			<option>orange</option>
@@ -631,7 +746,8 @@
 			<option>deeppink</option>
 			<option>magenta</option>
 			<option>red</option>
-		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+		<i class="icon-refresh medium" id="refresh-notes-display"></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<input type="button" id="save-a-new-note" value="Save Note" />
 	</div>
 </div>

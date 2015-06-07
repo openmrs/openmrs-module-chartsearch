@@ -37,6 +37,11 @@
 <div class="ui-tabs">
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
 	    <li class="ui-state-default ui-corner-top">
+	    	<a class="ui-tabs-anchor" href="#launcher">
+	        	Launcher
+	        </a>
+	    </li>
+	    <li class="ui-state-default ui-corner-top">
 	    	<a class="ui-tabs-anchor" href="#manage-preferences">
 	        	Preferences
 	        </a>
@@ -66,25 +71,36 @@
 	             Notes
 	        </a>
 	    </li>
+	    <li class="ui-state-default ui-corner-top ui-state-active" >
+	        <a class="ui-tabs-anchor" href="#aggregate-searches" >
+	             Aggregate Searches
+	        </a>
+	    </li>
     </ul>
     
+    <div id="launcher">
+    	${ ui.includeFragment("chartsearch", "chartsearchLauncher") }
+    </div>
     <div id="manage-preferences">
-    	<h1>Manage Preferences</h1>
+    	${ ui.includeFragment("chartsearch", "managePreferences") }
     </div>
     <div id="manage-bookmarks">
-    	<h1>Manage Bookmarks</h1>
+    	${ ui.includeFragment("chartsearch", "manageBookmarks") }
     </div>
     <div id="manage-history">
-    	<h1>Manage History</h1>
+    	${ ui.includeFragment("chartsearch", "manageHistory") }
     </div>
     <div id="manage-commands">
-    	<h1>Manage Commands</h1>
+    	${ ui.includeFragment("chartsearch", "manageCommands") }
     </div>
     <div id="manage-settings">
-    	<h1>Manage Settings</h1>
+    	${ ui.includeFragment("chartsearch", "manageSettings") }
     </div>
     <div id="manage-notes">
-    	<h1>Manage Notes</h1>
+    	${ ui.includeFragment("chartsearch", "manageNotes") }
+    </div>
+    <div id="aggregate-searches">
+    	${ ui.includeFragment("chartsearch", "aggregateSearches") }
     </div>
     
 </div>

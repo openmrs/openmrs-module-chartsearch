@@ -126,6 +126,7 @@
     	displayExistingBookmarks();
     	displayBothPersonalAndGlobalNotes();
     	updateBookmarksAndNotesUI();
+    	displayQuickSearches();
     	
     	jq("#delete-search-record").click(function(event) {
     		invokeDialog("#delete-search-record-dialog", "Delete this Search Record", "300px");
@@ -197,7 +198,7 @@
     	}
     	
     	jq("#quick-searches").click(function(event){
-    		invokeDialog("#quick-searches-dialog-message", "Quick Searches", "300px");
+    		invokeDialog("#quick-searches-dialog-message", "Quick Searches", "400px");
     		return false;
     	});
     	
@@ -499,7 +500,8 @@
 		    jq(".obsgroup_view").empty();
 		    jq("#found-results-summary").html('');
 		    jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
-		
+			jq('.ui-dialog-content').dialog('close');
+			
 		    jq.ajax({
 		        type: "POST",
 		        url: "${ ui.actionLink('getResultsFromTheServer') }",

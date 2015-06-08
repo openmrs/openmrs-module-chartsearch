@@ -1109,3 +1109,35 @@ function closeAllActiveDialogs() {
 	jq("#favorite-search-record-dialog").dialog("close");
 	jq("#comment-on-search-record-dialog").dialog("close");
 }
+
+function displayQuickSearches() {
+	var history = jsonAfterParse.searchHistory;
+	var bookmarks = jsonAfterParse.searchBookmarks;
+	var quickSearchDisplay = "";
+	var hLength = history.length;
+	var bLength = bookmarks.length;
+	
+	if(history && hLength > 0) {
+		quickSearchDisplay += "<b>2 Most Recent & 3 Last bookmarked Searches</b><br /><u>History</u><br />";
+		for(i = 0; i < hLength; i++) {
+			var no = i + 1;
+			if(i === 0 || i === 1) {
+				quickSearchDisplay += no + ". <a href='' class='quick-searches-history' id='" + history[i].uuid + "'>" + history[i].searchPhrase + "</a><br />"; 
+			}
+		}
+	}
+	
+	if(bookmarks && bLength > 0) {
+		quickSearchDisplay += "<u>Bookmarks</u><br />";
+		for(i = 0; i < bLength; i++) {
+			var no = i + 1;
+			if(i === 0 || i === 1 || i === 2) {
+				quickSearchDisplay += no + ". <a href='' class='quick-searches-bookmark' id='" + bookmarks[i].uuid + "'>" + bookmarks[i].searchPhrase + "</a> [ <em>" + bookmarks[i].categories + "</em> ]<br />"; 
+			}
+		}
+	}
+	
+	if(quickSearchDisplay !== "") {
+		jq("#quick-searches-dialog-message").html(quickSearchDisplay);
+	}
+}

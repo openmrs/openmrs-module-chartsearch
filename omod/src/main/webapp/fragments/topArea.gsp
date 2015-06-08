@@ -216,6 +216,7 @@
 				jq(".obsgroup_view").empty();
 				jq("#found-results-summary").html('');
 				jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+				jq('.ui-dialog-content').dialog('close');
 				
 				jq.ajax({
 					type: "POST",
@@ -245,7 +246,6 @@
     					jq("#lauche-other-chartsearch-features").hide();
     					
     					displayBothPersonalAndGlobalNotes();
-			            closeAllActiveDialogs();
 					},
 					error: function(e) {
 					  //alert("Error occurred!!! " + e);

@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class TopAreaFragmentController {
 	
-	public void controller(FragmentModel model, @RequestParam("patientId") Integer patient) {
+	public void controller(FragmentModel model, @RequestParam("patientId") Patient patient) {
 		model.addAttribute("patientId", patient);
 	}
 	

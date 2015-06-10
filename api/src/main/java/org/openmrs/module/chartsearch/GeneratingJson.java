@@ -135,17 +135,7 @@ public class GeneratingJson {
 			JSONObject json = null;
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
 			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
-				json = new JSONObject();
-				
-				if (wholePageIsToBeLoaded) {
-					json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
-				} else {
-					json.put("searchPhrase", history.getSearchPhrase());
-				}
-				json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
-				json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
-				json.put("uuid", history.getUuid());
-				json.put("patientId", history.getPatient().getPatientId());
+				json = generateHistoryJSON(wholePageIsToBeLoaded, history);
 			}
 			if (null != json) {
 				histories.add(json);
@@ -154,6 +144,39 @@ public class GeneratingJson {
 		
 		return histories;
 	}
+	
+	public static JSONArray getAllSearchHistoriesToSendToTheManageUI(boolean wholePageIsToBeLoaded) {
+		JSONArray histories = new JSONArray();
+		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
+		
+		for (ChartSearchHistory history : allHistory) {
+			JSONObject json = null;
+			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
+				json = generateHistoryJSON(wholePageIsToBeLoaded, history);
+			}
+			if (null != json) {
+				histories.add(json);
+			}
+		}
+		
+		return histories;
+	}
+
+	private static JSONObject generateHistoryJSON(boolean wholePageIsToBeLoaded, ChartSearchHistory history) {
+	    JSONObject json;
+	    json = new JSONObject();
+	    
+	    if (wholePageIsToBeLoaded) {
+	    	json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
+	    } else {
+	    	json.put("searchPhrase", history.getSearchPhrase());
+	    }
+	    json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
+	    json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
+	    json.put("uuid", history.getUuid());
+	    json.put("patientId", history.getPatient().getPatientId());
+	    return json;
+    }
 	
 	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();

@@ -493,20 +493,20 @@
 		
 		function submitChartSearchFormWithAjax2(phrase, cats, bkName) {
 		    var searchText = document.getElementById('searchText');
-		
-		    jq("#lauche-stored-bookmark").hide();
-		    jq("#lauche-other-chartsearch-features").hide();
-		    jq("#chart-previous-searches-display").hide();
-		    jq(".obsgroup_view").empty();
-		    jq("#found-results-summary").html('');
-		    jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
-			jq('.ui-dialog-content').dialog('close');
+			var patientId = jq("#patient_id").val().replace("Patient#", "");
+			var categories = getAllCheckedCategoriesOrFacets();
 			
-		    jq.ajax({
-		        type: "POST",
-		        url: "${ ui.actionLink('getResultsFromTheServer') }",
-		        data: jq('#chart-search-form-submit').serialize(),
-		        dataType: "json",
+			jq("#chart-previous-searches-display").hide();
+			jq(".obsgroup_view").empty();
+			jq("#found-results-summary").html('');
+			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+			jq('.ui-dialog-content').dialog('close');	
+			
+			jq.ajax({
+				type: "POST",
+				url: "${ ui.actionLink('getResultsFromTheServer') }",
+				data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
+				dataType: "json",
 		        success: function(results) {
 		            jq("#obsgroups_results").html('');
 		            jq(".inside_filter_categories").fadeOut(500);

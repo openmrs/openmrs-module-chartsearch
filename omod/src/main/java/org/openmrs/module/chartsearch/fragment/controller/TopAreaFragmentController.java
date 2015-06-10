@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import net.sf.json.JSONObject;
 
 import org.openmrs.Patient;
@@ -23,7 +21,6 @@ import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
 import org.openmrs.module.chartsearch.page.controller.ChartsearchPageController;
-import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,12 +30,13 @@ public class TopAreaFragmentController {
 		model.addAttribute("patientId", patient);
 	}
 	
-	public String getResultsFromTheServer(FragmentModel model, @BindParams SearchPhrase search_phrase,
-	                                      @RequestParam("patientId") Patient patient, HttpServletRequest request) {
+	public String getResultsFromTheServer(FragmentModel model, @RequestParam("phrase") SearchPhrase search_phrase,
+	                                      @RequestParam("patientId") Patient patient,
+	                                      @RequestParam(value = "categories[]", required = false) String[] categories) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
 		return GeneratingJson.generateJson(false);
 	}
 	

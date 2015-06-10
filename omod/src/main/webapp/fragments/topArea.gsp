@@ -210,47 +210,51 @@
 		function submitChartSearchFormWithAjax() {
 			var searchText = document.getElementById('searchText');
 			var searchHistory = jsonAfterParse.searchHistory;
+			var patientId = jq("#patient_id").val().replace("Patient#", "");
+			var categories = getAllCheckedCategoriesOrFacets();
 			
-				hideSearchSuggestions();
-				jq("#chart-previous-searches-display").hide();
-				jq(".obsgroup_view").empty();
-				jq("#found-results-summary").html('');
-				jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
-				jq('.ui-dialog-content').dialog('close');
-				
-				jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('getResultsFromTheServer') }",
-					data: jq('#chart-search-form-submit').serialize(),
-					dataType: "json",
-					success: function(results) {
-						jq("#obsgroups_results").html('');
-						jq(".inside_filter_categories").fadeOut(500);
+			alert(categories);
+			
+			hideSearchSuggestions();
+			jq("#chart-previous-searches-display").hide();
+			jq(".obsgroup_view").empty();
+			jq("#found-results-summary").html('');
+			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+			jq('.ui-dialog-content').dialog('close');	
+			
+			jq.ajax({
+				type: "POST",
+				url: "${ ui.actionLink('getResultsFromTheServer') }",
+				data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
+				dataType: "json",
+				success: function(results) {
+					jq("#obsgroups_results").html('');
+					jq(".inside_filter_categories").fadeOut(500);
+									
+					jsonAfterParse = JSON.parse(results);
 						
-						jsonAfterParse = JSON.parse(results);
+					refresh_data();
+					jq(".results_table_wrap").fadeIn(500);
 						
-						refresh_data();
-						jq(".results_table_wrap").fadeIn(500);
+					//click the first result to show its details at the right side
+					jq('#first_obs_single').trigger('click');
 						
-						//click the first result to show its details at the right side
-						jq('#first_obs_single').trigger('click');
-						
-						//show updated facets
-						jq(".inside_filter_categories").fadeIn(500);
-						
-						showHistorySuggestionsOnLoad();
-						hideSearchSuggestions();
-						jq("#chart-previous-searches-display").hide();
-						
-						jq("#lauche-stored-bookmark").hide();
-    					jq("#lauche-other-chartsearch-features").hide();
+					//show updated facets
+					jq(".inside_filter_categories").fadeIn(500);
+							
+					showHistorySuggestionsOnLoad();
+					hideSearchSuggestions();
+					jq("#chart-previous-searches-display").hide();
+								
+					jq("#lauche-stored-bookmark").hide();
+    				jq("#lauche-other-chartsearch-features").hide();
     					
-    					displayBothPersonalAndGlobalNotes();
-					},
-					error: function(e) {
-					  //alert("Error occurred!!! " + e);
-					}
-				});
+    				displayBothPersonalAndGlobalNotes();
+				},
+				error: function(e) {
+				  //alert("Error occurred!!! " + e);
+				}
+			});
 		}
 		
 		var delay = (function() {

@@ -47,9 +47,9 @@ public class ChartSearchCache {
 		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText);
 		
 		if (StringUtils.isNotBlank(searchText) && null != patientId) {
-			history.setLastSearchedAt(new Date());//Date was duplicated, probably use Calendar
+			history.setLastSearchedAt(new Date());
 			
-			if (null != exisitingHistory) {//change only the date to current and generate new searchId
+			if (null != exisitingHistory) {
 				history.setHistoryOwner(exisitingHistory.getHistoryOwner());
 				history.setPatient(exisitingHistory.getPatient());
 				history.setSearchPhrase(exisitingHistory.getSearchPhrase());
@@ -256,6 +256,17 @@ public class ChartSearchCache {
 		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 		
 		return json;
+	}
+	
+	public JSONArray deleteHistoryOfSelectedUuids(String[] uuids) {
+		if (null != uuids && uuids.length != 0) {
+			for (int i = 0; i < uuids.length; i++) {
+				String uuid = uuids[i];
+				ChartSearchHistory history = chartSearchService.getSearchHistoryByUuid(uuid);
+				chartSearchService.deleteSearchHistory(history);
+			}
+		}
+		return GeneratingJson.getAllSearchHistoriesToSendToTheManageUI(false);
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

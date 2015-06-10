@@ -206,7 +206,7 @@
 			<column name="search_phrase" type="text">
 				<constraints nullable="false" />
 			</column>
-			<column name="last_searched_at" type="date">
+			<column name="last_searched_at" type="timestamp">
 				<constraints nullable="false" />
 			</column>
 			<column name="uuid" type="char(38)">
@@ -289,7 +289,7 @@
 			<column name="priority" type="text">
 				<constraints nullable="false" />
 			</column>
-			<column name="created_or_last_modified_at" type="date">
+			<column name="created_or_last_modified_at" type="timestamp">
 				<constraints nullable="false" />
 			</column>
 			<column name="uuid" type="char(38)">

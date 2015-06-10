@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
@@ -47,14 +45,14 @@ public class ChartsearchPageController {
 	
 	public void controller(@RequestParam("patientId") Patient patient, PageModel model,
 	                       @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
-	                       @InjectBeans PatientDomainWrapper patientDomainWrapper, HttpServletRequest request) {
+	                       @InjectBeans PatientDomainWrapper patientDomainWrapper, @RequestParam(value = "categories[]", required = false) String[] categories) {
 		
-		if (patient != null && request != null) {
+		if (patient != null) {
 			patientDomainWrapper.setPatient(patient);
 			model.addAttribute("patient", patientDomainWrapper);
 			SearchAPI searchAPIInstance = SearchAPI.getInstance();
 			indexPatientData(patient);
-			searchAndReturnResults(search_phrase, patient, request, searchAPIInstance);
+			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
 		}
 	}
 	
@@ -67,10 +65,8 @@ public class ChartsearchPageController {
 		log.info("indexed patient");
 	}
 	
-	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, HttpServletRequest request,
+	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, String[] categories,
 	                                          SearchAPI searchAPIInstance) {
-		//get all checked categories from the UI and pass them into categories array
-		String[] categories = request.getParameterValues("categories");
 		if (categories == null) {
 			categories = new String[0];
 		}

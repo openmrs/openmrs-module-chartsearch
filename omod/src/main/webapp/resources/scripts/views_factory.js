@@ -1141,3 +1141,11 @@ function displayQuickSearches() {
 		jq("#quick-searches-dialog-message").html(quickSearchDisplay);
 	}
 }
+
+function getAllCheckedCategoriesOrFacets() {
+	var categories = [];
+	jq("input:checkbox[name=categories]:checked").each(function() {
+		categories.push(jq(this).val());
+	});
+	return categories;
+}

@@ -11,27 +11,9 @@
     
     jq = jQuery;
     
-    var tab = parseInt(getUrlParameter('tab')) - 1;
-    
     jq(function() {
-    	if(tab) {
-	    	jq(".ui-tabs").tabs({ active: tab });
-    	} else {
-    		jq(".ui-tabs").tabs();
-    	}
+    	jq(".ui-tabs").tabs();
 	});
-	
-	function getUrlParameter(sParam) {
-	    var sPageURL = window.location.search.substring(1);
-	    var sURLVariables = sPageURL.split('&');
-	    for (var i = 0; i < sURLVariables.length; i++) {
-	        var sParameterName = sURLVariables[i].split('=');
-	        if (sParameterName[0] == sParam) 
-	        {
-	            return sParameterName[1];
-	        }
-	    }
-	}      
 </script>
 
 <div class="ui-tabs">

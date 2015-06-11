@@ -165,7 +165,7 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	 */
 	public void setDisplayColor(String displayColor) {
 		if ("orange".equals(displayColor) || "yellow".equals(displayColor)|| "violet".equals(displayColor) || "lime".equals(displayColor)
-		        || "beige".equals(displayColor) || "cyan".equals(displayColor) || "aqua".equals(displayColor)
+		        || "beige".equals(displayColor) || "cyan".equals(displayColor) || "lightgreen".equals(displayColor)
 		        || "deeppink".equals(displayColor) || "magenta".equals(displayColor) || "red".equals(displayColor)) {//don't persist the first option
 			this.displayColor = displayColor;
 		} else {

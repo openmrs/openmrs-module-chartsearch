@@ -197,6 +197,7 @@
 				var selectedHistory = event.target.innerText;
 				
 				jq('#searchText').val(selectedHistory);
+				unSelectAllCategories();
 				submitChartSearchFormWithAjax();
 			} else if(event.target.localName === "i") {
 				var uuid = event.target.id;
@@ -213,14 +214,14 @@
 			var patientId = jq("#patient_id").val().replace("Patient#", "");
 			var categories = getAllCheckedCategoriesOrFacets();
 			
-			alert(categories);
-			
-			hideSearchSuggestions();
 			jq("#chart-previous-searches-display").hide();
 			jq(".obsgroup_view").empty();
 			jq("#found-results-summary").html('');
 			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
 			jq('.ui-dialog-content').dialog('close');	
+			jq("#lauche-other-chartsearch-features").hide();
+			jq("#lauche-stored-bookmark").hide();
+			jq("#chart-previous-searches-display").hide();
 			
 			jq.ajax({
 				type: "POST",
@@ -232,24 +233,18 @@
 					jq(".inside_filter_categories").fadeOut(500);
 									
 					jsonAfterParse = JSON.parse(results);
-						
 					refresh_data();
+					
 					jq(".results_table_wrap").fadeIn(500);
-						
-					//click the first result to show its details at the right side
 					jq('#first_obs_single').trigger('click');
-						
-					//show updated facets
 					jq(".inside_filter_categories").fadeIn(500);
 							
 					showHistorySuggestionsOnLoad();
 					hideSearchSuggestions();
-					jq("#chart-previous-searches-display").hide();
-								
-					jq("#lauche-stored-bookmark").hide();
-    				jq("#lauche-other-chartsearch-features").hide();
-    					
     				displayBothPersonalAndGlobalNotes();
+    				displayQuickSearches();
+    				updateBookmarksAndNotesUI();
+    				updateCategeriesAtUIGlobally(categories);
 				},
 				error: function(e) {
 				  //alert("Error occurred!!! " + e);
@@ -376,7 +371,6 @@
 			reversed = true;
 			
 			for(i = 0; i < history.length; i++) {
-				//TODO use; var lastSearchedAt = new Date(1432892071355), history[i].lastSearchedAt for re-formatting date
 				historyToDisplay += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history[i].searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history[i].formattedLastSearchedAt + "</em><i id='" + history[i].uuid + "' class='icon-remove delete-search-history' title='Delete This History'></i></div>"; 
 			}
 			

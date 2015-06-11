@@ -1061,10 +1061,12 @@ function displayBothPersonalAndGlobalNotes() {
 		
 		for(i = 0; i < personalNotes.length; i++) {
 			var note = personalNotes[i];
+			var date = new Date(note.createdOrLastModifiedAt);
+			var time = date.toTimeString();
 			owner = note.noteOwner;
 			
 			if(owner === curUser) {
-				displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
+				displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
 			}
 		}
 	}
@@ -1074,9 +1076,11 @@ function displayBothPersonalAndGlobalNotes() {
 		
 		for(i = 0; i < globalNotes.length; i++) {
 			var note = globalNotes[i];
+			var date = new Date(note.createdOrLastModifiedAt);
+			var time = date.toTimeString();
 			owner = note.noteOwner;
 			
-			displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
+			displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
 			
 			if(owner === curUser) {
 				displayGlobalNotes += "<i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i>";
@@ -1148,4 +1152,32 @@ function getAllCheckedCategoriesOrFacets() {
 		categories.push(jq(this).val());
 	});
 	return categories;
+}
+
+function unSelectAllCategories() {
+	jq("input:checkbox[name=categories]:checked").each(function() {
+		jq(this).prop('checked', false);
+	});
+}
+
+function updateCategeriesAtUIGlobally(categories) {
+	if(categories && categories.length === 0) {
+		jq("#category-filter_method").text("All Categories");
+	} else {
+		if(categories.length >= 2) {
+			if(categories[0] && categories[0] !== "" && categories[1] && categories[1] !== "") {
+				var catsLabel = capitalizeFirstLetter(categories[0]) + "," + capitalizeFirstLetter(categories[1]);
+		   		
+				if(catsLabel.length <= 14) {
+		   			jq("#category-filter_method").text(catsLabel + "...");
+		   		} else {
+		   			jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]) + "...");
+		   		}
+		    }
+		} else {
+		    if(categories[0] && categories[0] !== "") {
+		   		jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]) + "...");
+		    }
+		}
+	}
 }

@@ -3,7 +3,7 @@
 		padding-top:8px;
 	}
 	
-	#delete-search-record, #favorite-search-record, #comment-on-search-record, #possible-task-list {
+	#favorite-search-record, #comment-on-search-record, #possible-task-list {
 		cursor: pointer;
 	}
 	
@@ -127,18 +127,14 @@
     	displayBothPersonalAndGlobalNotes();
     	updateBookmarksAndNotesUI();
     	displayQuickSearches();
-    	
-    	jq("#delete-search-record").click(function(event) {
-    		invokeDialog("#delete-search-record-dialog", "Delete this Search Record", "300px");
-    	});
     
     	jq("#favorite-search-record").click(function(event) {
     		jq("#favorite-search-record").prop('disabled', true);
     		//TODO check if bookmarkExists, else run below
 	    	var phrase = jq("#searchText").val();
 		    var selectedCats = getSelectedCategoryNames();
-		    var patientId = jq("#patient_id").val();
-	    	
+		    var patientId = jq("#patient_id").val().replace("Patient#", "");
+			
 	    	if(!phrase) {
 	    		failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
 	    	} else {
@@ -151,7 +147,7 @@
     		var phrase = jq("#searchText").val();
     		var bookmarkName = jq("#current-bookmark-name").val();
 			var selectedCats = getSelectedCategoryNames();
-			var patientId = jq("#patient_id").val();
+			var patientId = jq("#patient_id").val().replace("Patient#", "");
 			
 			saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId);
 			jq("#favorite-search-record-dialog").dialog("close");
@@ -226,7 +222,7 @@
     			var bookmarkUuid = event.target.id;
     			deleteSearchBookmark(bookmarkUuid, false);
     		} else if(event.target.localName === "a") {
-    			window.open('../chartsearch/chartSearchManager.page?tab=3', '_blank');
+    			window.open('../chartsearch/chartSearchManager.page#manage-bookmarks', '_blank');
     			return false;
     		} else if(event.target.localName === "div" || event.target.localName === "b" || event.target.localName === "em") {
     			var bookmarkUuid = event.target.id;
@@ -238,27 +234,31 @@
     	});
     	
     	jq("#history-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=4', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#manage-history', '_blank');
     	});
     	
     	jq("#preferences-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=2', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#manage-preferences', '_blank');
     	});
     	
     	jq("#commands-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=5', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#manage-commands', '_blank');
     	});
     	
     	jq("#settings-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=6', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#manage-settings', '_blank');
     	});
     	
     	jq("#notes-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=7', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#manage-notes', '_blank');
     	});
     	
     	jq("#aggregate-searches").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page?tab=8', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#aggregate-searches', '_blank');
+    	});
+    	
+    	jq("#chartsearch-laucher").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page#launcher', '_blank');
     	});
     	
     	jq("#new-note-color").change(function(event) {
@@ -285,6 +285,24 @@
     		refreshSearchNotes();
     	});
     	
+    	jq("body").on("click", "#quick-searches-dialog-message", function (event) {
+    		if(event.target.localName === "a") {
+    			if(event.target.className === "quick-searches-history") {
+	    			var searchPhrase = event.target.text;
+	    			if(searchPhrase) {
+	    				jq("#searchText").val(searchPhrase);
+	    				unSelectAllCategories();
+	    				submitChartSearchFormWithAjax2(searchPhrase, "");
+	    			}
+    			} else if(event.target.className === "quick-searches-bookmark") {
+    				var uuid = event.target.id;
+    				
+    				searchUsingBookmark(uuid);
+    			}
+    		}
+    		return false;
+    	});
+    	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
     		checkIfPhraseExisitsInHistory(phrase, function(exists) {
     			if(exists) {
@@ -293,8 +311,8 @@
 	    					saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
 	    				} else {
 	    					jq("#current-bookmark-object").val(bookmarkUuid);
+	    					addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
 	    				}
-	    				addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
 	    			});
     			} else {
 					failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
@@ -463,7 +481,11 @@
 						var commaCats = bookmarks.commaCategories;
 						
 						autoFillSearchForm(phrase, cats, bkName);
+						jq("#current-bookmark-name").val(bkName);
+						
 						submitChartSearchFormWithAjax2(phrase, cats);
+						
+						//TODO change label of category filter
 					},
 					error: function(e) {
 					}
@@ -491,21 +513,30 @@
 		    }
 		}
 		
-		function submitChartSearchFormWithAjax2(phrase, cats, bkName) {
-		    var searchText = document.getElementById('searchText');
-			var patientId = jq("#patient_id").val().replace("Patient#", "");
+		function submitChartSearchFormWithAjax2(phrase, cats) {
+		    var patientId = jq("#patient_id").val().replace("Patient#", "");
 			var categories = getAllCheckedCategoriesOrFacets();
+			var searchText = document.getElementById('searchText');
 			
-			jq("#chart-previous-searches-display").hide();
+			if(phrase === "") {
+				phrase = searchText;
+			}
+			if(cats === "") {
+				cats = categories;
+			}
+			
 			jq(".obsgroup_view").empty();
 			jq("#found-results-summary").html('');
 			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
 			jq('.ui-dialog-content').dialog('close');	
+			jq("#lauche-other-chartsearch-features").hide();
+			jq("#lauche-stored-bookmark").hide();
+			jq("#chart-previous-searches-display").hide();
 			
 			jq.ajax({
 				type: "POST",
 				url: "${ ui.actionLink('getResultsFromTheServer') }",
-				data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
+				data: { "patientId":patientId, "phrase":phrase, "categories":cats },
 				dataType: "json",
 		        success: function(results) {
 		            jq("#obsgroups_results").html('');
@@ -517,17 +548,12 @@
 		            jq(".results_table_wrap").fadeIn(500);
 		            jq('#first_obs_single').trigger('click');
 		            jq(".inside_filter_categories").fadeIn(500);
-		            jq("#current-bookmark-name").val(bkName);
 		            jq("#bookmark-category-names").text(cats);
 		            jq("#bookmark-search-phrase").text(phrase);
-		           	
 		            
 		            updateBookmarksAndNotesUI();
-		            if(cats.length === 1) {
-		            	if(cats[0] !== "") {
-		            		jq("#category-filter_method").text(capitalizeFirstLetter(cats[0]) + "...");
-		            	}
-		            }
+		            displayQuickSearches();
+		            updateCategeriesAtUIGlobally(cats);
 		        },
 		        error: function(e) {}
 		    });
@@ -540,8 +566,8 @@
     	
     	function saveSearchNote() {
     		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val();
-    		var comment = jq("#new-comment-or-note").val();
+    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+			var comment = jq("#new-comment-or-note").val();
     		var priority = jq("#new-note-priority option:selected").text();
     		var backgroundColor = jq("#new-note-color option:selected").text();
     		
@@ -561,13 +587,15 @@
 							
 							displayBothPersonalAndGlobalNotes();
 							jq("#new-comment-or-note").val("");
-							jq("#new-note-color option:selected").text("Color");
-							jq("#patient_id").val("Priority");
+    						jq("#new-comment-or-note").css("border", "");
 						}
 					},
 					error: function(e) {
 					}
 				});
+			} else {
+				jq("#new-comment-or-note").css("border", "2px solid rgb(252, 0, 27)");
+				jq("#new-comment-or-note").focus();
 			}
     	}
     	
@@ -583,8 +611,8 @@
     	
     	function deleteSearchNote(uuid) {
     		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val();
-    	
+    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+			
     		if(uuid) {
 	    		jq.ajax({
 					type: "POST",
@@ -608,8 +636,8 @@
     	
     	function refreshSearchNotes() {
     		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val();
-	    	jq.ajax({
+    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+			jq.ajax({
 				type: "POST",
 				url: "${ ui.actionLink('refreshSearchNotes') }",
 				data: {"searchPhrase":searchPhrase, "patientId":patientId},
@@ -632,11 +660,6 @@
     
        
 </script>
-
-
-
-<i id="delete-search-record" class="icon-remove medium" title="Reset"></i>
-<div class="search-record-dialog-content" id="delete-search-record-dialog">Do you want to delete?</div>
 
 <i id="favorite-search-record" class="icon-star-empty medium" title="Bookmark Search"></i>
 <div class="search-record-dialog-content" id="favorite-search-record-dialog">
@@ -681,7 +704,7 @@
 			<option>lime</option>
 			<option>beige</option>
 			<option>cyan</option>
-			<option>aqua</option>
+			<option>lightgreen</option>
 			<option>deeppink</option>
 			<option>magenta</option>
 			<option>red</option>
@@ -693,7 +716,7 @@
 
 <div id="dialogFailureMessage"></div>
 
-<a id="quick-searches" href="" title="Quick Searches">Q.k-<i class="icon-search"></i></a>
+<a id="quick-searches" href="" title="Quick Searches">QuickSearch</a>
 <div class="search-record-dialog-content" id="quick-searches-dialog-message"></div>
 
 
@@ -708,4 +731,5 @@
 	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
 	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
 	<div class="possible-task-list-item" id="aggregate-searches">Aggregate Searches</div>
+	<div class="possible-task-list-item" id="chartsearch-laucher">Choose Another Patient</div>
 </div>

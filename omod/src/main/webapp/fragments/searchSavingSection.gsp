@@ -401,14 +401,6 @@
 	    	jq("#favorite-search-record-dialog").dialog("close");
     	}
     	
-    	/*Overrides jq.("").dialog()*/
-    	function invokeDialog(dialogMessageElement, dialogTitle, dialogWidth) {
-	    	jq(dialogMessageElement).dialog({
-				title: dialogTitle,
-				width:dialogWidth
-			});
-    	}
-    	
     	function checkIfPhraseExisitsInHistory(searchPhrase, taskToRunOnSuccess) {
     		if(searchPhrase !== "") {
 	    		jq.ajax({
@@ -484,8 +476,6 @@
 						jq("#current-bookmark-name").val(bkName);
 						
 						submitChartSearchFormWithAjax2(phrase, cats);
-						
-						//TODO change label of category filter
 					},
 					error: function(e) {
 					}

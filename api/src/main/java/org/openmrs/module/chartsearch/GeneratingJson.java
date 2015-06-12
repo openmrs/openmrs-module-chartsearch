@@ -161,22 +161,22 @@ public class GeneratingJson {
 		
 		return histories;
 	}
-
+	
 	private static JSONObject generateHistoryJSON(boolean wholePageIsToBeLoaded, ChartSearchHistory history) {
-	    JSONObject json;
-	    json = new JSONObject();
-	    
-	    if (wholePageIsToBeLoaded) {
-	    	json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
-	    } else {
-	    	json.put("searchPhrase", history.getSearchPhrase());
-	    }
-	    json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
-	    json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
-	    json.put("uuid", history.getUuid());
-	    json.put("patientId", history.getPatient().getPatientId());
-	    return json;
-    }
+		JSONObject json;
+		json = new JSONObject();
+		
+		if (wholePageIsToBeLoaded) {
+			json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
+		} else {
+			json.put("searchPhrase", history.getSearchPhrase());
+		}
+		json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
+		json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
+		json.put("uuid", history.getUuid());
+		json.put("patientId", history.getPatient().getPatientId());
+		return json;
+	}
 	
 	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();
@@ -254,25 +254,50 @@ public class GeneratingJson {
 			
 			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())
 			        && curBookmark.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
-				json = new JSONObject();
-				
-				if (wholePageIsToBeLoaded) {
-					json.put("bookmarkName", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getBookmarkName()));
-					json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getSearchPhrase()));
-				} else {
-					json.put("bookmarkName", curBookmark.getBookmarkName());
-					json.put("searchPhrase", curBookmark.getSearchPhrase());
-				}
-				json.put("categories", curBookmark.getSelectedCategories());
-				json.put("uuid", curBookmark.getUuid());
+				json = generateBookmarksJSON(wholePageIsToBeLoaded, curBookmark);
 			}
 			
 			if (null != json) {
 				bookmarks.add(json);
 			}
 		}
-		
 		return bookmarks;
+	}
+	
+	public static JSONArray getAllSearchBookmarksToReturnTomanagerUI(boolean wholePageIsToBeLoaded) {
+		JSONArray bookmarks = new JSONArray();
+		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
+		
+		for (ChartSearchBookmark curBookmark : allBookmarks) {
+			JSONObject json = null;
+			
+			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())) {
+				json = generateBookmarksJSON(wholePageIsToBeLoaded, curBookmark);
+			}
+			
+			if (null != json) {
+				bookmarks.add(json);
+			}
+		}
+		return bookmarks;
+	}
+	
+	private static JSONObject generateBookmarksJSON(boolean wholePageIsToBeLoaded, ChartSearchBookmark curBookmark) {
+		JSONObject json;
+		json = new JSONObject();
+		
+		if (wholePageIsToBeLoaded) {
+			json.put("bookmarkName", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getBookmarkName()));
+			json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getSearchPhrase()));
+		} else {
+			json.put("bookmarkName", curBookmark.getBookmarkName());
+			json.put("searchPhrase", curBookmark.getSearchPhrase());
+		}
+		json.put("categories", curBookmark.getSelectedCategories());
+		json.put("uuid", curBookmark.getUuid());
+		json.put("patientId", curBookmark.getPatient().getPatientId());
+		
+		return json;
 	}
 	
 	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,

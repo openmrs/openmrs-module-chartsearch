@@ -12,8 +12,6 @@
 <script type="text/javascript">
 	var allReturnedhistory =' ${ allFoundHistory }';
     var historyAfterparse = JSON.parse(allReturnedhistory).reverse();
-    var jq = jQuery;
-	
     
     jq(document).ready(function() {
     	displayHistoryExistingHistory();
@@ -37,21 +35,29 @@
     		hideOrShowHistorySection("#others-hide-or-show", "#others-history-section");
     	});
     	
-    	jq("#history-check-all-today").click(function(event) {
-    		checkOrUnAllOtherCheckBoxesInADiv("#todays-history-section", "history-check-all-today");
-    	});
-    	
-    	jq("#history-check-all-week").click(function(event) {
-    		checkOrUnAllOtherCheckBoxesInADiv("#this-weeks-history-section", "history-check-all-week");
-    	});
-    	
-    	jq("#history-check-all-month").click(function(event) {
-    		checkOrUnAllOtherCheckBoxesInADiv("#this-month-history-section", "history-check-all-month");
-    	});
-    	
-    	jq("#history-check-others").click(function(event) {
-    		checkOrUnAllOtherCheckBoxesInADiv("#others-history-section", "history-check-others");
-    	});
+    	jq("body").on("click", "#todays-history-section", function() {
+			if(event.target.id === "history-check-all-today") {
+				checkOrUnAllOtherCheckBoxesInADiv("#todays-history-section", "history-check-all-today");
+			}
+		});
+		
+    	jq("body").on("click", "#this-weeks-history-section", function() {
+			if(event.target.id === "history-check-all-week") {
+				checkOrUnAllOtherCheckBoxesInADiv("#this-weeks-history-section", "history-check-all-week");
+			}
+		});
+		
+    	jq("body").on("click", "#this-month-history-section", function() {
+			if(event.target.id === "history-check-all-month") {
+				checkOrUnAllOtherCheckBoxesInADiv("#this-month-history-section", "history-check-all-month");
+			}
+		});
+		
+    	jq("body").on("click", "#others-history-section", function() {
+			if(event.target.id === "history-check-others") {
+				checkOrUnAllOtherCheckBoxesInADiv("#others-history-section", "history-check-others");
+			}
+		});
     	
     	jq("#delete-selected-history").click(function(event) {
     		deleteAllSelectedHistory();
@@ -163,20 +169,6 @@
 			return selectedHistoryUuids;
     	}
     	
-    	function checkOrUnAllOtherCheckBoxesInADiv(divElement, skipId) {
-    		jq(divElement + " input").each(function(event) {
-    			var selectedId = jq(this).attr("id");
-				
-				if(selectedId !== skipId) {
-					if(jq("#" + skipId).is(":checked")) {
-		    			jq(this).prop("checked", true);
-		    		} else {
-		    			jq(this).prop("checked", false);
-		    		}
-	    		}
-    		});
-    	}
-    	
     	function deleteAllSelectedHistory() {
     		var selectedUuids = returnuuidsOfSeletedHistory();
     		var deleteConfirmMsg = "Are you sure you want to delete " + selectedUuids.length + " Item(s)!";
@@ -189,7 +181,7 @@
 						data: {"selectedUuids":selectedUuids},
 						dataType: "json",
 						success: function(remainingHistory) {
-							historyAfterparse = remainingHistory;
+							historyAfterparse = remainingHistory.reverse();
 							
 							displayHistoryExistingHistory();
 						},

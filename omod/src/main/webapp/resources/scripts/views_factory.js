@@ -1181,3 +1181,25 @@ function updateCategeriesAtUIGlobally(categories) {
 		}
 	}
 }
+
+function checkOrUnAllOtherCheckBoxesInADiv(divElement, skipId) {
+	jq(divElement + " input").each(function(event) {
+		var selectedId = jq(this).attr("id");
+		
+		if(selectedId !== skipId && jq(this).attr("type") !== "radio") {
+			if(jq("#" + skipId).is(":checked")) {
+    			jq(this).prop("checked", true);
+    		} else {
+    			jq(this).prop("checked", false);
+    		}
+		}
+	});
+}
+
+/*Overrides jq.("").dialog()*/
+function invokeDialog(dialogMessageElement, dialogTitle, dialogWidth) {
+	jq(dialogMessageElement).dialog({
+		title: dialogTitle,
+		width:dialogWidth
+	});
+}

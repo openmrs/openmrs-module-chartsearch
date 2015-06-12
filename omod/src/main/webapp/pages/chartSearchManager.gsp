@@ -2,6 +2,8 @@
     ui.decorateWith("appui", "standardEmrPage", [ title: ui.message("chartsearch.refApp.title") ])
 %>
 
+<% ui.includeJavascript("chartsearch", "views_factory.js") %>
+
 <script type="text/javascript">
 	var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
@@ -15,6 +17,15 @@
     	jq(".ui-tabs").tabs();
 	});
 </script>
+
+<style>
+input[type="radio"], input[type="checkbox"] {
+	box-sizing: border-box;
+	padding: 0;
+	width: 15%;
+	height: 1.5em;
+}
+</style>
 
 <div class="ui-tabs">
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">

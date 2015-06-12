@@ -47,6 +47,9 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
+	@Column(name = "default_search", nullable = false)
+	private Boolean defaultSearch = false;
+	
 	@ManyToOne
 	@JoinColumn(name = "patient_id", nullable = false)
 	private Patient patient;
@@ -141,5 +144,13 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	
 	public void setSelectedCategories(String selectedCategories) {
 		this.selectedCategories = selectedCategories;
+	}
+	
+	public Boolean isDefaultSearch() {
+		return defaultSearch;
+	}
+	
+	public void setIsDefaultSearch(Boolean isDefaultSearch) {
+		this.defaultSearch = isDefaultSearch;
 	}
 }

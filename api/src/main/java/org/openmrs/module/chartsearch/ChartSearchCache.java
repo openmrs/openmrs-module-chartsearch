@@ -190,10 +190,31 @@ public class ChartSearchCache {
 			json.put("bookmarkName", bookmark.getBookmarkName());
 			json.put("commaCategories", bookmark.getSelectedCategories());
 			json.put("categories", categories);
+			//TODO json.put("isDefaultSearch", bookmark.isDefaultSearch());
 			
 			return json;
 		} else
 			return null;
+	}
+	
+	public JSONArray saveBookmarkProperties(String uuid, String bookmarkName, String searchPhrase, String selectedCategories) {
+		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
+		if (bookmark != null) {
+			bookmark.setBookmarkName(bookmarkName);
+			bookmark.setSearchPhrase(searchPhrase);
+			bookmark.setSelectedCategories(selectedCategories);
+			
+			chartSearchService.saveSearchBookmark(bookmark);
+		}
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+	}
+	
+	public JSONArray deleteBookmarkInTheDialog(String uuid) {
+		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
+		if (bookmark != null) {
+			chartSearchService.deleteSearchBookmark(bookmark);
+		}
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
 	}
 	
 	public String fetchLastHistorySearchPhrase(Integer patientId) {
@@ -267,6 +288,17 @@ public class ChartSearchCache {
 			}
 		}
 		return GeneratingJson.getAllSearchHistoriesToSendToTheManageUI(false);
+	}
+	
+	public JSONArray deleteBookmarkOfSelectedUuids(String[] uuids) {
+		if (null != uuids && uuids.length != 0) {
+			for (int i = 0; i < uuids.length; i++) {
+				String uuid = uuids[i];
+				ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
+				chartSearchService.deleteSearchBookmark(bookmark);
+			}
+		}
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

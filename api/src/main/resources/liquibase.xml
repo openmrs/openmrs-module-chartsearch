@@ -1,70 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
-    <!--
-        See http://www.liquibase.org/manual/home#available_database_refactorings
-        for a list of supported elements and attributes
-    -->
+	<!-- See http://www.liquibase.org/manual/home#available_database_refactorings 
+		for a list of supported elements and attributes -->
 
-    <changeSet id="1" author="Eli">
-        <comment>added synonym table</comment>
-        <createTable tableName="chartsearch_synonyms">
-            <column name="group_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
+	<changeSet id="1" author="Eli">
+		<comment>added synonym table</comment>
+		<createTable tableName="chartsearch_synonyms">
+			<column name="group_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
 
 
-    <changeSet id="2" author="Eli">
-        <comment>added synonym groups table and a foreign key</comment>
-        <createTable tableName="chartsearch_synonym_groups">
-            <column name="group_id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="group_name" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="is_category" type="boolean" defaultValueBoolean="false"/>
-        </createTable>
+	<changeSet id="2" author="Eli">
+		<comment>added synonym groups table and a foreign key</comment>
+		<createTable tableName="chartsearch_synonym_groups">
+			<column name="group_id" type="int">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="group_name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+			<column name="is_category" type="boolean" defaultValueBoolean="false" />
+		</createTable>
 
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="RESTRICT"
-                />
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="RESTRICT" />
+	</changeSet>
 
-    </changeSet>
+	<changeSet id="3" author="Eli">
+		<comment>Added synonym_id column</comment>
+		<addColumn tableName="chartsearch_synonyms">
+			<column name="synonym_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
 
-    <changeSet id="3" author="Eli">
-        <comment>Added synonym_id column</comment>
-        <addColumn tableName="chartsearch_synonyms">
-            <column name="synonym_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </addColumn>
-    </changeSet>
+	<changeSet id="4" author="Eli">
+		<comment>Changed cascade options</comment>
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms_cascade"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
+	</changeSet>
 
-    <changeSet id="4" author="Eli">
-        <comment>Changed cascade options</comment>
-        <addForeignKeyConstraint
-                constraintName="fk_synonymgroups_synonyms_cascade"
-                baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
-                referencedTableName="chartsearch_synonym_groups" referencedColumnNames="group_id"
-                onDelete="CASCADE"
-                onUpdate="CASCADE"
-                />
-    </changeSet>
 
-		
 	<changeSet id="CSM-58-18062014-2207" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -88,9 +79,10 @@
 			</column>
 		</createTable>
 	</changeSet>
-	
+
 	<changeSet id="CSM-58-18062014-2210" author="k-joseph">
-		<comment>Adding category filters for all existing concept classes</comment>
+		<comment>Adding category filters for all existing concept classes
+		</comment>
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="Test" />
 			<column name="filter_query" value="concept_class_name:Test" />
@@ -133,7 +125,7 @@
 			<column name="description" value="Category item for filtering Question" />
 			<column name="uuid" value="0717136a-5c5f-4d68-b099-cbf1ad820363" />
 		</insert>
-		
+
 		<insert tableName="${project.parent.artifactId}_categories">
 			<column name="name" value="LabSet" />
 			<column name="filter_query" value="concept_class_name:LabSet" />
@@ -189,7 +181,7 @@
 			<column name="uuid" value="21ac0fec-947f-4a76-aeee-2e17d9d0cb13" />
 		</insert>
 	</changeSet>
-	
+
 	<changeSet id="CSM-102_28052015_1742" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -212,21 +204,21 @@
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
-			<column name="user_id" type="int" >
+			<column name="user_id" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="patient_id" type="int" >
+			<column name="patient_id" type="int">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="history_owner-fk"
 			baseTableName="chartsearch_history" baseColumnNames="user_id"
-			referencedTableName="users" referencedColumnNames="user_id"/>
+			referencedTableName="users" referencedColumnNames="user_id" />
 		<addForeignKeyConstraint constraintName="history_patient-fk"
 			baseTableName="chartsearch_history" baseColumnNames="patient_id"
-			referencedTableName="patient" referencedColumnNames="patient_id"/>
+			referencedTableName="patient" referencedColumnNames="patient_id" />
 	</changeSet>
-	
+
 	<changeSet id="CSM-81_02062015_1446" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -252,21 +244,21 @@
 			<column name="uuid" type="char(38)">
 				<constraints nullable="false" />
 			</column>
-			<column name="user_id" type="int" >
+			<column name="user_id" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="patient_id" type="int" >
+			<column name="patient_id" type="int">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="bookmark_owner-fk"
 			baseTableName="chartsearch_bookmark" baseColumnNames="user_id"
-			referencedTableName="users" referencedColumnNames="user_id"/>
+			referencedTableName="users" referencedColumnNames="user_id" />
 		<addForeignKeyConstraint constraintName="bookmark_patient-fk"
 			baseTableName="chartsearch_bookmark" baseColumnNames="patient_id"
-			referencedTableName="patient" referencedColumnNames="patient_id"/>
+			referencedTableName="patient" referencedColumnNames="patient_id" />
 	</changeSet>
-	
+
 	<changeSet id="CSM-90_04062015_2012" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -298,19 +290,32 @@
 			<column name="display_color" type="char(10)">
 				<constraints nullable="true" />
 			</column>
-			<column name="user_id" type="int" >
+			<column name="user_id" type="int">
 				<constraints nullable="false" />
 			</column>
-			<column name="patient_id" type="int" >
+			<column name="patient_id" type="int">
 				<constraints nullable="false" />
 			</column>
 		</createTable>
 		<addForeignKeyConstraint constraintName="note_owner-fk"
 			baseTableName="chartsearch_note" baseColumnNames="user_id"
-			referencedTableName="users" referencedColumnNames="user_id"/>
+			referencedTableName="users" referencedColumnNames="user_id" />
 		<addForeignKeyConstraint constraintName="note_patient-fk"
 			baseTableName="chartsearch_note" baseColumnNames="patient_id"
-			referencedTableName="patient" referencedColumnNames="patient_id"/>
+			referencedTableName="patient" referencedColumnNames="patient_id" />
+	</changeSet>
+
+	<changeSet id="CSM-103_11062015_1634" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<tableExists tableName="chartsearch_bookmark" />
+		</preConditions>
+		<comment>Added default_search column</comment>
+		<addColumn tableName="chartsearch_bookmark">
+			<column name="default_search" type="boolean"
+				defaultValueNumeric="0">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
 	</changeSet>
 
 </databaseChangeLog>

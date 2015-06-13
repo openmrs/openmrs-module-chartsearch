@@ -78,7 +78,7 @@ public class SearchSavingSectionFragmentController {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, false);
 		return GeneratingJson.generateJson(false);
 	}
 	

@@ -222,7 +222,7 @@
     			var bookmarkUuid = event.target.id;
     			deleteSearchBookmark(bookmarkUuid, false);
     		} else if(event.target.localName === "a") {
-    			window.open('../chartsearch/chartSearchManager.page#manage-bookmarks', '_blank');
+    			window.open('../chartsearch/chartSearchManager.page#bookmarks', '_blank');
     			return false;
     		} else if(event.target.localName === "div" || event.target.localName === "b" || event.target.localName === "em") {
     			var bookmarkUuid = event.target.id;
@@ -234,23 +234,23 @@
     	});
     	
     	jq("#history-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#manage-history', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#history', '_blank');
     	});
     	
     	jq("#preferences-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#manage-preferences', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#preferences', '_blank');
     	});
     	
     	jq("#commands-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#manage-commands', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#commands', '_blank');
     	});
     	
     	jq("#settings-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#manage-settings', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#settings', '_blank');
     	});
     	
     	jq("#notes-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#manage-notes', '_blank');
+    		window.open('../chartsearch/chartSearchManager.page#notes', '_blank');
     	});
     	
     	jq("#aggregate-searches").click(function(event) {

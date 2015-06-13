@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import net.sf.json.JSONObject;
+
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.synonyms.SynonymsAPI;
@@ -66,16 +67,35 @@ public class SearchAPI {
 		SearchAPI.resultList.clear();
 	}
 	
-	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames) {
-		SearchAPI.searchPhrase = searchPhrase;
-		SearchAPI.setSelectedCategoryNames(selectedCategoryNames);
+	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames,
+	                                  boolean reloadWholePage) {
 		SearchAPI.patientId = patientId;
-		System.out.println("phrase :" + searchPhrase.getPhrase());
-		if (searchPhrase.getPhrase().equals(",")) {
-			searchPhrase.setPhrase("");
-		}
+		List<String> categories = null;
 		
-		searchPhrase.setPhrase(returnDefaultSearchPhrase(searchPhrase.getPhrase(), SearchAPI.getPatientId()));
+		if (reloadWholePage) {
+			ChartSearchCache cache = new ChartSearchCache();
+			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
+			    SearchAPI.getPatientId());
+			String phrase = (String) defaultSearchProps.get("searchPhrase");
+			List<String> cats = (List<String>) defaultSearchProps.get("selectedCategories");
+			SearchAPI.searchPhrase = new SearchPhrase(phrase);
+			
+			searchPhrase.setPhrase(phrase);
+			if (cats != null && !cats.isEmpty()) {
+				categories = cats;
+			} else {
+				categories = selectedCategoryNames;
+			}
+		} else {
+			SearchAPI.searchPhrase = searchPhrase;
+			categories = selectedCategoryNames;
+			if (searchPhrase.getPhrase().equals(",")) {
+				searchPhrase.setPhrase("");
+			}
+		}
+		SearchAPI.selectedCategoryNames = categories;
+		
+		System.out.println("phrase :" + searchPhrase.getPhrase());
 		
 		String searchPhraseStr = searchPhrase.getPhrase();
 		
@@ -101,24 +121,6 @@ public class SearchAPI {
 		SearchAPI.retrievalTime = (endSearchingTime - startSearchingTime) / 1000.0;
 		
 		return items;
-	}
-	
-	/**
-	 * TODO Support defining a default search from a user's configured bookmark as default
-	 * 
-	 * @return searchPhrase
-	 */
-	public String returnDefaultSearchPhrase(String currentSPhrase, Integer patientId) {
-		if (StringUtils.isBlank(currentSPhrase)) {
-			ChartSearchCache cache = new ChartSearchCache();
-			String lastSearchPhraseFromHistory = cache.fetchLastHistorySearchPhrase(patientId);
-			
-			if (StringUtils.isNotBlank(lastSearchPhraseFromHistory)) {
-				return lastSearchPhraseFromHistory;
-			} else
-				return currentSPhrase;
-		} else
-			return currentSPhrase;
 	}
 	
 	public SearchPhrase getSearchPhrase() {

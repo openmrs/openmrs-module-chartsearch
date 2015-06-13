@@ -296,6 +296,7 @@ public class GeneratingJson {
 		json.put("categories", curBookmark.getSelectedCategories());
 		json.put("uuid", curBookmark.getUuid());
 		json.put("patientId", curBookmark.getPatient().getPatientId());
+		json.put("isDefaultSearch", curBookmark.isDefaultSearch());
 		
 		return json;
 	}

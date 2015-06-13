@@ -36,7 +36,7 @@
 		});
 		
 		jq("table").on('mouseenter', 'tr', function(event) {
-			if(event.target.localName !== "th") {
+			if(event.target.localName !== "th" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history") {
 				jq(this).css("cursor", "pointer");
 				jq(this).css('background', '#F0EAEA');
 			}
@@ -56,8 +56,8 @@
 			deleteAllSelectedBookmarks();
 		});
 		
-		jq("body").on("each", "#dialog-bookmark-categories option:selected", function (event) {
-				//categories.push(jq(this).text());
+		jq("#save-default-search").click(function(event) {
+			setSelectedBookmarkAsDefaultSearch();
 		});
 		
 		jq("#dialog-bookmark-save").click(function(event) {
@@ -121,13 +121,23 @@
 			if(bookmarksAfterparse.length != 0) {
 				for(i = 0; i < bookmarksAfterparse.length; i++) {
 					var bookmark = bookmarksAfterparse[i];
+					var displayDefaultSearch = "";
+					if(bookmark.isDefaultSearch) {
+						displayDefaultSearch = "<input name='radiogroup' type='radio' id='" + bookmark.uuid + "' checked >";
+					} else {
+						displayDefaultSearch = "<input name='radiogroup' type='radio' id='" + bookmark.uuid + "' >";
+					}
 					
-					trBookmarkEntries += "<tr id='" + bookmark.uuid + "'><td><label><input type='checkbox' class='bookmark-check' id='" + bookmark.uuid + "' > (" + bookmark.patientId + ")</label></td><td><input name='radiogroup' type='radio'></td><td>" + bookmark.bookmarkName + "</td><td>" + bookmark.searchPhrase + "</td><td>" + bookmark.categories + "</td></tr>";
+					trBookmarkEntries += "<tr id='" + bookmark.uuid + "'><td><label><input type='checkbox' class='bookmark-check' id='" + bookmark.uuid + "' > (" + bookmark.patientId + ")</label></td><td>" + displayDefaultSearch + "</td><td>" + bookmark.bookmarkName + "</td><td>" + bookmark.searchPhrase + "</td><td>" + bookmark.categories + "</td></tr>";
 				}
 			}
 			
 			if(trBookmarkEntries !== "") {
 				jq("#returned-search-bookmarks").html(thBookmarks + trBookmarkEntries);
+				jq("#grouped-functionality").show();
+			} else {
+				jq("#returned-search-bookmarks").html("You currently have no saved bookmarks to manage");
+				jq("#grouped-functionality").hide();
 			}
 		}
 		
@@ -158,17 +168,53 @@
     		}
     	}
     	
+    	function setSelectedBookmarkAsDefaultSearch() {
+    		var selectedDefaultBkuuid = returnUuidOfSelectedDefaultBookmark();
+    		
+    		if(selectedDefaultBkuuid) {
+    			jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('setBookmarkAsDefaultSearch') }",
+						data: {"selectedUuid":selectedDefaultBkuuid},
+						dataType: "json",
+						success: function(bookmarks) {
+							bookmarksAfterparse = bookmarks.reverse();
+							
+							displayExistingBookmarks();
+							alert("Successfully saved default search :-)");
+						},
+						error: function(e) {
+						}
+					});
+    		} else {
+    			alert("Please select a bookmark to set as a default search and try again!");
+    		}
+    	}
+    	
     	function returnUuidsOfSeletedBookmarks() {
     		var selectedBookmarkUuids = [];
 	    	
 			jq('#bookmarks-section input:checked').each(function() {
 				var selectedId = jq(this).attr("id");
 				
-				if(selectedId !== "bookmark-check-all" && jq(this).attr("type") !== "radio") {
+				if(selectedId !== "bookmark-check-all" && jq(this).attr("type") !== "radio" && jq(this).attr("type") === "checkbox" && jq(this).attr("class") === "bookmark-check") {
 			    	selectedBookmarkUuids.push(selectedId);
 			    }
 			});
 			return selectedBookmarkUuids;
+    	}
+    	
+    	function returnUuidOfSelectedDefaultBookmark() {
+    		var selecteduuid;
+    		
+    		jq('#bookmarks-section input:checked').each(function() {
+    			var selectedId = jq(this).attr("id");
+    			
+    			if(selectedId !== "bookmark-check-all" && jq(this).attr("name") === "radiogroup" && jq(this).attr("type") === "radio") {
+    				selecteduuid = selectedId;
+    			}
+    		});
+    		return selecteduuid;
     	}
     	
     	function saveBookmarkProperties(bookmarkUuid, bkName, phrase, categories) {
@@ -217,8 +263,8 @@
 
 <div id="selected-bookmark-dialog-content">
 	<input type="hidden" id="dialog-bookmark-uuid" value="">
-	Bookmark Name: <input type="textbox" id="dialog-bookmark-name" value=""><br /><br />
-	Search Phrase: <input type="textbox" id="dialog-bookmark-phrase" value=""><br /><br />
+	Bookmark Name: <input type="textbox" id="dialog-bookmark-name" value="" /><br /><br />
+	Search Phrase: <input type="textbox" id="dialog-bookmark-phrase" disabled value="" /><br /><br />
 	Categories: 
 		<select multiple id="dialog-bookmark-categories">
 		</select> <b>Tip:</b> Use Ctrl + Left Click<br /><br />

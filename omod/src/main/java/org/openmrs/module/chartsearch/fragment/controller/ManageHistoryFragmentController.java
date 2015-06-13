@@ -28,4 +28,8 @@ public class ManageHistoryFragmentController {
 	public JSONArray deleteSelectedHistory(@RequestParam("selectedUuids[]") String[] uuids) {
 		return cache.deleteHistoryOfSelectedUuids(uuids);
 	}
+	
+	public JSONArray setBookmarkAsDefaultSearch(@RequestParam("selectedBookmarkUuid") String uuid) {
+		return cache.setBookmarkAsDefaultSearch(uuid);
+	}
 }

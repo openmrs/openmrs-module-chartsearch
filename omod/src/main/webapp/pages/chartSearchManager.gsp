@@ -35,32 +35,32 @@ input[type="radio"], input[type="checkbox"] {
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top">
-	    	<a class="ui-tabs-anchor" href="#manage-preferences">
+	    	<a class="ui-tabs-anchor" href="#preferences">
 	        	Preferences
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top">
-	    	<a class="ui-tabs-anchor" href="#manage-bookmarks">
+	    	<a class="ui-tabs-anchor" href="#bookmarks">
 	        	Bookmarks
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#manage-history" >
+	        <a class="ui-tabs-anchor" href="#history" >
 	             History
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#manage-commands" >
+	        <a class="ui-tabs-anchor" href="#commands" >
 	             Commands
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#manage-settings" >
+	        <a class="ui-tabs-anchor" href="#settings" >
 	             Settings
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#manage-notes" >
+	        <a class="ui-tabs-anchor" href="#notes" >
 	             Notes
 	        </a>
 	    </li>
@@ -74,22 +74,22 @@ input[type="radio"], input[type="checkbox"] {
     <div id="launcher">
     	${ ui.includeFragment("chartsearch", "chartsearchLauncher") }
     </div>
-    <div id="manage-preferences">
+    <div id="preferences">
     	${ ui.includeFragment("chartsearch", "managePreferences") }
     </div>
-    <div id="manage-bookmarks">
+    <div id="bookmarks">
     	${ ui.includeFragment("chartsearch", "manageBookmarks") }
     </div>
-    <div id="manage-history">
+    <div id="history">
     	${ ui.includeFragment("chartsearch", "manageHistory") }
     </div>
-    <div id="manage-commands">
+    <div id="commands">
     	${ ui.includeFragment("chartsearch", "manageCommands") }
     </div>
-    <div id="manage-settings">
+    <div id="settings">
     	${ ui.includeFragment("chartsearch", "manageSettings") }
     </div>
-    <div id="manage-notes">
+    <div id="notes">
     	${ ui.includeFragment("chartsearch", "manageNotes") }
     </div>
     <div id="aggregate-searches">

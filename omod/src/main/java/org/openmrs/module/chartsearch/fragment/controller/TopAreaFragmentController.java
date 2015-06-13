@@ -30,13 +30,13 @@ public class TopAreaFragmentController {
 		model.addAttribute("patientId", patient);
 	}
 	
-	public String getResultsFromTheServer(FragmentModel model, @RequestParam("phrase") SearchPhrase search_phrase,
+	public String getResultsFromTheServer(FragmentModel model, @RequestParam(value = "phrase", required = false) SearchPhrase search_phrase,
 	                                      @RequestParam("patientId") Patient patient,
 	                                      @RequestParam(value = "categories[]", required = false) String[] categories) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, false);
 		return GeneratingJson.generateJson(false);
 	}
 	

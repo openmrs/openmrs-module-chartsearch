@@ -44,4 +44,8 @@ public class ManageBookmarksFragmentController {
 	public JSONArray deleteBookmarkInTheDialog(@RequestParam("bookmarkUuid") String uuid) {
 		return cache.deleteBookmarkInTheDialog(uuid);
 	}
+	
+	public JSONArray setBookmarkAsDefaultSearch(@RequestParam("selectedUuid") String uuid) {
+		return cache.setBookmarkAsDefaultSearch(uuid);
+	}
 }

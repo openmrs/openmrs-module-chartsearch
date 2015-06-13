@@ -190,7 +190,7 @@ public class ChartSearchCache {
 			json.put("bookmarkName", bookmark.getBookmarkName());
 			json.put("commaCategories", bookmark.getSelectedCategories());
 			json.put("categories", categories);
-			//TODO json.put("isDefaultSearch", bookmark.isDefaultSearch());
+			json.put("isDefaultSearch", bookmark.isDefaultSearch());
 			
 			return json;
 		} else
@@ -201,7 +201,7 @@ public class ChartSearchCache {
 		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
 		if (bookmark != null) {
 			bookmark.setBookmarkName(bookmarkName);
-			bookmark.setSearchPhrase(searchPhrase);
+			//bookmark.setSearchPhrase(searchPhrase); search phrase needs not to be modified
 			bookmark.setSelectedCategories(selectedCategories);
 			
 			chartSearchService.saveSearchBookmark(bookmark);
@@ -296,6 +296,72 @@ public class ChartSearchCache {
 				String uuid = uuids[i];
 				ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
 				chartSearchService.deleteSearchBookmark(bookmark);
+			}
+		}
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+	}
+	
+	/**
+	 * Supports a search for everything as initial default search, which is overwritten by most
+	 * recent search history and also bound to be overwritten if the user has set up a default
+	 * search from amoung his/her saved bookmarks
+	 * 
+	 * @return searchPhrase and selectedCategories if bookmark is default
+	 */
+	public JSONObject returnDefaultSearchPhrase(String currentSPhrase, Integer patientId) {
+		JSONObject json = new JSONObject();
+		if (StringUtils.isBlank(currentSPhrase)) {
+			ChartSearchCache cache = new ChartSearchCache();
+			String lastSearchPhraseFromHistory = cache.fetchLastHistorySearchPhrase(patientId);
+			List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
+			ChartSearchBookmark defaultBookmark = null;
+			
+			for (ChartSearchBookmark bookmark : allBookmarks) {
+				if (bookmark.isDefaultSearch()) {
+					defaultBookmark = bookmark;
+				} else getDefaultSearchFromHistoryIfItExists(currentSPhrase, json, lastSearchPhraseFromHistory);
+			}
+			
+			if (defaultBookmark != null) {
+				List<String> categories = defaultBookmark.getSelectedCategoriesAsList();
+				
+				json.put("searchPhrase", defaultBookmark.getSearchPhrase());
+				if (categories != null && !categories.isEmpty()) {
+					json.put("selectedCategories", categories);
+				}
+			} else {
+				getDefaultSearchFromHistoryIfItExists(currentSPhrase, json, lastSearchPhraseFromHistory);
+			}
+		}
+		
+		return json;
+	}
+
+	private void getDefaultSearchFromHistoryIfItExists(String currentSPhrase, JSONObject json, String lastSearchPhraseFromHistory) {
+	    if (StringUtils.isNotBlank(lastSearchPhraseFromHistory)) {
+	    	json.put("searchPhrase", lastSearchPhraseFromHistory);
+	    } else
+			json.put("searchPhrase", currentSPhrase);
+	}
+	
+	/**
+	 * Sets only one, selected as bookmark and sets all others to false since default search from
+	 * bookmarks can only be one
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public JSONArray setBookmarkAsDefaultSearch(String uuid) {
+		if (StringUtils.isNotBlank(uuid)) {
+			List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
+			
+			for (ChartSearchBookmark bookmark : allBookmarks) {
+				if (bookmark.getUuid().equals(uuid)) {
+					bookmark.setIsDefaultSearch(true);
+				} else {
+					bookmark.setIsDefaultSearch(false);
+				}
+				chartSearchService.saveSearchBookmark(bookmark);
 			}
 		}
 		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);

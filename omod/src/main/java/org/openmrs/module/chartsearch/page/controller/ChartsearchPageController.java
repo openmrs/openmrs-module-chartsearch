@@ -52,7 +52,7 @@ public class ChartsearchPageController {
 			model.addAttribute("patient", patientDomainWrapper);
 			SearchAPI searchAPIInstance = SearchAPI.getInstance();
 			indexPatientData(patient);
-			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, true);
 		}
 	}
 	
@@ -66,12 +66,15 @@ public class ChartsearchPageController {
 	}
 	
 	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, String[] categories,
-	                                          SearchAPI searchAPIInstance) {
+	                                          SearchAPI searchAPIInstance, boolean reloadWholePage) {
+		if (search_phrase == null) {
+			search_phrase = new SearchPhrase();
+		}
 		if (categories == null) {
 			categories = new String[0];
 		}
 		List<String> selectedCategories = Arrays.asList(categories);
-		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
+		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories, reloadWholePage);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
 		//loop to get full details about observations.
 		for (ChartListItem chartListItem : items) {
@@ -92,7 +95,7 @@ public class ChartsearchPageController {
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
 		
-		//saving search record where necessary.
+		//saving search record where necessary every after a search.
 		ChartSearchCache csCache = new ChartSearchCache();
 		csCache.saveOrUpdateSearchHistory(search_phrase.getPhrase(), patient.getPatientId());
 	}

@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class SearchPhrase {
 	
 	String phrase;
@@ -22,7 +24,7 @@ public class SearchPhrase {
 	}
 	
 	public SearchPhrase(String phrase) {
-		if (phrase == ",") {
+		if (phrase == "," || StringUtils.isBlank(phrase)) {
 			this.phrase = "";
 		} else {
 			this.phrase = phrase;

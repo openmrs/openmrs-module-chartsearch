@@ -177,6 +177,7 @@ public class GeneratingJson {
 		json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
 		json.put("uuid", history.getUuid());
 		json.put("patientId", history.getPatient().getPatientId());
+		json.put("patientFamilyName", history.getPatient().getPersonName().getFamilyName());
 		return json;
 	}
 	
@@ -299,6 +300,7 @@ public class GeneratingJson {
 		json.put("uuid", curBookmark.getUuid());
 		json.put("patientId", curBookmark.getPatient().getPatientId());
 		json.put("isDefaultSearch", curBookmark.isDefaultSearch());
+		json.put("patientFamilyName", curBookmark.getPatient().getPersonName().getFamilyName());
 		
 		return json;
 	}

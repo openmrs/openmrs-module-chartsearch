@@ -73,7 +73,7 @@ public class SearchAPI {
 		List<String> categories = null;
 		ChartSearchCache cache = new ChartSearchCache();
 		
-		if (reloadWholePage) {
+		if (reloadWholePage || searchPhrase.getPhrase().equals(",") || searchPhrase.getPhrase().equals("")) {
 			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
 			    SearchAPI.getPatientId());
 			String phrase = (String) defaultSearchProps.get("searchPhrase");
@@ -89,9 +89,6 @@ public class SearchAPI {
 		} else {
 			SearchAPI.searchPhrase = searchPhrase;
 			categories = selectedCategoryNames;
-			if (searchPhrase.getPhrase().equals(",")) {
-				searchPhrase.setPhrase("");
-			}
 		}
 		SearchAPI.selectedCategoryNames = categories;
 		

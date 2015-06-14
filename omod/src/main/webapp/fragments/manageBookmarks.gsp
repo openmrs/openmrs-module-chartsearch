@@ -42,6 +42,7 @@
 			}
 		}).on('mouseleave', 'tr', function () {
 			jq(this).css('background', '');
+			jq(this).css("cursor", "");
 		});
 		
 		jq("body").on("click", "#returned-search-bookmarks tr", function(event) {
@@ -116,7 +117,7 @@
 		
 		function displayExistingBookmarks() {
 			var trBookmarkEntries = "";
-			var thBookmarks = "<tr id='bookmarks-tb-header'><th><label><input type='checkbox' id='bookmark-check-all' > Select (PatientId)</label></th><th>Default Search</th><th>Bookmark Name </th><th>Search Phrase</th><th>Categories</th></tr>";
+			var thBookmarks = "<tr id='bookmarks-tb-header'><th><label><input type='checkbox' id='bookmark-check-all' > Select (PatientFName)</label></th><th>Default Search</th><th>Bookmark Name </th><th>Search Phrase</th><th>Categories</th></tr>";
 			
 			if(bookmarksAfterparse.length != 0) {
 				for(i = 0; i < bookmarksAfterparse.length; i++) {
@@ -128,7 +129,7 @@
 						displayDefaultSearch = "<input name='radiogroup' type='radio' id='" + bookmark.uuid + "' >";
 					}
 					
-					trBookmarkEntries += "<tr id='" + bookmark.uuid + "'><td><label><input type='checkbox' class='bookmark-check' id='" + bookmark.uuid + "' > (" + bookmark.patientId + ")</label></td><td>" + displayDefaultSearch + "</td><td>" + bookmark.bookmarkName + "</td><td>" + bookmark.searchPhrase + "</td><td>" + bookmark.categories + "</td></tr>";
+					trBookmarkEntries += "<tr id='" + bookmark.uuid + "'><td><label><input type='checkbox' class='bookmark-check' id='" + bookmark.uuid + "' > (" + bookmark.patientFamilyName + ")</label></td><td>" + displayDefaultSearch + "</td><td>" + bookmark.bookmarkName + "</td><td>" + bookmark.searchPhrase + "</td><td>" + bookmark.categories + "</td></tr>";
 				}
 			}
 			
@@ -261,8 +262,8 @@
 
 <h1>Manage Bookmarks</h1>
 <b>NOTE:</b>
-A default search from here is what the module will search whenever any patient's chartsearch will be loaded,
-Please chose one that would be appropriate for all patients after it's category filters will be applied
+<p>A default search from here is what the module will search whenever any patient's chartsearch will be loaded,
+Please chose one that would be appropriate for all patients after it's category filters will be applied</p>
 <div id="selected-bookmark-dialog-content">
 	<input type="hidden" id="dialog-bookmark-uuid" value="">
 	Bookmark Name: <input type="textbox" id="dialog-bookmark-name" value="" /><br /><br />

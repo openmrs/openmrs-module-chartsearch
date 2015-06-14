@@ -1179,6 +1179,16 @@ function updateCategeriesAtUIGlobally(categories) {
 		   		jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]) + "...");
 		    }
 		}
+		jq("input:checkbox[class=category_check]").each(function() {
+			var uiCat = jq(this).val();
+			
+			for(i = 0; i < categories.length; i++) {
+				var cat = categories[i];
+				if(uiCat === cat) {
+					jq(this).prop('checked', true);
+				}
+			}
+		});
 	}
 }
 

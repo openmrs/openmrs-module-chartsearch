@@ -68,10 +68,10 @@
     		var thHistoryWeek = "";
     		var thHistoryMonth = "";
     		var thHistoryOther = "";
-    		var tableTodayHeader = "<tr><th><label><input type='checkbox' id='history-check-all-today' > Select (PatientId)</label></th><th>Time</th><th>Search Phrase</th></tr>";
-    		var tableWeekHeader = "<tr><th><label><input type='checkbox' id='history-check-all-week' > Select (PatientId)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
-    		var tableMonthHeader = "<tr><th><label><input type='checkbox' id='history-check-all-month' > Select (PatientId)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
-    		var tableOthersHeader = "<tr><th><label><input type='checkbox' id='history-check-others' > Select (PatientId)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
+    		var tableTodayHeader = "<tr><th><label><input type='checkbox' id='history-check-all-today' > Select (PatientFName)</label></th><th>Time</th><th>Search Phrase</th></tr>";
+    		var tableWeekHeader = "<tr><th><label><input type='checkbox' id='history-check-all-week' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
+    		var tableMonthHeader = "<tr><th><label><input type='checkbox' id='history-check-all-month' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
+    		var tableOthersHeader = "<tr><th><label><input type='checkbox' id='history-check-others' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
     		
     		if(historyAfterparse.length !== 0) {
     			for (i = 0; i < historyAfterparse.length; i++) {
@@ -79,16 +79,16 @@
     				var date = new Date(history.lastSearchedAt);
     				
     				if(checkIfDateIsToday(history.lastSearchedAt)) {
-    					thHistoryToday += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientId + ")</label></td><td>" + date.toTimeString() + "</td><td>" + history.searchPhrase + "</td></tr>";
+    					thHistoryToday += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toTimeString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
     				if(checkIfDateIsForThisWeek(history.lastSearchedAt) && !checkIfDateIsToday(history.lastSearchedAt)) {
-    					thHistoryWeek += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientId + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
+    					thHistoryWeek += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
     				if(checkIfDateIsInCurrentMonth(history.lastSearchedAt) && !checkIfDateIsForThisWeek(history.lastSearchedAt)) {
-    					thHistoryMonth += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientId + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
+    					thHistoryMonth += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
     				if(!checkIfDateIsInCurrentMonth(history.lastSearchedAt)) {
-    					thHistoryOther += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientId + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
+    					thHistoryOther += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
     			}
     		}
@@ -120,11 +120,22 @@
 			}
     	}
     	
+    	function getWeek(date) {
+    		//Obtained from: http://weeknumber.net/how-to/javascript
+			date.setHours(0, 0, 0, 0);
+		    // Thursday in current week decides the year.
+		    date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+		    // January 4 is always in week 1.
+		    var week1 = new Date(date.getFullYear(), 0, 4);
+		    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+		    return 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+    	}
+    	
     	function checkIfDateIsForThisWeek(dateTime) {
     		var date = new Date(dateTime);
     		var now = new Date();
     		
-    		if(date.getYear() === now.getYear() && date.getMonth() === now.getMonth() && date.getDay() >= 0 && date.getDay() <= 6) {
+    		if(date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && getWeek(date) === getWeek(now)) {
     			return true;
     		} else {
     			return false;

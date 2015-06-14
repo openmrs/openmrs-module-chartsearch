@@ -19,6 +19,8 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.openmrs.Patient;
+import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
@@ -44,14 +46,17 @@ public class ChartSearchCache {
 	public void saveOrUpdateSearchHistory(String searchText, Integer patientId) {
 		ChartSearchHistory history = new ChartSearchHistory();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
-		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText);
+		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText, patientId);
 		
 		if (StringUtils.isNotBlank(searchText) && null != patientId) {
 			history.setLastSearchedAt(new Date());
 			
 			if (null != exisitingHistory) {
-				history.setHistoryOwner(exisitingHistory.getHistoryOwner());
-				history.setPatient(exisitingHistory.getPatient());
+				User user = Context.getUserService().getUser(exisitingHistory.getHistoryOwner().getUserId());
+				Patient patient = Context.getPatientService().getPatient(exisitingHistory.getPatient().getPatientId());
+				
+				history.setHistoryOwner(user);
+				history.setPatient(patient);
 				history.setSearchPhrase(exisitingHistory.getSearchPhrase());
 				history.setUuid(exisitingHistory.getUuid());
 				
@@ -65,12 +70,14 @@ public class ChartSearchCache {
 		}
 	}
 	
-	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(List<ChartSearchHistory> allHistory, String searchText) {
+	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(List<ChartSearchHistory> allHistory, String searchText,
+	                                                           Integer patientId) {
 		if (!allHistory.isEmpty()) {
 			for (int i = 0; i < allHistory.size(); i++) {
 				ChartSearchHistory history = allHistory.get(i);
 				if (searchText.equals(history.getSearchPhrase())
-				        && Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
+				        && Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
+				        && history.getPatient().getPatientId().equals(patientId)) {
 					return history;
 				}
 			}
@@ -319,7 +326,8 @@ public class ChartSearchCache {
 			for (ChartSearchBookmark bookmark : allBookmarks) {
 				if (bookmark.isDefaultSearch()) {
 					defaultBookmark = bookmark;
-				} else getDefaultSearchFromHistoryIfItExists(currentSPhrase, json, lastSearchPhraseFromHistory);
+				} else
+					getDefaultSearchFromHistoryIfItExists(currentSPhrase, json, lastSearchPhraseFromHistory);
 			}
 			
 			if (defaultBookmark != null) {
@@ -336,11 +344,12 @@ public class ChartSearchCache {
 		
 		return json;
 	}
-
-	private void getDefaultSearchFromHistoryIfItExists(String currentSPhrase, JSONObject json, String lastSearchPhraseFromHistory) {
-	    if (StringUtils.isNotBlank(lastSearchPhraseFromHistory)) {
-	    	json.put("searchPhrase", lastSearchPhraseFromHistory);
-	    } else
+	
+	private void getDefaultSearchFromHistoryIfItExists(String currentSPhrase, JSONObject json,
+	                                                   String lastSearchPhraseFromHistory) {
+		if (StringUtils.isNotBlank(lastSearchPhraseFromHistory)) {
+			json.put("searchPhrase", lastSearchPhraseFromHistory);
+		} else
 			json.put("searchPhrase", currentSPhrase);
 	}
 	

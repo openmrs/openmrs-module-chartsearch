@@ -260,7 +260,9 @@
 
 
 <h1>Manage Bookmarks</h1>
-
+<b>NOTE:</b>
+A default search from here is what the module will search whenever any patient's chartsearch will be loaded,
+Please chose one that would be appropriate for all patients after it's category filters will be applied
 <div id="selected-bookmark-dialog-content">
 	<input type="hidden" id="dialog-bookmark-uuid" value="">
 	Bookmark Name: <input type="textbox" id="dialog-bookmark-name" value="" /><br /><br />

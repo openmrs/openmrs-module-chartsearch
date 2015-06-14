@@ -96,12 +96,15 @@ public class GeneratingJson {
 		
 		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
+		List<String> catNms = SearchAPI.getSelectedCategoryNames();
+		String[] appliedCats = new String[catNms.size()];
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		jsonToReturn.put("searchHistory", history);
 		jsonToReturn.put("searchBookmarks", bookmarks);
+		jsonToReturn.put("appliedFacets", (String[]) catNms.toArray(appliedCats));
 		
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
 		
@@ -120,8 +123,7 @@ public class GeneratingJson {
 	}
 	
 	private static String[] getAllPossibleSuggestionsAsArray() {
-		List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getInstance()
-		        .getPatientId());
+		List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getPatientId());
 		String[] searchSuggestions = new String[allPossibleSuggestions.size()];
 		searchSuggestions = (String[]) allPossibleSuggestions.toArray(searchSuggestions);
 		return searchSuggestions;

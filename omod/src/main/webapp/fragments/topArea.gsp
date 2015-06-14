@@ -14,6 +14,7 @@
 		
 		showHistorySuggestionsOnLoad();
 		displayBothPersonalAndGlobalNotes();
+		updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
 		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -244,7 +245,7 @@
     				displayBothPersonalAndGlobalNotes();
     				displayQuickSearches();
     				updateBookmarksAndNotesUI();
-    				updateCategeriesAtUIGlobally(categories);
+    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
 				},
 				error: function(e) {
 				  //alert("Error occurred!!! " + e);

@@ -94,10 +94,6 @@ public class ChartsearchPageController {
 		}
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);
-		
-		//saving search record where necessary every after a search.
-		ChartSearchCache csCache = new ChartSearchCache();
-		csCache.saveOrUpdateSearchHistory(search_phrase.getPhrase(), patient.getPatientId());
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

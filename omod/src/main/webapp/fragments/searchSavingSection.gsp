@@ -543,7 +543,7 @@
 		            
 		            updateBookmarksAndNotesUI();
 		            displayQuickSearches();
-		            updateCategeriesAtUIGlobally(cats);
+		            updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
 		        },
 		        error: function(e) {}
 		    });

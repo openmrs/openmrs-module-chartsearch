@@ -71,9 +71,9 @@ public class SearchAPI {
 	                                  boolean reloadWholePage) {
 		SearchAPI.patientId = patientId;
 		List<String> categories = null;
+		ChartSearchCache cache = new ChartSearchCache();
 		
 		if (reloadWholePage) {
-			ChartSearchCache cache = new ChartSearchCache();
 			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
 			    SearchAPI.getPatientId());
 			String phrase = (String) defaultSearchProps.get("searchPhrase");
@@ -84,7 +84,7 @@ public class SearchAPI {
 			if (cats != null && !cats.isEmpty()) {
 				categories = cats;
 			} else {
-				categories = selectedCategoryNames;
+				categories = new ArrayList<String>();
 			}
 		} else {
 			SearchAPI.searchPhrase = searchPhrase;
@@ -94,8 +94,6 @@ public class SearchAPI {
 			}
 		}
 		SearchAPI.selectedCategoryNames = categories;
-		
-		System.out.println("phrase :" + searchPhrase.getPhrase());
 		
 		String searchPhraseStr = searchPhrase.getPhrase();
 		
@@ -111,6 +109,9 @@ public class SearchAPI {
 		double startSearchingTime = new Date().getTime();
 		try {
 			items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames()); //searching for the phrase.
+			
+			//saving search record where necessary every after a search.
+			cache.saveOrUpdateSearchHistory(finalPhrase, patientId);
 		}
 		
 		catch (Exception e) {

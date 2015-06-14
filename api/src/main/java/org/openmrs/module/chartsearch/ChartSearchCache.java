@@ -55,19 +55,27 @@ public class ChartSearchCache {
 				User user = Context.getUserService().getUser(exisitingHistory.getHistoryOwner().getUserId());
 				Patient patient = Context.getPatientService().getPatient(exisitingHistory.getPatient().getPatientId());
 				
-				history.setHistoryOwner(user);
-				history.setPatient(patient);
-				history.setSearchPhrase(exisitingHistory.getSearchPhrase());
-				history.setUuid(exisitingHistory.getUuid());
-				
+				if (patient.getPatientId().equals(patientId)
+				        && user.getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
+					history.setSearchPhrase(exisitingHistory.getSearchPhrase());
+					history.setUuid(exisitingHistory.getUuid());
+					history.setHistoryOwner(user);
+					history.setPatient(patient);
+				} else {
+					setNewHistoryOwnerPatientAndPhrase(searchText, patientId, history);
+				}
 				chartSearchService.deleteSearchHistory(exisitingHistory);
 			} else {
-				history.setHistoryOwner(Context.getAuthenticatedUser());
-				history.setPatient(Context.getPatientService().getPatient(patientId));
-				history.setSearchPhrase(searchText);
+				setNewHistoryOwnerPatientAndPhrase(searchText, patientId, history);
 			}
 			chartSearchService.saveSearchHistory(history);
 		}
+	}
+	
+	private void setNewHistoryOwnerPatientAndPhrase(String searchText, Integer patientId, ChartSearchHistory history) {
+		history.setHistoryOwner(Context.getAuthenticatedUser());
+		history.setPatient(Context.getPatientService().getPatient(patientId));
+		history.setSearchPhrase(searchText);
 	}
 	
 	private ChartSearchHistory checkIfSearchIsAlreadyInHistory(List<ChartSearchHistory> allHistory, String searchText,
@@ -102,12 +110,12 @@ public class ChartSearchCache {
 			return false;
 	}
 	
-	public boolean checkIfPhraseExisitsInHistory(String searchPhrase) {
+	public boolean checkIfPhraseExisitsInHistory(String searchPhrase, Integer patientId) {
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		boolean exists = false;
 		
 		for (ChartSearchHistory history : allHistory) {
-			if (history.getSearchPhrase().equals(searchPhrase)) {
+			if (history.getSearchPhrase().equals(searchPhrase) && history.getPatient().getPatientId().equals(patientId)) {
 				exists = true;
 			}
 		}
@@ -121,7 +129,8 @@ public class ChartSearchCache {
 		
 		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId) {
 			ChartSearchBookmark bookmark = new ChartSearchBookmark();
-			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, selectedCategories);
+			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, selectedCategories,
+			    patientId);
 			
 			if (null != existingBookmark) {
 				existingBookmark.setBookmarkName(bookmarkName);
@@ -163,12 +172,13 @@ public class ChartSearchCache {
 		return false;
 	}
 	
-	public ChartSearchBookmark checkIfBookmarkExistsForPhrase(String phrase, String categories) {
+	public ChartSearchBookmark checkIfBookmarkExistsForPhrase(String phrase, String categories, Integer patientId) {
 		List<ChartSearchBookmark> existingBookmarks = chartSearchService.getAllSearchBookmarks();
 		
 		if (!existingBookmarks.isEmpty()) {
 			for (ChartSearchBookmark bookmark : existingBookmarks) {
-				if (bookmark.getSearchPhrase().equals(phrase) && bookmark.getSelectedCategories().equals(categories)) {
+				if (bookmark.getSearchPhrase().equals(phrase) && bookmark.getSelectedCategories().equals(categories)
+				        && bookmark.getPatient().getPatientId().equals(patientId)) {
 					return bookmark;
 				}
 			}

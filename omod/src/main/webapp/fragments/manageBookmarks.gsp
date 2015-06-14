@@ -36,7 +36,7 @@
 		});
 		
 		jq("table").on('mouseenter', 'tr', function(event) {
-			if(event.target.localName !== "th" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history") {
+			if(event.target.localName !== "th" && event.target.localName !== "input" && event.target.localName !== "label" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history") {
 				jq(this).css("cursor", "pointer");
 				jq(this).css('background', '#F0EAEA');
 			}

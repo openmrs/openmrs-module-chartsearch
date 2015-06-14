@@ -139,8 +139,8 @@
 	    		failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
 	    	} else {
 		    	saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
+			    updateBookmarksAndNotesUI();
 			}
-			updateBookmarksAndNotesUI();
     	});
     	
     	jq("#submit-edit-bookmark").click(function(event) {
@@ -173,10 +173,11 @@
     	
     	jq("#comment-on-search-record").click(function(event) {
     		var phrase = jq("#searchText").val();
+    		var patientId = jq("#patient_id").val().replace("Patient#", "");
     		refreshSearchNotes();
     		
     		if(phrase) {
-	    		checkIfPhraseExisitsInHistory(phrase, function(exists) {
+	    		checkIfPhraseExisitsInHistory(phrase, patientId, function(exists) {
 		    		if(exists) {
 		    			displayNotesAtUILevel();
 	    			} else {
@@ -304,9 +305,9 @@
     	});
     	
     	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
-    		checkIfPhraseExisitsInHistory(phrase, function(exists) {
-    			if(exists) {
-	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, function(bookmarkUuid) {
+    		checkIfPhraseExisitsInHistory(phrase, patientId, function(exists) {
+    			if(exists === true) {
+	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, patientId, function(bookmarkUuid) {
 	    				if(bookmarkUuid === "") {
 	    					saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
 	    				} else {
@@ -320,7 +321,7 @@
 			});
     	}
     	
-    	function checkIfBookmarkExists(bookmarkName, phrase, categories, taskToRunOnSuccess) {
+    	function checkIfBookmarkExists(bookmarkName, phrase, categories, patientId, taskToRunOnSuccess) {
     		if(categories === "") {
 				categories = "none";
 			}
@@ -329,7 +330,7 @@
 	    		jq.ajax({
 					type: "POST",
 					url: "${ ui.actionLink('checkIfBookmarkExists') }",
-					data: {"phrase":phrase, "bookmarkName":bookmarkName, "categories":categories},
+					data: {"phrase":phrase, "bookmarkName":bookmarkName, "categories":categories, "patientId":patientId},
 					dataType: "json",
 					success: function(bookmarkUuid) {
 						taskToRunOnSuccess(bookmarkUuid);
@@ -401,12 +402,12 @@
 	    	jq("#favorite-search-record-dialog").dialog("close");
     	}
     	
-    	function checkIfPhraseExisitsInHistory(searchPhrase, taskToRunOnSuccess) {
+    	function checkIfPhraseExisitsInHistory(searchPhrase, patientId, taskToRunOnSuccess) {
     		if(searchPhrase !== "") {
 	    		jq.ajax({
 					type: "POST",
 					url: "${ ui.actionLink('checkIfPhraseExisitsInHistory') }",
-					data: {"searchPhrase":searchPhrase},
+					data: {"searchPhrase":searchPhrase, "patientId":patientId},
 					dataType: "json",
 					success: function(exists) {
 						taskToRunOnSuccess(exists);

@@ -31,10 +31,11 @@ public class SearchSavingSectionFragmentController {
 		
 	}
 	
-	public boolean checkIfPhraseExisitsInHistory(@RequestParam("searchPhrase") String searchPhrase) {
+	public boolean checkIfPhraseExisitsInHistory(@RequestParam("searchPhrase") String searchPhrase,
+	                                             @RequestParam("patientId") Integer patientId) {
 		boolean exists = false;
 		
-		if (cache.checkIfPhraseExisitsInHistory(searchPhrase)) {
+		if (cache.checkIfPhraseExisitsInHistory(searchPhrase, patientId)) {
 			exists = true;
 		}
 		
@@ -53,11 +54,12 @@ public class SearchSavingSectionFragmentController {
 	
 	public String checkIfBookmarkExists(@RequestParam("phrase") String phrase,
 	                                    @RequestParam("bookmarkName") String bookmarkName,
-	                                    @RequestParam("categories") String categories) {
+	                                    @RequestParam("categories") String categories,
+	                                    @RequestParam("patientId") Integer patientId) {
 		if ("none".equals(categories)) {
 			categories = "";
 		}
-		ChartSearchBookmark bookmark = cache.checkIfBookmarkExistsForPhrase(phrase, categories);
+		ChartSearchBookmark bookmark = cache.checkIfBookmarkExistsForPhrase(phrase, categories, patientId);
 		if (null != bookmark) {
 			return bookmark.getUuid();
 		} else

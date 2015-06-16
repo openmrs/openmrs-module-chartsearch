@@ -13,7 +13,7 @@
 
 <schema name="chartsearch" version="1.5">
 
-	<types>	
+	<types>
 
 		<!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
 		<fieldType name="string" class="solr.StrField"
@@ -876,36 +876,60 @@
 			increase storage costs. default: a value that should be used if no value 
 			is specified when adding a document. -->
 
-		<field name="id" type="string" indexed="true" stored="true"		required="true" />
-		
-		<!-- obs  -->
-		<field name="meta" type="boolean" indexed="true" stored="false"		required="false" />	
-		<field name="obs_id" type="int" indexed="true" stored="true"		required="false" />
-		<field name="person_id" type="int" indexed="true" stored="true"		required="false" />
-		<field name="concept_name" type="string" indexed="true" stored="true" 	required="false" />
-		<field name="obs_datetime" type="date" indexed="true" stored="true"		required="false" />
-		<field name="value_boolean" type="text_general" indexed="true"	stored="false" required="false" />
-		<field name="value_datetime" type="text_general" indexed="true" stored="false"	required="false" />
-		<field name="obs_group_id" type="int" indexed="true" stored="true"		required="false" />
-		<field name="value_numeric" type="text_general" indexed="true" stored="false"	required="false" />
-		<field name="coded" type="string" indexed="true" stored="false"		required="false" />
-		<field name="value_text" type="text_general" indexed="true"	stored="false" required="false" />
-		<field name="concept_class_name" type="text_general" indexed="true"	stored="false" required="false" />
-		<field name="concept_synonym" type="text_general" indexed="true"	stored="false" required="false" />
+		<field name="id" type="string" indexed="true" stored="true"
+			required="true" />
 
-		<!-- forms  -->
-		<field name="form_id" type="int" indexed="true" stored="true"	required="false" />
-		<field name="form_name" type="text_general" indexed="true" stored="true"	required="false" />
-		<field name="encounter_type_name" type="text_general" indexed="true" stored="true"	required="false" />	
-		<field name="date_created" type="date" indexed="true" stored="true"		required="false" />
-			
-		<!-- encounters  -->		
-		<field name="encounter_id" type="int" indexed="true" stored="true"	required="false" />
-		<field name="patient_id" type="int" indexed="true" stored="true"	required="false" />
-		<field name="e_form_id" type="int" indexed="true" stored="true"		required="false" />
-		<field name="encounter_type" type="text_general" indexed="true" stored="true"	required="false" />	
-		<field name="encounter_datetime" type="date" indexed="true" stored="true"		required="false" />
-		<field name="visit_id" type="int" indexed="true" stored="true"		required="false" />
+		<!-- obs -->
+		<field name="meta" type="boolean" indexed="true" stored="false"
+			required="false" />
+		<field name="obs_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="person_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="concept_name" type="string" indexed="true" stored="true"
+			required="false" />
+		<field name="obs_datetime" type="date" indexed="true" stored="true"
+			required="false" />
+		<field name="value_boolean" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="value_datetime" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="obs_group_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="value_numeric" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="coded" type="string" indexed="true" stored="false"
+			required="false" />
+		<field name="value_text" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="concept_class_name" type="text_general" indexed="true"
+			stored="false" required="false" />
+		<field name="concept_synonym" type="text_general" indexed="true"
+			stored="false" required="false" />
+
+		<!-- forms -->
+		<field name="form_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="form_name" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="encounter_type_name" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="date_created" type="date" indexed="true" stored="true"
+			required="false" />
+
+		<!-- encounters -->
+		<field name="encounter_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="patient_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="e_form_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="encounter_type" type="text_general" indexed="true"
+			stored="true" required="false" />
+		<field name="encounter_datetime" type="date" indexed="true"
+			stored="true" required="false" />
+		<field name="visit_id" type="int" indexed="true" stored="true"
+			required="false" />
 
 		<field name="_version_" type="long" indexed="true" stored="true" />
 		<!-- catchall field, containing all other searchable text fields (implemented 
@@ -913,8 +937,29 @@
 		<field name="value" type="text_general" indexed="true" stored="true"
 			multiValued="true" />
 
-		<field name="text" type="text_general" indexed="true" stored="true" 
-			multiValued="true"/>
+		<field name="text" type="text_general" indexed="true" stored="true"
+			multiValued="true" />
+
+		<!-- allergies -->
+		<field name="allergy_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="allergy_coded_name" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="allergy_non_coded_name" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="allergy_severity" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="allergy_type" type="string" indexed="true" stored="true"
+			required="false" />
+		<field name="allergy_coded_reaction" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="allergy_non_coded_reaction" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="allergy_comment" type="string" indexed="true"
+			stored="true" required="false" />
+
+		<field name="allergy_text" type="text_general" indexed="true"
+			stored="true" multiValued="true" />
 
 
 		<!-- catchall text field that indexes tokens both normally and in reverse 
@@ -952,21 +997,29 @@
 		is added to the index. It's used either to index the same field differently, 
 		or to add multiple fields to the same field for easier/faster searching. -->
 
-	<copyField source="value_boolean" 	dest="value" />
-	<copyField source="coded" 			dest="value" />
-	<copyField source="value_datetime" 	dest="value" />
-	<copyField source="value_numeric" 	dest="value" />
-	<copyField source="value_text" 		dest="value" />
-	
-	<copyField source="value_boolean" 	dest="text" />
-	<copyField source="coded" 			dest="text" />
-	<copyField source="value_datetime" 	dest="text" />
-	<copyField source="value_numeric" 	dest="text" />
-	<copyField source="value_text" 		dest="text" />
-	<copyField source="concept_name" 	dest="text" />
-	<copyField source="concept_class_name" 	dest="text" />
-	<copyField source="concept_synonym" 	dest="text" />
-	
+	<copyField source="value_boolean" dest="value" />
+	<copyField source="coded" dest="value" />
+	<copyField source="value_datetime" dest="value" />
+	<copyField source="value_numeric" dest="value" />
+	<copyField source="value_text" dest="value" />
+
+	<copyField source="value_boolean" dest="text" />
+	<copyField source="coded" dest="text" />
+	<copyField source="value_datetime" dest="text" />
+	<copyField source="value_numeric" dest="text" />
+	<copyField source="value_text" dest="text" />
+	<copyField source="concept_name" dest="text" />
+	<copyField source="concept_class_name" dest="text" />
+	<copyField source="concept_synonym" dest="text" />
+
+	<copyField source="allergy_coded_name" dest="allergy_text" />
+	<copyField source="allergy_non_coded_name" dest="allergy_text" />
+	<copyField source="allergy_severity" dest="allergy_text" />
+	<copyField source="allergy_type" dest="allergy_text" />
+	<copyField source="allergy_coded_reaction" dest="allergy_text" />
+	<copyField source="allergy_non_coded_reaction" dest="allergy_text" />
+	<copyField source="allergy_comment" dest="allergy_text" />
+
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 
 		the dynamic field syntax. copyField also supports a maxChars to copy setting. -->

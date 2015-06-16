@@ -24,12 +24,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.AllergyItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
@@ -78,19 +80,18 @@ public class ChartSearchSearcher {
 		
 		SolrQuery query = new SolrQuery(String.format("text:(%s)", searchText));
 		query.addFilterQuery(String.format("person_id:%d", patientId));
-		query.setRows(0); // Intentionally setting to this value such that we
-		// get the count very quickly.
+		query.setRows(0); //Intentionally setting to this value such that we
+		//get the count very quickly.
 		QueryResponse response = solrServer.query(query);
 		return response.getResults().getNumFound();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
 	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		SolrQuery query = new SolrQuery();
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
-		//TODO check for existence of characters such as ", and : in the search text and submit as it is if so
+		//check for existence of characters such as ", and : in the search text and submit as it is if so
 		if (searchText.contains("\"")) {
 			String searchWhole = "text:" + searchText;
 			query.setQuery(searchWhole);
@@ -99,11 +100,9 @@ public class ChartSearchSearcher {
 		} else if (searchText.equals("*")) {
 			query.setQuery(String.format("text:(%s)", searchText));
 		} else {
-			//TODO re-use ChartSearchSntax class hear
 			ChartSearchSyntax searchSyntax = new ChartSearchSyntax(searchText);
 			searchText = searchSyntax.getSearchQuery();
 			
-			// TODO Move to Eli's code
 			if (StringUtils.isNumeric(searchText)) {
 				//this allows 36 returning 36.* for numerics
 				searchText = searchText + ".*" + " || " + searchText;
@@ -113,7 +112,6 @@ public class ChartSearchSearcher {
 		
 		query.addFilterQuery(String.format("person_id:%d", patientId));
 		
-		//TODO add selected categories to the query here or use all categories
 		addSelectedFilterQueriesToQuery(query, selectedCategories);
 		
 		query.setStart(start);
@@ -121,12 +119,45 @@ public class ChartSearchSearcher {
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
 		query.setParam("hl.fl", "text");
 		
-		//TODO add facet fields here and if more than one, getAndUseCountsForFacetFields(..)
 		query.remove(FacetParams.FACET_FIELD);
 		query.setFacet(true);
 		//adding facet field for concept_class
 		query.addFacetField("concept_class_name");
 		
+		List<ChartListItem> list = searchObservationsAndGenerateSolrDoc(solrServer, query);
+		
+		searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
+		searchEncounterTypesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
+		searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
+		
+		return list;
+	}
+	
+	private void searchEFormsAndGenerateSolrDoc(String searchText, SolrServer solrServer, List<ChartListItem> list)
+	    throws SolrServerException {
+		// forms
+		System.out.println("Forms:");
+		SolrQuery query2 = new SolrQuery(String.format("form_name:(%s)", searchText));
+		QueryResponse response2 = solrServer.query(query2);
+		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
+		
+		while (iter2.hasNext()) {
+			SolrDocument document = iter2.next();
+			FormItem item = new FormItem();
+			item.setUuid((String) document.get("id"));
+			item.setEncounterType((String) document.get("encounter_type_name"));
+			item.setFormId((Integer) document.get("form_id"));
+			item.setFormName((String) document.get("form_name"));
+			list.add(item);
+			
+			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", "
+			        + document.get("encounter_type_name"));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ChartListItem> searchObservationsAndGenerateSolrDoc(SolrServer solrServer, SolrQuery query)
+	    throws SolrServerException {
 		System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
 		
@@ -169,7 +200,11 @@ public class ChartSearchSearcher {
 			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", "
 			        + document.get("obs_datetime"));
 		}
-		
+		return list;
+	}
+	
+	private void searchEncounterTypesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                                    List<ChartListItem> list) throws SolrServerException {
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
@@ -188,27 +223,33 @@ public class ChartSearchSearcher {
 			System.out.println(document.get("encounter_id") + ", " + document.get("encounter_type") + ", "
 			        + document.get("encounter_datetime"));
 		}
+	}
+	
+	private void searchAllergiesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                               List<ChartListItem> list) throws SolrServerException {
+		SolrQuery query4 = new SolrQuery(String.format("allergy_text:(%s)", searchText));
 		
-		// forms
-		System.out.println("Forms:");
-		SolrQuery query2 = new SolrQuery(String.format("form_name:(%s)", searchText));
-		QueryResponse response2 = solrServer.query(query2);
-		Iterator<SolrDocument> iter2 = response2.getResults().iterator();
+		query4.addFilterQuery(String.format("patient_id:%d", patientId));
+		QueryResponse response4 = solrServer.query(query4);
+		Iterator<SolrDocument> iter4 = response4.getResults().iterator();
 		
-		while (iter2.hasNext()) {
-			SolrDocument document = iter2.next();
-			FormItem item = new FormItem();
+		while (iter4.hasNext()) {
+			SolrDocument document = iter4.next();
+			AllergyItem item = new AllergyItem();
 			item.setUuid((String) document.get("id"));
-			item.setEncounterType((String) document.get("encounter_type_name"));
-			item.setFormId((Integer) document.get("form_id"));
-			item.setFormName((String) document.get("form_name"));
+			item.setAllergyId((Integer) document.get("allergy_id"));
+			item.setAllergenCodedName((String) document.get("allergy_coded_name"));
+			item.setAllergenNonCodedName((String) document.get("allergy_non_coded_name"));
+			item.setAllergenSeverity((String) document.get("allergy_severity"));
+			item.setAllergenType((String) document.get("allergy_type"));
+			item.setAllergenCodedReaction((String) document.get("allergy_coded_reaction"));
+			item.setAllergenNonCodedReaction((String) document.get("allergy_non_coded_reaction"));
+			item.setAllergenComment((String) document.get("allergy_comment"));
+			
 			list.add(item);
 			
-			System.out.println(document.get("form_id") + ", " + document.get("form_name") + ", "
-			        + document.get("encounter_type_name"));
+			System.out.println("FOUND ALLERGY: " + document.toString());
 		}
-		
-		return list;
 	}
 	
 	/**

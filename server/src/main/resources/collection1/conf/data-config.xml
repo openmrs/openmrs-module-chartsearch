@@ -76,5 +76,32 @@
 				where f.retired = 1">
 		</entity>
 
+		<entity name="allergies"
+			query="SELECT DISTINCT a.uuid AS id, a.allergy_id AS allergy_id, ac1.name AS allergy_coded_name, a.non_coded_allergen AS allergy_non_coded_name,
+					ac2.name AS allergy_severity, a.allergen_type AS allergy_type, ar2.name AS allergy_coded_reaction, ar2.reaction_non_coded AS allergy_non_coded_reaction, a.comment AS allergy_comment FROM allergy a
+				JOIN (SELECT cn1.name, a1.coded_allergen, a1.non_coded_allergen FROM concept_name cn1 INNER JOIN (SELECT DISTINCT coded_allergen, non_coded_allergen FROM allergy) AS a1 ON a1.coded_allergen = cn1.concept_id WHERE cn1.locale='en') AS ac1 ON ac1.coded_allergen = a.coded_allergen
+				LEFT JOIN (SELECT cn2.name, a2.severity_concept_id FROM concept_name cn2 INNER JOIN (SELECT DISTINCT severity_concept_id FROM allergy) AS a2 ON cn2.concept_id = a2.severity_concept_id WHERE cn2.locale='en') AS ac2 ON ac2.severity_concept_id = a.severity_concept_id
+				LEFT JOIN (SELECT cn.name, ar.allergy_id, ar.reaction_non_coded FROM concept_name cn INNER JOIN (SELECT DISTINCT allergy_id, reaction_concept_id, reaction_non_coded FROM allergy_reaction) AS ar ON ar.reaction_concept_id = cn.concept_id  WHERE cn.locale='en') AS ar2 ON ar2.allergy_id = a.allergy_id
+				WHERE a.patient_id ='${dataimporter.request.personId}'"
+
+			deltaImportQuery="SELECT DISTINCT a.uuid AS id, a.allergy_id AS allergy_id, ac1.name AS allergy_coded_name, a.non_coded_allergen AS allergy_non_coded_name,
+					ac2.name AS allergy_severity, a.allergen_type AS allergy_type, ar2.name AS allergy_coded_reaction, ar2.reaction_non_coded AS allergy_non_coded_reaction, a.comment AS allergy_comment FROM allergy a
+				JOIN (SELECT cn1.name, a1.coded_allergen, a1.non_coded_allergen FROM concept_name cn1 INNER JOIN (SELECT DISTINCT coded_allergen, non_coded_allergen FROM allergy) AS a1 ON a1.coded_allergen = cn1.concept_id WHERE cn1.locale='en') AS ac1 ON ac1.coded_allergen = a.coded_allergen
+				LEFT JOIN (SELECT cn2.name, a2.severity_concept_id FROM concept_name cn2 INNER JOIN (SELECT DISTINCT severity_concept_id FROM allergy) AS a2 ON cn2.concept_id = a2.severity_concept_id WHERE cn2.locale='en') AS ac2 ON ac2.severity_concept_id = a.severity_concept_id
+				LEFT JOIN (SELECT cn.name, ar.allergy_id, ar.reaction_non_coded FROM concept_name cn INNER JOIN (SELECT DISTINCT allergy_id, reaction_concept_id, reaction_non_coded FROM allergy_reaction) AS ar ON ar.reaction_concept_id = cn.concept_id  WHERE cn.locale='en') AS ar2 ON ar2.allergy_id = a.allergy_id
+				WHERE a.uuid='${dih.delta.id}'"
+
+			deltaQuery="SELECT a.uuid as id from openmrs.allergy a 
+				INNER JOIN concept_name cn on cn.concept_id = a.coded_allergen
+				WHERE patient_id='${dataimporter.request.personId}'
+				AND a.voided=0 AND cn.voided=0
+				AND a.date_created &gt; '${dataimporter.request.lastIndexTime}"
+
+			deletedPkQuery="SELECT a.uuid as id from openmrs.allergy a 
+				INNER JOIN concept_name cn on cn.concept_id = a.coded_allergen
+				WHERE patient_id='${dataimporter.request.personId}'
+				AND (a.voided=1 OR cn.voided=1) AND a.date_voided &gt; '${dataimporter.request.lastIndexTime}'">
+		</entity>
+
 	</document>
 </dataConfig>

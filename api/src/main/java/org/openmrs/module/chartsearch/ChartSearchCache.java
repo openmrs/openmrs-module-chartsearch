@@ -334,7 +334,8 @@ public class ChartSearchCache {
 			ChartSearchBookmark defaultBookmark = null;
 			
 			for (ChartSearchBookmark bookmark : allBookmarks) {
-				if (bookmark.isDefaultSearch()) {
+				if (bookmark.isDefaultSearch()
+				        && bookmark.getBookmarkOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
 					defaultBookmark = bookmark;
 				} else
 					getDefaultSearchFromHistoryIfItExists(currentSPhrase, json, lastSearchPhraseFromHistory);
@@ -375,12 +376,14 @@ public class ChartSearchCache {
 			List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
 			
 			for (ChartSearchBookmark bookmark : allBookmarks) {
-				if (bookmark.getUuid().equals(uuid)) {
-					bookmark.setIsDefaultSearch(true);
-				} else {
-					bookmark.setIsDefaultSearch(false);
+				if (bookmark.getBookmarkOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
+					if (bookmark.getUuid().equals(uuid)) {
+						bookmark.setIsDefaultSearch(true);
+					} else {
+						bookmark.setIsDefaultSearch(false);
+					}
+					chartSearchService.saveSearchBookmark(bookmark);
 				}
-				chartSearchService.saveSearchBookmark(bookmark);
 			}
 		}
 		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);

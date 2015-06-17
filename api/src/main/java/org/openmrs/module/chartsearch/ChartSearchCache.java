@@ -24,6 +24,7 @@ import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 
+import com.google.common.collect.Lists;
 import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
 import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
 import com.openmrs.module.chartsearch.saving.ChartSearchNote;
@@ -271,7 +272,7 @@ public class ChartSearchCache {
 			chartSearchService.saveSearchNote(note);
 			
 			if (null != chartSearchService.getSearchNote(note.getNoteId())) {
-				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
+				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
 			} else {
 				json = null;
 			}
@@ -291,7 +292,7 @@ public class ChartSearchCache {
 			}
 		}
 		
-		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
+		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
 		
 		return json;
 	}
@@ -387,6 +388,31 @@ public class ChartSearchCache {
 			}
 		}
 		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+	}
+	
+	public JSONArray fetchAllNotesForManageUI(boolean wholePageIsToBeLoaded) {
+		JSONArray jsonArr = new JSONArray();
+		List<ChartSearchNote> allNotes = Lists.reverse(chartSearchService.getAllSearchNotes());//re-arrange to get the most recent/added first
+		
+		for (ChartSearchNote note : allNotes) {
+			JSONObject json = new JSONObject();
+			if (note.getNoteOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {//manage owned notes only
+				json.put("uuid", note.getUuid());
+				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
+				json.put("backgroundColor", note.getDisplayColor());
+				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
+				        .format(note.getCreatedOrLastModifiedAt()));
+				
+				GeneratingJson.addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
+				
+				json.put("patientId", note.getPatient().getPatientId());
+				json.put("patientFName", note.getPatient().getFamilyName());
+				json.put("priority", note.getPriority());
+			}
+			jsonArr.add(json);
+		}
+		
+		return jsonArr;
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

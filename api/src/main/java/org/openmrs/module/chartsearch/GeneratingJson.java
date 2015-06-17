@@ -100,14 +100,16 @@ public class GeneratingJson {
 		jsonToReturn.put("searchBookmarks", bookmarks);
 		jsonToReturn.put("appliedFacets", (String[]) catNms.toArray(appliedCats));
 		
-		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
+		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn, wholePageIsToBeLoaded);
 		
 		return jsonToReturn.toString();
 	}
 	
-	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json) {
-		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
-		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
+	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json,
+	                                                       boolean wholePageIsToBeLoaded) {
+		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId,
+		    wholePageIsToBeLoaded);
+		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId, wholePageIsToBeLoaded);
 		String userName = Context.getAuthenticatedUser().getUsername();
 		String systemId = Context.getAuthenticatedUser().getSystemId();
 		
@@ -163,7 +165,7 @@ public class GeneratingJson {
 		json = new JSONObject();
 		
 		if (wholePageIsToBeLoaded) {
-			json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(history.getSearchPhrase()));
+			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(history.getSearchPhrase()));
 		} else {
 			json.put("searchPhrase", history.getSearchPhrase());
 		}
@@ -175,7 +177,8 @@ public class GeneratingJson {
 		return json;
 	}
 	
-	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
+	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId,
+	                                                     boolean wholePageIsToBeLoaded) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allPersonalNotes = new ArrayList<ChartSearchNote>();
@@ -196,11 +199,10 @@ public class GeneratingJson {
 				
 				json.put("uuid", note.getUuid());
 				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
-				json.put("comment", note.getComment());
 				json.put("backgroundColor", note.getDisplayColor());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
-				json.put("searchPhrase", note.getSearchPhrase());
+				addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);
@@ -209,7 +211,18 @@ public class GeneratingJson {
 		return jsonArr;
 	}
 	
-	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId) {
+	public static void addPhraseAndCommentNotesAttributes(boolean wholePageIsToBeLoaded, ChartSearchNote note,
+	                                                      JSONObject json) {
+		if (wholePageIsToBeLoaded) {
+			json.put("comment", appendBackwardSlashBeforeMustBePassedCharacters(note.getComment()));
+			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(note.getSearchPhrase()));
+		} else {
+			json.put("comment", note.getComment());
+			json.put("searchPhrase", note.getSearchPhrase());
+		}
+	}
+	
+	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId, boolean wholePageIsToBeLoaded) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allGlobalNotes = new ArrayList<ChartSearchNote>();
@@ -231,9 +244,10 @@ public class GeneratingJson {
 				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
-				json.put("comment", note.getComment());
 				json.put("backgroundColor", note.getDisplayColor());
-				json.put("searchPhrase", note.getSearchPhrase());
+				
+				addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
+				
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);
@@ -284,8 +298,8 @@ public class GeneratingJson {
 		json = new JSONObject();
 		
 		if (wholePageIsToBeLoaded) {
-			json.put("bookmarkName", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getBookmarkName()));
-			json.put("searchPhrase", appendBackwardSlashBeforeDoubleQuotes(curBookmark.getSearchPhrase()));
+			json.put("bookmarkName", appendBackwardSlashBeforeMustBePassedCharacters(curBookmark.getBookmarkName()));
+			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(curBookmark.getSearchPhrase()));
 		} else {
 			json.put("bookmarkName", curBookmark.getBookmarkName());
 			json.put("searchPhrase", curBookmark.getSearchPhrase());
@@ -631,11 +645,18 @@ public class GeneratingJson {
 		return counts;
 	}
 	
-	private static String appendBackwardSlashBeforeDoubleQuotes(String str) {
+	private static String appendBackwardSlashBeforeMustBePassedCharacters(String str) {
+		if (str.contains("'")) {
+			//str = str.replace("'", "\\'");
+		}
 		if (str.contains("\"")) {
 			str = str.replace("\"", "\\\"");
 		}
 		return str;
+	}
+	
+	public static void main(String[] dsds) {
+		System.out.println(appendBackwardSlashBeforeMustBePassedCharacters("testst's"));
 	}
 	
 	private static <T> T getComponent(Class<T> clazz) {

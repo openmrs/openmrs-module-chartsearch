@@ -101,7 +101,7 @@ public class SearchSavingSectionFragmentController {
 	                                     @RequestParam("patientId") Integer patientId) {
 		JSONObject json = new JSONObject();
 		
-		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
+		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
 		
 		return json;
 	}

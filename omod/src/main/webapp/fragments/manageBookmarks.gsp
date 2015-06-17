@@ -36,7 +36,7 @@
 		});
 		
 		jq("table").on('mouseenter', 'tr', function(event) {
-			if(event.delegateTarget.id !== "patient-search-results-table" && event.target.localName !== "th" && event.target.localName !== "input" && event.target.localName !== "label" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history") {
+			if(event.delegateTarget.id !== "manage-notes-display-table" && event.delegateTarget.id !== "patient-search-results-table" && event.target.localName !== "th" && event.target.localName !== "input" && event.target.localName !== "label" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history") {
 				jq(this).css("cursor", "pointer");
 				jq(this).css('background', '#F0EAEA');
 			}
@@ -105,8 +105,10 @@
 						jq.each(cats, function(key, value) {   
 							jq('#dialog-bookmark-categories').append(jq("<option></option>").attr("value",key).text(value)); 
 						});
-						jq('#dialog-bookmark-categories option').prop('selected', true);
 						
+						if(jq('#dialog-bookmark-categories option').text() !== "") {
+							jq('#dialog-bookmark-categories option').prop('selected', true);
+						}
 						invokeDialog("#selected-bookmark-dialog-content", "Editing '" + bkName + "' Bookmark", "450px");
 					},
 					error: function(e) {

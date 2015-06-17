@@ -46,15 +46,9 @@ public class GeneratingJson {
 	
 	final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
 	
-	private static ChartSearchService chartSearchService;
+	private static ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
 	
 	public static ChartSearchService getChartSearchService() {
-		try {
-			chartSearchService = Context.getService(ChartSearchService.class);
-		}
-		catch (APIAuthenticationException e) {
-			System.out.println("Not Authenticated!!!");
-		}
 		return chartSearchService;
 	}
 	
@@ -66,6 +60,8 @@ public class GeneratingJson {
 		boolean foundNoResults = false;
 		JSONObject noResults = new JSONObject();
 		String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
+		
+		jsonToReturn.put("search_phrase", searchPhrase);
 		
 		if (returnedResults == null || returnedResults.isEmpty()) {
 			foundNoResults = true;
@@ -83,8 +79,6 @@ public class GeneratingJson {
 			noResults.put("foundNoResults", foundNoResults);
 			addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(jsonToReturn, arr_of_groups, arr_of_locations,
 			    arr_of_providers, arr_of_datatypes, failedPrivilegeMessages);
-			
-			jsonToReturn.put("search_phrase", searchPhrase);
 			
 			addFacetsToJSONObjectToReturn(jsonToReturn);
 			
@@ -642,5 +636,12 @@ public class GeneratingJson {
 			str = str.replace("\"", "\\\"");
 		}
 		return str;
+	}
+	
+	private static <T> T getComponent(Class<T> clazz) {
+		List<T> list = Context.getRegisteredComponents(clazz);
+		if (list == null || list.size() == 0)
+			throw new RuntimeException("Cannot find component of " + clazz);
+		return list.get(0);
 	}
 }

@@ -9,7 +9,6 @@
     jq(document).ready(function() {
     
 		jq('#searchText').focus();
-		
 		jq("#chart-previous-searches-display").hide();
 		
 		showHistorySuggestionsOnLoad();

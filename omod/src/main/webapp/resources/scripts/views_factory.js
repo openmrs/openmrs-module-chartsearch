@@ -928,7 +928,9 @@ function filterOptions_datatypes() {
 
 
 function refresh_data() {
+	$('#searchText').val(jsonAfterParse.search_phrase);
 	var searchText = document.getElementById('searchText');
+	
     $("#time_anchor").text('Any Time');
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');

@@ -9,8 +9,11 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
+import net.sf.json.JSONArray;
+
 import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class ManageNotesFragmentController {
 	
@@ -20,4 +23,7 @@ public class ManageNotesFragmentController {
 		fragmentModel.addAttribute("allFoundNotes", cache.fetchAllNotesForManageUI(true).toString());
 	}
 	
+	public JSONArray deleteSelectedNotes(@RequestParam("selectedUuids[]") String[] selectedUuids) {
+		return cache.deleteSelectedNotes(selectedUuids);
+	}
 }

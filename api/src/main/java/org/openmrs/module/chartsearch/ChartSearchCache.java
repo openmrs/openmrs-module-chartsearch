@@ -396,7 +396,7 @@ public class ChartSearchCache {
 		
 		for (ChartSearchNote note : allNotes) {
 			JSONObject json = new JSONObject();
-			if (note.getNoteOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {//manage owned notes only
+			if (note.getNoteOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId()) && null != note) {//manage owned notes only
 				json.put("uuid", note.getUuid());
 				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("backgroundColor", note.getDisplayColor());
@@ -413,6 +413,18 @@ public class ChartSearchCache {
 		}
 		
 		return jsonArr;
+	}
+	
+	public JSONArray deleteSelectedNotes(String[] uuids) {
+		if (uuids != null && uuids.length != 0) {
+			for (int i = 0; i < uuids.length; i++) {
+				ChartSearchNote note = chartSearchService.getSearchNoteByUuid(uuids[i]);
+				if (note != null) {
+					chartSearchService.deleteSearchNote(note);
+				}
+			}
+		}
+		return fetchAllNotesForManageUI(false);
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

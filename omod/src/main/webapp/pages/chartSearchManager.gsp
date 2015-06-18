@@ -34,9 +34,9 @@ input[type="radio"], input[type="checkbox"] {
 	        	Launcher
 	        </a>
 	    </li>
-	    <li class="ui-state-default ui-corner-top">
-	    	<a class="ui-tabs-anchor" href="#preferences">
-	        	Preferences
+	    <li class="ui-state-default ui-corner-top ui-state-active" >
+	        <a class="ui-tabs-anchor" href="#history" >
+	             History
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top">
@@ -45,8 +45,13 @@ input[type="radio"], input[type="checkbox"] {
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#history" >
-	             History
+	        <a class="ui-tabs-anchor" href="#notes" >
+	             Notes
+	        </a>
+	    </li>
+	    <li class="ui-state-default ui-corner-top">
+	    	<a class="ui-tabs-anchor" href="#preferences">
+	        	Preferences
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
@@ -57,11 +62,6 @@ input[type="radio"], input[type="checkbox"] {
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#settings" >
 	             Settings
-	        </a>
-	    </li>
-	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#notes" >
-	             Notes
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >

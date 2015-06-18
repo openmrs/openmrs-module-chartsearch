@@ -26,4 +26,8 @@ public class ManageNotesFragmentController {
 	public JSONArray deleteSelectedNotes(@RequestParam("selectedUuids[]") String[] selectedUuids) {
 		return cache.deleteSelectedNotes(selectedUuids);
 	}
+	
+	public JSONArray saveEdittedNote(@RequestParam("uuid") String uuid, @RequestParam("comment") String comment, @RequestParam("priority") String priority) {
+		return cache.saveEdittedNote(uuid, comment, priority);
+	}
 }

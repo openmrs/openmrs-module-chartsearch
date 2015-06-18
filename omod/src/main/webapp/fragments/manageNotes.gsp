@@ -22,16 +22,16 @@
     			checkOrUnAllOtherCheckBoxesInADiv("#manage-notes-display", "select-all-notes");
     		}
     		if(event.target.className.indexOf("m-notes-actions") >= 0) {
-    			//TODO either purform a delete or a save functionality here
-    			if(event.target.id) {
+    			if(event.target.id && event.target.title === "Delete") {
     				if(confirm("Do you really want to delete this Note?")) {
     					deleteSelectedNotes(event.target.id);
     				} else {
     					//Do nothing
     				}
-    			} else {
+    			} else if (event.target.id && event.target.title === "Save") {
     				if(confirm("Have you finished Editing?")) {
-			    		//TODO save the edited Note			
+			    		//TODO save the edited Note
+			    		saveEdittedNote(event.target.id);		
     				}
     			}
     		}
@@ -60,11 +60,11 @@
     					var uuid = note.uuid;
 	    				var patient = "<td><input type='checkbox' class='select-this-note' id='" + uuid + "' style='width:55%;height:1.5em;'/>" + note.patientFName + "</td>";
 	    				var phrase = "<td>" + note.searchPhrase + "</td>";
-	    				var comment = "<td><textarea class='m-notes-comment' style='width: 488px;height:80px;'>" + note.comment + "</textarea></td>";
-	    				var priority = setPriorityDisplay(note.priority);
+	    				var comment = "<td><textarea class='m-notes-comment " + uuid + "' style='width: 488px;height:80px;'>" + note.comment + "</textarea></td>";
+	    				var priority = setPriorityDisplay(note.priority, uuid);
 	    				var date = new Date(note.createdOrLastModifiedAt);
 	    				
-	    				displayNotes += "<tr>" + patient + phrase + comment + priority + "<td>" + date.toString() + "</td><td><i class='icon-remove medium m-notes-actions' id='" + uuid + "'><i class='icon-save medium m-notes-actions'></td></tr>";
+	    				displayNotes += "<tr>" + patient + phrase + comment + priority + "<td>" + date.toString() + "</td><td><i class='icon-remove medium m-notes-actions' id='" + uuid + "' title='Delete'></i><i class='icon-save medium m-notes-actions' title='Save' id='" + uuid + "'></i></td></tr>";
     				}
     			}
     		}
@@ -75,14 +75,14 @@
     	}
     	
     	
-    	function setPriorityDisplay(priority) {
+    	function setPriorityDisplay(priority, uuid) {
     		var allPiorities = ["LOW", "HIGH"];
     		var priorityDisplay = "";
     		
     		if(priority === allPiorities[1]) {
-    			priorityDisplay = "<td><select class='m-notes-priority'><option>" + allPiorities[1] + "</option><option>" + allPiorities[0] + "</option></select></td>";
+    			priorityDisplay = "<td><select class='m-notes-priority " + uuid + "'><option>" + allPiorities[1] + "</option><option>" + allPiorities[0] + "</option></select></td>";
     		} else {
-    			priorityDisplay = "<td><select class='m-notes-priority'><option>" + allPiorities[0] + "</option><option>" + allPiorities[1] + "</option></select></td>";
+    			priorityDisplay = "<td><select class='m-notes-priority " + uuid + "'><option>" + allPiorities[0] + "</option><option>" + allPiorities[1] + "</option></select></td>";
     		}
     		
     		return priorityDisplay;
@@ -132,11 +132,45 @@
     		return selectedUuids;
     	}
     	
+    	function saveEdittedNote(uuid) {
+    		var comment;
+    		var priority;
+    		
+    		jq(".m-notes-priority").each(function(event) {
+    			if(jq(this).attr("class").indexOf(uuid) >= 0) {
+    				priority = jq(this).find('option:selected').text();
+    			}
+    		});
+    		jq(".m-notes-comment").each(function(event) {
+    			if(jq(this).attr("class").indexOf(uuid) >= 0) {
+    				comment = jq(this).text();
+    			}
+    		});
+    		
+    		if(uuid && comment && priority) {
+    			jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('saveEdittedNote') }",
+					data: {"uuid":uuid, "comment":comment, "priority":priority},
+					dataType: "json",
+					success: function(allExistingNotes) {
+						if(allExistingNotes) {
+							notesAfterparse = allExistingNotes;
+							displayExistingNotes();
+									
+							alert("Successfully Editted Note");
+						} else {
+							alert("Note is not edited to be saved!");
+						}
+					},
+					error: function(e) {
+					}
+				});
+    		}
+    	}
     });
    	
 </script>
-
-
 
 
 

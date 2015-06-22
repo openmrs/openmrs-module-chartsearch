@@ -23,11 +23,11 @@ import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import org.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 import com.google.common.collect.Lists;
-import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * This basically provides access to chart-search module stored records such as notes on searches,

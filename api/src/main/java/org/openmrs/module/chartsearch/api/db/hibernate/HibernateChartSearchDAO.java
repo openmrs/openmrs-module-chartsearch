@@ -27,11 +27,11 @@ import org.apache.solr.common.SolrInputDocument;
 import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
+import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import org.openmrs.module.chartsearch.saving.ChartSearchNote;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
-import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.

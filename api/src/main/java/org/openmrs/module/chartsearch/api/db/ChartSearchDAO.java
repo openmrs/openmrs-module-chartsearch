@@ -17,10 +17,10 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import org.openmrs.module.chartsearch.saving.ChartSearchNote;
 
-import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * Database methods for {@link ChartSearchService}.

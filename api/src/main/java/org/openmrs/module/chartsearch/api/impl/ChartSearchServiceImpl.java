@@ -42,14 +42,14 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
+import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import org.openmrs.module.chartsearch.saving.ChartSearchNote;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.

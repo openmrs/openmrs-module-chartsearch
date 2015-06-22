@@ -33,11 +33,11 @@ import org.openmrs.Obs;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
+import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
+import org.openmrs.module.chartsearch.saving.ChartSearchNote;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
-import com.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import com.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import com.openmrs.module.chartsearch.saving.ChartSearchNote;
 
 /**
  * Responsible for generating the JSON object to be returned to the view(s)

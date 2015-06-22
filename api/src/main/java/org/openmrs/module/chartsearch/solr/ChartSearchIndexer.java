@@ -24,13 +24,13 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
+import org.openmrs.module.chartsearch.customindexing.ChartSearchAllergiesIndexer;
 import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.openmrs.module.chartsearch.customindexing.ChartSearchAllergiesIndexer;
 
 public class ChartSearchIndexer {
 	

@@ -29,8 +29,7 @@ import org.openmrs.module.allergyapi.api.PatientService;
 public class ChartSearchAllergiesIndexer {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void indexPatientAllergies(Integer patientId, SolrServer solrServer) {
-		PatientService patientService = Context.getService(PatientService.class);
+	public void indexPatientAllergies(Integer patientId, SolrServer solrServer, PatientService patientService) {
 		Collection<SolrInputDocument> docs = new ArrayList();
 		
 		if (patientId != null) {

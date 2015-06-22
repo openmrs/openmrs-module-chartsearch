@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmrs.api.context.Context;
+import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
@@ -35,8 +36,8 @@ public class SolrSearch {
 		SolrSingleton.getInstance().getServer();
 	}
 	
-	public void indexPatientData(Integer personId) {
-		indexer.indexPatientData(personId);
+	public void indexPatientData(Integer personId, PatientService patientService) {
+		indexer.indexPatientData(personId, patientService);
 	}
 	
 	public PatientInfo getPatientInfo(Integer patientId) {

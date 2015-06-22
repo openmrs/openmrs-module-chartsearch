@@ -318,4 +318,24 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet id="CSM-103_22062015_1941" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="chartsearch_history"
+				columnName="uuid" />
+			<columnExists tableName="chartsearch_bookmark"
+				columnName="uuid" />
+			<columnExists tableName="chartsearch_note" columnName="uuid" />
+		</preConditions>
+		<comment>
+			Rename uuid to history_uuid, bookmark_uuid, note_uuid
+			respectively
+		</comment>
+		<renameColumn tableName="chartsearch_history"
+			oldColumnName="uuid" newColumnName="history_uuid" columnDataType="char(38)" />
+		<renameColumn tableName="chartsearch_bookmark"
+			oldColumnName="uuid" newColumnName="bookmark_uuid" columnDataType="char(38)" />
+		<renameColumn tableName="chartsearch_note"
+			oldColumnName="uuid" newColumnName="note_uuid" columnDataType="char(38)" />
+	</changeSet>
+
 </databaseChangeLog>

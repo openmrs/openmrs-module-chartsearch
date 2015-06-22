@@ -35,6 +35,6 @@ public class PatientDashBoardChartSearchTabController extends PortletController 
 		Integer personId = (Integer) model.get("personId");
 		
 		chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), personId + "", 0, 0);
-		chartSearchIndexer.indexPatientData(personId);
+		chartSearchIndexer.indexPatientData(personId, null);
 	}
 }

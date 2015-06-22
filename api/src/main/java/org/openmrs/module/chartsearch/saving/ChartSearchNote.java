@@ -77,14 +77,14 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	
 	/**
 	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
-	 */
+	 *//*
 	@Basic
 	@Access(AccessType.PROPERTY)
 	@Column(name = "uuid", length = 38, unique = true)
 	@Override
 	public String getUuid() {
 		return super.getUuid();
-	}
+	}*/
 	
 	public Integer getNoteId() {
 		return noteId;

@@ -138,7 +138,7 @@
 	</mappingFiles>
 	
 	<packagesWithMappedClasses>
-		com.openmrs.module.chartsearch.saving
+		org.openmrs.module.chartsearch.saving
 	</packagesWithMappedClasses>
 
 	<!-- Internationalization -->

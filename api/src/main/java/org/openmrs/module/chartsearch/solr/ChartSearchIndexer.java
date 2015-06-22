@@ -24,7 +24,6 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.apache.solr.common.util.NamedList;
-import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.chartsearch.server.ConfigCommands;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
@@ -40,7 +39,7 @@ public class ChartSearchIndexer {
 	public ChartSearchIndexer() {
 	}
 	
-	public void indexPatientData(Integer personId, PatientService patientService) {
+	public void indexPatientData(Integer personId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
 		//TODO take path from config
@@ -53,7 +52,7 @@ public class ChartSearchIndexer {
 				ChartSearchAllergiesIndexer allergiesIndexer = new ChartSearchAllergiesIndexer();
 				
 				solrServer.query(params);
-				allergiesIndexer.indexPatientAllergies(personId, patientService, solrServer);
+				allergiesIndexer.indexPatientAllergies(personId, solrServer);
 			}
 		}
 		catch (SolrServerException ex) {

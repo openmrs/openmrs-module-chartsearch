@@ -17,7 +17,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
-import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.openmrs.ConceptName;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
@@ -29,8 +29,9 @@ import org.openmrs.module.allergyapi.api.PatientService;
 public class ChartSearchAllergiesIndexer {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void indexPatientAllergies(Integer patientId, PatientService patientService, SolrServer solrServer) {
-		Collection docs = new ArrayList();
+	public void indexPatientAllergies(Integer patientId, SolrServer solrServer) {
+		PatientService patientService = Context.getService(PatientService.class);
+		Collection<SolrInputDocument> docs = new ArrayList();
 		
 		if (patientId != null) {
 			Patient patient = Context.getPatientService().getPatient(patientId);
@@ -44,7 +45,7 @@ public class ChartSearchAllergiesIndexer {
 					}
 				}
 				for (Allergy allergy : allergies) {
-					SolrDocument doc = addAllergiesPropertiesToSolrDoc(allergy);
+					SolrInputDocument doc = addAllergiesPropertiesToSolrDoc(allergy);
 					
 					docs.add(doc);
 				}
@@ -52,10 +53,10 @@ public class ChartSearchAllergiesIndexer {
 					try {
 						if (docs.size() > 1000) {// Commit within 5 minutes.
 							UpdateResponse resp = solrServer.add(docs, 300000);
-							printFailureIfNoResponseIseturned(resp);
+							printFailureIfNoResponseIsreturned(resp);
 						} else {
 							UpdateResponse resp = solrServer.add(docs);
-							printFailureIfNoResponseIseturned(resp);
+							printFailureIfNoResponseIsreturned(resp);
 						}
 						solrServer.commit();
 					}
@@ -70,8 +71,8 @@ public class ChartSearchAllergiesIndexer {
 		}
 	}
 	
-	private SolrDocument addAllergiesPropertiesToSolrDoc(Allergy allergy) {
-		SolrDocument doc = new SolrDocument();
+	private SolrInputDocument addAllergiesPropertiesToSolrDoc(Allergy allergy) {
+		SolrInputDocument doc = new SolrInputDocument();
 		
 		if (allergy != null && allergy.getAllergyId() != null) {
 			String nonCodedAllergen = allergy.getAllergen().getNonCodedAllergen();
@@ -109,12 +110,11 @@ public class ChartSearchAllergiesIndexer {
 			doc.addField("allergy_coded_reaction", codedReaction);
 			doc.addField("allergy_non_coded_reaction", nonCodedReactions);
 			doc.addField("allergy_comment", allergy.getComment());
-			doc.addField("allergy_comment_", allergy.getComment());
 		}
 		return doc;
 	}
 	
-	private void printFailureIfNoResponseIseturned(UpdateResponse resp) {
+	private void printFailureIfNoResponseIsreturned(UpdateResponse resp) {
 		if (resp.getStatus() != 0) {
 			System.out.println("Some error has occurred, status is: " + resp.getStatus());
 		}

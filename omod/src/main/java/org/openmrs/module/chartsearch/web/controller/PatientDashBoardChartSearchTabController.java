@@ -13,14 +13,11 @@
  */
 package org.openmrs.module.chartsearch.web.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.solr.handler.dataimport.custom.IndexClearStrategies;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.web.controller.PortletController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,16 +33,8 @@ public class PatientDashBoardChartSearchTabController extends PortletController 
 	@Override
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
 		Integer personId = (Integer) model.get("personId");
-		PatientService patientService = getComponent(PatientService.class);
 		
 		chartSearchIndexer.clearIndex(IndexClearStrategies.IDS.toString(), personId + "", 0, 0);
-		chartSearchIndexer.indexPatientData(personId, patientService);
-	}
-	
-	private <T> T getComponent(Class<T> clazz) {
-		List<T> list = Context.getRegisteredComponents(clazz);
-		if (list == null || list.size() == 0)
-			throw new RuntimeException("Cannot find component of " + clazz);
-		return list.get(0);
+		chartSearchIndexer.indexPatientData(personId);
 	}
 }

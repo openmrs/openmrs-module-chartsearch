@@ -25,6 +25,14 @@
 			<artifactId>${project.parent.artifactId}-server</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		
+		 <dependency>
+            <groupId>org.openmrs.module</groupId>
+            <artifactId>allergyapi-api</artifactId>
+            <version>${allergyapiVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
 
 	</dependencies>
 

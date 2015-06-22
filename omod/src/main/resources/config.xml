@@ -37,6 +37,10 @@
 		<require_module version="${emrapiVersion}">
 			org.openmrs.module.emrapi
 		</require_module>
+		
+		<require_module version="${allergyapiVersion}">
+			org.openmrs.module.allergyapi
+		</require_module>
 
 	</require_modules>
 

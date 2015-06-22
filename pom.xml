@@ -54,6 +54,7 @@
 		<emrapiVersion>1.1</emrapiVersion>
 		<appuiVersion>1.0</appuiVersion>
 		<uicommonsVersion>1.0</uicommonsVersion>
+		<allergyapiVersion>1.3</allergyapiVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 

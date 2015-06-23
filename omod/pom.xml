@@ -51,6 +51,8 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>allergyapi-api</artifactId>
             <version>${allergyapiVersion}</version>
+            <type>jar</type>
+            <scope>provided</scope>
         </dependency>
 	</dependencies>
 

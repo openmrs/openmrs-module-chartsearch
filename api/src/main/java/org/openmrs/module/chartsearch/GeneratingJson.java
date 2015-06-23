@@ -33,9 +33,9 @@ import org.openmrs.Obs;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
-import org.openmrs.module.chartsearch.saving.ChartSearchBookmark;
-import org.openmrs.module.chartsearch.saving.ChartSearchHistory;
-import org.openmrs.module.chartsearch.saving.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
+import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
 

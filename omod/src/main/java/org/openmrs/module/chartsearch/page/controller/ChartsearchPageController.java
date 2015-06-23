@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
@@ -32,7 +31,6 @@ import org.openmrs.module.chartsearch.web.dwr.DWRChartSearchService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.ui.framework.annotation.BindParams;
 import org.openmrs.ui.framework.annotation.InjectBeans;
-import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,22 +45,21 @@ public class ChartsearchPageController {
 	public void controller(@RequestParam("patientId") Patient patient, PageModel model,
 	                       @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
-	                       @RequestParam(value = "categories[]", required = false) String[] categories, @SpringBean("allergyService") PatientService patientService) {
-		
+	                       @RequestParam(value = "categories[]", required = false) String[] categories) {
 		if (patient != null) {
 			patientDomainWrapper.setPatient(patient);
 			model.addAttribute("patient", patientDomainWrapper);
 			SearchAPI searchAPIInstance = SearchAPI.getInstance();
-			indexPatientData(patient, patientService);
+			indexPatientData(patient);
 			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, true);
 		}
 	}
 	
-	private void indexPatientData(Patient patient, PatientService patientService) {
+	private void indexPatientData(Patient patient) {
 		log.info("getting patient ID :" + patient);
 		log.info("trying to index a patient");
 		if (chartSearchIndexer != null && patient != null) {
-			chartSearchIndexer.indexPatientData(patient.getPatientId(), patientService);
+			chartSearchIndexer.indexPatientData(patient.getPatientId());
 		}
 		log.info("indexed patient");
 	}

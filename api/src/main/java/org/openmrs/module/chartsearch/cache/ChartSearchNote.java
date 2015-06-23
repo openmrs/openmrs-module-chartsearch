@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.chartsearch.saving;
+package org.openmrs.module.chartsearch.cache;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -55,7 +55,6 @@
 			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
 	</changeSet>
 
-
 	<changeSet id="CSM-58-18062014-2207" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
 			<not>
@@ -334,8 +333,47 @@
 			oldColumnName="uuid" newColumnName="history_uuid" columnDataType="char(38)" />
 		<renameColumn tableName="chartsearch_bookmark"
 			oldColumnName="uuid" newColumnName="bookmark_uuid" columnDataType="char(38)" />
-		<renameColumn tableName="chartsearch_note"
-			oldColumnName="uuid" newColumnName="note_uuid" columnDataType="char(38)" />
+		<renameColumn tableName="chartsearch_note" oldColumnName="uuid"
+			newColumnName="note_uuid" columnDataType="char(38)" />
+	</changeSet>
+
+	<changeSet id="CSM-98-23062015-0037" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_synonymgroups_synonyms" />
+			<foreignKeyConstraintExists
+				foreignKeyName="fk_synonymgroups_synonyms_cascade" />
+		</preConditions>
+		<comment>Dropping both fk_synonymgroups_synonyms and
+			fk_synonymgroups_synonyms_cascade foreign keys
+		</comment>
+		<dropForeignKeyConstraint baseTableName="chartsearch_synonyms"
+			constraintName="fk_synonymgroups_synonyms" />
+		<dropForeignKeyConstraint baseTableName="chartsearch_synonyms"
+			constraintName="fk_synonymgroups_synonyms_cascade" />
+	</changeSet>
+
+	<changeSet id="CSM-98-23062015-1440" author="k-joseph">
+		<preConditions>
+			<tableExists tableName="chartsearch_synonyms" />
+		</preConditions>
+		<comment>Re-create chartsearch_synonyms table which is not yet being used</comment>
+		<dropTable tableName="chartsearch_synonyms"/>
+		<createTable tableName="chartsearch_synonyms">
+			<column name="synonym_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="group_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="name" type="varchar(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="fk_synonymgroups_synonyms"
+			baseTableName="chartsearch_synonyms" baseColumnNames="group_id"
+			referencedTableName="chartsearch_synonym_groups"
+			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
 	</changeSet>
 
 </databaseChangeLog>

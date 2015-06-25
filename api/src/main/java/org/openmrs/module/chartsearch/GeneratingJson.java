@@ -533,25 +533,15 @@ public class GeneratingJson {
 				AllergyItem allergy = (AllergyItem) item;
 				JSONObject json = new JSONObject();
 				if (allergy.getAllergyId() != null) {
-					Integer allergyId = allergy.getAllergyId();
-					String allergyUuid = allergy.getUuid();
-					String allergenCodedName = allergy.getAllergenCodedName();
-					String allergenNonCodedName = allergy.getAllergenNonCodedName();
-					String allergenSeverity = allergy.getAllergenSeverity();
-					String allergenType = allergy.getAllergenType();
-					String allergenCodedReaction = allergy.getAllergenCodedReaction();
-					String allergenNonCodedReaction = allergy.getAllergenNonCodedReaction();
-					String allergenComment = allergy.getAllergenComment();
-					
-					json.put("allergenId", allergyId);
-					json.put("allergenUuid", allergyUuid);
-					json.put("allergenCodedName", allergenCodedName);
-					json.put("allergenNonCodedName", allergenNonCodedName);
-					json.put("allergenSeverity", allergenSeverity);
-					json.put("allergenType", allergenType);
-					json.put("allergenCodedReaction", allergenCodedReaction);
-					json.put("allergenNonCodedReaction", allergenNonCodedReaction);
-					json.put("allergenComment", allergenComment);
+					json.put("allergenId", allergy.getAllergyId());
+					json.put("allergenUuid", allergy.getUuid());
+					json.put("allergenCodedName", allergy.getAllergenCodedName());
+					json.put("allergenNonCodedName", allergy.getAllergenNonCodedName());
+					json.put("allergenSeverity", allergy.getAllergenSeverity());
+					json.put("allergenType", allergy.getAllergenType());
+					json.put("allergenCodedReaction", allergy.getAllergenCodedReaction());
+					json.put("allergenNonCodedReaction", allergy.getAllergenNonCodedReaction());
+					json.put("allergenComment", allergy.getAllergenComment());
 					
 					allergies.add(json);
 				}

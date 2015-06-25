@@ -38,7 +38,6 @@ import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
-
 /**
  * Responsible for generating the JSON object to be returned to the view(s)
  */
@@ -56,7 +55,7 @@ public class GeneratingJson {
 		
 		JSONObject jsonToReturn = new JSONObject();
 		@SuppressWarnings("rawtypes")
-		List returnedResults = SearchAPI.getInstance().getResults();
+		List<ChartListItem> returnedResults = SearchAPI.getInstance().getResults();
 		boolean foundNoResults = false;
 		JSONObject noResults = new JSONObject();
 		String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
@@ -92,6 +91,7 @@ public class GeneratingJson {
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
 		List<String> catNms = SearchAPI.getSelectedCategoryNames();
 		String[] appliedCats = new String[catNms.size()];
+		JSONArray allergies = generateAllergiesJSONFromResults(returnedResults);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
@@ -99,6 +99,7 @@ public class GeneratingJson {
 		jsonToReturn.put("searchHistory", history);
 		jsonToReturn.put("searchBookmarks", bookmarks);
 		jsonToReturn.put("appliedFacets", (String[]) catNms.toArray(appliedCats));
+		jsonToReturn.put("patientAllergies", allergies);
 		
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn, wholePageIsToBeLoaded);
 		
@@ -522,6 +523,42 @@ public class GeneratingJson {
 			}
 		}
 		return obsSingles;
+	}
+	
+	public static JSONArray generateAllergiesJSONFromResults(List<ChartListItem> returnedResults) {
+		JSONArray allergies = new JSONArray();
+		
+		for (ChartListItem item : returnedResults) {
+			if (item != null && item instanceof AllergyItem) {
+				AllergyItem allergy = (AllergyItem) item;
+				JSONObject json = new JSONObject();
+				if (allergy.getAllergyId() != null) {
+					Integer allergyId = allergy.getAllergyId();
+					String allergyUuid = allergy.getUuid();
+					String allergenCodedName = allergy.getAllergenCodedName();
+					String allergenNonCodedName = allergy.getAllergenNonCodedName();
+					String allergenSeverity = allergy.getAllergenSeverity();
+					String allergenType = allergy.getAllergenType();
+					String allergenCodedReaction = allergy.getAllergenCodedReaction();
+					String allergenNonCodedReaction = allergy.getAllergenNonCodedReaction();
+					String allergenComment = allergy.getAllergenComment();
+					
+					json.put("allergenId", allergyId);
+					json.put("allergenUuid", allergyUuid);
+					json.put("allergenCodedName", allergenCodedName);
+					json.put("allergenNonCodedName", allergenNonCodedName);
+					json.put("allergenSeverity", allergenSeverity);
+					json.put("allergenType", allergenType);
+					json.put("allergenCodedReaction", allergenCodedReaction);
+					json.put("allergenNonCodedReaction", allergenNonCodedReaction);
+					json.put("allergenComment", allergenComment);
+					
+					allergies.add(json);
+				}
+			}
+		}
+		
+		return allergies;
 	}
 	
 	public static JSONObject generateLocationJson(String location) {

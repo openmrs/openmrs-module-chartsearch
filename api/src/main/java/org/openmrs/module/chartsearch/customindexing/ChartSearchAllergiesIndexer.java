@@ -45,7 +45,7 @@ public class ChartSearchAllergiesIndexer {
 					}
 				}
 				for (Allergy allergy : allergies) {
-					SolrInputDocument doc = addAllergiesPropertiesToSolrDoc(allergy);
+					SolrInputDocument doc = addAllergiesPropertiesToSolrDoc(allergy, patientId);
 					
 					docs.add(doc);
 				}
@@ -71,7 +71,7 @@ public class ChartSearchAllergiesIndexer {
 		}
 	}
 	
-	private SolrInputDocument addAllergiesPropertiesToSolrDoc(Allergy allergy) {
+	private SolrInputDocument addAllergiesPropertiesToSolrDoc(Allergy allergy, Integer patientId) {
 		SolrInputDocument doc = new SolrInputDocument();
 		
 		if (allergy != null && allergy.getAllergyId() != null) {
@@ -104,6 +104,7 @@ public class ChartSearchAllergiesIndexer {
 			doc.addField("id", allergy.getUuid());
 			doc.addField("allergy_id", allergy.getAllergyId());
 			doc.addField("allergy_coded_name", codedAllegen);
+			doc.addField("patient_id", patientId);
 			doc.addField("allergy_non_coded_name", nonCodedAllergen);
 			doc.addField("allergy_severity", severity);
 			doc.addField("allergy_type", allergy.getAllergen().getAllergenType());

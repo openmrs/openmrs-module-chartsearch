@@ -4,7 +4,7 @@
 var firstSingleObs;
 
 var dates = {
-    convert:function(d) {
+    convert: function(d) {
         // Converts the date in d to a date-object. The input can be:
         // a date object: returned without modification
         // an array : Interpreted as [year,month,day]. NOTE: month is 0-11.
@@ -16,14 +16,14 @@ var dates = {
         // attributes. **NOTE** month is 0-11.
         return (
             d.constructor === Date ? d :
-                d.constructor === Array ? new Date(d[0],d[1],d[2]) :
-                    d.constructor === Number ? new Date(d) :
-                        d.constructor === String ? new Date(format_date(d)) :
-                            typeof d === "object" ? new Date(d.year,d.month,d.date) :
-                                NaN
-            );
+            d.constructor === Array ? new Date(d[0], d[1], d[2]) :
+            d.constructor === Number ? new Date(d) :
+            d.constructor === String ? new Date(format_date(d)) :
+            typeof d === "object" ? new Date(d.year, d.month, d.date) :
+            NaN
+        );
     },
-    compare:function(a,b) {
+    compare: function(a, b) {
         // Compare two dates (could be of any type supported by the convert
         // function above) and returns:
         // -1 : if a < b
@@ -32,13 +32,13 @@ var dates = {
         // NaN : if a or b is an illegal date
         // NOTE: The code inside isFinite does an assignment (=).
         return (
-            isFinite(a=this.convert(a).valueOf()) &&
-                isFinite(b=this.convert(b).valueOf()) ?
-                (a>b)-(a<b) :
-                NaN
-            );
+            isFinite(a = this.convert(a).valueOf()) &&
+            isFinite(b = this.convert(b).valueOf()) ?
+            (a > b) - (a < b) :
+            NaN
+        );
     },
-    inRange:function(d,start,end) {
+    inRange: function(d, start, end) {
         // Checks if date in d is between dates in start and end.
         // Returns a boolean or NaN:
         // true : if d is between start and end (inclusive)
@@ -46,22 +46,21 @@ var dates = {
         // NaN : if one or more of the dates is illegal.
         // NOTE: The code inside isFinite does an assignment (=).
         return (
-            isFinite(d=this.convert(d).valueOf()) &&
-                isFinite(start=this.convert(start).valueOf()) &&
-                isFinite(end=this.convert(end).valueOf()) ?
-                start <= d && d <= end :
-                NaN
-            );
+            isFinite(d = this.convert(d).valueOf()) &&
+            isFinite(start = this.convert(start).valueOf()) &&
+            isFinite(end = this.convert(end).valueOf()) ?
+            start <= d && d <= end :
+            NaN
+        );
     }
 }
 
-        /*
-		 * Function that gets a string as a parameter The function capitalize
-		 * the first char in that string The function decapitalize the rest
-		 */
+/*
+ * Function that gets a string as a parameter The function capitalize
+ * the first char in that string The function decapitalize the rest
+ */
 
-function capitalizeFirstLetter(string)
-{
+function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
@@ -82,89 +81,81 @@ function single_sort_func(a, b) {
     return dates.compare(first_date, second_date);
 }
 
-function addAllSingleObs(obsJSON)
-{
+function addAllSingleObs(obsJSON) {
     console.log(obsJSON);
-    var resultText='';
-    var single_obsJSON=obsJSON.obs_singles;
+    var resultText = '';
+    var single_obsJSON = obsJSON.obs_singles;
     single_obsJSON.sort(single_sort_func);
     single_obsJSON.reverse();
-    if (typeof single_obsJSON !== 'undefined')
-    {
-        resultText+='';
-        for(var i=0;i<single_obsJSON.length;i++){
-        	if (i == 0) {
-        		firstSingleObs = single_obsJSON[i];
-        	}
-            resultText+=addSingleObsToResults(single_obsJSON[i], i);
+    if (typeof single_obsJSON !== 'undefined') {
+        resultText += '';
+        for (var i = 0; i < single_obsJSON.length; i++) {
+            if (i == 0) {
+                firstSingleObs = single_obsJSON[i];
+            }
+            resultText += addSingleObsToResults(single_obsJSON[i], i);
         }
-        document.getElementById('obsgroups_results').innerHTML+=resultText;
+        document.getElementById('obsgroups_results').innerHTML += resultText;
     }
 }
 
-function addSingleObsToResults(obsJSON, i)
-{
+function addSingleObsToResults(obsJSON, i) {
     var obs_id_html = '';
-    if(typeof obsJSON.observation_id !== 'undefined') {
-    	if (i == 0) {
-    		obs_id_html = 'id="first_obs_single"';
-    	} else {
-    		obs_id_html = 'id="obs_single_'+obsJSON.observation_id+'"';
-    	}
+    if (typeof obsJSON.observation_id !== 'undefined') {
+        if (i == 0) {
+            obs_id_html = 'id="first_obs_single"';
+        } else {
+            obs_id_html = 'id="obs_single_' + obsJSON.observation_id + '"';
+        }
     }
     var resultText = '';
-    resultText+='<div class="obsgroup_wrap"' + obs_id_html +' onclick="updateNavigationIndicesToClicked('+obsJSON.observation_id+');load_single_detailed_obs('+obsJSON.observation_id+');">';
-    resultText+='<div class="obsgroup_first_row">';
-    resultText+='<div class="obsgroup_titleBox">';
-    resultText+='<h3 class="obsgroup_title">';
-    resultText+=capitalizeFirstLetter(obsJSON.concept_name);
-    resultText+='</h3>';
-    resultText+='<br><span class="obsgroup_date">';
-    resultText+=getDateStr(obsJSON.date, true);
-    resultText+='</span></div>';
+    resultText += '<div class="obsgroup_wrap"' + obs_id_html + ' onclick="updateNavigationIndicesToClicked(' + obsJSON.observation_id + ');load_single_detailed_obs(' + obsJSON.observation_id + ');">';
+    resultText += '<div class="obsgroup_first_row">';
+    resultText += '<div class="obsgroup_titleBox">';
+    resultText += '<h3 class="obsgroup_title">';
+    resultText += capitalizeFirstLetter(obsJSON.concept_name);
+    resultText += '</h3>';
+    resultText += '<br><span class="obsgroup_date">';
+    resultText += getDateStr(obsJSON.date, true);
+    resultText += '</span></div>';
     if (obsJSON.value_type && obsJSON.value_type === "Text") {
-	    resultText+='<span class="obsgroup_valueText">';
-	    resultText+=obsJSON.value.substring(0, 70) + "...";
-	    resultText+='</span>'
-    }
-    else {
-        resultText+='<span class="obsgroup_value">';
-	    resultText+=obsJSON.value;
-	    if (obsJSON.units_of_measurement) {
-	        resultText+='<span class="cs_span_measure">';
-	    	resultText+=' '+obsJSON.units_of_measurement;
-	    	resultText+='</span>';
-	    }
-	    resultText+='</span>'
+        resultText += '<span class="obsgroup_valueText">';
+        resultText += obsJSON.value.substring(0, 70) + "...";
+        resultText += '</span>'
+    } else {
+        resultText += '<span class="obsgroup_value">';
+        resultText += obsJSON.value;
+        if (obsJSON.units_of_measurement) {
+            resultText += '<span class="cs_span_measure">';
+            resultText += ' ' + obsJSON.units_of_measurement;
+            resultText += '</span>';
+        }
+        resultText += '</span>'
     }
 
-    resultText+='<span class="obsgroup_range">';
-    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined')
-    {
-        resultText+='('+obsJSON.normal_low+'-'+obsJSON.normal_high+')';
+    resultText += '<span class="obsgroup_range">';
+    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined') {
+        resultText += '(' + obsJSON.normal_low + '-' + obsJSON.normal_high + ')';
     }
-    resultText+='</span>'
-    resultText+='<div class="chart_serach_clear"></div>';
-    resultText+='</div>';
-    resultText+='</div>';
+    resultText += '</span>'
+    resultText += '<div class="chart_serach_clear"></div>';
+    resultText += '</div>';
+    resultText += '</div>';
     return resultText;
 }
 
-function get_single_obs_by_id(obs_id)
-{
-    var obs_single_JSON=jsonAfterParse.obs_singles;
-    for(var i=0;i<obs_single_JSON.length;i++){
-        if(obs_single_JSON[i].observation_id==obs_id)
-        {
+function get_single_obs_by_id(obs_id) {
+    var obs_single_JSON = jsonAfterParse.obs_singles;
+    for (var i = 0; i < obs_single_JSON.length; i++) {
+        if (obs_single_JSON[i].observation_id == obs_id) {
             return obs_single_JSON[i];
         }
     }
-    var obsgroupJSON=jsonAfterParse.obs_groups;
-    for(var i=0;i<obsgroupJSON.length;i++){
+    var obsgroupJSON = jsonAfterParse.obs_groups;
+    for (var i = 0; i < obsgroupJSON.length; i++) {
         var singleGroup = obsgroupJSON[i].observations;
-        for(var j=0;j<singleGroup.length;j++){
-            if(singleGroup[j].observation_id==obs_id)
-            {
+        for (var j = 0; j < singleGroup.length; j++) {
+            if (singleGroup[j].observation_id == obs_id) {
                 return singleGroup[j];
             }
         }
@@ -172,7 +163,7 @@ function get_single_obs_by_id(obs_id)
     return -1;
 }
 
-function array_sort(a,b) {
+function array_sort(a, b) {
     var first_date = new Date(a[0]);
     var second_date = new Date(b[0]);
     return dates.compare(first_date, second_date);
@@ -184,9 +175,9 @@ function get_obs_graph_points(obs_id) {
     var obs_obj = get_single_obs_by_id(obs_id);
     var obs_name = obs_obj.concept_name;
     var history_json = get_obs_history_json_by_name(obs_name);
-    for(var i=0;i<history_json.length;i++){
+    for (var i = 0; i < history_json.length; i++) {
         int_date = parseInt(history_json[i].date);
-        date_formmated = new Date (int_date);
+        date_formmated = new Date(int_date);
         cur = [date_formmated.getTime(), history_json[i].value];
         res.push(cur);
     }
@@ -199,7 +190,7 @@ function get_obs_spark_points(obs_id) {
     var obs_obj = get_single_obs_by_id(obs_id);
     var obs_name = obs_obj.concept_name;
     var history_json = get_obs_history_json_by_name(obs_name);
-    for(var i=0;i<history_json.length;i++){
+    for (var i = 0; i < history_json.length; i++) {
         res.push(history_json[i].value);
     }
     return res;
@@ -210,7 +201,7 @@ function get_obs_ticks(obs_id) {
     var obs_obj = get_single_obs_by_id(obs_id);
     var obs_name = obs_obj.concept_name;
     var history_json = get_obs_history_json_by_name(obs_name);
-    for(var i=0;i<history_json.length;i++){
+    for (var i = 0; i < history_json.length; i++) {
         res.push(history_json[i].date);
     }
     return res;
@@ -225,22 +216,22 @@ function enable_graph(obs_id) {
         enabled: true,
         showMinMax: false,
         color: "rgb(6,191,2)",
-        avg:0
+        avg: 0
     };
-    if (typeof observation_obj.normal_high !== 'undefined')
-    {
+    if (typeof observation_obj.normal_high !== 'undefined') {
         mark.max = parseInt(observation_obj.normal_high);
         mark.showMinMax = true;
     }
-    if (typeof observation_obj.normal_low !== 'undefined')
-    {
+    if (typeof observation_obj.normal_low !== 'undefined') {
         mark.min = parseInt(observation_obj.normal_low);
         mark.showMinMax = true;
     }
 
-    var plot = $.plot("#placeholder", [
-        { data: data2, label: capitalizeFirstLetter(observation_obj.concept_name), color: '#0D4F8B'}
-    ], {
+    var plot = $.plot("#placeholder", [{
+        data: data2,
+        label: capitalizeFirstLetter(observation_obj.concept_name),
+        color: '#0D4F8B'
+    }], {
         series: {
             lines: {
                 show: true
@@ -254,8 +245,7 @@ function enable_graph(obs_id) {
             hoverable: true,
             clickable: true
         },
-        yaxis: {
-        },
+        yaxis: {},
         xaxis: {
             mode: "time",
             minTickSize: [1, "month"],
@@ -272,204 +262,202 @@ function enable_graph(obs_id) {
         opacity: 0.80
     }).appendTo("body");
 
-    $("#placeholder").bind("plothover", function (event, pos, item) {
+    $("#placeholder").bind("plothover", function(event, pos, item) {
 
-            if (item) {
-                var x = item.datapoint[0],
-                    y = item.datapoint[1];
+        if (item) {
+            var x = item.datapoint[0],
+                y = item.datapoint[1];
 
-                $("#tooltip").html(item.series.label + ": "+ y + "<br /> Taken date:" + getDateStr(x))
-                    .css({top: item.pageY+5, left: item.pageX+5})
-                    .fadeIn(200);
-            } else {
-                $("#tooltip").hide();
-            }
+            $("#tooltip").html(item.series.label + ": " + y + "<br /> Taken date:" + getDateStr(x))
+                .css({
+                    top: item.pageY + 5,
+                    left: item.pageX + 5
+                })
+                .fadeIn(200);
+        } else {
+            $("#tooltip").hide();
+        }
     });
 }
 
 
-function load_single_detailed_obs(obs_id){
+function load_single_detailed_obs(obs_id) {
     removeAllHovering();
     if (firstSingleObs.observation_id == obs_id) {
-    	$( "#first_obs_single").addClass("obsgroup_current");
+        $("#first_obs_single").addClass("obsgroup_current");
     } else {
-    	$( "#obs_single_"+obs_id ).addClass("obsgroup_current");
+        $("#obs_single_" + obs_id).addClass("obsgroup_current");
     }
     var obsJSON = get_single_obs_by_id(obs_id);
-    var resultText='';
-    resultText+='<div class="obsgroup_view">';
-    resultText+='<h3 class="chartserach_center">';
-    resultText+=capitalizeFirstLetter(obsJSON.concept_name);
+    var resultText = '';
+    resultText += '<div class="obsgroup_view">';
+    resultText += '<h3 class="chartserach_center">';
+    resultText += capitalizeFirstLetter(obsJSON.concept_name);
     if (obsJSON.units_of_measurement != undefined) {
-    	resultText+='<span style="font-weight: normal; display: inline;"> ('+obsJSON.units_of_measurement+') </span>';
-	}
-    resultText+='</h3>';
-    resultText+='<div class="demo-container">' +
+        resultText += '<span style="font-weight: normal; display: inline;"> (' + obsJSON.units_of_measurement + ') </span>';
+    }
+    resultText += '</h3>';
+    resultText += '<div class="demo-container">' +
         '<div id="placeholder" class="demo-placeholder"></div>' +
         '</div>';
     // resultText+='<div class="demo-container"><h1
-	// class="graph_title">Graph</h1> <div id="placeholder"
-	// class="demo-placeholder" style="width:550px;height:300px;margin:0
-	// auto;"></div></div>';
+    // class="graph_title">Graph</h1> <div id="placeholder"
+    // class="demo-placeholder" style="width:550px;height:300px;margin:0
+    // auto;"></div></div>';
     /* resultText+='<div class="obsgroup_all_wrapper">'; */
-    resultText+=load_single_obs_history(obs_id);
+    resultText += load_single_obs_history(obs_id);
     /* resultText+='</div>'; */
 
-    resultText+='<div class="obsgroup_all_wrapper">';
+    resultText += '<div class="obsgroup_all_wrapper">';
 
     /*
-	 * resultText+='<label class="cs_label">'; resultText+='Date: ';
-	 * resultText+='</label>'; resultText+='<span class="cs_span">';
-	 * resultText+=getDateStr(obsJSON.date); resultText+='</span>';
-	 * resultText+='<br />';
-	 */
-    resultText+='<label class="cs_label">';
-    resultText+='Value Type:';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.value_type;
-    resultText+='</span>';
-    resultText+='<br />';
-    resultText+='<label class="cs_label">';
-    resultText+='Location: ';
-    resultText+='</label>';
-    resultText+='<span class="cs_span">';
-    resultText+=obsJSON.location;
-    resultText+='</span>';
+     * resultText+='<label class="cs_label">'; resultText+='Date: ';
+     * resultText+='</label>'; resultText+='<span class="cs_span">';
+     * resultText+=getDateStr(obsJSON.date); resultText+='</span>';
+     * resultText+='<br />';
+     */
+    resultText += '<label class="cs_label">';
+    resultText += 'Value Type:';
+    resultText += '</label>';
+    resultText += '<span class="cs_span">';
+    resultText += obsJSON.value_type;
+    resultText += '</span>';
+    resultText += '<br />';
+    resultText += '<label class="cs_label">';
+    resultText += 'Location: ';
+    resultText += '</label>';
+    resultText += '<span class="cs_span">';
+    resultText += obsJSON.location;
+    resultText += '</span>';
     /* resultText+='<br />'; */
     /*
-	 * resultText+='<label class="cs_label">'; resultText+='Value:';
-	 * resultText+='</label>';
-	 * 
-	 * resultText+='<span class="cs_span">'; resultText+=obsJSON.value; if
-	 * (obsJSON.units_of_measurement) { resultText+='<span
-	 * class="cs_span_measure">'; resultText+=' '+obsJSON.units_of_measurement;
-	 * resultText+='</span>'; } resultText+='</span>';
-	 */
+     * resultText+='<label class="cs_label">'; resultText+='Value:';
+     * resultText+='</label>';
+     * 
+     * resultText+='<span class="cs_span">'; resultText+=obsJSON.value; if
+     * (obsJSON.units_of_measurement) { resultText+='<span
+     * class="cs_span_measure">'; resultText+=' '+obsJSON.units_of_measurement;
+     * resultText+='</span>'; } resultText+='</span>';
+     */
 
-    resultText+='<br />';
+    resultText += '<br />';
     if (obsJSON.absolute_high) {
-	    resultText+='<label class="cs_label">';
-	    resultText+='Absolute High:';
-	    resultText+='</label>';
-	    resultText+='<span class="cs_span">';
-	    resultText+=obsJSON.absolute_high;
-	    resultText+='</span>';
-	    resultText+='<br />';
+        resultText += '<label class="cs_label">';
+        resultText += 'Absolute High:';
+        resultText += '</label>';
+        resultText += '<span class="cs_span">';
+        resultText += obsJSON.absolute_high;
+        resultText += '</span>';
+        resultText += '<br />';
     }
 
     if (obsJSON.absolute_low) {
-	    resultText+='<label class="cs_label">';
-	    resultText+='Absolute Low:';
-	    resultText+='</label>';
-	    resultText+='<span class="cs_span">';
-	    resultText+=obsJSON.absolute_low;
-	    resultText+='</span>';
+        resultText += '<label class="cs_label">';
+        resultText += 'Absolute Low:';
+        resultText += '</label>';
+        resultText += '<span class="cs_span">';
+        resultText += obsJSON.absolute_low;
+        resultText += '</span>';
     }
     if (obsJSON.normal_high) {
-        resultText+='<label class="cs_label">';
-        resultText+='Normal High:';
-        resultText+='</label>';
-        resultText+='<span class="cs_span">';
-        resultText+=obsJSON.normal_high;
-        resultText+='</span>';
-        resultText+='<br />';
+        resultText += '<label class="cs_label">';
+        resultText += 'Normal High:';
+        resultText += '</label>';
+        resultText += '<span class="cs_span">';
+        resultText += obsJSON.normal_high;
+        resultText += '</span>';
+        resultText += '<br />';
     }
 
     if (obsJSON.normal_low) {
-        resultText+='<label class="cs_label">';
-        resultText+='Normal Low:';
-        resultText+='</label>';
-        resultText+='<span class="cs_span">';
-        resultText+=obsJSON.normal_low;
-        resultText+='</span>';
+        resultText += '<label class="cs_label">';
+        resultText += 'Normal Low:';
+        resultText += '</label>';
+        resultText += '<span class="cs_span">';
+        resultText += obsJSON.normal_low;
+        resultText += '</span>';
     }
-    resultText+='</div>';
-    resultText+='</div>';
+    resultText += '</div>';
+    resultText += '</div>';
 
-    document.getElementById('obsgroup_view').innerHTML=resultText;
-    if(obsJSON.value_type == 'Numeric')
-    {
+    document.getElementById('obsgroup_view').innerHTML = resultText;
+    if (obsJSON.value_type == 'Numeric') {
         enable_graph(obs_id);
     }
 }
 
 function updateNavigationIndicesToClicked(obs_id) {
-	var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
-	var allPossibleIndices = new Array(numberOfResults);
-	
-	for(i = 0; i < allPossibleIndices.length; i++) {
-		if(jsonAfterParse.obs_singles[i].observation_id === obs_id) {
-			peviousIndex = i;
-			if(wasGoingNext) {
-				if(peviousIndex === numberOfResults) {
-					peviousIndex = -1;
-					navigationIndex = 0;
-				} else {
-					navigationIndex = i + 1;
-				}
-			} else {
-				if(peviousIndex !== 0) {
-					navigationIndex = i - 1;
-					wasGoingNext = false;
-				}
-			}
-		}
-	}
-	
+    var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+    var allPossibleIndices = new Array(numberOfResults);
+
+    for (i = 0; i < allPossibleIndices.length; i++) {
+        if (jsonAfterParse.obs_singles[i].observation_id === obs_id) {
+            peviousIndex = i;
+            if (wasGoingNext) {
+                if (peviousIndex === numberOfResults) {
+                    peviousIndex = -1;
+                    navigationIndex = 0;
+                } else {
+                    navigationIndex = i + 1;
+                }
+            } else {
+                if (peviousIndex !== 0) {
+                    navigationIndex = i - 1;
+                    wasGoingNext = false;
+                }
+            }
+        }
+    }
+
 }
 
 function load_single_obs_history(obs_id) {
-    resultText='<h3>History</h3>';
+    resultText = '<h3>History</h3>';
     var obs_obj = get_single_obs_by_id(obs_id);
     var obs_name = obs_obj.concept_name;
     var history_json = get_obs_history_json_by_name(obs_name);
-    resultText+='<table><tr><th>Date</th><th>Value</th></tr>';
-    for(var i=0;i<history_json.length;i++){
+    resultText += '<table><tr><th>Date</th><th>Value</th></tr>';
+    for (var i = 0; i < history_json.length; i++) {
         var red = '';
-        var addition ='';
-        if (typeof history_json[i].normal_high !== 'undefined')
-        {
-            if(history_json[i].value > history_json[i].normal_high) {
-                red=' red ';
+        var addition = '';
+        if (typeof history_json[i].normal_high !== 'undefined') {
+            if (history_json[i].value > history_json[i].normal_high) {
+                red = ' red ';
                 addition = ' more_then_normal ';
             }
         }
-        if (typeof history_json[i].normal_low !== 'undefined')
-        {
-            if(history_json[i].value < history_json[i].normal_low) {
-                red=' red ';
+        if (typeof history_json[i].normal_low !== 'undefined') {
+            if (history_json[i].value < history_json[i].normal_low) {
+                red = ' red ';
                 addition = ' less_then_normal ';
             }
         }
-        resultText+='<tr class="'+red+'"><td>'+getDateStr(history_json[i].date, true)+'</td><td><div class="'+addition+'">'+history_json[i].value+'</div></td></tr>';
+        resultText += '<tr class="' + red + '"><td>' + getDateStr(history_json[i].date, true) + '</td><td><div class="' + addition + '">' + history_json[i].value + '</div></td></tr>';
     }
-    resultText+='</table>';
+    resultText += '</table>';
     return resultText;
 }
 
 function format_date(obs_date) {
-    return obs_date.substring(3, 5)+'/'+obs_date.substring(0, 2)+'/'+obs_date.substring(6, 8);
+    return obs_date.substring(3, 5) + '/' + obs_date.substring(0, 2) + '/' + obs_date.substring(6, 8);
 }
 
 function get_obs_history_json_by_name(obs_name) {
     var result = new Array();
-    var single_obsJSON=jsonAfterParse.obs_singles;
-    if (typeof single_obsJSON !== 'undefined')
-    {
-        for(var i=0;i<single_obsJSON.length;i++){
-            if(single_obsJSON[i].concept_name === obs_name) {
+    var single_obsJSON = jsonAfterParse.obs_singles;
+    if (typeof single_obsJSON !== 'undefined') {
+        for (var i = 0; i < single_obsJSON.length; i++) {
+            if (single_obsJSON[i].concept_name === obs_name) {
                 result.push(single_obsJSON[i]);
             }
         }
     }
 
-    var obsgroupJSON=jsonAfterParse.obs_groups;
-    for(var i=0;i<obsgroupJSON.length;i++){
+    var obsgroupJSON = jsonAfterParse.obs_groups;
+    for (var i = 0; i < obsgroupJSON.length; i++) {
         var singleGroup = obsgroupJSON[i].observations;
-        for(var j=0;j<singleGroup.length;j++){
-            if(singleGroup[j].concept_name==obs_name)
-            {
+        for (var j = 0; j < singleGroup.length; j++) {
+            if (singleGroup[j].concept_name == obs_name) {
                 result.push(singleGroup[j]);
             }
         }
@@ -479,35 +467,34 @@ function get_obs_history_json_by_name(obs_name) {
     return result;
 }
 
-function compare(a,b) {
+function compare(a, b) {
     var first_date = new Date(parseInt(a.date));
     var second_date = new Date(parseInt(b.date));
     /*
-	 * console.log(first_date.toLocaleString() + ' against: ' +
-	 * second_date.toLocaleString()); console.log(dates.compare(first_date,
-	 * second_date));
-	 */
+     * console.log(first_date.toLocaleString() + ' against: ' +
+     * second_date.toLocaleString()); console.log(dates.compare(first_date,
+     * second_date));
+     */
     return dates.compare(second_date, first_date);
 }
 
-function groupSortFunc(a,b) {
+function groupSortFunc(a, b) {
     var first_date = new Date(parseInt(a.last_taken_date));
     var second_date = new Date(parseInt(b.last_taken_date));
-    return dates.compare(first_date,second_date);
+    return dates.compare(first_date, second_date);
 }
-function addAllObsGroups(obsJSON)
-{
-    var resultText='';
-    var obsgroupJSON=obsJSON.obs_groups;
+
+function addAllObsGroups(obsJSON) {
+    var resultText = '';
+    var obsgroupJSON = obsJSON.obs_groups;
     obsgroupJSON.sort(groupSortFunc);
     obsgroupJSON.reverse();
-    if (typeof obsgroupJSON !== 'undefined')
-    {
-        resultText+='';
-        for(var i=0;i<obsgroupJSON.length;i++){
-            resultText+=addObsGroupToResults(obsgroupJSON[i]);
+    if (typeof obsgroupJSON !== 'undefined') {
+        resultText += '';
+        for (var i = 0; i < obsgroupJSON.length; i++) {
+            resultText += addObsGroupToResults(obsgroupJSON[i]);
         }
-        document.getElementById('obsgroups_results').innerHTML+=resultText;
+        document.getElementById('obsgroups_results').innerHTML += resultText;
     }
 }
 
@@ -515,125 +502,110 @@ function getDateStr(date_str, onlyDate) {
     date_str = parseInt(date_str);
     var date_obj = new Date(date_str);
     var ans = date_obj.toLocaleString('he-IL');
-    if(onlyDate) {
+    if (onlyDate) {
         ans = date_obj.toLocaleDateString('he-IL');
     }
     return ans;
 }
 
-function addObsGroupToResults(obsJSON)
-{
+function addObsGroupToResults(obsJSON) {
     var resultText = '';
     var obs_id_html = '';
-    var obs_id = 'obs_group_'+obsJSON.group_Id;
-    if(typeof obsJSON.group_Id !== 'undefined') {
-        obs_id_html = 'id="obs_group_'+obsJSON.group_Id+'"';
+    var obs_id = 'obs_group_' + obsJSON.group_Id;
+    if (typeof obsJSON.group_Id !== 'undefined') {
+        obs_id_html = 'id="obs_group_' + obsJSON.group_Id + '"';
     }
-    resultText+='<div class="obsgroup_wrap" '+obs_id_html+' onclick="load_detailed_obs('+obsJSON.group_Id+');">';
-    resultText+='<div class="obsgroup_first_row">';
-	resultText+='<div class="obsgroup_titleBox">';
-    if (typeof obsJSON.group_name !== 'undefined')
-    {
-        resultText+='<h3 class="obsgroup_title">';
-        resultText+=obsJSON.group_name;
-        resultText+='</h3>';
+    resultText += '<div class="obsgroup_wrap" ' + obs_id_html + ' onclick="load_detailed_obs(' + obsJSON.group_Id + ');">';
+    resultText += '<div class="obsgroup_first_row">';
+    resultText += '<div class="obsgroup_titleBox">';
+    if (typeof obsJSON.group_name !== 'undefined') {
+        resultText += '<h3 class="obsgroup_title">';
+        resultText += obsJSON.group_name;
+        resultText += '</h3>';
     }
-    if (typeof obsJSON.last_taken_date !== 'undefined')
-    {
-        resultText+='<br><span class="obsgroup_date">';
-        resultText+=getDateStr(obsJSON.last_taken_date, true);
-        resultText+='</span>'
+    if (typeof obsJSON.last_taken_date !== 'undefined') {
+        resultText += '<br><span class="obsgroup_date">';
+        resultText += getDateStr(obsJSON.last_taken_date, true);
+        resultText += '</span>'
     }
-    resultText+='</div>'
-    resultText+='<div class="chart_serach_clear"></div>';
-    resultText+='</div>';
-    resultText+=innerObservationsHTML(obsJSON.observations);
-    resultText+='</div>';
+    resultText += '</div>'
+    resultText += '<div class="chart_serach_clear"></div>';
+    resultText += '</div>';
+    resultText += innerObservationsHTML(obsJSON.observations);
+    resultText += '</div>';
     return resultText;
 }
 
 function innerObservationsHTML(obsJSON) {
-    var resultText='';
-    resultText+='<div class="obsgroup_rows">';
-    for(var i=0;i<obsJSON.length;i++){
-        resultText+=single_obs_html(obsJSON[i]);
+    var resultText = '';
+    resultText += '<div class="obsgroup_rows">';
+    for (var i = 0; i < obsJSON.length; i++) {
+        resultText += single_obs_html(obsJSON[i]);
     }
-    resultText+='</div>';
+    resultText += '</div>';
     return resultText;
 }
 
 function displayOnlyIfDef(display_opt) {
-    if (typeof display_opt !== 'undefined')
-    {
+    if (typeof display_opt !== 'undefined') {
         return display_opt;
-    }
-    else {
+    } else {
         return '';
     }
 }
 
 function single_obs_html(obsJSON) {
     console.log('====single obs html function=========');
-    var resultText='';
+    var resultText = '';
     var red = '';
-    if (typeof obsJSON.normal_high !== 'undefined')
-    {
-        if(obsJSON.value > obsJSON.normal_high) {
-            red=' red ';
+    if (typeof obsJSON.normal_high !== 'undefined') {
+        if (obsJSON.value > obsJSON.normal_high) {
+            red = ' red ';
         }
     }
-    if (typeof obsJSON.normal_low !== 'undefined')
-    {
-        if(obsJSON.value < obsJSON.normal_low) {
-            red=' red ';
+    if (typeof obsJSON.normal_low !== 'undefined') {
+        if (obsJSON.value < obsJSON.normal_low) {
+            red = ' red ';
         }
     }
-    if (typeof obsJSON.chosen !== 'undefined')
-    {
-        red+=' bold ';
+    if (typeof obsJSON.chosen !== 'undefined') {
+        red += ' bold ';
     }
-    resultText+='<div class="obsgroup_row ' + red + '">';
-    if (typeof obsJSON.concept_name !== 'undefined')
-    {
-        resultText+='<div class="obsgroup_row_first_section inline">';
-        resultText+=capitalizeFirstLetter(obsJSON.concept_name);
-        resultText+='</div>';
+    resultText += '<div class="obsgroup_row ' + red + '">';
+    if (typeof obsJSON.concept_name !== 'undefined') {
+        resultText += '<div class="obsgroup_row_first_section inline">';
+        resultText += capitalizeFirstLetter(obsJSON.concept_name);
+        resultText += '</div>';
     }
-    if (typeof obsJSON.value !== 'undefined')
-    {
+    if (typeof obsJSON.value !== 'undefined') {
         var change = '';
-        if (typeof obsJSON.normal_high !== 'undefined')
-        {
-            if(obsJSON.value > obsJSON.normal_high) {
-                change+=' more_then_normal ';
+        if (typeof obsJSON.normal_high !== 'undefined') {
+            if (obsJSON.value > obsJSON.normal_high) {
+                change += ' more_then_normal ';
             }
         }
-        if (typeof obsJSON.normal_low !== 'undefined')
-        {
-            if(obsJSON.value < obsJSON.normal_low) {
-                change+=' less_then_normal ';
+        if (typeof obsJSON.normal_low !== 'undefined') {
+            if (obsJSON.value < obsJSON.normal_low) {
+                change += ' less_then_normal ';
             }
         }
-        resultText+='<div class="obsgroup_row_sec_section inline '+ change + '">';
-        resultText+=obsJSON.value + ' ' + displayOnlyIfDef(obsJSON.units_of_measurement);
-        resultText+='</div>';
+        resultText += '<div class="obsgroup_row_sec_section inline ' + change + '">';
+        resultText += obsJSON.value + ' ' + displayOnlyIfDef(obsJSON.units_of_measurement);
+        resultText += '</div>';
     }
-    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined')
-    {
-        resultText+='<div class="obsgroup_row_trd_section inline ">';
-        resultText+='(' + obsJSON.normal_low + ' - ' + obsJSON.normal_high + ')';
-        resultText+='</div>';
+    if (typeof obsJSON.normal_low !== 'undefined' && typeof obsJSON.normal_high !== 'undefined') {
+        resultText += '<div class="obsgroup_row_trd_section inline ">';
+        resultText += '(' + obsJSON.normal_low + ' - ' + obsJSON.normal_high + ')';
+        resultText += '</div>';
     }
-    resultText+='</div>';
+    resultText += '</div>';
     return resultText;
 }
 
-function get_obs_by_id(id)
-{
-    var obsgroupJSON=jsonAfterParse.obs_groups;
-    for(var i=0;i<obsgroupJSON.length;i++){
-        if(obsgroupJSON[i].group_Id==id)
-        {
+function get_obs_by_id(id) {
+    var obsgroupJSON = jsonAfterParse.obs_groups;
+    for (var i = 0; i < obsgroupJSON.length; i++) {
+        if (obsgroupJSON[i].group_Id == id) {
             return obsgroupJSON[i];
         }
     }
@@ -641,62 +613,60 @@ function get_obs_by_id(id)
 }
 
 function removeAllHovering() {
-    $( ".obsgroup_wrap" ).removeClass( "obsgroup_current" );
+    $(".obsgroup_wrap").removeClass("obsgroup_current");
 }
 
 function showOnlyIfDef(str) {
-    if (typeof str !== 'undefined')
-    {
+    if (typeof str !== 'undefined') {
         return str;
     }
     return '';
 }
 
-function load_detailed_obs(obs_id)
-{
+function load_detailed_obs(obs_id) {
     removeAllHovering();
-    $( "#obs_group_"+obs_id ).addClass( "obsgroup_current" );
+    $("#obs_group_" + obs_id).addClass("obsgroup_current");
     var obsJSON = get_obs_by_id(obs_id);
-    var resultText='';
-    resultText+='<div class="obsgroup_view">';
-    resultText+='<h3 class="chartserach_center">';
-    resultText+=obsJSON.group_name;
-    resultText+='</h3>';
-    resultText+='<div class="obsgroup_all_wrapper">';
+    var resultText = '';
+    resultText += '<div class="obsgroup_view">';
+    resultText += '<h3 class="chartserach_center">';
+    resultText += obsJSON.group_name;
+    resultText += '</h3>';
+    resultText += '<div class="obsgroup_all_wrapper">';
     var singleObs = obsJSON.observations;
-    for(var i=0;i<singleObs.length;i++){
+    for (var i = 0; i < singleObs.length; i++) {
         var isBold = '';
-        if (typeof singleObs[i].chosen !== 'undefined')
-        {
-            isBold=' bold ';
+        if (typeof singleObs[i].chosen !== 'undefined') {
+            isBold = ' bold ';
         }
-        resultText+='<div class="obsgroup_item_row' + isBold +'" onclick="updateNavigationIndicesToClicked('+singleObs[i].observation_id+');load_single_detailed_obs('+singleObs[i].observation_id+');">';
-        resultText+='<div class="obsgroup_item_first inline">';
-        resultText+=capitalizeFirstLetter(singleObs[i].concept_name);
-        resultText+='</div>';
-        resultText+='<div class="obsgroup_item_sec inline">';
-        resultText+='<span style="display: inline; font-weight: bold;">'+singleObs[i].value +"</span> "+ showOnlyIfDef(singleObs[i].units_of_measurement);
-        resultText+='</div>';
-        resultText+='<div class="obsgroup_item_frth inline">';
-        resultText+=getDateStr(singleObs[i].date, true);
-        resultText+='</div>';
-        resultText+='<span id="single_spark_'+singleObs[i].observation_id+'">Load</span>';
-        resultText+='</div>';
+        resultText += '<div class="obsgroup_item_row' + isBold + '" onclick="updateNavigationIndicesToClicked(' + singleObs[i].observation_id + ');load_single_detailed_obs(' + singleObs[i].observation_id + ');">';
+        resultText += '<div class="obsgroup_item_first inline">';
+        resultText += capitalizeFirstLetter(singleObs[i].concept_name);
+        resultText += '</div>';
+        resultText += '<div class="obsgroup_item_sec inline">';
+        resultText += '<span style="display: inline; font-weight: bold;">' + singleObs[i].value + "</span> " + showOnlyIfDef(singleObs[i].units_of_measurement);
+        resultText += '</div>';
+        resultText += '<div class="obsgroup_item_frth inline">';
+        resultText += getDateStr(singleObs[i].date, true);
+        resultText += '</div>';
+        resultText += '<span id="single_spark_' + singleObs[i].observation_id + '">Load</span>';
+        resultText += '</div>';
     }
-    resultText+='</div>';
-    resultText+='</div>';
+    resultText += '</div>';
+    resultText += '</div>';
     $("#obsgroup_view").html(resultText);
     var singleObs = obsJSON.observations;
-    for(var i=0;i<singleObs.length;i++){
+    for (var i = 0; i < singleObs.length; i++) {
         var spark = get_obs_spark_points(singleObs[i].observation_id);
-        $("#single_spark_"+singleObs[i].observation_id).sparkline(spark, {
+        $("#single_spark_" + singleObs[i].observation_id).sparkline(spark, {
             type: 'line',
             width: '150',
             normalRangeMin: singleObs[i].normal_low,
             normalRangeMax: singleObs[i].normal_high,
             normalRangeColor: '#d3ffa8',
             fillColor: false,
-            drawNormalOnTop: true});
+            drawNormalOnTop: true
+        });
     }
 }
 
@@ -707,295 +677,288 @@ var currentJson = jsonAfterParse;
 
 function get_timeback_date(time_back) {
     var today = new Date();
-    today.setDate(today.getDate()-time_back);
+    today.setDate(today.getDate() - time_back);
     return today;
 }
 
 function time_filter(time_back, lbl) {
     $("#time_anchor").text(lbl);
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
-	$("#dataType_anchor").text('All Data Types');
-    var today = get_timeback_date(time_back), myDate;
-    var single_obsJSON=jsonAfterParse.obs_singles;
-	var group_obsJSON=jsonAfterParse.obs_groups;
+    $("#location_anchor").text('All Locations');
+    $("#provider_anchor").text('All Providers');
+    $("#dataType_anchor").text('All Data Types');
+    var today = get_timeback_date(time_back),
+        myDate;
+    var single_obsJSON = jsonAfterParse.obs_singles;
+    var group_obsJSON = jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'obs_groups':new Array(),
+        'obs_groups': new Array(),
         'obs_singles': new Array()
     };
-    if (typeof single_obsJSON !== 'undefined')
-    {
-        for(var i=0;i<single_obsJSON.length;i++){
+    if (typeof single_obsJSON !== 'undefined') {
+        for (var i = 0; i < single_obsJSON.length; i++) {
             myDate = new Date(parseInt(single_obsJSON[i].date));
-           /* console.log('try to compare today: '+today+' with: '+ myDate); */
-            if(dates.compare(today, myDate) <= 0) {
+            /* console.log('try to compare today: '+today+' with: '+ myDate); */
+            if (dates.compare(today, myDate) <= 0) {
                 console.log('pass!!');
-                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+                newJSON.obs_singles[json_counter] = single_obsJSON[i];
                 json_counter++;
             }
         }
     }
-	
-	json_counter = 0;
-	if (group_obsJSON)
-    {
-        for(var i=0;i<group_obsJSON.length;i++){
-		var observations = group_obsJSON[i].observations;
-			for(var j=0;j<observations.length;j++){
-				myDate = new Date(parseInt(observations[j].date));
-				 if(dates.compare(today, myDate) <= 0) {
-					newJSON.obs_groups[json_counter]=group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
+
+    json_counter = 0;
+    if (group_obsJSON) {
+        for (var i = 0; i < group_obsJSON.length; i++) {
+            var observations = group_obsJSON[i].observations;
+            for (var j = 0; j < observations.length; j++) {
+                myDate = new Date(parseInt(observations[j].date));
+                if (dates.compare(today, myDate) <= 0) {
+                    newJSON.obs_groups[json_counter] = group_obsJSON[i];
+                    json_counter++;
+                    break;
+                }
+            }
         }
     }
-	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
-	currentJson = newJSON;
+    addAllObsGroups(newJSON);
+    addAllSingleObs(newJSON);
+    currentJson = newJSON;
 
 }
 
 function location_filter(location, lbl) {
-	$("#location_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#provider_anchor").text('All Providers');
-	$("#dataType_anchor").text('All Data Types');
-    var single_obsJSON=jsonAfterParse.obs_singles;
-	var group_obsJSON=jsonAfterParse.obs_groups;
+    $("#location_anchor").text(lbl);
+    $("#time_anchor").text('Any Time');
+    $("#provider_anchor").text('All Providers');
+    $("#dataType_anchor").text('All Data Types');
+    var single_obsJSON = jsonAfterParse.obs_singles;
+    var group_obsJSON = jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'obs_groups':new Array(),
+        'obs_groups': new Array(),
         'obs_singles': new Array()
     };
-    if (typeof single_obsJSON !== 'undefined')
-    {
-        for(var i=0;i<single_obsJSON.length;i++){
-            if(single_obsJSON[i].location === location) {
-                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+    if (typeof single_obsJSON !== 'undefined') {
+        for (var i = 0; i < single_obsJSON.length; i++) {
+            if (single_obsJSON[i].location === location) {
+                newJSON.obs_singles[json_counter] = single_obsJSON[i];
                 json_counter++;
             }
         }
     }
-	
-	json_counter = 0;
-	if (group_obsJSON)
-    {
-        for(var i=0;i<group_obsJSON.length;i++){
-		var observations = group_obsJSON[i].observations;
-			for(var j=0;j<observations.length;j++){
-				 if(observations[j].location && observations[j].location === location) {
-					newJSON.obs_groups[json_counter]=group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
+
+    json_counter = 0;
+    if (group_obsJSON) {
+        for (var i = 0; i < group_obsJSON.length; i++) {
+            var observations = group_obsJSON[i].observations;
+            for (var j = 0; j < observations.length; j++) {
+                if (observations[j].location && observations[j].location === location) {
+                    newJSON.obs_groups[json_counter] = group_obsJSON[i];
+                    json_counter++;
+                    break;
+                }
+            }
         }
     }
-	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
-	currentJson = newJSON;
-	
+    addAllObsGroups(newJSON);
+    addAllSingleObs(newJSON);
+    currentJson = newJSON;
+
 }
 
 function provider_filter(provider, lbl) {
     $("#provider_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#dataType_anchor").text('All Data Types');
-	
-    var single_obsJSON=jsonAfterParse.obs_singles;
-	var group_obsJSON=jsonAfterParse.obs_groups;
+    $("#time_anchor").text('Any Time');
+    $("#location_anchor").text('All Locations');
+    $("#dataType_anchor").text('All Data Types');
+
+    var single_obsJSON = jsonAfterParse.obs_singles;
+    var group_obsJSON = jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'obs_groups':new Array(),
+        'obs_groups': new Array(),
         'obs_singles': new Array()
     };
-    if (typeof single_obsJSON !== 'undefined')
-    {
-        for(var i=0;i<single_obsJSON.length;i++){
-            if(single_obsJSON[i].provider && single_obsJSON[i].provider === provider) {
-                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+    if (typeof single_obsJSON !== 'undefined') {
+        for (var i = 0; i < single_obsJSON.length; i++) {
+            if (single_obsJSON[i].provider && single_obsJSON[i].provider === provider) {
+                newJSON.obs_singles[json_counter] = single_obsJSON[i];
                 json_counter++;
             }
         }
     }
-	
-	json_counter = 0;
-	if (group_obsJSON)
-    {
-        for(var i=0;i<group_obsJSON.length;i++){
-		var observations = group_obsJSON[i].observations;
-			for(var j=0;j<observations.length;j++){
-				 if(observations[j].provider && observations[j].provider === provider) {
-					newJSON.obs_groups[json_counter]=group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
+
+    json_counter = 0;
+    if (group_obsJSON) {
+        for (var i = 0; i < group_obsJSON.length; i++) {
+            var observations = group_obsJSON[i].observations;
+            for (var j = 0; j < observations.length; j++) {
+                if (observations[j].provider && observations[j].provider === provider) {
+                    newJSON.obs_groups[json_counter] = group_obsJSON[i];
+                    json_counter++;
+                    break;
+                }
+            }
         }
     }
-	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
-	currentJson = newJSON;
-	
+    addAllObsGroups(newJSON);
+    addAllSingleObs(newJSON);
+    currentJson = newJSON;
+
 }
 
 function dataType_filter(type, lbl) {
-	$("#dataType_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
+    $("#dataType_anchor").text(lbl);
+    $("#time_anchor").text('Any Time');
+    $("#location_anchor").text('All Locations');
+    $("#provider_anchor").text('All Providers');
 
-    var single_obsJSON=jsonAfterParse.obs_singles;
-	var group_obsJSON=jsonAfterParse.obs_groups;
+    var single_obsJSON = jsonAfterParse.obs_singles;
+    var group_obsJSON = jsonAfterParse.obs_groups;
     var json_counter = 0;
     var newJSON = {
-        'obs_groups':new Array(),
+        'obs_groups': new Array(),
         'obs_singles': new Array()
     };
 
-	if (typeof single_obsJSON !== 'undefined')
-    {
-        for(var i=0;i<single_obsJSON.length;i++){
-            if(single_obsJSON[i].value_type && single_obsJSON[i].value_type === type) {
-                newJSON.obs_singles[json_counter]=single_obsJSON[i];
+    if (typeof single_obsJSON !== 'undefined') {
+        for (var i = 0; i < single_obsJSON.length; i++) {
+            if (single_obsJSON[i].value_type && single_obsJSON[i].value_type === type) {
+                newJSON.obs_singles[json_counter] = single_obsJSON[i];
                 json_counter++;
             }
         }
     }
-	
-	json_counter = 0;
-	if (group_obsJSON)
-    {
-        for(var i=0;i<group_obsJSON.length;i++){
-		var observations = group_obsJSON[i].observations;
-			for(var j=0;j<observations.length;j++){
-				 if(observations[j].value_type && observations[j].value_type === type) {
-					newJSON.obs_groups[json_counter]=group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
+
+    json_counter = 0;
+    if (group_obsJSON) {
+        for (var i = 0; i < group_obsJSON.length; i++) {
+            var observations = group_obsJSON[i].observations;
+            for (var j = 0; j < observations.length; j++) {
+                if (observations[j].value_type && observations[j].value_type === type) {
+                    newJSON.obs_groups[json_counter] = group_obsJSON[i];
+                    json_counter++;
+                    break;
+                }
+            }
         }
     }
-	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
-	currentJson = newJSON;
+    addAllObsGroups(newJSON);
+    addAllSingleObs(newJSON);
+    currentJson = newJSON;
 }
 
 function filterOptions_providers() {
-	var providers = jsonAfterParse.providers;
-	var result = '<hr />';
-	for(var i=0; i<providers.length; i++){
-		var tmpProvider = providers[i].provider;
-		result += '<a class="single_filter_option" onclick="provider_filter(\'' + tmpProvider + '\', \'' + tmpProvider + '\')">' + tmpProvider + '</a>';
-	}
-	
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Providers</a>';
-	document.getElementById('providersOptions').innerHTML = result;
+    var providers = jsonAfterParse.providers;
+    var result = '<hr />';
+    for (var i = 0; i < providers.length; i++) {
+        var tmpProvider = providers[i].provider;
+        result += '<a class="single_filter_option" onclick="provider_filter(\'' + tmpProvider + '\', \'' + tmpProvider + '\')">' + tmpProvider + '</a>';
+    }
+
+    result += '<a class="single_filter_option" onclick="refresh_data()">All Providers</a>';
+    document.getElementById('providersOptions').innerHTML = result;
 }
 
 function filterOptions_locations() {
-	var locations = jsonAfterParse.locations;
-	var result = '<hr />';
-	for(var i=0; i<locations.length; i++){
-		var tmpLocation = locations[i].location;
-		result += '<a class="single_filter_option" onclick="location_filter(\'' + tmpLocation + '\', \'' + tmpLocation + '\')">' + tmpLocation + '</a>';
-	}
-	
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Locations</a>';
-	document.getElementById('locationOptions').innerHTML = result;
+    var locations = jsonAfterParse.locations;
+    var result = '<hr />';
+    for (var i = 0; i < locations.length; i++) {
+        var tmpLocation = locations[i].location;
+        result += '<a class="single_filter_option" onclick="location_filter(\'' + tmpLocation + '\', \'' + tmpLocation + '\')">' + tmpLocation + '</a>';
+    }
+
+    result += '<a class="single_filter_option" onclick="refresh_data()">All Locations</a>';
+    document.getElementById('locationOptions').innerHTML = result;
 }
 
 function filterOptions_datatypes() {
-	var datatypes = jsonAfterParse.datatypes;
-	var result = '<hr />';
-	for(var i=0; i<datatypes.length; i++){
-	var tmpdatatypes = datatypes[i].datatype;
-		if (tmpdatatypes !== 'N/A') {
-			result += '<a class="single_filter_option" onclick="dataType_filter(\'' + tmpdatatypes + '\', \'' + tmpdatatypes + '\')">' + tmpdatatypes + '</a>';
+    var datatypes = jsonAfterParse.datatypes;
+    var result = '<hr />';
+    for (var i = 0; i < datatypes.length; i++) {
+        var tmpdatatypes = datatypes[i].datatype;
+        if (tmpdatatypes !== 'N/A') {
+            result += '<a class="single_filter_option" onclick="dataType_filter(\'' + tmpdatatypes + '\', \'' + tmpdatatypes + '\')">' + tmpdatatypes + '</a>';
 
-		}
-	}
-	
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Data Types</a>';
-	document.getElementById('datatypesOptions').innerHTML = result;
+        }
+    }
+
+    result += '<a class="single_filter_option" onclick="refresh_data()">All Data Types</a>';
+    document.getElementById('datatypesOptions').innerHTML = result;
 }
 
 
 
 function refresh_data() {
-	$('#searchText').val(jsonAfterParse.search_phrase);
-	var searchText = document.getElementById('searchText');
-	
+    $('#searchText').val(jsonAfterParse.search_phrase);
+    var searchText = document.getElementById('searchText');
+
     $("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
-	currentJson = jsonAfterParse;
+    $("#location_anchor").text('All Locations');
+    $("#provider_anchor").text('All Providers');
+    currentJson = jsonAfterParse;
     displayCategories(jsonAfterParse);
     // if (searchText != "") {
-		if(jsonAfterParse.noResults.foundNoResults) {
-			document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>" + jsonAfterParse.noResults.foundNoResultsMessage + " <b> " + searchText.value + "</b></div>";
-		} else {
-			searchText.value = jsonAfterParse.search_phrase;
-			var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
-			document.getElementById('found-results-summary').innerHTML = "<b>" + numberOfResults + "</b> Results (<b>" + jsonAfterParse.retrievalTime + "</b> seconds)";
-			filterOptions_providers();
-			filterOptions_locations();
-		    addAllObsGroups(jsonAfterParse);
-		    addAllSingleObs(jsonAfterParse);
-		    displayFailedPrivileges(jsonAfterParse);
-		}
+    if (jsonAfterParse.noResults.foundNoResults) {
+        document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>" + jsonAfterParse.noResults.foundNoResultsMessage + " <b> " + searchText.value + "</b></div>";
+    } else {
+        searchText.value = jsonAfterParse.search_phrase;
+        var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+        document.getElementById('found-results-summary').innerHTML = "<b>" + numberOfResults + "</b> Results (<b>" + jsonAfterParse.retrievalTime + "</b> seconds)";
+        filterOptions_providers();
+        filterOptions_locations();
+        addAllObsGroups(jsonAfterParse);
+        addAllSingleObs(jsonAfterParse);
+        displayFailedPrivileges(jsonAfterParse);
+    }
     // }
-		displayBothPersonalAndGlobalNotes();
+    displayBothPersonalAndGlobalNotes();
 }
 
 /*
  * maintains categories state and displays new categories from the server
  */
 function displayCategories(jsonAfterParse) {
-	var categories = document.getElementsByClassName('category_check');
-	var checkedCategories = new Object();
-    
-	if(jsonAfterParse.noResults.foundNoResults) {
-		document.getElementById('inside_filter_categories').innerHTML = "";
-	} else {
-		// record previous state
-		for(var i=0; i < categories.length; i++) {
-			var catId = "#"+categories[i].id;
-			if (jq(catId).prop('checked')) {
-				checkedCategories[i] = catId;
-			}
-		}
-		
-		// delete all categories being shown on the page
-		document.getElementById('inside_filter_categories').innerHTML = "";
-		
-		// now fetch and display new categories from the server
-		for (var i = 0; i < jsonAfterParse.facets.length; i++) {
-	        var name = jsonAfterParse.facets[i].facet.name;
-	        var count = jsonAfterParse.facets[i].facet.count;
-	        
-	        if (count != 0) {
-		        var displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
-		        var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
-		        
-	        } else {
-	        	var displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
-		        var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
-	        }
-	        
-	        document.getElementById('inside_filter_categories').innerHTML += displaycheckBox + "' />" + displayDetail;
-	    }
-		
-		// now check all previously checked categories
-		for (index in checkedCategories) {
-			$(checkedCategories[index]).prop('checked', true);
-		}
-	}
+    var categories = document.getElementsByClassName('category_check');
+    var checkedCategories = new Object();
+
+    if (jsonAfterParse.noResults.foundNoResults) {
+        document.getElementById('inside_filter_categories').innerHTML = "";
+    } else {
+        // record previous state
+        for (var i = 0; i < categories.length; i++) {
+            var catId = "#" + categories[i].id;
+            if (jq(catId).prop('checked')) {
+                checkedCategories[i] = catId;
+            }
+        }
+
+        // delete all categories being shown on the page
+        document.getElementById('inside_filter_categories').innerHTML = "";
+
+        // now fetch and display new categories from the server
+        for (var i = 0; i < jsonAfterParse.facets.length; i++) {
+            var name = jsonAfterParse.facets[i].facet.name;
+            var count = jsonAfterParse.facets[i].facet.count;
+
+            if (count != 0) {
+                var displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+                var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
+
+            } else {
+                var displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='" + name + "_category' type='checkbox' name='categories' value='" + name;
+                var displayDetail = "<a href='' class='select_one_category' id='select_" + name + "_category'>" + capitalizeFirstLetter(name) + "</a> (" + count + ") </div>";
+            }
+
+            document.getElementById('inside_filter_categories').innerHTML += displaycheckBox + "' />" + displayDetail;
+        }
+
+        // now check all previously checked categories
+        for (index in checkedCategories) {
+            $(checkedCategories[index]).prop('checked', true);
+        }
+    }
 }
 
 /*
@@ -1003,218 +966,218 @@ function displayCategories(jsonAfterParse) {
  * returned and a message is instead displayed
  */
 function displayFailedPrivileges(jsonAfterParse) {
-	document.getElementById('failed_privileges').innerHTML == "";
-    for (var i=0; i<jsonAfterParse.failedPrivileges.length; i++) {
-    	document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message + "<br />";
+    document.getElementById('failed_privileges').innerHTML == "";
+    for (var i = 0; i < jsonAfterParse.failedPrivileges.length; i++) {
+        document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message + "<br />";
     }
 }
 
 function updateBookmarksAndNotesUI() {
-	var bookmarks = jsonAfterParse.searchBookmarks;
-	var pNotes = jsonAfterParse.personalNotes;
-	var gNotes = jsonAfterParse.globalNotes;
-	var bookmarkDoesnotExist = true;
-	var pNoteDoesnotExist = true;
-	var gNoteDoesnotExist = true;
-	var sPhrase = jsonAfterParse.search_phrase;
-	
-	for(i = 0; i < bookmarks.length; i++) {
-		if(bookmarks[i].searchPhrase === sPhrase) {
-			bookmarkDoesnotExist = false;
-		}
-	}
-	for(i = 0; i < pNotes.length; i++) {
-		if(pNotes[i].searchPhrase === sPhrase) {
-			pNoteDoesnotExist = false;
-		}
-	}
-	for(i = 0; i < gNotes.length; i++) {
-		if(gNotes[i].searchPhrase === sPhrase) {
-			gNoteDoesnotExist = false;
-		}
-	}
-	
-	if(bookmarkDoesnotExist) {
+    var bookmarks = jsonAfterParse.searchBookmarks;
+    var pNotes = jsonAfterParse.personalNotes;
+    var gNotes = jsonAfterParse.globalNotes;
+    var bookmarkDoesnotExist = true;
+    var pNoteDoesnotExist = true;
+    var gNoteDoesnotExist = true;
+    var sPhrase = jsonAfterParse.search_phrase;
+
+    for (i = 0; i < bookmarks.length; i++) {
+        if (bookmarks[i].searchPhrase === sPhrase) {
+            bookmarkDoesnotExist = false;
+        }
+    }
+    for (i = 0; i < pNotes.length; i++) {
+        if (pNotes[i].searchPhrase === sPhrase) {
+            pNoteDoesnotExist = false;
+        }
+    }
+    for (i = 0; i < gNotes.length; i++) {
+        if (gNotes[i].searchPhrase === sPhrase) {
+            gNoteDoesnotExist = false;
+        }
+    }
+
+    if (bookmarkDoesnotExist) {
         $("#favorite-search-record").removeClass("icon-star");
         $("#favorite-search-record").addClass("icon-star-empty");
     } else {
-    	$("#favorite-search-record").removeClass("icon-star-empty");
+        $("#favorite-search-record").removeClass("icon-star-empty");
         $("#favorite-search-record").addClass("icon-star");
     }
-	
-	
-    if(pNoteDoesnotExist && gNoteDoesnotExist) {
-    	$("#comment-on-search-record").removeClass("icon-comment");
-    	$("#comment-on-search-record").addClass("icon-comment-alt");
+
+
+    if (pNoteDoesnotExist && gNoteDoesnotExist) {
+        $("#comment-on-search-record").removeClass("icon-comment");
+        $("#comment-on-search-record").addClass("icon-comment-alt");
     } else {
-    	$("#comment-on-search-record").removeClass("icon-comment-alt");
-    	$("#comment-on-search-record").addClass("icon-comment");
+        $("#comment-on-search-record").removeClass("icon-comment-alt");
+        $("#comment-on-search-record").addClass("icon-comment");
     }
 }
 
 function displayBothPersonalAndGlobalNotes() {
-	var personalNotes = jsonAfterParse.personalNotes;
-	var globalNotes = jsonAfterParse.globalNotes;
-	var displayPersonalNotes = "";
-	var displayGlobalNotes = "";
-	var displayAllNotes;
-	var owner;
-	var curUser = jsonAfterParse.currentUser;
-	
-	if(personalNotes && personalNotes.length !== 0) {
-		displayPersonalNotes += "<u>Personal Notes (LOW priority):</u><br />";
-		
-		for(i = 0; i < personalNotes.length; i++) {
-			var note = personalNotes[i];
-			var date = new Date(note.createdOrLastModifiedAt);
-			var time = date.toTimeString();
-			owner = note.noteOwner;
-			
-			if(owner === curUser) {
-				displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
-			}
-		}
-	}
-	
-	if(globalNotes && globalNotes.length !== 0) {
-		displayGlobalNotes += "<u>Global Notes (HIGH priority):</u><br />";
-		
-		for(i = 0; i < globalNotes.length; i++) {
-			var note = globalNotes[i];
-			var date = new Date(note.createdOrLastModifiedAt);
-			var time = date.toTimeString();
-			owner = note.noteOwner;
-			
-			displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
-			
-			if(owner === curUser) {
-				displayGlobalNotes += "<i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i>";
-			}
-			
-			displayGlobalNotes += "</p><hr>";
-		}
-	}
-	if(displayPersonalNotes || displayGlobalNotes) {
-		displayAllNotes = displayPersonalNotes + "<br /><hr />" + displayGlobalNotes;
-		
-		$("#comment-on-search-record").removeClass("icon-comment-alt");
-		$("#comment-on-search-record").addClass("icon-comment");
-		$("#previous-notes-on-this-search").html(displayAllNotes);
-		scrollToBottomOfDiv("#previous-notes-on-this-search");
-	} else {
-		$("#comment-on-search-record").removeClass("icon-comment");
-		$("#comment-on-search-record").addClass("icon-comment-alt");
-		$("#previous-notes-on-this-search").html("");
-	}
+    var personalNotes = jsonAfterParse.personalNotes;
+    var globalNotes = jsonAfterParse.globalNotes;
+    var displayPersonalNotes = "";
+    var displayGlobalNotes = "";
+    var displayAllNotes;
+    var owner;
+    var curUser = jsonAfterParse.currentUser;
+
+    if (personalNotes && personalNotes.length !== 0) {
+        displayPersonalNotes += "<u>Personal Notes (LOW priority):</u><br />";
+
+        for (i = 0; i < personalNotes.length; i++) {
+            var note = personalNotes[i];
+            var date = new Date(note.createdOrLastModifiedAt);
+            var time = date.toTimeString();
+            owner = note.noteOwner;
+
+            if (owner === curUser) {
+                displayPersonalNotes += "On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment + " <i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i></p><hr>";
+            }
+        }
+    }
+
+    if (globalNotes && globalNotes.length !== 0) {
+        displayGlobalNotes += "<u>Global Notes (HIGH priority):</u><br />";
+
+        for (i = 0; i < globalNotes.length; i++) {
+            var note = globalNotes[i];
+            var date = new Date(note.createdOrLastModifiedAt);
+            var time = date.toTimeString();
+            owner = note.noteOwner;
+
+            displayGlobalNotes += "<b>" + note.noteOwner + "</b> On: <em>" + note.formatedCreatedOrLastModifiedAt + " " + time + "</em><p style='background-color:" + note.backgroundColor + ";'>" + note.comment;
+
+            if (owner === curUser) {
+                displayGlobalNotes += "<i class='icon-remove remove-this-sNote' id='" + note.uuid + "'></i>";
+            }
+
+            displayGlobalNotes += "</p><hr>";
+        }
+    }
+    if (displayPersonalNotes || displayGlobalNotes) {
+        displayAllNotes = displayPersonalNotes + "<br /><hr />" + displayGlobalNotes;
+
+        $("#comment-on-search-record").removeClass("icon-comment-alt");
+        $("#comment-on-search-record").addClass("icon-comment");
+        $("#previous-notes-on-this-search").html(displayAllNotes);
+        scrollToBottomOfDiv("#previous-notes-on-this-search");
+    } else {
+        $("#comment-on-search-record").removeClass("icon-comment");
+        $("#comment-on-search-record").addClass("icon-comment-alt");
+        $("#previous-notes-on-this-search").html("");
+    }
 }
 
 function scrollToBottomOfDiv(element) {
-	var wtf = jq(element);
+    var wtf = jq(element);
     var height = wtf[0].scrollHeight;
     wtf.scrollTop(height);
 }
 
 function closeAllActiveDialogs() {
-	jq("#favorite-search-record-dialog").dialog("close");
-	jq("#comment-on-search-record-dialog").dialog("close");
+    jq("#favorite-search-record-dialog").dialog("close");
+    jq("#comment-on-search-record-dialog").dialog("close");
 }
 
 function displayQuickSearches() {
-	var history = jsonAfterParse.searchHistory;
-	var bookmarks = jsonAfterParse.searchBookmarks;
-	var quickSearchDisplay = "";
-	var hLength = history.length;
-	var bLength = bookmarks.length;
-	
-	if(history && hLength > 0) {
-		quickSearchDisplay += "<b>2 Most Recent & 3 Last bookmarked Searches</b><br /><u>History</u><br />";
-		for(i = 0; i < hLength; i++) {
-			var no = i + 1;
-			if(i === 0 || i === 1) {
-				quickSearchDisplay += no + ". <a href='' class='quick-searches-history' id='" + history[i].uuid + "'>" + history[i].searchPhrase + "</a><br />"; 
-			}
-		}
-	}
-	
-	if(bookmarks && bLength > 0) {
-		quickSearchDisplay += "<u>Bookmarks</u><br />";
-		for(i = 0; i < bLength; i++) {
-			var no = i + 1;
-			if(i === 0 || i === 1 || i === 2) {
-				quickSearchDisplay += no + ". <a href='' class='quick-searches-bookmark' id='" + bookmarks[i].uuid + "'>" + bookmarks[i].searchPhrase + "</a> [ <em>" + bookmarks[i].categories + "</em> ]<br />"; 
-			}
-		}
-	}
-	
-	if(quickSearchDisplay !== "") {
-		jq("#quick-searches-dialog-message").html(quickSearchDisplay);
-	}
+    var history = jsonAfterParse.searchHistory;
+    var bookmarks = jsonAfterParse.searchBookmarks;
+    var quickSearchDisplay = "";
+    var hLength = history.length;
+    var bLength = bookmarks.length;
+
+    if (history && hLength > 0) {
+        quickSearchDisplay += "<b>2 Most Recent & 3 Last bookmarked Searches</b><br /><u>History</u><br />";
+        for (i = 0; i < hLength; i++) {
+            var no = i + 1;
+            if (i === 0 || i === 1) {
+                quickSearchDisplay += no + ". <a href='' class='quick-searches-history' id='" + history[i].uuid + "'>" + history[i].searchPhrase + "</a><br />";
+            }
+        }
+    }
+
+    if (bookmarks && bLength > 0) {
+        quickSearchDisplay += "<u>Bookmarks</u><br />";
+        for (i = 0; i < bLength; i++) {
+            var no = i + 1;
+            if (i === 0 || i === 1 || i === 2) {
+                quickSearchDisplay += no + ". <a href='' class='quick-searches-bookmark' id='" + bookmarks[i].uuid + "'>" + bookmarks[i].searchPhrase + "</a> [ <em>" + bookmarks[i].categories + "</em> ]<br />";
+            }
+        }
+    }
+
+    if (quickSearchDisplay !== "") {
+        jq("#quick-searches-dialog-message").html(quickSearchDisplay);
+    }
 }
 
 function getAllCheckedCategoriesOrFacets() {
-	var categories = [];
-	jq("input:checkbox[name=categories]:checked").each(function() {
-		categories.push(jq(this).val());
-	});
-	return categories;
+    var categories = [];
+    jq("input:checkbox[name=categories]:checked").each(function() {
+        categories.push(jq(this).val());
+    });
+    return categories;
 }
 
 function unSelectAllCategories() {
-	jq("input:checkbox[name=categories]:checked").each(function() {
-		jq(this).prop('checked', false);
-	});
+    jq("input:checkbox[name=categories]:checked").each(function() {
+        jq(this).prop('checked', false);
+    });
 }
 
 function updateCategeriesAtUIGlobally(categories) {
-	if(categories && categories.length === 0) {
-		jq("#category-filter_method").text("All Categories");
-	} else {
-		if(categories.length === 1) {
-			if(categories[0] && categories[0] !== "") {
-		   		jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]));
-		    }
-		} else if(categories.length >= 2) {
-			if(categories[0] && categories[0] !== "" && categories[1] && categories[1] !== "") {
-				var catsLabel = capitalizeFirstLetter(categories[0]) + "," + capitalizeFirstLetter(categories[1]);
-		   		
-				if(catsLabel.length <= 14) {
-		   			jq("#category-filter_method").text(catsLabel + "...");
-		   		} else {
-		   			jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]) + "...");
-		   		}
-		    }
-		}
-		jq("input:checkbox[class=category_check]").each(function() {
-			var uiCat = jq(this).val();
-			
-			for(i = 0; i < categories.length; i++) {
-				var cat = categories[i];
-				if(uiCat === cat) {
-					jq(this).prop('checked', true);
-				}
-			}
-		});
-	}
+    if (categories && categories.length === 0) {
+        jq("#category-filter_method").text("All Categories");
+    } else {
+        if (categories.length === 1) {
+            if (categories[0] && categories[0] !== "") {
+                jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]));
+            }
+        } else if (categories.length >= 2) {
+            if (categories[0] && categories[0] !== "" && categories[1] && categories[1] !== "") {
+                var catsLabel = capitalizeFirstLetter(categories[0]) + "," + capitalizeFirstLetter(categories[1]);
+
+                if (catsLabel.length <= 14) {
+                    jq("#category-filter_method").text(catsLabel + "...");
+                } else {
+                    jq("#category-filter_method").text(capitalizeFirstLetter(categories[0]) + "...");
+                }
+            }
+        }
+        jq("input:checkbox[class=category_check]").each(function() {
+            var uiCat = jq(this).val();
+
+            for (i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                if (uiCat === cat) {
+                    jq(this).prop('checked', true);
+                }
+            }
+        });
+    }
 }
 
 function checkOrUnAllOtherCheckBoxesInADiv(divElement, skipId) {
-	jq(divElement + " input").each(function(event) {
-		var selectedId = jq(this).attr("id");
-		
-		if(selectedId !== skipId && jq(this).attr("type") !== "radio") {
-			if(jq("#" + skipId).is(":checked")) {
-    			jq(this).prop("checked", true);
-    		} else {
-    			jq(this).prop("checked", false);
-    		}
-		}
-	});
+    jq(divElement + " input").each(function(event) {
+        var selectedId = jq(this).attr("id");
+
+        if (selectedId !== skipId && jq(this).attr("type") !== "radio") {
+            if (jq("#" + skipId).is(":checked")) {
+                jq(this).prop("checked", true);
+            } else {
+                jq(this).prop("checked", false);
+            }
+        }
+    });
 }
 
 /* Overrides jq.("").dialog() */
 function invokeDialog(dialogMessageElement, dialogTitle, dialogWidth) {
-	jq(dialogMessageElement).dialog({
-		title: dialogTitle,
-		width:dialogWidth
-	});
+    jq(dialogMessageElement).dialog({
+        title: dialogTitle,
+        width: dialogWidth
+    });
 }

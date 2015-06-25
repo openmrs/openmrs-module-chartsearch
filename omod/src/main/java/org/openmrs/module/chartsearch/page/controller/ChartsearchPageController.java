@@ -20,6 +20,7 @@ import java.util.List;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.chartsearch.AllergyItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
@@ -91,6 +92,9 @@ public class ChartsearchPageController {
 				updatedItems.add(chartListItem);
 			}
 			
+			if(chartListItem instanceof AllergyItem) {
+				updatedItems.add(chartListItem);
+			}
 		}
 		//setting results to show.
 		searchAPIInstance.setResults(updatedItems);

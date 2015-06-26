@@ -32,6 +32,8 @@
 		    jq('.category_check').prop('checked', true);
 		    categoryFilterLabel = "All Categories";
 		    jq("#category-filter_method").text(categoryFilterLabel);
+		    submitChartSearchFormWithAjax();
+		    
 		    return false;
 		});
 		
@@ -39,6 +41,8 @@
 		    jq('.category_check').prop('checked', false);
 		    categoryFilterLabel = "All Categories";
 		    jq("#category-filter_method").text(categoryFilterLabel);
+		    submitChartSearchFormWithAjax();
+		    
 		    return false;
 		});
 		

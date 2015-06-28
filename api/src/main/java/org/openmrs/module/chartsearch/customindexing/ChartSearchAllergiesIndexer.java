@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
@@ -79,7 +80,7 @@ public class ChartSearchAllergiesIndexer {
 			List<AllergyReaction> reactions = allergy.getReactions();
 			String codedAllegen = null;
 			String severity = null;
-			String codedReaction = null;
+			String codedReaction = "";
 			String nonCodedReactions = null;
 			
 			if (allergy.getAllergen().getCodedAllergen() != null) {
@@ -93,10 +94,20 @@ public class ChartSearchAllergiesIndexer {
 			for (int i = 0; i < reactions.size(); i++) {
 				AllergyReaction reaction = reactions.get(i);
 				
-				nonCodedReactions = reaction.getReactionNonCoded();
-				if (reaction.getReaction() != null) {
-					ConceptName codedReactioncName = reaction.getReaction().getName();
-					codedReaction = codedReactioncName.getName();
+				if (StringUtils.isNotBlank(reaction.getReactionNonCoded())) {
+					nonCodedReactions = reaction.getReactionNonCoded();
+					break;
+				} else {
+					if (reaction.getReaction() != null) {
+						String codedReactioncName = reaction.getReaction().getName().getName();
+						if (StringUtils.isNotBlank(codedReactioncName)) {
+							if (i == reactions.size() - 1) {
+								codedReaction += codedReactioncName;
+							} else {
+								codedReaction += codedReactioncName + ", ";
+							}
+						}
+					}
 				}
 				
 			}
@@ -111,6 +122,8 @@ public class ChartSearchAllergiesIndexer {
 			doc.addField("allergy_coded_reaction", codedReaction);
 			doc.addField("allergy_non_coded_reaction", nonCodedReactions);
 			doc.addField("allergy_comment", allergy.getComment());
+			doc.addField("allergy_date",
+			    allergy.getDateChanged() != null ? allergy.getDateChanged() : allergy.getDateCreated());
 		}
 		return doc;
 	}

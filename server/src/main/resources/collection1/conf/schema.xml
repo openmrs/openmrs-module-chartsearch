@@ -957,6 +957,8 @@
 			stored="true" required="false" />
 		<field name="allergy_comment" type="string" indexed="true"
 			stored="true" required="false" />
+		<field name="allergy_date" type="date" indexed="true"
+			stored="true" required="false" />
 
 		<field name="allergy_text" type="text_general" indexed="true"
 			stored="true" multiValued="true" />

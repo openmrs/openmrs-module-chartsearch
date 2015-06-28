@@ -9,6 +9,8 @@
  */
 package org.openmrs.module.chartsearch;
 
+import java.util.Date;
+
 public class AllergyItem extends ChartListItem {
 	
 	private Integer allergyId;
@@ -26,6 +28,8 @@ public class AllergyItem extends ChartListItem {
 	private String allergenNonCodedReaction;
 	
 	private String allergenComment;
+	
+	private Date allergenDate;
 	
 	public Integer getAllergyId() {
 		return allergyId;
@@ -89,6 +93,14 @@ public class AllergyItem extends ChartListItem {
 	
 	public void setAllergenComment(String allergenComment) {
 		this.allergenComment = allergenComment;
+	}
+	
+	public Date getAllergenDate() {
+		return allergenDate;
+	}
+	
+	public void setAllergenDate(Date allergenDate) {
+		this.allergenDate = allergenDate;
 	}
 	
 }

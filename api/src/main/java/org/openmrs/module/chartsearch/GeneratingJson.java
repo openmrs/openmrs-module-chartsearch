@@ -542,6 +542,7 @@ public class GeneratingJson {
 					json.put("allergenCodedReaction", allergy.getAllergenCodedReaction());
 					json.put("allergenNonCodedReaction", allergy.getAllergenNonCodedReaction());
 					json.put("allergenComment", allergy.getAllergenComment());
+					json.put("allergenDate", allergy.getAllergenDate().getTime());
 					
 					allergies.add(json);
 				}

@@ -245,6 +245,7 @@ public class ChartSearchSearcher {
 			item.setAllergenCodedReaction((String) document.get("allergy_coded_reaction"));
 			item.setAllergenNonCodedReaction((String) document.get("allergy_non_coded_reaction"));
 			item.setAllergenComment((String) document.get("allergy_comment"));
+			item.setAllergenDate((Date) document.get("allergy_date"));
 			
 			list.add(item);
 			

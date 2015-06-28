@@ -271,17 +271,12 @@
 			if (typeof single_obsJSON !== 'undefined') {
 				if(key.keyCode == 39) {// =>>
 					var diffBtnIndecs = navigationIndex - peviousIndex;
-					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length;
+					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length;
 					
 					if(wasGoingNext) {
 						if(navigationIndex != numberOfResults) {
 							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
-								var obsId = single_obsJSON[navigationIndex].observation_id;
-								
-								peviousIndex = navigationIndex;
-								navigationIndex++;
-								wasGoingNext = true;
-								focusOnNextObsAndDisplayItsDetails(obsId);
+								increamentNavigation(single_obsJSON);
 							}
 						}
 					} else {
@@ -291,12 +286,7 @@
 							navigationIndex = 1;
 						}
 						if(navigationIndex >= 0 && diffBtnIndecs == -1) {
-							var obsId = single_obsJSON[navigationIndex].observation_id;
-								
-							peviousIndex = navigationIndex;
-							navigationIndex++;
-							wasGoingNext = true;
-							focusOnNextObsAndDisplayItsDetails(obsId);
+							increamentNavigation(single_obsJSON);
 						}
 					}
 				}
@@ -308,23 +298,11 @@
 							navigationIndex  = navigationIndex - 2;
 							
 							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
-								var obsId = single_obsJSON[navigationIndex].observation_id;
-								
-								peviousIndex = navigationIndex;
-								navigationIndex--;
-								wasGoingNext = false;
-								
-								focusOnNextObsAndDisplayItsDetails(obsId);
+								decreamentNavigation(single_obsJSON);
 							}
 						} else {
 							if(navigationIndex >= 0 && diffBtnIndecs == -1) {
-								var obsId = single_obsJSON[navigationIndex].observation_id;
-								
-								peviousIndex = navigationIndex;
-								navigationIndex--;
-								wasGoingNext = false;
-								
-								focusOnNextObsAndDisplayItsDetails(obsId);
+								decreamentNavigation(single_obsJSON);
 							}
 						}
 					}
@@ -332,9 +310,43 @@
 			}
 		});
 		
+		function increamentNavigation(single_obsJSON) {
+			var obs = single_obsJSON[navigationIndex];
+			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
+							
+			peviousIndex = navigationIndex;
+			navigationIndex++;
+			wasGoingNext = true;
+			if(obs && obs.observation_id) {
+				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
+			} else if(allergy && allergy.allergenId > 0) {
+				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
+			}
+		}
+		
+		function decreamentNavigation(single_obsJSON) {
+			var obs = single_obsJSON[navigationIndex];
+			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
+								
+			peviousIndex = navigationIndex;
+			navigationIndex--;
+			wasGoingNext = false;
+								
+			if(obs && obs.observation_id) {
+				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
+			} else if(allergy && allergy.allergenId > 0) {
+				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
+			}
+		}
+		
 		function focusOnNextObsAndDisplayItsDetails(obsId) {
 			jq('#obs_single_'+obsId).focus();
 			load_single_detailed_obs(obsId);
+		}
+		
+		function focusOnNextAllergenAndDisplayItsDetails(allergenId) {
+			jq('#allergen_' + allergenId).focus();
+			load_allergen(allergenId);
 		}
 		
 		function hideSearchSuggestions() {

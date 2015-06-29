@@ -227,6 +227,7 @@
 			jq("#lauche-other-chartsearch-features").hide();
 			jq("#lauche-stored-bookmark").hide();
 			jq("#chart-previous-searches-display").hide();
+			jq('#filter_categories_categories').removeClass('display_filter_onclick');
 			
 			jq.ajax({
 				type: "POST",

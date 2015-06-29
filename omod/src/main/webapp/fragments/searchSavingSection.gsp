@@ -138,7 +138,20 @@
 	    	if(!phrase) {
 	    		failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
 	    	} else {
-		    	saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
+	    		if(jq("#favorite-search-record").hasClass("icon-star-empty")) {
+		    		saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
+			    } else {
+			    	var bookmarks = jsonAfterParse.searchBookmarks;
+			    	var bookmarkName;
+			    	
+				    for (i = 0; i < bookmarks.length; i++) {
+						if (bookmarks[i].searchPhrase === phrase) {
+							bookmarkName = bookmarks[i].bookmarkName;
+							break;
+						}
+					}
+			    	addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
+			    }
 			    updateBookmarksAndNotesUI();
 			}
     	});
@@ -160,7 +173,7 @@
     		if(bookmarkUuid) {
     			deleteSearchBookmark(bookmarkUuid, true);
     			jq("#favorite-search-record-dialog").dialog("close");
-    			updateBookmarksAndNotesUI();
+    			removeBookmarkAtUIlayer();
     		}
     		return false;
     	});
@@ -308,12 +321,9 @@
     		checkIfPhraseExisitsInHistory(phrase, patientId, function(exists) {
     			if(exists === true) {
 	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, patientId, function(bookmarkUuid) {
-	    				if(bookmarkUuid === "") {
-	    					saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
-	    				} else {
-	    					jq("#current-bookmark-object").val(bookmarkUuid);
-	    					addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
-	    				}
+	    				saveBookmarkAtServerLayer(selectedCats, phrase, bookmarkName, patientId);
+	    				jq("#current-bookmark-object").val(bookmarkUuid);
+	    				addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
 	    			});
     			} else {
 					failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
@@ -454,7 +464,7 @@
 	    	bookmarks = jsonAfterParse.searchBookmarks.reverse();
 	    	
 	    	for(i = 0; i < bookmarks.length; i++) {
-	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].searchPhrase + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "' title='Delete This Bookmark'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
+	    		bookmarksToDisplay += "<div class='possible-task-list-item'  id='" + bookmarks[i].uuid + "' name=' "+ bookmarks[i].bookmarkName + "'><i class='icon-remove delete-this-bookmark' id='" + bookmarks[i].uuid + "' title='Delete This Bookmark'></i>&nbsp&nbsp<b id='" + bookmarks[i].uuid + "'>" + bookmarks[i].bookmarkName + "</b>&nbsp&nbsp-&nbsp&nbsp<em id='" + bookmarks[i].uuid + "'>" + bookmarks[i].categories + "</em></div>";
 	    	}
 	    	
 	    	jq("#lauche-stored-bookmark").html(bookmarksToDisplay + "<a href='' id='bookmark-manager-lancher'>Bookmark Manager</a>");
@@ -523,6 +533,7 @@
 			jq("#lauche-other-chartsearch-features").hide();
 			jq("#lauche-stored-bookmark").hide();
 			jq("#chart-previous-searches-display").hide();
+			jq('#filter_categories_categories').removeClass('display_filter_onclick');
 			
 			jq.ajax({
 				type: "POST",

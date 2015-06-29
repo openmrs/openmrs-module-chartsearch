@@ -218,6 +218,7 @@
 			var patientId = jq("#patient_id").val().replace("Patient#", "");
 			var categories = getAllCheckedCategoriesOrFacets();
 			
+			reInitializeGlobalVars();
 			jq("#chart-previous-searches-display").hide();
 			jq(".obsgroup_view").empty();
 			jq("#found-results-summary").html('');
@@ -240,7 +241,7 @@
 					refresh_data();
 					
 					jq(".results_table_wrap").fadeIn(500);
-					jq('#first_obs_single').trigger('click');
+					autoClickFirstResultToShowItsDetails();
 					jq(".inside_filter_categories").fadeIn(500);
 							
 					showHistorySuggestionsOnLoad();

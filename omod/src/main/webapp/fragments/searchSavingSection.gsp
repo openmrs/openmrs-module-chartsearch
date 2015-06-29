@@ -515,7 +515,7 @@
 			if(cats === "") {
 				cats = categories;
 			}
-			
+			reInitializeGlobalVars();
 			jq(".obsgroup_view").empty();
 			jq("#found-results-summary").html('');
 			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
@@ -537,7 +537,7 @@
 		            refresh_data();
 		
 		            jq(".results_table_wrap").fadeIn(500);
-		            jq('#first_obs_single').trigger('click');
+		            autoClickFirstResultToShowItsDetails();
 		            jq(".inside_filter_categories").fadeIn(500);
 		            jq("#bookmark-category-names").text(cats);
 		            jq("#bookmark-search-phrase").text(phrase);

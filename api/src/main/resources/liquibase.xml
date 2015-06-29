@@ -357,8 +357,9 @@
 		<preConditions>
 			<tableExists tableName="chartsearch_synonyms" />
 		</preConditions>
-		<comment>Re-create chartsearch_synonyms table which is not yet being used</comment>
-		<dropTable tableName="chartsearch_synonyms"/>
+		<comment>Re-create chartsearch_synonyms table which is not yet being
+			used</comment>
+		<dropTable tableName="chartsearch_synonyms" />
 		<createTable tableName="chartsearch_synonyms">
 			<column name="synonym_id" type="int" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />

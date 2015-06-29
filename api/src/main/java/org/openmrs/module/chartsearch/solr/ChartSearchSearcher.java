@@ -289,7 +289,7 @@ public class ChartSearchSearcher {
 	}
 	
 	/**
-	 * Looks for any added filter fields onto the query and and returns its value names and counts
+	 * Looks for any added filter fields onto the query and returns its value names and counts
 	 * 
 	 * @param response
 	 */

@@ -77,8 +77,8 @@ function single_sort_func(a, b) {
 	return dates.compare(first_date, second_date);
 }
 
-function addAllSingleObs(obsJSON) {// TODO rename to:
-	// addAllSingleObsAndAllergies(obsJSON)
+function addAllSingleObs(obsJSON) {
+	// TODO rename to: addAllSingleObsAndAllergies(obsJSON)
 	console.log(obsJSON);
 	var resultText = '';
 	var single_obsJSON = obsJSON.obs_singles;
@@ -168,9 +168,9 @@ function addAllergiesToResults(allergy, noObsSingle) {
 	var allergyNonCodedReaction = allergy.allergenNonCodedReaction;
 	var allergyComment = allergy.allergenComment;
 	var allergyDate = allergy.allergenDate;
-	var title = !allergyNonCodedName && allergyNonCodedName === "" ? allergyCodedName
+	var title = !allergyNonCodedName || allergyNonCodedName === "" ? allergyCodedName
 			: allergyNonCodedName;
-	var reaction = !allergyNonCodedReaction && allergyNonCodedReaction === "" ? allergyCodedReaction
+	var reaction = !allergyNonCodedReaction || allergyNonCodedReaction === "" ? allergyCodedReaction
 			: allergyNonCodedReaction;
 	var resultText = '';
 	var allergyIdHtml;
@@ -187,7 +187,7 @@ function addAllergiesToResults(allergy, noObsSingle) {
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
-	resultText += capitalizeFirstLetter(title);
+	resultText += title;
 	resultText += '</h3>';
 	resultText += '<br><span class="obsgroup_date">';
 	resultText += getDateStr(allergyDate, true);
@@ -451,6 +451,15 @@ function load_single_detailed_obs(obs_id) {
 	}
 }
 
+function getAllergy(allergyId) {
+	for (i = 0; i < jsonAfterParse.patientAllergies.length; i++) {
+		var allergy = jsonAfterParse.patientAllergies[i];
+		if (allergy.allergenId === allergyId) {
+			return allergy;
+		}
+	}
+}
+
 function load_allergen(allergeId) {
 	removeAllHovering();
 	if (firstAllergen && firstAllergen.allergenId == allergeId) {
@@ -458,8 +467,39 @@ function load_allergen(allergeId) {
 	} else {
 		$("#allergen_" + allergeId).addClass("obsgroup_current");
 	}
-	$(".obsgroup_view").empty();
 	// TODO load the right section details
+	var resultText = '';
+	var allergy = getAllergy(allergeId);
+	var allergen = (!allergy.allergenNonCodedName || allergy.allergenNonCodedName === "") ? allergy.allergenCodedName
+			: allergy.allergenNonCodedName;
+	var reaction = (!allergy.allergenNonCodedReaction || allergy.allergenNonCodedReaction === "") ? allergy.allergenCodedReaction
+			: allergy.allergenNonCodedReaction;
+	var severity = allergy.allergenSeverity;
+	var type = allergy.allergenType;
+	var comment = allergy.allergenComment;
+	var date = getDateStr(allergy.allergenDate, true);
+
+	if (!severity) {
+		severity = "";
+	} else {
+		severity = capitalizeFirstLetter(severity);
+	}
+
+	resultText += '<div class="obsgroup_view">';
+	resultText += '<h3 class="chartserach_center">';
+	resultText += allergen;
+	resultText += '</h3>';
+	resultText += '<table>'
+	resultText += '<tr><th>Allergen:</th><td>' + allergen + '</td></tr>'
+	resultText += '<tr><th>Type:</th><td>' + type + '</td></tr>'
+	resultText += '<tr><th>Severity:</th><td>' + severity + '</td></tr>'
+	resultText += '<tr><th>Reaction:</th><td>' + reaction + '</td></tr>'
+	resultText += '<tr><th>Comment:</th><td>' + comment + '</td></tr>'
+	resultText += '<tr><th>Last Updated:</th><td>' + date + '</td></tr>'
+	resultText += '</table>'
+	resultText += '</div>';
+
+	$("#obsgroup_view").html(resultText);
 }
 
 function updateNavigationIndicesToClicked(id) {
@@ -1025,7 +1065,8 @@ function refresh_data() {
 	} else {
 		searchText.value = jsonAfterParse.search_phrase;
 		var numberOfResults = jsonAfterParse.obs_groups.length
-				+ jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length;
+				+ jsonAfterParse.obs_singles.length
+				+ jsonAfterParse.patientAllergies.length;
 		document.getElementById('found-results-summary').innerHTML = "<b>"
 				+ numberOfResults + "</b> Results (<b>"
 				+ jsonAfterParse.retrievalTime + "</b> seconds)";
@@ -1339,4 +1380,23 @@ function invokeDialog(dialogMessageElement, dialogTitle, dialogWidth) {
 		title : dialogTitle,
 		width : dialogWidth
 	});
+}
+
+function reInitializeGlobalVars() {
+	navigationIndex = 1;
+	peviousIndex = 0;
+	wasGoingNext = true;
+	firstSingleObs = null;
+	firstAllergen = null;
+}
+
+function autoClickFirstResultToShowItsDetails() {
+	if (jsonAfterParse.obs_singles.length
+			&& jsonAfterParse.obs_singles.length > 0) {
+		jq('#first_obs_single').trigger('click');
+	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
+			&& jsonAfterParse.patientAllergies.length
+			&& jsonAfterParse.patientAllergies.length > 0) {
+		jq('#first_alergen').trigger('click');
+	}
 }

@@ -35,6 +35,9 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.module.allergyapi.Allergies;
+import org.openmrs.module.allergyapi.Allergy;
+import org.openmrs.module.allergyapi.api.PatientService;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
@@ -49,7 +52,6 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
-
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -330,21 +332,34 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public List<String> getAllPossibleSearchSuggestions(Integer patientId) {
 		ObsService obsService = Context.getObsService();
-		List<String> conceptNameSuggestions = new ArrayList<String>();
+		List<String> suggestions = new ArrayList<String>();
 		
 		List<Obs> allPatientObs = obsService.getObservationsByPerson(new Patient(patientId));
+		Allergies allAllergies = Context.getService(PatientService.class).getAllergies(
+		    Context.getPatientService().getPatient(patientId));
 		
 		for (Obs currentObs : allPatientObs) {
 			if (currentObs != null && currentObs.getConcept() != null && currentObs.getConcept().getName() != null) {
 				String currentConceptName = currentObs.getConcept().getName().getName();
 				if (StringUtils.isNotBlank(currentConceptName)) {
-					conceptNameSuggestions.add(currentConceptName);
+					suggestions.add(currentConceptName);
 				}
 			}
 		}
 		//TODO add  previous search terms, allergies and appointments to conceptNameSuggestions list
+		for (Allergy allergy : allAllergies) {
+			if (allergy != null) {
+				String nonCoded = allergy.getAllergen().getNonCodedAllergen();
+				String coded = allergy.getAllergen().getCodedAllergen().getName().getName();
+				if (StringUtils.isNotBlank(nonCoded)) {
+					suggestions.add(nonCoded);
+				} else {
+					suggestions.add(coded);
+				}
+			}
+		}
 		
-		return conceptNameSuggestions;
+		return suggestions;
 	}
 	
 	@Override

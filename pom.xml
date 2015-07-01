@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chartsearch</artifactId>
-	<version>1.3-SNAPSHOT</version>
+	<version>1.3</version>
 	<packaging>pom</packaging>
 	<name>Chart Search Module</name>
 	<description>Chart Search Module for the OpenMRS Reference Application</description>
@@ -37,7 +37,8 @@
 		<connection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</connection>
 		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-chartsearch.git</developerConnection>
 		<url>https://github.com/openmrs/openmrs-module-chartsearch</url>
-    </scm>
+      <tag>1.3</tag>
+  </scm>
 
 	<modules>
 		<module>api</module>

@@ -21,6 +21,7 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.chartsearch.AllergyItem;
+import org.openmrs.module.chartsearch.AppointmentItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
@@ -77,7 +78,6 @@ public class ChartsearchPageController {
 		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories,
 		    reloadWholePage);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
-		//loop to get full details about observations.
 		for (ChartListItem chartListItem : items) {
 			if (chartListItem instanceof ObsItem) {
 				int itemObsId = ((ObsItem) chartListItem).getObsId();
@@ -92,7 +92,11 @@ public class ChartsearchPageController {
 				updatedItems.add(chartListItem);
 			}
 			
-			if(chartListItem instanceof AllergyItem) {
+			if (chartListItem instanceof AllergyItem) {
+				updatedItems.add(chartListItem);
+			}
+			
+			if (chartListItem instanceof AppointmentItem) {
 				updatedItems.add(chartListItem);
 			}
 		}

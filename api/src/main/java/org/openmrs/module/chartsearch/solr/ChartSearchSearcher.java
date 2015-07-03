@@ -32,6 +32,7 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.params.FacetParams;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.AllergyItem;
+import org.openmrs.module.chartsearch.AppointmentItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
@@ -127,10 +128,39 @@ public class ChartSearchSearcher {
 		List<ChartListItem> list = searchObservationsAndGenerateSolrDoc(solrServer, query);
 		
 		searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
+		searchAppointmentsAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 		searchEncounterTypesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 		searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
 		
 		return list;
+	}
+	
+	private void searchAppointmentsAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                                  List<ChartListItem> list) throws SolrServerException {
+		SolrQuery query5 = new SolrQuery(String.format("appointment_text:(%s)", searchText));
+		
+		query5.addFilterQuery(String.format("patient_id:%d", patientId));
+		QueryResponse response5 = solrServer.query(query5);
+		Iterator<SolrDocument> iter5 = response5.getResults().iterator();
+		
+		while (iter5.hasNext()) {
+			SolrDocument doc = iter5.next();
+			AppointmentItem item = new AppointmentItem();
+			item.setUuid((String) doc.get("id"));
+			item.setAppointmentId((Integer) doc.get("appointment_id"));
+			item.setProvider((String) doc.get("appointment_provider"));
+			item.setStatus((String) doc.get("appointment_status"));
+			item.setReason((String) doc.get("appointment_reason"));
+			item.setType((String) doc.get("appointment_type"));
+			item.setStart((Date) doc.get("appointment_start"));
+			item.setEnd((Date) doc.get("appointment_end"));
+			item.setTypeDesc((String) doc.get("appointment_typeDesc"));
+			item.setCancelReason((String) doc.get("appointment_cancelReason"));
+			
+			list.add(item);
+			
+			System.out.println("FOUND APPOINTMENT: " + doc.toString());
+		}
 	}
 	
 	private void searchEFormsAndGenerateSolrDoc(String searchText, SolrServer solrServer, List<ChartListItem> list)

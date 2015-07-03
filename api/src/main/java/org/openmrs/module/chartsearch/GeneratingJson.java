@@ -54,7 +54,6 @@ public class GeneratingJson {
 	public static String generateJson(boolean wholePageIsToBeLoaded) {
 		
 		JSONObject jsonToReturn = new JSONObject();
-		@SuppressWarnings("rawtypes")
 		List<ChartListItem> returnedResults = SearchAPI.getInstance().getResults();
 		boolean foundNoResults = false;
 		JSONObject noResults = new JSONObject();
@@ -92,6 +91,7 @@ public class GeneratingJson {
 		List<String> catNms = SearchAPI.getSelectedCategoryNames();
 		String[] appliedCats = new String[catNms.size()];
 		JSONArray allergies = generateAllergiesJSONFromResults(returnedResults);
+		JSONArray appointments = generateAppointmentsJSONFromResults(returnedResults);
 		
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
@@ -100,6 +100,7 @@ public class GeneratingJson {
 		jsonToReturn.put("searchBookmarks", bookmarks);
 		jsonToReturn.put("appliedFacets", (String[]) catNms.toArray(appliedCats));
 		jsonToReturn.put("patientAllergies", allergies);
+		jsonToReturn.put("patientAppointments", appointments);
 		
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn, wholePageIsToBeLoaded);
 		
@@ -550,6 +551,33 @@ public class GeneratingJson {
 		}
 		
 		return allergies;
+	}
+	
+	private static JSONArray generateAppointmentsJSONFromResults(List<ChartListItem> returnedResults) {
+		JSONArray appointments = new JSONArray();
+		
+		for (ChartListItem item : returnedResults) {
+			if (item != null && item instanceof AppointmentItem) {
+				AppointmentItem appointment = (AppointmentItem) item;
+				JSONObject json = new JSONObject();
+				if (appointment.getAppointmentId() != null) {
+					json.put("id", appointment.getAppointmentId());
+					json.put("uuid", appointment.getUuid());
+					json.put("status", appointment.getStatus());
+					json.put("reason", appointment.getReason());
+					json.put("type", appointment.getType());
+					json.put("start", appointment.getStart().getTime());
+					json.put("end", appointment.getEnd().getTime());
+					json.put("typeDesc", appointment.getTypeDesc());
+					json.put("cancelReason", appointment.getCancelReason());
+					json.put("provider", appointment.getProvider());
+					
+					appointments.add(json);
+				}
+			}
+		}
+		
+		return appointments;
 	}
 	
 	public static JSONObject generateLocationJson(String location) {

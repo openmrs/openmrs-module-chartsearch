@@ -957,10 +957,33 @@
 			stored="true" required="false" />
 		<field name="allergy_comment" type="string" indexed="true"
 			stored="true" required="false" />
-		<field name="allergy_date" type="date" indexed="true"
-			stored="true" required="false" />
+		<field name="allergy_date" type="date" indexed="true" stored="true"
+			required="false" />
 
 		<field name="allergy_text" type="text_general" indexed="true"
+			stored="true" multiValued="true" />
+
+		<!-- appointments -->
+		<field name="appointment_id" type="int" indexed="true" stored="true"
+			required="false" />
+		<field name="appointment_reason" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_status" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_type" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_start" type="date" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_end" type="date" indexed="true" stored="true"
+			required="false" />
+		<field name="appointment_typeDesc" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_cancelReason" type="string" indexed="true"
+			stored="true" required="false" />
+		<field name="appointment_provider" type="string" indexed="true"
+			stored="true" required="false" />
+
+		<field name="appointment_text" type="text_general" indexed="true"
 			stored="true" multiValued="true" />
 
 
@@ -1021,6 +1044,12 @@
 	<copyField source="allergy_coded_reaction" dest="allergy_text" />
 	<copyField source="allergy_non_coded_reaction" dest="allergy_text" />
 	<copyField source="allergy_comment" dest="allergy_text" />
+
+	<copyField source="appointment_reason" dest="appointment_text" />
+	<copyField source="appointment_status" dest="appointment_text" />
+	<copyField source="appointment_type" dest="appointment_text" />
+	<copyField source="appointment_typeDesc" dest="appointment_text" />
+	<copyField source="appointment_cancelReason" dest="appointment_text" />
 
 	<!-- Above, multiple source fields are copied to the [text] field. Another 
 		way to map multiple source fields to the same destination field is to use 

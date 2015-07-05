@@ -1203,7 +1203,7 @@ function refresh_data() {
 		searchText.value = jsonAfterParse.search_phrase;
 		var numberOfResults = jsonAfterParse.obs_groups.length
 				+ jsonAfterParse.obs_singles.length
-				+ jsonAfterParse.patientAllergies.length;
+				+ jsonAfterParse.patientAllergies.length + jsonAfterParse.patientAppointments.length;
 		document.getElementById('found-results-summary').innerHTML = "<b>"
 				+ numberOfResults + "</b> Results (<b>"
 				+ jsonAfterParse.retrievalTime + "</b> seconds)";

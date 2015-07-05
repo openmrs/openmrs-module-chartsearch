@@ -1,9 +1,3 @@
-/**
- * Views manipulations. Created by Tallevi12
- */
-var firstSingleObs;
-var firstAllergen;
-
 var dates = {
 	convert : function(d) {
 		// Converts the date in d to a date-object. The input can be:
@@ -83,25 +77,26 @@ function addAllSingleObs(obsJSON) {
 	var resultText = '';
 	var single_obsJSON = obsJSON.obs_singles;
 	var allergies = jsonAfterParse.patientAllergies;
+	var appointments = jsonAfterParse.patientAppointments;
 	single_obsJSON.sort(single_sort_func);
 	single_obsJSON.reverse();
 	if (typeof single_obsJSON !== 'undefined') {
 		resultText += '';
 		for ( var i = 0; i < single_obsJSON.length; i++) {
-			if (i == 0) {
-				firstSingleObs = single_obsJSON[i];
-			}
 			resultText += addSingleObsToResults(single_obsJSON[i], i);
 		}
 		for (i = 0; i < allergies.length; i++) {
 			var allergen = allergies[i];
 
 			if (!single_obsJSON.length || single_obsJSON.length === 0) {
-				firstAllergen = allergen;
 				resultText += addAllergiesToResults(allergen, true);
 			} else {
 				resultText += addAllergiesToResults(allergen, false);
 			}
+		}
+		for (i = 0; i < appointments.length; i++) {
+			var app = appointments[i];
+			resultText += addAppointmentsToResults(app);
 		}
 		document.getElementById('obsgroups_results').innerHTML += resultText;
 	}
@@ -109,18 +104,21 @@ function addAllSingleObs(obsJSON) {
 
 function addSingleObsToResults(obsJSON, i) {
 	var obs_id_html = '';
+	var ob_id;
 	if (typeof obsJSON.observation_id !== 'undefined') {
 		if (i == 0) {
 			obs_id_html = 'id="first_obs_single"';
+			ob_id = 'first_obs_single';
 		} else {
 			obs_id_html = 'id="obs_single_' + obsJSON.observation_id + '"';
+			ob_id = 'obs_single_' + obsJSON.observation_id;
 		}
 	}
 	var resultText = '';
 	resultText += '<div class="obsgroup_wrap"' + obs_id_html
 			+ ' onclick="updateNavigationIndicesToClicked('
-			+ obsJSON.observation_id + ');load_single_detailed_obs('
-			+ obsJSON.observation_id + ');">';
+			+ obsJSON.observation_id + ', ' + ob_id
+			+ ');load_single_detailed_obs(' + obsJSON.observation_id + ');">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
@@ -174,16 +172,20 @@ function addAllergiesToResults(allergy, noObsSingle) {
 			: allergyNonCodedReaction;
 	var resultText = '';
 	var allergyIdHtml;
+	var allId;
 
-	if (noObsSingle) {
+	if (noObsSingle
+			&& jsonAfterParse.patientAllergies[0].allergenId === allergy.allergenId) {
 		allergyIdHtml = 'id="first_alergen"';
+		allId = "first_alergen";
 	} else {
 		allergyIdHtml = 'id="allergen_' + allergyId + '"';
+		allId = "allergen_" + allergyId;
 	}
 
 	resultText += '<div class="obsgroup_wrap" ' + allergyIdHtml
-			+ ' onclick="updateNavigationIndicesToClicked(' + allergyId
-			+ '); load_allergen(' + allergyId + ');">';
+			+ ' onclick="updateNavigationIndicesToClicked(' + allergyId + ', '
+			+ allId + '); load_allergen(' + allergyId + ');">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
@@ -206,6 +208,61 @@ function addAllergiesToResults(allergy, noObsSingle) {
 	resultText += '<div class="chart_serach_clear"></div>';
 	resultText += '</div>';
 	resultText += '</div>';
+	return resultText;
+}
+
+function addAppointmentsToResults(app) {
+	var status = app.status;
+	var id = app.id;
+	var reason = app.reason;
+	var type = app.type;
+	var start = new Date(app.start);
+	var end = new Date(app.end);
+	var typeDesc = app.typeDesc;
+	var cancelReason = app.cancelReason;
+	var provider = app.provider;
+
+	var resultText = '';
+	var appointmentIdHtml;
+	var appId;
+
+	if (jsonAfterParse.obs_singles.length === 0
+			&& jsonAfterParse.patientAllergies.length === 0
+			&& jsonAfterParse.patientAllergies[0].id === app.id) {
+		appointmentIdHtml = 'id="first_appointment"';
+		appId = "first_appointment";
+	} else {
+		appointmentIdHtml = 'id="appointment_' + id + '"';
+		appId = "appointment_" + id;
+	}
+
+	resultText += '<div class="obsgroup_wrap" ' + appointmentIdHtml
+			+ ' onclick="updateNavigationIndicesToClicked(' + id + ', ' + appId
+			+ '); load_appointment(' + id + ');">';
+	resultText += '<div class="obsgroup_first_row">';
+	resultText += '<div class="obsgroup_titleBox">';
+	resultText += '<h3 class="obsgroup_title">';
+	resultText += type;
+	resultText += '</h3>';
+	resultText += '<br><span class="obsgroup_date">';
+	resultText += getDateStr(app.start, true) + ' - '
+			+ getDateStr(app.end, true);
+	resultText += '</span></div>';
+	if (typeDesc) {
+		resultText += '<span class="obsgroup_value">';
+		resultText += status;
+		resultText += '</span>'
+	}
+
+	if (provider) {
+		resultText += '<span class="obsgroup_range">';
+		resultText += provider;
+		resultText += '</span>'
+	}
+	resultText += '<div class="chart_serach_clear"></div>';
+	resultText += '</div>';
+	resultText += '</div>';
+
 	return resultText;
 }
 
@@ -347,7 +404,7 @@ function enable_graph(obs_id) {
 
 function load_single_detailed_obs(obs_id) {
 	removeAllHovering();
-	if (firstSingleObs.observation_id == obs_id) {
+	if (jsonAfterParse.obs_singles[0].observation_id == obs_id) {
 		$("#first_obs_single").addClass("obsgroup_current");
 	} else {
 		$("#obs_single_" + obs_id).addClass("obsgroup_current");
@@ -460,14 +517,23 @@ function getAllergy(allergyId) {
 	}
 }
 
+function getAppointment(appId) {
+	for (i = 0; i < jsonAfterParse.patientAppointments.length; i++) {
+		var appointment = jsonAfterParse.patientAppointments[i];
+		if (appointment.id === appId) {
+			return appointment;
+		}
+	}
+}
+
 function load_allergen(allergeId) {
 	removeAllHovering();
-	if (firstAllergen && firstAllergen.allergenId == allergeId) {
+	if (jsonAfterParse.obs_singles.length === 0
+			&& jsonAfterParse.patientAllergies[0].allergenId === allergeId) {
 		$("#first_alergen").addClass("obsgroup_current");
 	} else {
 		$("#allergen_" + allergeId).addClass("obsgroup_current");
 	}
-	// TODO load the right section details
 	var resultText = '';
 	var allergy = getAllergy(allergeId);
 	var allergen = (!allergy.allergenNonCodedName || allergy.allergenNonCodedName === "") ? allergy.allergenCodedName
@@ -477,7 +543,8 @@ function load_allergen(allergeId) {
 	var severity = allergy.allergenSeverity;
 	var type = allergy.allergenType;
 	var comment = allergy.allergenComment;
-	var date = getDateStr(allergy.allergenDate, true);
+	var dt = new Date(allergy.allergenDate);
+	var date = getDateStr(allergy.allergenDate, true) + " " + dt.toTimeString();
 
 	if (!severity) {
 		severity = "";
@@ -489,37 +556,102 @@ function load_allergen(allergeId) {
 	resultText += '<h3 class="chartserach_center">';
 	resultText += allergen;
 	resultText += '</h3>';
-	resultText += '<table>'
-	resultText += '<tr><th>Allergen:</th><td>' + allergen + '</td></tr>'
-	resultText += '<tr><th>Type:</th><td>' + type + '</td></tr>'
-	resultText += '<tr><th>Severity:</th><td>' + severity + '</td></tr>'
-	resultText += '<tr><th>Reaction:</th><td>' + reaction + '</td></tr>'
-	resultText += '<tr><th>Comment:</th><td>' + comment + '</td></tr>'
-	resultText += '<tr><th>Last Updated:</th><td>' + date + '</td></tr>'
+	resultText += '<table>';
+	resultText += '<tr><th>Allergen:</th><td>' + allergen + '</td></tr>';
+	resultText += '<tr><th>Type:</th><td>' + type + '</td></tr>';
+	resultText += '<tr><th>Severity:</th><td>' + severity + '</td></tr>';
+	resultText += '<tr><th>Reaction:</th><td>' + reaction + '</td></tr>';
+	resultText += '<tr><th>Comment:</th><td>' + comment + '</td></tr>';
+	resultText += '<tr><th>Last Updated:</th><td>' + date + '</td></tr>';
+	resultText += '</table>';
+	resultText += '</div>';
+
+	$("#obsgroup_view").html(resultText);
+}
+
+function load_appointment(appId) {
+	removeAllHovering();
+	if (jsonAfterParse.obs_singles.length === 0
+			&& jsonAfterParse.patientAllergies.length === 0
+			&& jsonAfterParse.patientAppointments[0].id === appId) {
+		$("#first_appointment").addClass("obsgroup_current");
+	} else {
+		$("#appointment_" + appId).addClass("obsgroup_current");
+	}
+	var resultText = '';
+	var app = getAppointment(appId);
+	var status = app.status;
+	var reason = app.reason;
+	var type = app.type;
+	var start = new Date(app.start);
+	var end = new Date(app.end);
+	var typeDesc = app.typeDesc;
+	var cancelReason = app.cancelReason;
+	var provider = app.provider;
+	var date;
+
+	if (getDateStr(app.start, true) === getDateStr(app.end, true)) {
+		date = getDateStr(app.start, true) + " " + start.toTimeString() + " - "
+				+ end.toTimeString();
+	} else {
+		date = getDateStr(app.start, true) + " " + start.toTimeString() + " - "
+		getDateStr(app.end, true) + " " + end.toTimeString();
+	}
+
+	resultText += '<div class="obsgroup_view">';
+	resultText += '<h3 class="chartserach_center">';
+	resultText += type;
+	resultText += '</h3>';
+	resultText += '<table>';
+	resultText += '<tr><th>Appointment Service Type:</th><td>' + type + '</td></tr>';
+	resultText += '<tr><th>Description:</th><td>' + typeDesc + '</td></tr>';
+	resultText += '<tr><th>Provider:</th><td>' + provider + '</td></tr>';
+	resultText += '<tr><th>Reason:</th><td>' + reason + '</td></tr>';
+	resultText += '<tr><th>Status:</th><td>' + status + '</td></tr>';
+	if (cancelReason && cancelReason !== "") {
+		resultText += '<tr><th>Cancel Reason:</th><td>' + cancelReason
+				+ '</td></tr>'
+	}
+	resultText += '<tr><th>Period:</th><td>' + date + '</td></tr>';
+
 	resultText += '</table>'
 	resultText += '</div>';
 
 	$("#obsgroup_view").html(resultText);
 }
 
-function updateNavigationIndicesToClicked(id) {
+function updateNavigationIndicesToClicked(id, clickedId) {
+	clickedId = clickedId.id;
 	var numberOfResults = jsonAfterParse.obs_groups.length
 			+ jsonAfterParse.obs_singles.length
-			+ jsonAfterParse.patientAllergies.length;
+			+ jsonAfterParse.patientAllergies.length
+			+ jsonAfterParse.patientAppointments.length;
 	var allPossibleIndices = new Array(numberOfResults);
 
-	for (i = 0; i < allPossibleIndices.length; i++) {
-		if (i < jsonAfterParse.obs_singles.length
-				&& jsonAfterParse.obs_singles[i].observation_id === id) {
-			navigationIndicesUpdateLogic(i, numberOfResults);
-		} else if (i < jsonAfterParse.patientAllergies.length
-				&& jsonAfterParse.patientAllergies[i].allergenId === id) {
-			if (jsonAfterParse.obs_singles.length
-					&& jsonAfterParse.obs_singles.length > 0) {
-				navigationIndicesUpdateLogic(i
-						+ jsonAfterParse.obs_singles.length, numberOfResults);
-			} else {
+	if (clickedId && clickedId !== '') {
+		for (i = 0; i < allPossibleIndices.length; i++) {
+			if (i < jsonAfterParse.obs_singles.length
+					&& jsonAfterParse.obs_singles[i].observation_id === id
+					&& (clickedId === "first_obs_single" || clickedId
+							.indexOf("obs_single_") === 0)) {
 				navigationIndicesUpdateLogic(i, numberOfResults);
+			} else if (i < jsonAfterParse.patientAllergies.length
+					&& jsonAfterParse.patientAllergies[i].allergenId === id
+					&& (clickedId === "first_alergen" || clickedId
+							.indexOf("allergen_") === 0)) {
+				if (jsonAfterParse.obs_singles.length
+						&& jsonAfterParse.obs_singles.length > 0) {
+					navigationIndicesUpdateLogic(i
+							+ jsonAfterParse.obs_singles.length,
+							numberOfResults);
+				} else {
+					navigationIndicesUpdateLogic(i, numberOfResults);
+				}
+			} else if (i < jsonAfterParse.patientAppointments.length
+					&& jsonAfterParse.patientAppointments.length[i] === id
+					&& (clickedId === "first_appointment" || clickedId
+							.indexOf("appointment_") === 0)) {
+
 			}
 		}
 	}
@@ -782,7 +914,8 @@ function load_detailed_obs(obs_id) {
 		}
 		resultText += '<div class="obsgroup_item_row' + isBold
 				+ '" onclick="updateNavigationIndicesToClicked('
-				+ singleObs[i].observation_id + ');load_single_detailed_obs('
+				+ singleObs[i].observation_id
+				+ ',"");load_single_detailed_obs('
 				+ singleObs[i].observation_id + ');">';
 		resultText += '<div class="obsgroup_item_first inline">';
 		resultText += capitalizeFirstLetter(singleObs[i].concept_name);
@@ -1386,8 +1519,6 @@ function reInitializeGlobalVars() {
 	navigationIndex = 1;
 	peviousIndex = 0;
 	wasGoingNext = true;
-	firstSingleObs = null;
-	firstAllergen = null;
 }
 
 function autoClickFirstResultToShowItsDetails() {
@@ -1398,5 +1529,10 @@ function autoClickFirstResultToShowItsDetails() {
 			&& jsonAfterParse.patientAllergies.length
 			&& jsonAfterParse.patientAllergies.length > 0) {
 		jq('#first_alergen').trigger('click');
+	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
+			&& (!jsonAfterParse.patientAllergies.length || jsonAfterParse.patientAllergies.length === 0)
+			&& jsonAfterParse.patientAppointments.length
+			&& jsonAfterParse.patientAppointments.length > 0) {
+		jq('#first_appointment').trigger('click');
 	}
 }

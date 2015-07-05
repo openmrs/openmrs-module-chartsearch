@@ -273,7 +273,7 @@
 			if (typeof single_obsJSON !== 'undefined') {
 				if(key.keyCode == 39) {// =>>
 					var diffBtnIndecs = navigationIndex - peviousIndex;
-					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length;
+					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length + jsonAfterParse.patientAppointments.length;
 					
 					if(wasGoingNext) {
 						if(navigationIndex != numberOfResults) {
@@ -312,9 +312,10 @@
 			}
 		});
 		
-		function increamentNavigation(single_obsJSON) {
+		function increamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
 			var obs = single_obsJSON[navigationIndex];
 			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
+			var appointment = jsonAfterParse.patientAppointments[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length)];
 							
 			peviousIndex = navigationIndex;
 			navigationIndex++;
@@ -323,12 +324,15 @@
 				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
 			} else if(allergy && allergy.allergenId > 0) {
 				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
+			} else if(appointment && appointment.id > 0) {
+				focusOnNextAppointmentAndDisplayItsDetails(appointment.id)
 			}
 		}
 		
-		function decreamentNavigation(single_obsJSON) {
+		function decreamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
 			var obs = single_obsJSON[navigationIndex];
 			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
+			var appointment = jsonAfterParse.patientAppointments[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length)];
 								
 			peviousIndex = navigationIndex;
 			navigationIndex--;
@@ -338,6 +342,8 @@
 				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
 			} else if(allergy && allergy.allergenId > 0) {
 				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
+			} else if(appointment && appointment.id > 0) {
+				focusOnNextAppointmentAndDisplayItsDetails(appointment.id)
 			}
 		}
 		
@@ -349,6 +355,11 @@
 		function focusOnNextAllergenAndDisplayItsDetails(allergenId) {
 			jq('#allergen_' + allergenId).focus();
 			load_allergen(allergenId);
+		}
+		
+		function focusOnNextAppointmentAndDisplayItsDetails(appId) {
+			jq('#appointment_' + appId).focus();
+			load_appointment(appId);
 		}
 		
 		function hideSearchSuggestions() {

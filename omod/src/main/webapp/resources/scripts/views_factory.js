@@ -245,8 +245,8 @@ function addAppointmentsToResults(app) {
 	resultText += type;
 	resultText += '</h3>';
 	resultText += '<br><span class="obsgroup_date">';
-	resultText += getDateStr(app.start, true) + ' - '
-			+ getDateStr(app.end, true);
+	resultText += start.toTimeString() + ' - '
+			+ end.toTimeString();
 	resultText += '</span></div>';
 	if (typeDesc) {
 		resultText += '<span class="obsgroup_value">';
@@ -589,7 +589,11 @@ function load_appointment(appId) {
 	var cancelReason = app.cancelReason;
 	var provider = app.provider;
 	var date;
-
+	
+	typeDesc = !typeDesc ? "" : typeDesc;
+	provider = !provider ? "" : provider;
+	reason = !reason ? "" : reason;
+	status = !status ? "" : status;
 	if (getDateStr(app.start, true) === getDateStr(app.end, true)) {
 		date = getDateStr(app.start, true) + " " + start.toTimeString() + " - "
 				+ end.toTimeString();

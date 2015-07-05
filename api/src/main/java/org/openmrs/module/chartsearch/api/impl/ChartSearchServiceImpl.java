@@ -38,6 +38,8 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.allergyapi.Allergies;
 import org.openmrs.module.allergyapi.Allergy;
 import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.module.appointmentscheduling.Appointment;
+import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.api.db.CategoryFilterDAO;
@@ -337,6 +339,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		List<Obs> allPatientObs = obsService.getObservationsByPerson(new Patient(patientId));
 		Allergies allAllergies = Context.getService(PatientService.class).getAllergies(
 		    Context.getPatientService().getPatient(patientId));
+		List<Appointment> appointments = Context.getService(AppointmentService.class).getAllAppointments();
 		
 		for (Obs currentObs : allPatientObs) {
 			if (currentObs != null && currentObs.getConcept() != null && currentObs.getConcept().getName() != null) {
@@ -346,7 +349,6 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 				}
 			}
 		}
-		//TODO add  previous search terms, allergies and appointments to conceptNameSuggestions list
 		for (Allergy allergy : allAllergies) {
 			if (allergy != null) {
 				String nonCoded = allergy.getAllergen().getNonCodedAllergen();
@@ -355,6 +357,14 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 					suggestions.add(nonCoded);
 				} else {
 					suggestions.add(coded);
+				}
+			}
+		}
+		for (Appointment app : appointments) {
+			if (app != null) {
+				String appType = app.getAppointmentType().getDisplayString();
+				if (StringUtils.isNotBlank(appType)) {
+					suggestions.add(appType);
 				}
 			}
 		}

@@ -34,6 +34,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.AllergyItem;
 import org.openmrs.module.chartsearch.AppointmentItem;
 import org.openmrs.module.chartsearch.ChartListItem;
+import org.openmrs.module.chartsearch.ChartSearchNonFacetFiltering;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
 import org.openmrs.module.chartsearch.ObsItem;
@@ -91,6 +92,9 @@ public class ChartSearchSearcher {
 	                                           List<String> selectedCategories) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		SolrQuery query = new SolrQuery();
+		List<ChartListItem> list = new ArrayList<ChartListItem>();
+		ChartSearchNonFacetFiltering nonFaceting = new ChartSearchNonFacetFiltering();
+		
 		searchText = StringUtils.isNotBlank(searchText) ? searchText : "*";
 		//check for existence of characters such as ", and : in the search text and submit as it is if so
 		if (searchText.contains("\"")) {
@@ -125,18 +129,13 @@ public class ChartSearchSearcher {
 		//adding facet field for concept_class
 		query.addFacetField("concept_class_name");
 		
-		List<ChartListItem> list = searchObservationsAndGenerateSolrDoc(solrServer, query);
-		
-		searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
-		searchAppointmentsAndGenerateSolrDoc(patientId, searchText, solrServer, list);
-		searchEncounterTypesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
-		searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
+		nonFaceting.applyNonFacetingLogicWhileSearching(patientId, searchText, selectedCategories, solrServer, query, list);
 		
 		return list;
 	}
 	
-	private void searchAppointmentsAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
-	                                                  List<ChartListItem> list) throws SolrServerException {
+	public void searchAppointmentsAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                                 List<ChartListItem> list) throws SolrServerException {
 		SolrQuery query5 = new SolrQuery(String.format("appointment_text:(%s)", searchText));
 		
 		query5.addFilterQuery(String.format("patient_id:%d", patientId));
@@ -163,7 +162,7 @@ public class ChartSearchSearcher {
 		}
 	}
 	
-	private void searchEFormsAndGenerateSolrDoc(String searchText, SolrServer solrServer, List<ChartListItem> list)
+	public void searchEFormsAndGenerateSolrDoc(String searchText, SolrServer solrServer, List<ChartListItem> list)
 	    throws SolrServerException {
 		// forms
 		System.out.println("Forms:");
@@ -186,7 +185,7 @@ public class ChartSearchSearcher {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ChartListItem> searchObservationsAndGenerateSolrDoc(SolrServer solrServer, SolrQuery query)
+	public void searchObservationsAndGenerateSolrDoc(SolrServer solrServer, SolrQuery query, List<ChartListItem> list)
 	    throws SolrServerException {
 		System.out.println("Observations:");
 		QueryResponse response = solrServer.query(query);
@@ -195,7 +194,6 @@ public class ChartSearchSearcher {
 		
 		Iterator<SolrDocument> iter = response.getResults().iterator();
 		
-		List<ChartListItem> list = new ArrayList<ChartListItem>();
 		while (iter.hasNext()) {
 			SolrDocument document = iter.next();
 			
@@ -230,11 +228,10 @@ public class ChartSearchSearcher {
 			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", "
 			        + document.get("obs_datetime"));
 		}
-		return list;
 	}
 	
-	private void searchEncounterTypesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
-	                                                    List<ChartListItem> list) throws SolrServerException {
+	public void searchEncounterTypesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                                   List<ChartListItem> list) throws SolrServerException {
 		// Encounters
 		System.out.println("Encounters:");
 		SolrQuery query3 = new SolrQuery(String.format("encounter_type:(%s)", searchText));
@@ -255,8 +252,8 @@ public class ChartSearchSearcher {
 		}
 	}
 	
-	private void searchAllergiesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
-	                                               List<ChartListItem> list) throws SolrServerException {
+	public void searchAllergiesAndGenerateSolrDoc(Integer patientId, String searchText, SolrServer solrServer,
+	                                              List<ChartListItem> list) throws SolrServerException {
 		SolrQuery query4 = new SolrQuery(String.format("allergy_text:(%s)", searchText));
 		
 		query4.addFilterQuery(String.format("patient_id:%d", patientId));

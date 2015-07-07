@@ -214,7 +214,7 @@ div.ui-datepicker{
 	.display_filter_onclick {
 		left:-1px;
 		margin-left:0px;
-		width: 140px;
+		width: 152px;
 	}
 	
 	.dropdown .insider_categories:active {

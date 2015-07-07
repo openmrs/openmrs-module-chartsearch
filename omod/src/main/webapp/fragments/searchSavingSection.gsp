@@ -555,7 +555,7 @@
 		            
 		            updateBookmarksAndNotesUI();
 		            displayQuickSearches();
-		            updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
+		            updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
 		        },
 		        error: function(e) {}
 		    });

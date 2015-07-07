@@ -13,7 +13,7 @@
 		
 		showHistorySuggestionsOnLoad();
 		displayBothPersonalAndGlobalNotes();
-		updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
+		updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
 		
         jq( "#date_filter_title" ).click(function() {
             jq( "#date_filter_options" ).toggle();
@@ -250,7 +250,7 @@
     				displayBothPersonalAndGlobalNotes();
     				displayQuickSearches();
     				updateBookmarksAndNotesUI();
-    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedFacets);
+    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
 				},
 				error: function(e) {
 				  //alert("Error occurred!!! " + e);
@@ -701,7 +701,7 @@
 								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">
-									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
+									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
 									<br /><hr />
 									<div id="inside_filter_categories">
 										<script type="text/javascript">
@@ -709,7 +709,7 @@
 										</script>
 									</div>
 									<hr />
-									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Cancel</a>
+									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Cancel</a>
 								</div>
 							</div>
 						</div>

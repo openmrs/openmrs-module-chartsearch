@@ -245,8 +245,7 @@ function addAppointmentsToResults(app) {
 	resultText += type;
 	resultText += '</h3>';
 	resultText += '<br><span class="obsgroup_date">';
-	resultText += start.toTimeString() + ' - '
-			+ end.toTimeString();
+	resultText += start.toTimeString() + ' - ' + end.toTimeString();
 	resultText += '</span></div>';
 	if (typeDesc) {
 		resultText += '<span class="obsgroup_value">';
@@ -589,7 +588,7 @@ function load_appointment(appId) {
 	var cancelReason = app.cancelReason;
 	var provider = app.provider;
 	var date;
-	
+
 	typeDesc = !typeDesc ? "" : typeDesc;
 	provider = !provider ? "" : provider;
 	reason = !reason ? "" : reason;
@@ -607,7 +606,8 @@ function load_appointment(appId) {
 	resultText += type;
 	resultText += '</h3>';
 	resultText += '<table>';
-	resultText += '<tr><th>Appointment Service Type:</th><td>' + type + '</td></tr>';
+	resultText += '<tr><th>Appointment Service Type:</th><td>' + type
+			+ '</td></tr>';
 	resultText += '<tr><th>Description:</th><td>' + typeDesc + '</td></tr>';
 	resultText += '<tr><th>Provider:</th><td>' + provider + '</td></tr>';
 	resultText += '<tr><th>Reason:</th><td>' + reason + '</td></tr>';
@@ -1203,7 +1203,8 @@ function refresh_data() {
 		searchText.value = jsonAfterParse.search_phrase;
 		var numberOfResults = jsonAfterParse.obs_groups.length
 				+ jsonAfterParse.obs_singles.length
-				+ jsonAfterParse.patientAllergies.length + jsonAfterParse.patientAppointments.length;
+				+ jsonAfterParse.patientAllergies.length
+				+ jsonAfterParse.patientAppointments.length;
 		document.getElementById('found-results-summary').innerHTML = "<b>"
 				+ numberOfResults + "</b> Results (<b>"
 				+ jsonAfterParse.retrievalTime + "</b> seconds)";
@@ -1223,6 +1224,8 @@ function refresh_data() {
 function displayCategories(jsonAfterParse) {
 	var categories = document.getElementsByClassName('category_check');
 	var checkedCategories = new Object();
+	var allergies = jsonAfterParse.patientAllergies;
+	var appointments = jsonAfterParse.patientAppointments;
 
 	if (jsonAfterParse.noResults.foundNoResults) {
 		document.getElementById('inside_filter_categories').innerHTML = "";
@@ -1239,27 +1242,32 @@ function displayCategories(jsonAfterParse) {
 		document.getElementById('inside_filter_categories').innerHTML = "";
 
 		// now fetch and display new categories from the server
+
+		displayNonFacetCategories(allergies, "allergies");
+		displayNonFacetCategories(appointments, "appointments");
+
 		for ( var i = 0; i < jsonAfterParse.facets.length; i++) {
 			var name = jsonAfterParse.facets[i].facet.name;
 			var count = jsonAfterParse.facets[i].facet.count;
+			var displaycheckBox;
+			var displayDetail;
 
 			if (count != 0) {
-				var displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='"
+				displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='"
 						+ name
 						+ "_category' type='checkbox' name='categories' value='"
 						+ name;
-				var displayDetail = "<a href='' class='select_one_category' id='select_"
+				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
 						+ capitalizeFirstLetter(name)
 						+ "</a> (" + count + ") </div>";
-
 			} else {
-				var displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
+				displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
 						+ name
 						+ "_category' type='checkbox' name='categories' value='"
 						+ name;
-				var displayDetail = "<a href='' class='select_one_category' id='select_"
+				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
 						+ capitalizeFirstLetter(name)
@@ -1275,6 +1283,35 @@ function displayCategories(jsonAfterParse) {
 			$(checkedCategories[index]).prop('checked', true);
 		}
 	}
+}
+
+function displayNonFacetCategories(cat, catName) {
+	var displayNonFacetcheckBox;
+	var displayNonFacetDetail;
+
+	if (cat.length !== 0) {
+		displayNonFacetcheckBox = "<div class='category_filter_item'><input class='category_check' id='"
+				+ catName
+				+ "_category' type='checkbox' name='categories' value='"
+				+ catName + "' />";
+		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
+				+ catName
+				+ "_category'>"
+				+ capitalizeFirstLetter(catName)
+				+ "</a> (" + cat.length + ") </div>";
+	} else {
+		displayNonFacetcheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
+				+ catName
+				+ "_category' type='checkbox' name='categories' value='"
+				+ catName + "' />";
+		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
+				+ catName
+				+ "_category'>"
+				+ capitalizeFirstLetter(catName)
+				+ "</a> (" + 0 + ") </div>";
+	}
+	document.getElementById('inside_filter_categories').innerHTML += displayNonFacetcheckBox
+			+ displayNonFacetDetail;
 }
 
 /*

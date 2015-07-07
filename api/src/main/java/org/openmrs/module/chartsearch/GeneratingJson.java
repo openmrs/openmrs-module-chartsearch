@@ -89,7 +89,6 @@ public class GeneratingJson {
 		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
 		List<String> catNms = SearchAPI.getSelectedCategoryNames();
-		String[] appliedCats = new String[catNms.size()];
 		JSONArray allergies = generateAllergiesJSONFromResults(returnedResults);
 		JSONArray appointments = generateAppointmentsJSONFromResults(returnedResults);
 		
@@ -98,7 +97,7 @@ public class GeneratingJson {
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
 		jsonToReturn.put("searchHistory", history);
 		jsonToReturn.put("searchBookmarks", bookmarks);
-		jsonToReturn.put("appliedFacets", (String[]) catNms.toArray(appliedCats));
+		jsonToReturn.put("appliedCategories", (String[]) catNms.toArray(new String[catNms.size()]));
 		jsonToReturn.put("patientAllergies", allergies);
 		jsonToReturn.put("patientAppointments", appointments);
 		

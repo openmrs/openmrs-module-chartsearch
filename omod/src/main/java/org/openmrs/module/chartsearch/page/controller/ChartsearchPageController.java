@@ -78,6 +78,7 @@ public class ChartsearchPageController {
 		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories,
 		    reloadWholePage);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
+		
 		for (ChartListItem chartListItem : items) {
 			if (chartListItem instanceof ObsItem) {
 				int itemObsId = ((ObsItem) chartListItem).getObsId();

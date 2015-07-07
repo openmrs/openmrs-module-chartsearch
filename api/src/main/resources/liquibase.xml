@@ -358,7 +358,8 @@
 			<tableExists tableName="chartsearch_synonyms" />
 		</preConditions>
 		<comment>Re-create chartsearch_synonyms table which is not yet being
-			used</comment>
+			used
+		</comment>
 		<dropTable tableName="chartsearch_synonyms" />
 		<createTable tableName="chartsearch_synonyms">
 			<column name="synonym_id" type="int" autoIncrement="true">
@@ -377,4 +378,23 @@
 			referencedColumnNames="group_id" onDelete="CASCADE" onUpdate="CASCADE" />
 	</changeSet>
 
+	<changeSet id="CSM-91-07072015-1826" author="k-joseph">
+		<comment>Adding category filters Pharmacologic Drug Class and Units of
+			Measure
+		</comment>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Pharmacology" />
+			<column name="filter_query" value='concept_class_name:"Pharmacologic Drug Class"' />
+			<column name="description"
+				value="Category item for filtering medications based on pharmacologic properties as opposed to therapeutic properties" />
+			<column name="uuid" value="663f91a0-24bd-11e5-b345-feff819cdc9f" />
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Units" />
+			<column name="filter_query" value='concept_class_name:"Units of Measure"' />
+			<column name="description"
+				value="Category item for filtering prescription and dispensation units" />
+			<column name="uuid" value="663f961e-24bd-11e5-b345-feff819cdc9f" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

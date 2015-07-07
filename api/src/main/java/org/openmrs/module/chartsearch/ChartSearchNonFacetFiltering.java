@@ -31,9 +31,11 @@ public class ChartSearchNonFacetFiltering {
 	 * @param categoryName
 	 * @return
 	 */
-	public boolean checkIfCategoriesContainNonFacetCategory(List<String> categories, String categoryName) {
+	private boolean checkIfCategoriesContainNonFacetCategory(List<String> categories, String categoryName) {
 		boolean contains = false;
-		if (categories != null && !categories.isEmpty() && categories.size() > 1 && StringUtils.isNotBlank(categoryName)) {
+		if (categories != null && !categories.isEmpty() && categories.size() > 1
+		        && !checkIfCategoriesContainBothAndOnlyAllergiesAndAppointments(categories)
+		        && StringUtils.isNotBlank(categoryName)) {
 			for (int i = 0; i < categories.size(); i++) {
 				if (categories.get(i).equals(categoryName)) {
 					contains = true;
@@ -44,7 +46,7 @@ public class ChartSearchNonFacetFiltering {
 		return contains;
 	}
 	
-	public boolean checkifCategoriesContainsOnlyOneNonFacetCategory(List<String> categories, String categoryName) {
+	private boolean checkifCategoriesContainsOnlyOneNonFacetCategory(List<String> categories, String categoryName) {
 		boolean contains = false;
 		if (categories != null && !categories.isEmpty() && StringUtils.isNotBlank(categoryName)) {
 			if (categories.size() == 1 && categories.get(0).equals(categoryName)) {
@@ -55,14 +57,30 @@ public class ChartSearchNonFacetFiltering {
 		return contains;
 	}
 	
+	private boolean checkIfCategoriesContainBothAndOnlyAllergiesAndAppointments(List<String> categories) {
+		boolean contains = false;
+		if (categories != null && !categories.isEmpty()) {
+			if (categories.size() == 2
+			        && ((categories.get(0).equals("allergies") && categories.get(1).equals("appointments")) || (categories
+			                .get(0).equals("appointments") && categories.get(1).equals("allergies")))) {
+				contains = true;
+			}
+		}
+		
+		return contains;
+	}
+	
 	public void applyNonFacetingLogicWhileSearching(Integer patientId, String searchText, List<String> selectedCategories,
-	                                               SolrServer solrServer, SolrQuery query, List<ChartListItem> list)
+	                                                SolrServer solrServer, SolrQuery query, List<ChartListItem> list)
 	    throws SolrServerException {
 		ChartSearchSearcher searcher = new ChartSearchSearcher();
 		
 		if (checkifCategoriesContainsOnlyOneNonFacetCategory(selectedCategories, "allergies")) {
 			searcher.searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 		} else if (checkifCategoriesContainsOnlyOneNonFacetCategory(selectedCategories, "appointments")) {
+			searcher.searchAppointmentsAndGenerateSolrDoc(patientId, searchText, solrServer, list);
+		} else if (checkIfCategoriesContainBothAndOnlyAllergiesAndAppointments(selectedCategories)) {
+			searcher.searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 			searcher.searchAppointmentsAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 		} else if (checkIfCategoriesContainNonFacetCategory(selectedCategories, "allergies")
 		        && !checkIfCategoriesContainNonFacetCategory(selectedCategories, "appointments")) {

@@ -228,7 +228,7 @@ function addAppointmentsToResults(app) {
 
 	if (jsonAfterParse.obs_singles.length === 0
 			&& jsonAfterParse.patientAllergies.length === 0
-			&& jsonAfterParse.patientAllergies[0].id === app.id) {
+			&& jsonAfterParse.patientAppointments[0].id === app.id) {
 		appointmentIdHtml = 'id="first_appointment"';
 		appId = "first_appointment";
 	} else {

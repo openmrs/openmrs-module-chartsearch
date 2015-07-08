@@ -84,37 +84,43 @@
 			}
 		});
 		
+	});
+	
 		function invokeBookmarkDetailsDialog(bookmarkUuid) {
-			jq('#dialog-bookmark-categories').html("");
-			
-			if(bookmarkUuid) {
-		    	jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('fetchBookmarkDetails') }",
-					data: {"uuid":bookmarkUuid},
-					dataType: "json",
-					success: function(bookmarks) {
-						var phrase = bookmarks.searchPhrase;
-						var cats = bookmarks.categories;
-						var bkName = bookmarks.bookmarkName;
-						
-						//TODO set dialog element values
-						jq("#dialog-bookmark-uuid").val(bookmarkUuid);
-						jq("#dialog-bookmark-name").val(bkName);
-						jq("#dialog-bookmark-phrase").val(phrase);
-						jq.each(cats, function(key, value) {   
-							jq('#dialog-bookmark-categories').append(jq("<option></option>").attr("value",key).text(value)); 
-						});
-						
-						if(jq('#dialog-bookmark-categories option').text() !== "") {
-							jq('#dialog-bookmark-categories option').prop('selected', true);
+			if(isLoggedInSynchronousCheck()) {
+				jq('#dialog-bookmark-categories').html("");
+				
+				if(bookmarkUuid) {
+			    	jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('fetchBookmarkDetails') }",
+						data: {"uuid":bookmarkUuid},
+						dataType: "json",
+						success: function(bookmarks) {
+							var phrase = bookmarks.searchPhrase;
+							var cats = bookmarks.categories;
+							var bkName = bookmarks.bookmarkName;
+							
+							//TODO set dialog element values
+							jq("#dialog-bookmark-uuid").val(bookmarkUuid);
+							jq("#dialog-bookmark-name").val(bkName);
+							jq("#dialog-bookmark-phrase").val(phrase);
+							jq.each(cats, function(key, value) {   
+								jq('#dialog-bookmark-categories').append(jq("<option></option>").attr("value",key).text(value)); 
+							});
+							
+							if(jq('#dialog-bookmark-categories option').text() !== "") {
+								jq('#dialog-bookmark-categories option').prop('selected', true);
+							}
+							invokeDialog("#selected-bookmark-dialog-content", "Editing '" + bkName + "' Bookmark", "450px");
+						},
+						error: function(e) {
 						}
-						invokeDialog("#selected-bookmark-dialog-content", "Editing '" + bkName + "' Bookmark", "450px");
-					},
-					error: function(e) {
-					}
-				});
-	    	}
+					});
+		    	}
+		    } else {
+				location.reload();
+			}
 	    }
 		
 		function displayExistingBookmarks() {
@@ -145,53 +151,61 @@
 		}
 		
 		function deleteAllSelectedBookmarks() {
-    		var selectedUuids = returnUuidsOfSeletedBookmarks();
-    		var deleteConfirmMsg = "Are you sure you want to delete " + selectedUuids.length + " Item(s)!";
-    		
-    		if(selectedUuids.length !== 0) {
-	    		if(confirm(deleteConfirmMsg)) {
-	    			jq.ajax({
-						type: "POST",
-						url: "${ ui.actionLink('deleteSelectedBookmarks') }",
-						data: {"selectedUuids":selectedUuids},
-						dataType: "json",
-						success: function(remainingBookmarks) {
-							bookmarksAfterparse = remainingBookmarks.reverse();
-							
-							displayExistingBookmarks();
-						},
-						error: function(e) {
-						}
-					});
+			if(isLoggedInSynchronousCheck()) {
+	    		var selectedUuids = returnUuidsOfSeletedBookmarks();
+	    		var deleteConfirmMsg = "Are you sure you want to delete " + selectedUuids.length + " Item(s)!";
+	    		
+	    		if(selectedUuids.length !== 0) {
+		    		if(confirm(deleteConfirmMsg)) {
+		    			jq.ajax({
+							type: "POST",
+							url: "${ ui.actionLink('deleteSelectedBookmarks') }",
+							data: {"selectedUuids":selectedUuids},
+							dataType: "json",
+							success: function(remainingBookmarks) {
+								bookmarksAfterparse = remainingBookmarks.reverse();
+								
+								displayExistingBookmarks();
+							},
+							error: function(e) {
+							}
+						});
+		    		} else {
+		    			//alert("DELETE Cancelled");
+		    		}
 	    		} else {
-	    			//alert("DELETE Cancelled");
+	    			alert("Select at-least one Bookmark to be deleted!");
 	    		}
     		} else {
-    			alert("Select at-least one Bookmark to be deleted!");
-    		}
+				location.reload();
+			}
     	}
     	
     	function setSelectedBookmarkAsDefaultSearch() {
-    		var selectedDefaultBkuuid = returnUuidOfSelectedDefaultBookmark();
-    		
-    		if(selectedDefaultBkuuid) {
-    			jq.ajax({
-						type: "POST",
-						url: "${ ui.actionLink('setBookmarkAsDefaultSearch') }",
-						data: {"selectedUuid":selectedDefaultBkuuid},
-						dataType: "json",
-						success: function(bookmarks) {
-							bookmarksAfterparse = bookmarks.reverse();
-							
-							displayExistingBookmarks();
-							alert("Successfully saved default search :-)");
-						},
-						error: function(e) {
-						}
-					});
-    		} else {
-    			alert("Please select a bookmark to set as a default search and try again!");
-    		}
+    		if(isLoggedInSynchronousCheck()) {
+	    		var selectedDefaultBkuuid = returnUuidOfSelectedDefaultBookmark();
+	    		
+	    		if(selectedDefaultBkuuid) {
+	    			jq.ajax({
+							type: "POST",
+							url: "${ ui.actionLink('setBookmarkAsDefaultSearch') }",
+							data: {"selectedUuid":selectedDefaultBkuuid},
+							dataType: "json",
+							success: function(bookmarks) {
+								bookmarksAfterparse = bookmarks.reverse();
+								
+								displayExistingBookmarks();
+								alert("Successfully saved default search :-)");
+							},
+							error: function(e) {
+							}
+						});
+	    		} else {
+	    			alert("Please select a bookmark to set as a default search and try again!");
+	    		}
+	    	} else {
+				location.reload();
+			}
     	}
     	
     	function returnUuidsOfSeletedBookmarks() {
@@ -221,44 +235,51 @@
     	}
     	
     	function saveBookmarkProperties(bookmarkUuid, bkName, phrase, categories) {
-    		jq('#selected-bookmark-dialog-content').dialog('close');
-    		if(bookmarkUuid !== "" && bkName !== "" && phrase !== "") {
-    			jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('saveBookmarkProperties') }",
-					data: { "bookmarkUuid":bookmarkUuid, "bookmarkName":bkName, "searchPhrase":phrase, "selectedCategories":categories },
-					dataType: "json",
-					success: function(remainingBookmarks) {
-						bookmarksAfterparse = remainingBookmarks.reverse();
-							
-						displayExistingBookmarks();
-					},
-					error: function(e) {
-					}
-				});
-    		}
+	    	if(isLoggedInSynchronousCheck()) {
+	    		jq('#selected-bookmark-dialog-content').dialog('close');
+	    		if(bookmarkUuid !== "" && bkName !== "" && phrase !== "") {
+	    			jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('saveBookmarkProperties') }",
+						data: { "bookmarkUuid":bookmarkUuid, "bookmarkName":bkName, "searchPhrase":phrase, "selectedCategories":categories },
+						dataType: "json",
+						success: function(remainingBookmarks) {
+							bookmarksAfterparse = remainingBookmarks.reverse();
+								
+							displayExistingBookmarks();
+						},
+						error: function(e) {
+						}
+					});
+	    		}
+    		} else {
+				location.reload();
+			}
     	}
     	
     	function deleteBookmarkInTheDialog(bookmarkUuid) {
-    		jq('#selected-bookmark-dialog-content').dialog('close');
-    		if(bookmarkUuid !== "") {
-    			jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('deleteBookmarkInTheDialog') }",
-					data: { "bookmarkUuid":bookmarkUuid },
-					dataType: "json",
-					success: function(remainingBookmarks) {
-						bookmarksAfterparse = remainingBookmarks.reverse();
-							
-						displayExistingBookmarks();
-					},
-					error: function(e) {
-					}
-				});
-    		}
+    		if(isLoggedInSynchronousCheck()) {
+	    		jq('#selected-bookmark-dialog-content').dialog('close');
+	    		if(bookmarkUuid !== "") {
+	    			jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('deleteBookmarkInTheDialog') }",
+						data: { "bookmarkUuid":bookmarkUuid },
+						dataType: "json",
+						success: function(remainingBookmarks) {
+							bookmarksAfterparse = remainingBookmarks.reverse();
+								
+							displayExistingBookmarks();
+						},
+						error: function(e) {
+						}
+					});
+	    		}
+	    	} else {
+				location.reload();
+			}
     	}
 		
-	});
 </script>
 
 

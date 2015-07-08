@@ -37,13 +37,17 @@
 		<require_module version="${emrapiVersion}">
 			org.openmrs.module.emrapi
 		</require_module>
-		
+
 		<require_module version="${allergyapiVersion}">
 			org.openmrs.module.allergyapi
 		</require_module>
-		
+
 		<require_module version="${appointmentschedulingVersion}">
 			org.openmrs.module.appointmentscheduling
+		</require_module>
+
+		<require_module version="${htmlformentryuiVersion}">
+			org.openmrs.module.htmlformentryui
 		</require_module>
 
 	</require_modules>
@@ -140,7 +144,7 @@
 		ChartSearchCategories.hbm.xml
 
 	</mappingFiles>
-	
+
 	<packagesWithMappedClasses>
 		org.openmrs.module.chartsearch.cache
 	</packagesWithMappedClasses>

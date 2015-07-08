@@ -212,52 +212,6 @@
 			return false;
 		});
 		
-		function submitChartSearchFormWithAjax() {
-			var searchText = document.getElementById('searchText');
-			var searchHistory = jsonAfterParse.searchHistory;
-			var patientId = jq("#patient_id").val().replace("Patient#", "");
-			var categories = getAllCheckedCategoriesOrFacets();
-			
-			reInitializeGlobalVars();
-			jq("#chart-previous-searches-display").hide();
-			jq(".obsgroup_view").empty();
-			jq("#found-results-summary").html('');
-			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
-			jq('.ui-dialog-content').dialog('close');	
-			jq("#lauche-other-chartsearch-features").hide();
-			jq("#lauche-stored-bookmark").hide();
-			jq("#chart-previous-searches-display").hide();
-			jq('#filter_categories_categories').removeClass('display_filter_onclick');
-			
-			jq.ajax({
-				type: "POST",
-				url: "${ ui.actionLink('getResultsFromTheServer') }",
-				data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
-				dataType: "json",
-				success: function(results) {
-					jq("#obsgroups_results").html('');
-					jq(".inside_filter_categories").fadeOut(500);
-									
-					jsonAfterParse = JSON.parse(results);
-					refresh_data();
-					
-					jq(".results_table_wrap").fadeIn(500);
-					autoClickFirstResultToShowItsDetails();
-					jq(".inside_filter_categories").fadeIn(500);
-							
-					showHistorySuggestionsOnLoad();
-					hideSearchSuggestions();
-    				displayBothPersonalAndGlobalNotes();
-    				displayQuickSearches();
-    				updateBookmarksAndNotesUI();
-    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
-				},
-				error: function(e) {
-				  //alert("Error occurred!!! " + e);
-				}
-			});
-		}
-		
 		var delay = (function() {
 		  var timer = 0;
 		  return function(callback, ms){
@@ -311,6 +265,59 @@
 				}
 			}
 		});
+		
+		
+    });
+    
+		function submitChartSearchFormWithAjax() {
+			if(isLoggedInSynchronousCheck()) {
+				var searchText = document.getElementById('searchText');
+				var searchHistory = jsonAfterParse.searchHistory;
+				var patientId = jq("#patient_id").val().replace("Patient#", "");
+				var categories = getAllCheckedCategoriesOrFacets();
+				
+				reInitializeGlobalVars();
+				jq("#chart-previous-searches-display").hide();
+				jq(".obsgroup_view").empty();
+				jq("#found-results-summary").html('');
+				jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+				jq('.ui-dialog-content').dialog('close');	
+				jq("#lauche-other-chartsearch-features").hide();
+				jq("#lauche-stored-bookmark").hide();
+				jq("#chart-previous-searches-display").hide();
+				jq('#filter_categories_categories').removeClass('display_filter_onclick');
+				
+				jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('getResultsFromTheServer') }",
+					data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
+					dataType: "json",
+					success: function(results) {
+						jq("#obsgroups_results").html('');
+						jq(".inside_filter_categories").fadeOut(500);
+										
+						jsonAfterParse = JSON.parse(results);
+						refresh_data();
+						
+						jq(".results_table_wrap").fadeIn(500);
+						autoClickFirstResultToShowItsDetails();
+						jq(".inside_filter_categories").fadeIn(500);
+								
+						showHistorySuggestionsOnLoad();
+						hideSearchSuggestions();
+	    				displayBothPersonalAndGlobalNotes();
+	    				displayQuickSearches();
+	    				updateBookmarksAndNotesUI();
+	    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
+					},
+					error: function(e) {
+					  //alert("Error occurred!!! " + e);
+					}
+				});
+			} else {
+				location.reload();
+			}
+		}
 		
 		function increamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
 			var obs = single_obsJSON[navigationIndex];
@@ -367,25 +374,29 @@
 		}
 		
 		function showSearchSuggestions() {
-			var suggestionsArray = jsonAfterParse.searchSuggestions;
-			var searchSuggestions = "";
-			var searchText = jq('#searchText').val();
-			
-			searchSuggestions += "<a id='hide-search-suggestions-ui'>Close</a>";
-			
-			for(i = 0; i < suggestionsArray.length; i++) {
-				var suggestion = suggestionsArray[i];
+			if(isLoggedInSynchronousCheck()) {
+				var suggestionsArray = jsonAfterParse.searchSuggestions;
+				var searchSuggestions = "";
+				var searchText = jq('#searchText').val();
 				
-				if(strStartsWith(suggestion.toUpperCase(), searchText.toUpperCase()) && searchSuggestions.indexOf(suggestion) <= 0) {
-					searchSuggestions += "<a class='search-text-suggestion' href=''>" + suggestion + "</a><br/>";
+				searchSuggestions += "<a id='hide-search-suggestions-ui'>Close</a>";
+				
+				for(i = 0; i < suggestionsArray.length; i++) {
+					var suggestion = suggestionsArray[i];
+					
+					if(strStartsWith(suggestion.toUpperCase(), searchText.toUpperCase()) && searchSuggestions.indexOf(suggestion) <= 0) {
+						searchSuggestions += "<a class='search-text-suggestion' href=''>" + suggestion + "</a><br/>";
+					}
 				}
-			}
-			
-			document.getElementById('chart-searches-suggestions').innerHTML = searchSuggestions;
-			if(searchSuggestions) {
-				jq("#chart-searches-suggestions").show();
+				
+				document.getElementById('chart-searches-suggestions').innerHTML = searchSuggestions;
+				if(searchSuggestions) {
+					jq("#chart-searches-suggestions").show();
+				} else {
+					jq("#chart-searches-suggestions").hide();
+				}
 			} else {
-				jq("#chart-searches-suggestions").hide();
+				location.reload();
 			}
 		}
 		
@@ -407,55 +418,60 @@
 		}
 		
 		function updateSearchHistoryDisplay() {
-			var historyArray;
-			var historySuggestions = "";
-			var searchText = jq('#searchText').val();
-			
-			if(reversed === true) {
-				historyArray = jsonAfterParse.searchHistory
-			} else {
-				historyArray = jsonAfterParse.searchHistory.reverse();
-				reversed = true;
-			}
-			
-			for(i = 0; i < historyArray.length; i++) {
-				var history = historyArray[i];
+			if(isLoggedInSynchronousCheck()) {
+				var historyArray;
+				var historySuggestions = "";
+				var searchText = jq('#searchText').val();
 				
-				if(strStartsWith(history.searchPhrase.toUpperCase(), searchText.toUpperCase()) && historySuggestions.indexOf(history) <= 0) {
-					historySuggestions += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history.searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history.formattedLastSearchedAt + "</em><i id='" + history.uuid + "' class='icon-remove delete-search-history'></i></div>";
+				if(reversed === true) {
+					historyArray = jsonAfterParse.searchHistory
+				} else {
+					historyArray = jsonAfterParse.searchHistory.reverse();
+					reversed = true;
 				}
-			}
-			if(historySuggestions === "") {
-				showSearchSuggestions();
+				
+				for(i = 0; i < historyArray.length; i++) {
+					var history = historyArray[i];
+					
+					if(strStartsWith(history.searchPhrase.toUpperCase(), searchText.toUpperCase()) && historySuggestions.indexOf(history) <= 0) {
+						historySuggestions += "<div class='search-history-item'><a class='search-using-this-history' href=''>" + history.searchPhrase + "</a>&nbsp&nbsp-&nbsp&nbsp<em>" + history.formattedLastSearchedAt + "</em><i id='" + history.uuid + "' class='icon-remove delete-search-history'></i></div>";
+					}
+				}
+				if(historySuggestions === "") {
+					showSearchSuggestions();
+				} else {
+					hideSearchSuggestions();
+				}
+				
+				document.getElementById('chart-previous-searches-display').innerHTML = historySuggestions;
 			} else {
-				hideSearchSuggestions();
+				location.reload();
 			}
-			
-			document.getElementById('chart-previous-searches-display').innerHTML = historySuggestions;
 		}
 		
 		function deleteSearchHistory(historyUuid) {
-			if(historyUuid) {
-				jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('deleteSearchHistory') }",
-					data: {"historyUuid":historyUuid},
-					dataType: "json",
-					success: function(updatedHistory) {
-						var history = updatedHistory.searchHistory;
-						
-						jsonAfterParse.searchHistory = history;
-						showHistorySuggestionsOnLoad();
-					},
-					error: function(e) {
-						//DO Nothing
-					}
-				});
+			if(isLoggedInSynchronousCheck()) {
+				if(historyUuid) {
+					jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('deleteSearchHistory') }",
+						data: {"historyUuid":historyUuid},
+						dataType: "json",
+						success: function(updatedHistory) {
+							var history = updatedHistory.searchHistory;
+							
+							jsonAfterParse.searchHistory = history;
+							showHistorySuggestionsOnLoad();
+						},
+						error: function(e) {
+							//DO Nothing
+						}
+					});
+				}
+			} else {
+				location.reload();
 			}
 		}
-		
-    });
-    
 </script>
 
 <style type="text/css">

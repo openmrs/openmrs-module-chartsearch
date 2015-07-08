@@ -1,3 +1,6 @@
+$("#passwordPopup").hide();
+
+var tryingToSubmit = false;
 var dates = {
 	convert : function(d) {
 		// Converts the date in d to a date-object. The input can be:
@@ -956,8 +959,6 @@ function load_detailed_obs(obs_id) {
 
 /* ############# Filters ############### */
 
-var currentJson = jsonAfterParse;
-
 function get_timeback_date(time_back) {
 	var today = new Date();
 	today.setDate(today.getDate() - time_back);
@@ -1233,7 +1234,7 @@ function displayCategories(jsonAfterParse) {
 		// record previous state
 		for ( var i = 0; i < categories.length; i++) {
 			var catId = "#" + categories[i].id;
-			if (jq(catId).prop('checked')) {
+			if ($(catId).prop('checked')) {
 				checkedCategories[i] = catId;
 			}
 		}
@@ -1435,14 +1436,14 @@ function displayBothPersonalAndGlobalNotes() {
 }
 
 function scrollToBottomOfDiv(element) {
-	var wtf = jq(element);
+	var wtf = $(element);
 	var height = wtf[0].scrollHeight;
 	wtf.scrollTop(height);
 }
 
 function closeAllActiveDialogs() {
-	jq("#favorite-search-record-dialog").dialog("close");
-	jq("#comment-on-search-record-dialog").dialog("close");
+	$("#favorite-search-record-dialog").dialog("close");
+	$("#comment-on-search-record-dialog").dialog("close");
 }
 
 function displayQuickSearches() {
@@ -1480,31 +1481,31 @@ function displayQuickSearches() {
 	}
 
 	if (quickSearchDisplay !== "") {
-		jq("#quick-searches-dialog-message").html(quickSearchDisplay);
+		$("#quick-searches-dialog-message").html(quickSearchDisplay);
 	}
 }
 
 function getAllCheckedCategoriesOrFacets() {
 	var categories = [];
-	jq("input:checkbox[name=categories]:checked").each(function() {
-		categories.push(jq(this).val());
+	$("input:checkbox[name=categories]:checked").each(function() {
+		categories.push($(this).val());
 	});
 	return categories;
 }
 
 function unSelectAllCategories() {
-	jq("input:checkbox[name=categories]:checked").each(function() {
-		jq(this).prop('checked', false);
+	$("input:checkbox[name=categories]:checked").each(function() {
+		$(this).prop('checked', false);
 	});
 }
 
 function updateCategeriesAtUIGlobally(categories) {
 	if (categories && categories.length === 0) {
-		jq("#category-filter_method").text("All Categories");
+		$("#category-filter_method").text("All Categories");
 	} else {
 		if (categories.length === 1) {
 			if (categories[0] && categories[0] !== "") {
-				jq("#category-filter_method").text(
+				$("#category-filter_method").text(
 						capitalizeFirstLetter(categories[0]));
 			}
 		} else if (categories.length >= 2) {
@@ -1514,20 +1515,20 @@ function updateCategeriesAtUIGlobally(categories) {
 						+ capitalizeFirstLetter(categories[1]);
 
 				if (catsLabel.length <= 14) {
-					jq("#category-filter_method").text(catsLabel + "...");
+					$("#category-filter_method").text(catsLabel + "...");
 				} else {
-					jq("#category-filter_method").text(
+					$("#category-filter_method").text(
 							capitalizeFirstLetter(categories[0]) + "...");
 				}
 			}
 		}
-		jq("input:checkbox[class=category_check]").each(function() {
-			var uiCat = jq(this).val();
+		$("input:checkbox[class=category_check]").each(function() {
+			var uiCat = $(this).val();
 
 			for (i = 0; i < categories.length; i++) {
 				var cat = categories[i];
 				if (uiCat === cat) {
-					jq(this).prop('checked', true);
+					$(this).prop('checked', true);
 				}
 			}
 		});
@@ -1535,22 +1536,22 @@ function updateCategeriesAtUIGlobally(categories) {
 }
 
 function checkOrUnAllOtherCheckBoxesInADiv(divElement, skipId) {
-	jq(divElement + " input").each(function(event) {
-		var selectedId = jq(this).attr("id");
+	$(divElement + " input").each(function(event) {
+		var selectedId = $(this).attr("id");
 
-		if (selectedId !== skipId && jq(this).attr("type") !== "radio") {
-			if (jq("#" + skipId).is(":checked")) {
-				jq(this).prop("checked", true);
+		if (selectedId !== skipId && $(this).attr("type") !== "radio") {
+			if ($("#" + skipId).is(":checked")) {
+				$(this).prop("checked", true);
 			} else {
-				jq(this).prop("checked", false);
+				$(this).prop("checked", false);
 			}
 		}
 	});
 }
 
-/* Overrides jq.("").dialog() */
+/* Overrides $.("").dialog() */
 function invokeDialog(dialogMessageElement, dialogTitle, dialogWidth) {
-	jq(dialogMessageElement).dialog({
+	$(dialogMessageElement).dialog({
 		title : dialogTitle,
 		width : dialogWidth
 	});
@@ -1565,15 +1566,31 @@ function reInitializeGlobalVars() {
 function autoClickFirstResultToShowItsDetails() {
 	if (jsonAfterParse.obs_singles.length
 			&& jsonAfterParse.obs_singles.length > 0) {
-		jq('#first_obs_single').trigger('click');
+		$('#first_obs_single').trigger('click');
 	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
 			&& jsonAfterParse.patientAllergies.length
 			&& jsonAfterParse.patientAllergies.length > 0) {
-		jq('#first_alergen').trigger('click');
+		$('#first_alergen').trigger('click');
 	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
 			&& (!jsonAfterParse.patientAllergies.length || jsonAfterParse.patientAllergies.length === 0)
 			&& jsonAfterParse.patientAppointments.length
 			&& jsonAfterParse.patientAppointments.length > 0) {
-		jq('#first_appointment').trigger('click');
+		$('#first_appointment').trigger('click');
 	}
+}
+
+function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('htmlformentryui',
+	// 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {} but
+	// synchronously
+	var isLoggedIn = false;
+	$.ajax({
+		url : emr.fragmentActionLink('htmlformentryui',
+				'htmlform/enterHtmlForm', 'checkIfLoggedIn'),
+		dataType : 'json',
+		async : false,
+		success : function(loggedIn) {
+			isLoggedIn = loggedIn.isLoggedIn;
+		}
+	});
+	return isLoggedIn;
 }

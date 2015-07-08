@@ -63,6 +63,8 @@
     		deleteAllSelectedHistory();
     	});
     	
+    });
+
     	function displayHistoryExistingHistory() {
     		var thHistoryToday = "";
     		var thHistoryWeek = "";
@@ -181,33 +183,35 @@
     	}
     	
     	function deleteAllSelectedHistory() {
-    		var selectedUuids = returnuuidsOfSeletedHistory();
-    		var deleteConfirmMsg = "Are you sure you want to delete " + selectedUuids.length + " Item(s)!";
-    		
-    		if(selectedUuids.length !== 0) {
-	    		if(confirm(deleteConfirmMsg)) {
-	    			jq.ajax({
-						type: "POST",
-						url: "${ ui.actionLink('deleteSelectedHistory') }",
-						data: {"selectedUuids":selectedUuids},
-						dataType: "json",
-						success: function(remainingHistory) {
-							historyAfterparse = remainingHistory.reverse();
-							
-							displayHistoryExistingHistory();
-						},
-						error: function(e) {
-						}
-					});
+    		if(isLoggedInSynchronousCheck()) {
+	    		var selectedUuids = returnuuidsOfSeletedHistory();
+	    		var deleteConfirmMsg = "Are you sure you want to delete " + selectedUuids.length + " Item(s)!";
+	    		
+	    		if(selectedUuids.length !== 0) {
+		    		if(confirm(deleteConfirmMsg)) {
+		    			jq.ajax({
+							type: "POST",
+							url: "${ ui.actionLink('deleteSelectedHistory') }",
+							data: {"selectedUuids":selectedUuids},
+							dataType: "json",
+							success: function(remainingHistory) {
+								historyAfterparse = remainingHistory.reverse();
+								
+								displayHistoryExistingHistory();
+							},
+							error: function(e) {
+							}
+						});
+		    		} else {
+		    			//alert("DELETE Cancelled");
+		    		}
 	    		} else {
-	    			//alert("DELETE Cancelled");
+	    			alert("Select at-least one history to be deleted!");
 	    		}
-    		} else {
-    			alert("Select at-least one history to be deleted!");
-    		}
+	    	} else {
+				location.reload();
+			}
     	}
-    	
-    });
 </script>
 
 <h1>Manage History</h1>

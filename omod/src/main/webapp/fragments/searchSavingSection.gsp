@@ -316,8 +316,10 @@
     		}
     		return false;
     	});
-    	
-    	function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
+    
+	});
+	
+    function saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId) {
     		checkIfPhraseExisitsInHistory(phrase, patientId, function(exists) {
     			if(exists === true) {
 	    			checkIfBookmarkExists(bookmarkName, phrase, selectedCats, patientId, function(bookmarkUuid) {
@@ -371,29 +373,32 @@
     	}
 		
 		function saveBookmarkAtServerLayer(selectedCategories, phrase, bookmarkName, patientId) {
-			if(phrase && bookmarkName && patientId) {
-				if(selectedCategories === "") {
-					selectedCategories = "none";
-				}
-				jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('saveOrUpdateBookmark') }",
-					data: {"selectedCategories":selectedCategories, "searchPhrase":phrase, "bookmarkName":bookmarkName, "patientId":patientId},
-					dataType: "json",
-					success: function(bkObjs) {
-						if(bkObjs) {
-							jsonAfterParse.searchBookmarks = bkObjs.allBookmarks;
-							jq("#current-bookmark-object").val(bkObjs.currentUuid);
-							displayExistingBookmarks();
-						}
-						jq("#favorite-search-record").prop('disabled', false);
-					},
-					error: function(e) {
-						//alert(e);
+			if(isLoggedInSynchronousCheck()) {
+				if(phrase && bookmarkName && patientId) {
+					if(selectedCategories === "") {
+						selectedCategories = "none";
 					}
-				});
-			}  	
-    	
+					jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('saveOrUpdateBookmark') }",
+						data: {"selectedCategories":selectedCategories, "searchPhrase":phrase, "bookmarkName":bookmarkName, "patientId":patientId},
+						dataType: "json",
+						success: function(bkObjs) {
+							if(bkObjs) {
+								jsonAfterParse.searchBookmarks = bkObjs.allBookmarks;
+								jq("#current-bookmark-object").val(bkObjs.currentUuid);
+								displayExistingBookmarks();
+							}
+							jq("#favorite-search-record").prop('disabled', false);
+						},
+						error: function(e) {
+							//alert(e);
+						}
+					});
+				}  	
+    		} else {
+				location.reload();
+			}
     	}
     	
     	function addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName) {
@@ -413,18 +418,22 @@
     	}
     	
     	function checkIfPhraseExisitsInHistory(searchPhrase, patientId, taskToRunOnSuccess) {
-    		if(searchPhrase !== "") {
-	    		jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('checkIfPhraseExisitsInHistory') }",
-					data: {"searchPhrase":searchPhrase, "patientId":patientId},
-					dataType: "json",
-					success: function(exists) {
-						taskToRunOnSuccess(exists);
-					},
-					error: function(e) {
-					}
-				});
+    		if(isLoggedInSynchronousCheck()) {
+	    		if(searchPhrase !== "") {
+		    		jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('checkIfPhraseExisitsInHistory') }",
+						data: {"searchPhrase":searchPhrase, "patientId":patientId},
+						dataType: "json",
+						success: function(exists) {
+							taskToRunOnSuccess(exists);
+						},
+						error: function(e) {
+						}
+					});
+				}
+			} else {
+				location.reload();
 			}
     	}
     	
@@ -439,22 +448,26 @@
     	}
     	
     	function deleteSearchBookmark(bookmarkUuid, bookmarkIsOpen) {
-    		if(bookmarkUuid) {
-    			jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('deleteSearchBookmark') }",
-					data: {"bookmarkUuid":bookmarkUuid},
-					dataType: "json",
-					success: function(bookmarks) {
-						//removeBookmarkAtUIlayer();
-						if(bookmarks) {
-							jsonAfterParse.searchBookmarks = bookmarks;
-							displayExistingBookmarks();
+    		if(isLoggedInSynchronousCheck()) {
+	    		if(bookmarkUuid) {
+	    			jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('deleteSearchBookmark') }",
+						data: {"bookmarkUuid":bookmarkUuid},
+						dataType: "json",
+						success: function(bookmarks) {
+							//removeBookmarkAtUIlayer();
+							if(bookmarks) {
+								jsonAfterParse.searchBookmarks = bookmarks;
+								displayExistingBookmarks();
+							}
+						},
+						error: function(e) {
 						}
-					},
-					error: function(e) {
-					}
-				});
+					});
+				}
+			} else {
+				location.reload();
 			}
     	}
     	
@@ -471,27 +484,31 @@
 	    }
 	    
 	    function searchUsingBookmark(bookmarkUuid) {
-	    	if(bookmarkUuid) {
-	    		jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('getSearchBookmarkSearchDetailsByUuid') }",
-					data: {"uuid":bookmarkUuid},
-					dataType: "json",
-					success: function(bookmarks) {
-						var phrase = bookmarks.searchPhrase;
-						var cats = bookmarks.categories;
-						var bkName = bookmarks.bookmarkName;
-						var commaCats = bookmarks.commaCategories;
-						
-						autoFillSearchForm(phrase, cats, bkName);
-						jq("#current-bookmark-name").val(bkName);
-						
-						submitChartSearchFormWithAjax2(phrase, cats);
-					},
-					error: function(e) {
-					}
-				});
-	    	}
+	    	if(isLoggedInSynchronousCheck()) {
+		    	if(bookmarkUuid) {
+		    		jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('getSearchBookmarkSearchDetailsByUuid') }",
+						data: {"uuid":bookmarkUuid},
+						dataType: "json",
+						success: function(bookmarks) {
+							var phrase = bookmarks.searchPhrase;
+							var cats = bookmarks.categories;
+							var bkName = bookmarks.bookmarkName;
+							var commaCats = bookmarks.commaCategories;
+							
+							autoFillSearchForm(phrase, cats, bkName);
+							jq("#current-bookmark-name").val(bkName);
+							
+							submitChartSearchFormWithAjax2(phrase, cats);
+						},
+						error: function(e) {
+						}
+					});
+		    	}
+	    	} else {
+				location.reload();
+			}
 	    }
 	    
 	    function autoFillSearchForm(searchPhrase, categories) {
@@ -515,50 +532,54 @@
 		}
 		
 		function submitChartSearchFormWithAjax2(phrase, cats) {
-		    var patientId = jq("#patient_id").val().replace("Patient#", "");
-			var categories = getAllCheckedCategoriesOrFacets();
-			var searchText = document.getElementById('searchText');
+			if(isLoggedInSynchronousCheck()) {
+			    var patientId = jq("#patient_id").val().replace("Patient#", "");
+				var categories = getAllCheckedCategoriesOrFacets();
+				var searchText = document.getElementById('searchText');
+				
+				if(phrase === "") {
+					phrase = searchText;
+				}
+				if(cats === "") {
+					cats = categories;
+				}
+				reInitializeGlobalVars();
+				jq(".obsgroup_view").empty();
+				jq("#found-results-summary").html('');
+				jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
+				jq('.ui-dialog-content').dialog('close');	
+				jq("#lauche-other-chartsearch-features").hide();
+				jq("#lauche-stored-bookmark").hide();
+				jq("#chart-previous-searches-display").hide();
+				jq('#filter_categories_categories').removeClass('display_filter_onclick');
+				
+				jq.ajax({
+					type: "POST",
+					url: "${ ui.actionLink('getResultsFromTheServer') }",
+					data: { "patientId":patientId, "phrase":phrase, "categories":cats },
+					dataType: "json",
+			        success: function(results) {
+			            jq("#obsgroups_results").html('');
+			            jq(".inside_filter_categories").fadeOut(500);
 			
-			if(phrase === "") {
-				phrase = searchText;
-			}
-			if(cats === "") {
-				cats = categories;
-			}
-			reInitializeGlobalVars();
-			jq(".obsgroup_view").empty();
-			jq("#found-results-summary").html('');
-			jq("#obsgroups_results").html('<img class="search-spinner" src="../ms/uiframework/resource/uicommons/images/spinner.gif">');
-			jq('.ui-dialog-content').dialog('close');	
-			jq("#lauche-other-chartsearch-features").hide();
-			jq("#lauche-stored-bookmark").hide();
-			jq("#chart-previous-searches-display").hide();
-			jq('#filter_categories_categories').removeClass('display_filter_onclick');
+			            jsonAfterParse = JSON.parse(results);
+			            refresh_data();
 			
-			jq.ajax({
-				type: "POST",
-				url: "${ ui.actionLink('getResultsFromTheServer') }",
-				data: { "patientId":patientId, "phrase":phrase, "categories":cats },
-				dataType: "json",
-		        success: function(results) {
-		            jq("#obsgroups_results").html('');
-		            jq(".inside_filter_categories").fadeOut(500);
-		
-		            jsonAfterParse = JSON.parse(results);
-		            refresh_data();
-		
-		            jq(".results_table_wrap").fadeIn(500);
-		            autoClickFirstResultToShowItsDetails();
-		            jq(".inside_filter_categories").fadeIn(500);
-		            jq("#bookmark-category-names").text(cats);
-		            jq("#bookmark-search-phrase").text(phrase);
-		            
-		            updateBookmarksAndNotesUI();
-		            displayQuickSearches();
-		            updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
-		        },
-		        error: function(e) {}
-		    });
+			            jq(".results_table_wrap").fadeIn(500);
+			            autoClickFirstResultToShowItsDetails();
+			            jq(".inside_filter_categories").fadeIn(500);
+			            jq("#bookmark-category-names").text(cats);
+			            jq("#bookmark-search-phrase").text(phrase);
+			            
+			            updateBookmarksAndNotesUI();
+			            displayQuickSearches();
+			            updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
+			        },
+			        error: function(e) {}
+			    });
+		    } else {
+				location.reload();
+			}
 		}
     	
     	function changeNotesBgColor(element, color) {
@@ -567,37 +588,41 @@
     	}
     	
     	function saveSearchNote() {
-    		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val().replace("Patient#", "");
-			var comment = jq("#new-comment-or-note").val();
-    		var priority = jq("#new-note-priority option:selected").text();
-    		var backgroundColor = jq("#new-note-color option:selected").text();
-    		
-    		changeNotesBgColor("#new-comment-or-note", "white");
-    	
-    		if(searchPhrase && patientId && comment) {
-	    		jq.ajax({
-					type: "POST",
-					url: "${ ui.actionLink('saveANewNoteOnToASearch') }",
-					data: {"searchPhrase":searchPhrase, "patientId":patientId, "comment":comment, "priority":priority, "backgroundColor":backgroundColor},
-					dataType: "json",
-					success: function(allNotes) {
-						if(allNotes) {
-							jsonAfterParse.personalNotes = allNotes.personalNotes;
-							jsonAfterParse.globalNotes = allNotes.globalNotes;
-							jsonAfterParse.currentUser = allNotes.currentUser;
-							
-							displayBothPersonalAndGlobalNotes();
-							jq("#new-comment-or-note").val("");
-    						jq("#new-comment-or-note").css("border", "");
+    		if(isLoggedInSynchronousCheck()) {
+	    		var searchPhrase = jq("#searchText").val();
+	    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+				var comment = jq("#new-comment-or-note").val();
+	    		var priority = jq("#new-note-priority option:selected").text();
+	    		var backgroundColor = jq("#new-note-color option:selected").text();
+	    		
+	    		changeNotesBgColor("#new-comment-or-note", "white");
+	    	
+	    		if(searchPhrase && patientId && comment) {
+		    		jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('saveANewNoteOnToASearch') }",
+						data: {"searchPhrase":searchPhrase, "patientId":patientId, "comment":comment, "priority":priority, "backgroundColor":backgroundColor},
+						dataType: "json",
+						success: function(allNotes) {
+							if(allNotes) {
+								jsonAfterParse.personalNotes = allNotes.personalNotes;
+								jsonAfterParse.globalNotes = allNotes.globalNotes;
+								jsonAfterParse.currentUser = allNotes.currentUser;
+								
+								displayBothPersonalAndGlobalNotes();
+								jq("#new-comment-or-note").val("");
+	    						jq("#new-comment-or-note").css("border", "");
+							}
+						},
+						error: function(e) {
 						}
-					},
-					error: function(e) {
-					}
-				});
+					});
+				} else {
+					jq("#new-comment-or-note").css("border", "2px solid rgb(252, 0, 27)");
+					jq("#new-comment-or-note").focus();
+				}
 			} else {
-				jq("#new-comment-or-note").css("border", "2px solid rgb(252, 0, 27)");
-				jq("#new-comment-or-note").focus();
+				location.reload();
 			}
     	}
     	
@@ -612,14 +637,42 @@
     	}
     	
     	function deleteSearchNote(uuid) {
-    		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val().replace("Patient#", "");
-			
-    		if(uuid) {
-	    		jq.ajax({
+    		if(isLoggedInSynchronousCheck()) {
+	    		var searchPhrase = jq("#searchText").val();
+	    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+				
+	    		if(uuid) {
+		    		jq.ajax({
+						type: "POST",
+						url: "${ ui.actionLink('deleteSearchNote') }",
+						data: {"uuid":uuid, "searchPhrase":searchPhrase, "patientId":patientId},
+						dataType: "json",
+						success: function(allNotes) {
+							if(allNotes) {
+								jsonAfterParse.personalNotes = allNotes.personalNotes;
+								jsonAfterParse.globalNotes = allNotes.globalNotes;
+								jsonAfterParse.currentUser = allNotes.currentUser;
+								
+								displayBothPersonalAndGlobalNotes();
+							}
+						},
+						error: function(e) {
+						}
+					});
+				}
+			} else {
+				location.reload();
+			}
+    	}
+    	
+    	function refreshSearchNotes() {
+    		if(isLoggedInSynchronousCheck()) {
+	    		var searchPhrase = jq("#searchText").val();
+	    		var patientId = jq("#patient_id").val().replace("Patient#", "");
+				jq.ajax({
 					type: "POST",
-					url: "${ ui.actionLink('deleteSearchNote') }",
-					data: {"uuid":uuid, "searchPhrase":searchPhrase, "patientId":patientId},
+					url: "${ ui.actionLink('refreshSearchNotes') }",
+					data: {"searchPhrase":searchPhrase, "patientId":patientId},
 					dataType: "json",
 					success: function(allNotes) {
 						if(allNotes) {
@@ -633,33 +686,10 @@
 					error: function(e) {
 					}
 				});
+			} else {
+				location.reload();
 			}
     	}
-    	
-    	function refreshSearchNotes() {
-    		var searchPhrase = jq("#searchText").val();
-    		var patientId = jq("#patient_id").val().replace("Patient#", "");
-			jq.ajax({
-				type: "POST",
-				url: "${ ui.actionLink('refreshSearchNotes') }",
-				data: {"searchPhrase":searchPhrase, "patientId":patientId},
-				dataType: "json",
-				success: function(allNotes) {
-					if(allNotes) {
-						jsonAfterParse.personalNotes = allNotes.personalNotes;
-						jsonAfterParse.globalNotes = allNotes.globalNotes;
-						jsonAfterParse.currentUser = allNotes.currentUser;
-						
-						displayBothPersonalAndGlobalNotes();
-					}
-				},
-				error: function(e) {
-				}
-			});
-    	}
-    
-	});
-    
        
 </script>
 

@@ -79,8 +79,8 @@ function addAllResultsFromJSONFromTheServer(json) {
 	console.log(json);
 	var resultText = '';
 	var single_obsJSON = json.obs_singles;
-	var allergies = jsonAfterParse.patientAllergies;
-	var appointments = jsonAfterParse.patientAppointments;
+	var allergies = json.patientAllergies;
+	var appointments = json.patientAppointments;
 	single_obsJSON.sort(single_sort_func);
 	single_obsJSON.reverse();
 	if (typeof single_obsJSON !== 'undefined') {
@@ -1192,7 +1192,6 @@ function refresh_data(json) {
 	$("#time_anchor").text('Any Time');
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
-	currentJson = json;
 	displayCategories(json);
 	if (json.noResults.foundNoResults) {
 		document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>"
@@ -1207,10 +1206,6 @@ function refresh_data(json) {
 		document.getElementById('found-results-summary').innerHTML = "<b>"
 				+ numberOfResults + "</b> Results (<b>" + json.retrievalTime
 				+ "</b> seconds)";
-		// TODO remove filters and instead call this method within filter
-		// methods
-		filterOptions_providers();
-		filterOptions_locations();
 		addAllObsGroups(json);
 		addAllResultsFromJSONFromTheServer(json);
 		displayFailedPrivileges(json);
@@ -1593,9 +1588,88 @@ function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('html
 }
 
 function filterResultsUsingTime(selectedPeriod) {
-	var serverPeriod = getMatchedDatePeriod("1436333189000", "yesterday");
 
-	alert(serverPeriod);
+	var newResultsJson = jsonAfterParse;
+	var new_obs_groups = [];
+	var new_obs_singles = [];
+	var new_patientAllergies = [];
+	var new_patientAppointments = [];
+	var selectedPeriodText = "Any Time";
+
+	if (selectedPeriod === "custom") {// TODO custom implementation
+
+	} else {// TODO non custom time
+		if (selectedPeriod === "anyTime") {
+			// do nothing
+		} else {
+			if (newResultsJson.obs_groups.length > 0) {
+				// TODO compare and form a new obs_groups object
+				new_obs_groups = newResultsJson.obs_groups;
+			}
+			if (newResultsJson.obs_singles.length > 0) {
+				for (i = 0; i < newResultsJson.obs_singles.length; i++) {
+					var curObjSingle = newResultsJson.obs_singles[i];
+					var neededPeriod = getMatchedDatePeriod(curObjSingle.date,
+							selectedPeriod);
+
+					if (neededPeriod !== "anyTime") {
+						new_obs_singles.push(curObjSingle);
+					}
+				}
+			}
+			if (newResultsJson.patientAllergies.length > 0) {
+				for (i = 0; i < newResultsJson.patientAllergies.length; i++) {
+					var curAllergy = newResultsJson.patientAllergies[i];
+					var neededPeriod = getMatchedDatePeriod(
+							curAllergy.allergenDate, selectedPeriod);
+
+					if (neededPeriod !== "anyTime") {
+						new_patientAllergies.push(curAllergy);
+					}
+				}
+			}
+			if (newResultsJson.patientAppointments.length > 0) {
+				for (i = 0; i < newResultsJson.patientAppointments.length; i++) {
+					var curAppointment = newResultsJson.patientAppointments[i];
+					var neededPeriod = getMatchedDatePeriod(
+							curAppointment.start, selectedPeriod);// start and
+					// stop are
+					// same
+					// date/day
+
+					if (neededPeriod !== "anyTime") {
+						new_patientAppointments.push(curAppointment);
+					}
+				}
+			}
+
+			newResultsJson.obs_groups = new_obs_groups;
+			newResultsJson.obs_singles = new_obs_singles;
+			newResultsJson.patientAllergies = new_patientAllergies;
+			newResultsJson.patientAppointments = new_patientAppointments;
+		}
+	}
+	document.getElementById('obsgroups_results').innerHTML = "";
+	document.getElementById('obsgroup_view').innerHTML = "";
+
+	tempJsonAfterParse = newResultsJson;
+	refresh_data(tempJsonAfterParse);
+	autoClickFirstResultToShowItsDetails(tempJsonAfterParse);
+
+	if (selectedPeriod === "today") {
+		selectedPeriodText = "Today";
+	} else if (selectedPeriod === "yesterday") {
+		selectedPeriodText = "Yesterday";
+	} else if (selectedPeriod === "thisWeek") {
+		selectedPeriodText = "This Week";
+	} else if (selectedPeriod === "thisMonth") {
+		selectedPeriodText = "This Month";
+	} else if (selectedPeriod === "last3Months") {
+		selectedPeriodText = "Last 3 Months";
+	} else if (selectedPeriod === "thisYear") {
+		selectedPeriodText = "This Year";
+	}
+	$("#time_anchor").text(selectedPeriodText);
 }
 
 function checkIfDateIsToday(dateTime) {
@@ -1686,7 +1760,7 @@ function checkIfDateIsInCurrentYear(milliSecs) {
 /* Returns matched period */
 function getMatchedDatePeriod(dateTime, period) {
 	// period can be any of: (today, yesterday, thisWeek, thisMonth,
-	// last3Months, thisYear, custom, anyTime)
+	// last3Months, thisYear, anyTime)
 	if (typeof dateTime === 'string') {
 		dateTime = parseInt(dateTime);
 	}
@@ -1695,7 +1769,7 @@ function getMatchedDatePeriod(dateTime, period) {
 
 	if (period === "today" && checkIfDateIsToday(date.getTime())) { // today
 		matchedPeriod = "today";
-	} else if (period = "yesterday" && checkIfDateIsYesterday(date.getTime())) {
+	} else if (period === "yesterday" && checkIfDateIsYesterday(date.getTime())) {
 		matchedPeriod = "yesterday";
 	} else if (period === "thisWeek"
 			&& checkIfDateIsForThisWeek(date.getTime())) { // this week
@@ -1706,6 +1780,11 @@ function getMatchedDatePeriod(dateTime, period) {
 	} else if (period === "last3Months"
 			&& checkIfDateIsInLastThreeMonths(date.getTime())) {
 		matchedPeriod = "last3Months";
+	} else if (period === "thisYear"
+			&& checkIfDateIsInCurrentYear(date.getTime())) {
+		matchedPeriod = "thisYear";
+	} else {
+		matchedPeriod = "anyTime";
 	}
 
 	return matchedPeriod;

@@ -297,10 +297,10 @@
 						jq(".inside_filter_categories").fadeOut(500);
 										
 						jsonAfterParse = JSON.parse(results);
-						refresh_data();
+						refresh_data(jsonAfterParse);
 						
 						jq(".results_table_wrap").fadeIn(500);
-						autoClickFirstResultToShowItsDetails();
+						autoClickFirstResultToShowItsDetails(jsonAfterParse);
 						jq(".inside_filter_categories").fadeIn(500);
 								
 						showHistorySuggestionsOnLoad();
@@ -737,14 +737,15 @@
                                 </span>
                                 <div class="filter_categories" id="filter_categories_time">
                                     <hr />
-                                        <a class="single_filter_option" onclick="time_filter(1, 'Last Day')">Last Day</a>
-                                        <a class="single_filter_option" onclick="time_filter(7, 'Last Week')">Last Week</a>
-										<a class="single_filter_option" onclick="time_filter(14, 'Last 2 Weeks')">Last 2 Weeks</a>
-                                        <a class="single_filter_option" onclick="time_filter(31, 'Last Month')">Last Month</a>
-										<a class="single_filter_option" onclick="time_filter(93, 'Last 3 Months')">Last 3 Months</a>
-                                    	<a class="single_filter_option" onclick="time_filter(183, 'Last 6 Months')">Last 6 Months</a>
-                                        <a class="single_filter_option" onclick="time_filter(365, 'Last Year')">Last Year</a>
-                                        <a class="single_filter_option" onclick="refresh_data()">Any Time</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('last30Minutes')">Last 30 Minutes</a
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('today')">Today</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('yesterday')">Yesterday</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisWeek')">This Week</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisMonth')">This Month</a>
+										<a class="single_filter_option" onclick="filterResultsUsingTime('last3Months')">Last 3 Months</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisYear')">This Year</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('custom')">Custom</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('anyTime')">Any Time</a>
                                 </div>
                             </div>
                         </div>

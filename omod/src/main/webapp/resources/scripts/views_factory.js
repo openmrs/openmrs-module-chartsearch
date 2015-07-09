@@ -1,6 +1,7 @@
 $("#passwordPopup").hide();
 
 var tryingToSubmit = false;
+var tempJsonAfterParse;
 var dates = {
 	convert : function(d) {
 		// Converts the date in d to a date-object. The input can be:
@@ -74,11 +75,10 @@ function single_sort_func(a, b) {
 	return dates.compare(first_date, second_date);
 }
 
-function addAllSingleObs(obsJSON) {
-	// TODO rename to: addAllSingleObsAndAllergies(obsJSON)
-	console.log(obsJSON);
+function addAllResultsFromJSONFromTheServer(json) {
+	console.log(json);
 	var resultText = '';
-	var single_obsJSON = obsJSON.obs_singles;
+	var single_obsJSON = json.obs_singles;
 	var allergies = jsonAfterParse.patientAllergies;
 	var appointments = jsonAfterParse.patientAppointments;
 	single_obsJSON.sort(single_sort_func);
@@ -1005,7 +1005,7 @@ function time_filter(time_back, lbl) {
 		}
 	}
 	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
+	addAllResultsFromJSONFromTheServer(newJSON);
 	currentJson = newJSON;
 
 }
@@ -1046,7 +1046,7 @@ function location_filter(location, lbl) {
 		}
 	}
 	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
+	addAllResultsFromJSONFromTheServer(newJSON);
 	currentJson = newJSON;
 
 }
@@ -1089,7 +1089,7 @@ function provider_filter(provider, lbl) {
 		}
 	}
 	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
+	addAllResultsFromJSONFromTheServer(newJSON);
 	currentJson = newJSON;
 
 }
@@ -1133,7 +1133,7 @@ function dataType_filter(type, lbl) {
 		}
 	}
 	addAllObsGroups(newJSON);
-	addAllSingleObs(newJSON);
+	addAllResultsFromJSONFromTheServer(newJSON);
 	currentJson = newJSON;
 }
 
@@ -1147,7 +1147,7 @@ function filterOptions_providers() {
 				+ '</a>';
 	}
 
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Providers</a>';
+	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Providers</a>';
 	document.getElementById('providersOptions').innerHTML = result;
 }
 
@@ -1161,7 +1161,7 @@ function filterOptions_locations() {
 				+ '</a>';
 	}
 
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Locations</a>';
+	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Locations</a>';
 	document.getElementById('locationOptions').innerHTML = result;
 }
 
@@ -1181,39 +1181,39 @@ function filterOptions_datatypes() {
 		}
 	}
 
-	result += '<a class="single_filter_option" onclick="refresh_data()">All Data Types</a>';
+	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Data Types</a>';
 	document.getElementById('datatypesOptions').innerHTML = result;
 }
 
-function refresh_data() {
-	$('#searchText').val(jsonAfterParse.search_phrase);
+function refresh_data(json) {
+	$('#searchText').val(json.search_phrase);
 	var searchText = document.getElementById('searchText');
 
 	$("#time_anchor").text('Any Time');
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
-	currentJson = jsonAfterParse;
-	displayCategories(jsonAfterParse);
+	currentJson = json;
+	displayCategories(json);
 	// if (searchText != "") {
-	if (jsonAfterParse.noResults.foundNoResults) {
+	if (json.noResults.foundNoResults) {
 		document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>"
-				+ jsonAfterParse.noResults.foundNoResultsMessage
+				+ json.noResults.foundNoResultsMessage
 				+ " <b> "
 				+ searchText.value + "</b></div>";
 	} else {
-		searchText.value = jsonAfterParse.search_phrase;
-		var numberOfResults = jsonAfterParse.obs_groups.length
-				+ jsonAfterParse.obs_singles.length
-				+ jsonAfterParse.patientAllergies.length
-				+ jsonAfterParse.patientAppointments.length;
+		searchText.value = json.search_phrase;
+		var numberOfResults = json.obs_groups.length
+				+ json.obs_singles.length
+				+ json.patientAllergies.length
+				+ json.patientAppointments.length;
 		document.getElementById('found-results-summary').innerHTML = "<b>"
 				+ numberOfResults + "</b> Results (<b>"
-				+ jsonAfterParse.retrievalTime + "</b> seconds)";
+				+ json.retrievalTime + "</b> seconds)";
 		filterOptions_providers();
 		filterOptions_locations();
-		addAllObsGroups(jsonAfterParse);
-		addAllSingleObs(jsonAfterParse);
-		displayFailedPrivileges(jsonAfterParse);
+		addAllObsGroups(json);
+		addAllResultsFromJSONFromTheServer(json);
+		displayFailedPrivileges(json);
 	}
 	// }
 	displayBothPersonalAndGlobalNotes();
@@ -1222,13 +1222,13 @@ function refresh_data() {
 /*
  * maintains categories state and displays new categories from the server
  */
-function displayCategories(jsonAfterParse) {
+function displayCategories(json) {
 	var categories = document.getElementsByClassName('category_check');
 	var checkedCategories = new Object();
-	var allergies = jsonAfterParse.patientAllergies;
-	var appointments = jsonAfterParse.patientAppointments;
+	var allergies = json.patientAllergies;
+	var appointments = json.patientAppointments;
 
-	if (jsonAfterParse.noResults.foundNoResults) {
+	if (json.noResults.foundNoResults) {
 		document.getElementById('inside_filter_categories').innerHTML = "";
 	} else {
 		// record previous state
@@ -1247,9 +1247,9 @@ function displayCategories(jsonAfterParse) {
 		displayNonFacetCategories(allergies, "allergies");
 		displayNonFacetCategories(appointments, "appointments");
 
-		for ( var i = 0; i < jsonAfterParse.facets.length; i++) {
-			var name = jsonAfterParse.facets[i].facet.name;
-			var count = jsonAfterParse.facets[i].facet.count;
+		for ( var i = 0; i < json.facets.length; i++) {
+			var name = json.facets[i].facet.name;
+			var count = json.facets[i].facet.count;
 			var displaycheckBox;
 			var displayDetail;
 
@@ -1563,18 +1563,18 @@ function reInitializeGlobalVars() {
 	wasGoingNext = true;
 }
 
-function autoClickFirstResultToShowItsDetails() {
-	if (jsonAfterParse.obs_singles.length
-			&& jsonAfterParse.obs_singles.length > 0) {
+function autoClickFirstResultToShowItsDetails(json) {
+	if (json.obs_singles.length
+			&& json.obs_singles.length > 0) {
 		$('#first_obs_single').trigger('click');
-	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
-			&& jsonAfterParse.patientAllergies.length
-			&& jsonAfterParse.patientAllergies.length > 0) {
+	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+			&& json.patientAllergies.length
+			&& json.patientAllergies.length > 0) {
 		$('#first_alergen').trigger('click');
-	} else if ((!jsonAfterParse.obs_singles.length || jsonAfterParse.obs_singles.length === 0)
-			&& (!jsonAfterParse.patientAllergies.length || jsonAfterParse.patientAllergies.length === 0)
-			&& jsonAfterParse.patientAppointments.length
-			&& jsonAfterParse.patientAppointments.length > 0) {
+	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+			&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
+			&& json.patientAppointments.length
+			&& json.patientAppointments.length > 0) {
 		$('#first_appointment').trigger('click');
 	}
 }
@@ -1593,4 +1593,8 @@ function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('html
 		}
 	});
 	return isLoggedIn;
+}
+
+function filterResultsUsingTime(period) {
+	
 }

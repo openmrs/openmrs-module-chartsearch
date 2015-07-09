@@ -5,8 +5,8 @@
     var jsonAfterParse = JSON.parse(resultJSON);
 
     jQuery( document ).ready(function() {
-        refresh_data();
-        autoClickFirstResultToShowItsDetails();
+        refresh_data(jsonAfterParse);
+        autoClickFirstResultToShowItsDetails(jsonAfterParse);
     });
 
 /*    document.getElementById('result_main_box').innerHTML += resultText;*/

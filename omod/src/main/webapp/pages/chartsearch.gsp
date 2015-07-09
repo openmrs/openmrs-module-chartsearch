@@ -29,4 +29,6 @@ ${ ui.includeFragment("chartsearch", "cssIncludes") }
     ${ ui.includeFragment("chartsearch", "topArea") }
     <div style="clear:both;"></div>
     
+    <input type='hidden' id='json-stored-string' />
+    
 </div>

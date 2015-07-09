@@ -297,10 +297,12 @@
 						jq(".inside_filter_categories").fadeOut(500);
 										
 						jsonAfterParse = JSON.parse(results);
+						
 						refresh_data(jsonAfterParse);
+						storeJsonFromServer(jsonAfterParse);
+						autoClickFirstResultToShowItsDetails(jsonAfterParse);
 						
 						jq(".results_table_wrap").fadeIn(500);
-						autoClickFirstResultToShowItsDetails(jsonAfterParse);
 						jq(".inside_filter_categories").fadeIn(500);
 								
 						showHistorySuggestionsOnLoad();

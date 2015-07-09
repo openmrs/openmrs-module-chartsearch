@@ -1588,8 +1588,8 @@ function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('html
 }
 
 function filterResultsUsingTime(selectedPeriod) {
-
-	var newResultsJson = jsonAfterParse;
+	var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
+	var newResultsJson = storedJsonAfterParse;
 	var new_obs_groups = [];
 	var new_obs_singles = [];
 	var new_patientAllergies = [];
@@ -1788,4 +1788,9 @@ function getMatchedDatePeriod(dateTime, period) {
 	}
 
 	return matchedPeriod;
+}
+
+function storeJsonFromServer(json) {
+	var jsonStringToStore = JSON.stringify(json);
+	$("#json-stored-string").val(jsonStringToStore);
 }

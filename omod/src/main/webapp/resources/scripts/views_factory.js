@@ -1210,7 +1210,7 @@ function refresh_data(json) {
 		if (numberOfResults === 0 && json.searchSuggestions.length > 0
 				&& json.search_phrase === "") {
 			noResultsMessageNote = "<br /><br /><br /><br /><p style='color:black;'><b>NOTE:</b> If this is the first time you are accessing this patient's chart, <b>Indexing patient data could still be in progress. </b>"
-					+ "So refresh the page a few moments from now. Otherwise the <b>patient has no data</b> (observations, allergies and appointments) in the Database</p>";
+					+ "So refresh the page a few moments from now. Otherwise the <b>patient has no data</b> (observations, allergies and appointments) that matches the current search or filter tried</p>";
 		}
 
 		if (noResultsMessageNote !== "") {
@@ -1616,7 +1616,7 @@ function filterResultsUsingTime(selectedPeriod) {
 	var selectedPeriodText = "Any Time";
 
 	if (selectedPeriod === "custom") {// TODO custom implementation
-
+		invokeDialog("#custom-date-dialog-content", "Choose Date Range", "245px")
 	} else {// TODO non custom time
 		if (selectedPeriod === "anyTime") {
 			// do nothing
@@ -1687,6 +1687,8 @@ function filterResultsUsingTime(selectedPeriod) {
 		selectedPeriodText = "Last 3 Months";
 	} else if (selectedPeriod === "thisYear") {
 		selectedPeriodText = "This Year";
+	} else if(selectedPeriod === "custom") {
+		selectedPeriodText = "Custom";
 	}
 	$("#time_anchor").text(selectedPeriodText);
 }

@@ -10,6 +10,9 @@
     
 		jq('#searchText').focus();
 		jq("#chart-previous-searches-display").hide();
+		jq("#custom-date-dialog-content").hide();
+		jq("#ui-datepicker-start").datepicker();
+		jq("#ui-datepicker-stop").datepicker();
 		
 		showHistorySuggestionsOnLoad();
 		displayBothPersonalAndGlobalNotes();
@@ -266,6 +269,18 @@
 			}
 		});
 		
+		jq("#ui-datepicker-stop").change(function(event) {
+			var start = jq("#ui-datepicker-start").val();
+			var stop = jq("#ui-datepicker-stop").val();
+			var startDate = new Date(start);
+			var stopDate = new Date(stop);
+			
+			if(stopDate.setHours(0, 0, 0, 0) > startDate.setHours(0, 0, 0, 0)) {
+				jq("#submit-custom-date-filter").removeAttr('disabled');
+			} else {
+				jq("#submit-custom-date-filter").attr('disabled','disabled');
+			}
+		});
 		
     });
     
@@ -747,6 +762,11 @@
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('thisYear')">This Year</a>
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('custom')">Custom</a>
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('anyTime')">Any Time</a>
+                                </div>
+                                <div id="custom-date-dialog-content">
+                                	<p>Start: <input type="text" id="ui-datepicker-start"></p><br />
+									<p>Stop: <input type="text" id="ui-datepicker-stop"></p><br />
+									<p><input type="button" id="submit-custom-date-filter" value="Submit" disabled /></p>
                                 </div>
                             </div>
                         </div>

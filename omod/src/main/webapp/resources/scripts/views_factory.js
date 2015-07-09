@@ -1194,7 +1194,6 @@ function refresh_data(json) {
 	$("#provider_anchor").text('All Providers');
 	currentJson = json;
 	displayCategories(json);
-	// if (searchText != "") {
 	if (json.noResults.foundNoResults) {
 		document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>"
 				+ json.noResults.foundNoResultsMessage
@@ -1202,20 +1201,20 @@ function refresh_data(json) {
 				+ searchText.value + "</b></div>";
 	} else {
 		searchText.value = json.search_phrase;
-		var numberOfResults = json.obs_groups.length
-				+ json.obs_singles.length
+		var numberOfResults = json.obs_groups.length + json.obs_singles.length
 				+ json.patientAllergies.length
 				+ json.patientAppointments.length;
 		document.getElementById('found-results-summary').innerHTML = "<b>"
-				+ numberOfResults + "</b> Results (<b>"
-				+ json.retrievalTime + "</b> seconds)";
+				+ numberOfResults + "</b> Results (<b>" + json.retrievalTime
+				+ "</b> seconds)";
+		// TODO remove filters and instead call this method within filter
+		// methods
 		filterOptions_providers();
 		filterOptions_locations();
 		addAllObsGroups(json);
 		addAllResultsFromJSONFromTheServer(json);
 		displayFailedPrivileges(json);
 	}
-	// }
 	displayBothPersonalAndGlobalNotes();
 }
 
@@ -1564,12 +1563,10 @@ function reInitializeGlobalVars() {
 }
 
 function autoClickFirstResultToShowItsDetails(json) {
-	if (json.obs_singles.length
-			&& json.obs_singles.length > 0) {
+	if (json.obs_singles.length && json.obs_singles.length > 0) {
 		$('#first_obs_single').trigger('click');
 	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
-			&& json.patientAllergies.length
-			&& json.patientAllergies.length > 0) {
+			&& json.patientAllergies.length && json.patientAllergies.length > 0) {
 		$('#first_alergen').trigger('click');
 	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
 			&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
@@ -1595,6 +1592,78 @@ function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('html
 	return isLoggedIn;
 }
 
-function filterResultsUsingTime(period) {
-	
+function filterResultsUsingTime(selectedPeriod) {
+	var serverPeriod = getMatchedDatePeriod("1436333189000", "yesterday");
+
+	alert(serverPeriod);
+}
+
+function checkIfDateIsToday(dateTime) {
+	var inputDate = new Date(dateTime);
+	var todaysDate = new Date();
+
+	if (inputDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkIfDateIsYesterday(milliSecs) {
+	var inputDate = new Date(milliSecs);
+	var todaysDate = new Date();
+	todaysDate.setDate(todaysDate.getDate() - 1);// set today to yesterday
+	// instead
+	if (inputDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function getWeek(date) {
+	// Obtained from: http://weeknumber.net/how-to/javascript
+	date.setHours(0, 0, 0, 0);
+	// Thursday in current week decides the year.
+	date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+	// January 4 is always in week 1.
+	var week1 = new Date(date.getFullYear(), 0, 4);
+	// Adjust to Thursday in week 1 and count number of weeks from date to
+	// week1.
+	return 1 + Math
+			.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1
+					.getDay() + 6) % 7) / 7);
+}
+
+function checkIfDateIsForThisWeek(dateTime) {
+	var date = new Date(dateTime);
+	var now = new Date();
+
+	if (date.getFullYear() === now.getFullYear()
+			&& date.getMonth() === now.getMonth()
+			&& getWeek(date) === getWeek(now)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+/* Returns matched period */
+function getMatchedDatePeriod(dateTime, period) {
+	if (typeof dateTime === 'string') {
+		dateTime = parseInt(dateTime);
+	}
+	var date = new Date(dateTime);
+	var matchedPeriod;
+
+	if (period === "today" && checkIfDateIsToday(date.getTime())) { // today
+		matchedPeriod = "today";
+	} else if (period === "thisWeek"
+			&& checkIfDateIsForThisWeek(date.getTime())) { // this week
+		matchedPeriod = "thisWeek";
+	} else if (period = "yesterday" && checkIfDateIsYesterday(date.getTime())) {
+		matchedPeriod = "yesterday";
+	}
+
+	return matchedPeriod;
 }

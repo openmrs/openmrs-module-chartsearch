@@ -737,7 +737,6 @@
                                 </span>
                                 <div class="filter_categories" id="filter_categories_time">
                                     <hr />
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('last30Minutes')">Last 30 Minutes</a
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('today')">Today</a>
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('yesterday')">Yesterday</a>
                                         <a class="single_filter_option" onclick="filterResultsUsingTime('thisWeek')">This Week</a>

@@ -3,7 +3,7 @@
 		float:right;
 	}
 	
-	#today-hide-or-show, #this-week-hide-or-show, #this-month-hide-or-show, #others-hide-or-show {
+	#today-hide-or-show, #this-week-hide-or-show, #this-month-hide-or-show, #others-hide-or-show, #current-year-hide-or-show {
 		cursor: pointer;
 	}
 </style>
@@ -18,6 +18,7 @@
     	jq("#this-weeks-history-section").hide();
     	jq("#this-month-history-section").hide();
     	jq("#others-history-section").hide();
+    	jq("#this-year-history-section").hide();
     	
     	jq("#today-hide-or-show").click(function(event) {
     		hideOrShowHistorySection("#today-hide-or-show", "#todays-history-section");
@@ -33,6 +34,10 @@
     	
     	jq("#others-hide-or-show").click(function(event) {
     		hideOrShowHistorySection("#others-hide-or-show", "#others-history-section");
+    	});
+    	
+    	jq("#current-year-hide-or-show").click(function(event) {
+    		hideOrShowHistorySection("#current-year-hide-or-show", "#this-year-history-section");
     	});
     	
     	jq("body").on("click", "#todays-history-section", function() {
@@ -53,6 +58,12 @@
 			}
 		});
 		
+		jq("body").on("click", "#this-year-history-section", function() {
+			if(event.target.id === "history-check-year") {
+				checkOrUnAllOtherCheckBoxesInADiv("#this-year-history-section", "history-check-year");
+			}
+		});
+		
     	jq("body").on("click", "#others-history-section", function() {
 			if(event.target.id === "history-check-others") {
 				checkOrUnAllOtherCheckBoxesInADiv("#others-history-section", "history-check-others");
@@ -70,10 +81,12 @@
     		var thHistoryWeek = "";
     		var thHistoryMonth = "";
     		var thHistoryOther = "";
+    		var thHistoryYear = "";
     		var tableTodayHeader = "<tr><th><label><input type='checkbox' id='history-check-all-today' > Select (PatientFName)</label></th><th>Time</th><th>Search Phrase</th></tr>";
     		var tableWeekHeader = "<tr><th><label><input type='checkbox' id='history-check-all-week' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
     		var tableMonthHeader = "<tr><th><label><input type='checkbox' id='history-check-all-month' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
     		var tableOthersHeader = "<tr><th><label><input type='checkbox' id='history-check-others' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
+    		var tableYearHeader = "<tr><th><label><input type='checkbox' id='history-check-year' > Select (PatientFName)</label></th><th>Date && Time</th><th>Search Phrase</th></tr>";
     		
     		if(historyAfterparse.length !== 0) {
     			for (i = 0; i < historyAfterparse.length; i++) {
@@ -89,7 +102,10 @@
     				if(checkIfDateIsInCurrentMonth(history.lastSearchedAt) && !checkIfDateIsForThisWeek(history.lastSearchedAt)) {
     					thHistoryMonth += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
-    				if(!checkIfDateIsInCurrentMonth(history.lastSearchedAt)) {
+    				if(checkIfDateIsInCurrentYear(history.lastSearchedAt) && !checkIfDateIsInCurrentMonth(history.lastSearchedAt)) {
+    					thHistoryYear += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
+    				}
+    				if(!checkIfDateIsInCurrentYear(history.lastSearchedAt)) {
     					thHistoryOther += "<tr><td><label><input type='checkbox' id='" + history.uuid + "' class='history-check' > (" + history.patientFamilyName + ")</label></td><td>" + date.toString() + "</td><td>" + history.searchPhrase + "</td></tr>";
     				}
     			}
@@ -106,19 +122,12 @@
     			jq("#this-month-history").html(tableMonthHeader + thHistoryMonth);
     		}
     		
+    		if(thHistoryYear !== "") {
+    			jq("#this-year-history").html(tableYearHeader + thHistoryYear);
+    		}
+    		
     		if(thHistoryOther !== "") {
     			jq("#other-history").html(tableOthersHeader + thHistoryOther);
-    		}
-    	}
-    	
-    	function checkIfDateIsInCurrentMonth(dateTime) {
-    		var date = new Date(dateTime);
-    		var now = new Date();
-    		
-    		if(date.getYear() === now.getYear() && date.getMonth() === now.getMonth()) {
-    			return true;
-    		} else {
-    			return false;
     		}
     	}
     	
@@ -199,7 +208,12 @@
 		<table id="this-month-history"></table>
 	</div>
 	<br />
-	<i class="icon-circle-arrow-right" id="others-hide-or-show"> Others Months & years</i><br />	
+	<i class="icon-circle-arrow-right" id="current-year-hide-or-show">This Year Excluding Current Month</i><br />	
+	<div id="this-year-history-section">
+		<table id="this-year-history"></table>
+	</div>
+	<br />
+	<i class="icon-circle-arrow-right" id="others-hide-or-show"> Others Years</i><br />	
 	<div id="others-history-section">
 		<table id="other-history"></table>
 	</div>

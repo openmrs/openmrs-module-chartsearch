@@ -1648,8 +1648,45 @@ function checkIfDateIsForThisWeek(dateTime) {
 	}
 }
 
+function checkIfDateIsInCurrentMonth(dateTime) {
+	var date = new Date(dateTime);
+	var now = new Date();
+
+	if (date.getYear() === now.getYear() && date.getMonth() === now.getMonth()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkIfDateIsInLastThreeMonths(milliSecs) {
+	// checks for last three months and includes the current
+	var date = new Date(milliSecs);
+	var now = new Date();
+	var diff = now.getMonth() - date.getMonth();
+
+	if (date.getYear() === now.getYear() && diff >= 0 && diff <= 3) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function checkIfDateIsInCurrentYear(milliSecs) {
+	var date = new Date(milliSecs);
+	var now = new Date();
+
+	if (date.getYear() === now.getYear()) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /* Returns matched period */
 function getMatchedDatePeriod(dateTime, period) {
+	// period can be any of: (today, yesterday, thisWeek, thisMonth,
+	// last3Months, thisYear, custom, anyTime)
 	if (typeof dateTime === 'string') {
 		dateTime = parseInt(dateTime);
 	}
@@ -1658,11 +1695,17 @@ function getMatchedDatePeriod(dateTime, period) {
 
 	if (period === "today" && checkIfDateIsToday(date.getTime())) { // today
 		matchedPeriod = "today";
+	} else if (period = "yesterday" && checkIfDateIsYesterday(date.getTime())) {
+		matchedPeriod = "yesterday";
 	} else if (period === "thisWeek"
 			&& checkIfDateIsForThisWeek(date.getTime())) { // this week
 		matchedPeriod = "thisWeek";
-	} else if (period = "yesterday" && checkIfDateIsYesterday(date.getTime())) {
-		matchedPeriod = "yesterday";
+	} else if (period === "thisMonth"
+			&& checkIfDateIsInCurrentMonth(date.getTime())) {
+		matchedPeriod = "thisMonth";
+	} else if (period === "last3Months"
+			&& checkIfDateIsInLastThreeMonths(date.getTime())) {
+		matchedPeriod = "last3Months";
 	}
 
 	return matchedPeriod;

@@ -1203,9 +1203,23 @@ function refresh_data(json) {
 		var numberOfResults = json.obs_groups.length + json.obs_singles.length
 				+ json.patientAllergies.length
 				+ json.patientAppointments.length;
-		document.getElementById('found-results-summary').innerHTML = "<b>"
-				+ numberOfResults + "</b> Results (<b>" + json.retrievalTime
-				+ "</b> seconds)";
+		var noResultsMessage = "<b>" + numberOfResults + "</b> Results (<b>"
+				+ json.retrievalTime + "</b> seconds)";
+		var noResultsMessageNote = "";
+
+		if (numberOfResults === 0 && json.searchSuggestions.length > 0
+				&& json.search_phrase === "") {
+			noResultsMessageNote = "<br /><br /><br /><br /><p style='color:black;'><b>NOTE:</b> If this is the first time you are accessing this patient's chart, <b>Indexing patient data could still be in progress. </b>"
+					+ "So refresh the page a few moments from now. Otherwise the <b>patient has no data</b> (observations, allergies and appointments) in the Database</p>";
+		}
+
+		if (noResultsMessageNote !== "") {
+			document.getElementById('found-results-summary').innerHTML = noResultsMessage
+					+ noResultsMessageNote;
+		} else {
+			document.getElementById('found-results-summary').innerHTML = noResultsMessage;
+		}
+
 		addAllObsGroups(json);
 		addAllResultsFromJSONFromTheServer(json);
 		displayFailedPrivileges(json);
@@ -1310,14 +1324,16 @@ function displayNonFacetCategories(cat, catName) {
 }
 
 /*
- * In-case the has doesn't have privileges to view some results, they are not
- * returned and a message is instead displayed
+ * In-case the user has doesn't have privileges to view some results, they are
+ * not returned and a message is instead displayed
  */
 function displayFailedPrivileges(jsonAfterParse) {
-	document.getElementById('failed_privileges').innerHTML == "";
-	for ( var i = 0; i < jsonAfterParse.failedPrivileges.length; i++) {
-		document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message
-				+ "<br />";
+	if (jsonAfterParse.failedPrivileges) {
+		document.getElementById('failed_privileges').innerHTML == "";
+		for ( var i = 0; i < jsonAfterParse.failedPrivileges.length; i++) {
+			document.getElementById('failed_privileges').innerHTML += jsonAfterParse.failedPrivileges[i].message
+					+ "<br />";
+		}
 	}
 }
 
@@ -1558,16 +1574,19 @@ function reInitializeGlobalVars() {
 }
 
 function autoClickFirstResultToShowItsDetails(json) {
-	if (json.obs_singles.length && json.obs_singles.length > 0) {
-		$('#first_obs_single').trigger('click');
-	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
-			&& json.patientAllergies.length && json.patientAllergies.length > 0) {
-		$('#first_alergen').trigger('click');
-	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
-			&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
-			&& json.patientAppointments.length
-			&& json.patientAppointments.length > 0) {
-		$('#first_appointment').trigger('click');
+	if (json.obs_singles) {
+		if (json.obs_singles.length && json.obs_singles.length > 0) {
+			$('#first_obs_single').trigger('click');
+		} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+				&& json.patientAllergies.length
+				&& json.patientAllergies.length > 0) {
+			$('#first_alergen').trigger('click');
+		} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+				&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
+				&& json.patientAppointments.length
+				&& json.patientAppointments.length > 0) {
+			$('#first_appointment').trigger('click');
+		}
 	}
 }
 

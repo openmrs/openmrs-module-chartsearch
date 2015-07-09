@@ -336,7 +336,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		ObsService obsService = Context.getObsService();
 		List<String> suggestions = new ArrayList<String>();
 		
-		List<Obs> allPatientObs = obsService.getObservationsByPerson(new Patient(patientId));
+		List<Obs> allPatientObs = obsService.getObservationsByPerson(Context.getPatientService().getPatient(patientId));
 		Allergies allAllergies = Context.getService(PatientService.class).getAllergies(
 		    Context.getPatientService().getPatient(patientId));
 		List<Appointment> appointments = Context.getService(AppointmentService.class).getAllAppointments();

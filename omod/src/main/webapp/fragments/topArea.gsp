@@ -268,20 +268,38 @@
 			//}
 		});
 		
+		jq("#ui-datepicker-start").change(function(event) {
+			enableOrDisableCustomFilterSubmitButton();
+		});
+		
 		jq("#ui-datepicker-stop").change(function(event) {
-			var start = jq("#ui-datepicker-start").val();
-			var stop = jq("#ui-datepicker-stop").val();
-			var startDate = new Date(start);
-			var stopDate = new Date(stop);
-			
-			if(stopDate.setHours(0, 0, 0, 0) > startDate.setHours(0, 0, 0, 0)) {
-				jq("#submit-custom-date-filter").removeAttr('disabled');
-			} else {
-				jq("#submit-custom-date-filter").attr('disabled','disabled');
+			enableOrDisableCustomFilterSubmitButton();
+		});
+		
+		jq("#submit-custom-date-filter").click(function(event) {
+			if(!jq("#submit-custom-date-filter").is(":disabled")) {
+				filterResultsUsingCustomTime();
+				jq("#custom-date-dialog-content").dialog('close');
 			}
 		});
 		
     });
+    
+    	function enableOrDisableCustomFilterSubmitButton() {
+    		var start = jq("#ui-datepicker-start").val();
+			var stop = jq("#ui-datepicker-stop").val();
+			
+			if(start && start !== "" && stop && stop !== "") {
+				var startDate = new Date(start);
+				var stopDate = new Date(stop);
+				
+				if(stopDate.setHours(0, 0, 0, 0) > startDate.setHours(0, 0, 0, 0)) {
+					jq("#submit-custom-date-filter").removeAttr('disabled');
+				} else {
+					jq("#submit-custom-date-filter").attr('disabled','disabled');
+				}
+			}
+    	}
     
 		function submitChartSearchFormWithAjax() {
 			if(isLoggedInSynchronousCheck()) {

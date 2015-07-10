@@ -530,7 +530,7 @@ function getAppointment(appId) {
 
 function load_allergen(allergeId, clickedElement) {
 	removeAllHovering();
-	var clickedElementId = clickedElement.id;
+	var clickedElementId;
 	var resultText = '';
 	var allergy = getAllergy(allergeId);
 	var allergen = (!allergy.allergenNonCodedName || allergy.allergenNonCodedName === "") ? allergy.allergenCodedName
@@ -543,7 +543,9 @@ function load_allergen(allergeId, clickedElement) {
 	var dt = new Date(allergy.allergenDate);
 	var date = getDateStr(allergy.allergenDate, true) + " " + dt.toTimeString();
 
-	if (!clickedElementId) {
+	if (clickedElement.id) {
+		clickedElementId = clickedElement.id;
+	} else {
 		clickedElementId = "first_alergen";
 	}
 	$("#" + clickedElementId).addClass("obsgroup_current");
@@ -573,7 +575,7 @@ function load_allergen(allergeId, clickedElement) {
 
 function load_appointment(appId, clickedElement) {
 	removeAllHovering();
-	var clickedElementId = clickedElement.id;
+	var clickedElementId;
 	var resultText = '';
 	var app = getAppointment(appId);
 	var status = app.status;
@@ -586,7 +588,9 @@ function load_appointment(appId, clickedElement) {
 	var provider = app.provider;
 	var date;
 
-	if (!clickedElementId) {
+	if (clickedElement.id) {
+		clickedElementId = clickedElement.id;
+	} else {
 		clickedElementId = "first_appointment";
 	}
 	$("#" + clickedElementId).addClass("obsgroup_current");
@@ -630,8 +634,7 @@ function updateNavigationIndicesToClicked(id, clickedId) {
 	clickedId = clickedId.id;
 	var json = getResultsJson()
 	var numberOfResults = getResultsJson().obs_groups.length
-			+ json.obs_singles.length
-			+ json.patientAllergies.length
+			+ json.obs_singles.length + json.patientAllergies.length
 			+ json.patientAppointments.length;
 	var allPossibleIndices = new Array(numberOfResults);
 
@@ -646,10 +649,8 @@ function updateNavigationIndicesToClicked(id, clickedId) {
 					&& json.patientAllergies[i].allergenId === id
 					&& (clickedId === "first_alergen" || clickedId
 							.indexOf("allergen_") === 0)) {
-				if (json.obs_singles.length
-						&& json.obs_singles.length > 0) {
-					navigationIndicesUpdateLogic(i
-							+ json.obs_singles.length,
+				if (json.obs_singles.length && json.obs_singles.length > 0) {
+					navigationIndicesUpdateLogic(i + json.obs_singles.length,
 							numberOfResults);
 				} else {
 					navigationIndicesUpdateLogic(i, numberOfResults);
@@ -1616,6 +1617,7 @@ function filterResultsUsingTime(selectedPeriod) {
 	var selectedPeriodText = "Any Time";
 
 	if (selectedPeriod === "custom") {// TODO custom implementation
+		jq("#submit-custom-date-filter").attr('disabled','disabled');
 		invokeDialog("#custom-date-dialog-content", "Choose Date Range",
 				"245px")
 	} else {// TODO non custom time
@@ -1669,13 +1671,7 @@ function filterResultsUsingTime(selectedPeriod) {
 			newResultsJson.patientAppointments = new_patientAppointments;
 		}
 	}
-	document.getElementById('obsgroups_results').innerHTML = "";
-	document.getElementById('obsgroup_view').innerHTML = "";
-
-	tempJsonAfterParse = newResultsJson;
-	refresh_data(tempJsonAfterParse);
-	reInitializeGlobalVars();
-	$("#json-filtered-string").val(JSON.stringify(tempJsonAfterParse));
+	setResultsJsonAndApplySelectedFilter(tempJsonAfterParse, newResultsJson);
 
 	if (selectedPeriod === "today") {
 		selectedPeriodText = "Today";
@@ -1693,6 +1689,17 @@ function filterResultsUsingTime(selectedPeriod) {
 		selectedPeriodText = "Custom";
 	}
 	$("#time_anchor").text(selectedPeriodText);
+}
+
+function setResultsJsonAndApplySelectedFilter(tempJsonAfterParse,
+		newResultsJson) {
+	document.getElementById('obsgroups_results').innerHTML = "";
+	document.getElementById('obsgroup_view').innerHTML = "";
+
+	tempJsonAfterParse = newResultsJson;
+	refresh_data(tempJsonAfterParse);
+	reInitializeGlobalVars();
+	$("#json-filtered-string").val(JSON.stringify(tempJsonAfterParse));
 }
 
 function checkIfDateIsToday(dateTime) {
@@ -1831,4 +1838,72 @@ function getResultsJson() {
 			return jsonAfterParse;
 		}
 	}
+}
+
+function checkIfDateRangeExists(milliSecs, start, stop) {
+	if (typeof milliSecs === 'string') {
+		milliSecs = parseInt(milliSecs);
+	}
+
+	var serverDate = new Date(milliSecs);
+	var startDate = new Date(start);
+	var stopDate = new Date(stop);
+
+	if (serverDate.setHours(0, 0, 0, 0) >= startDate.setHours(0, 0, 0, 0)
+			&& serverDate.setHours(0, 0, 0, 0) <= stopDate.setHours(0, 0, 0, 0)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function filterResultsUsingCustomTime() {
+	var start = $("#ui-datepicker-start").val();
+	var stop = $("#ui-datepicker-stop").val();
+	var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
+	var newResultsJson = storedJsonAfterParse;
+	var new_obs_groups = [];
+	var new_obs_singles = [];
+	var new_patientAllergies = [];
+	var new_patientAppointments = [];
+
+	if (start && start !== "" && stop && stop !== "") {
+		if (newResultsJson.obs_groups.length > 0) {
+			new_obs_groups = newResultsJson.obs_groups;
+		}
+		if (newResultsJson.obs_singles.length > 0) {
+			for (i = 0; i < newResultsJson.obs_singles.length; i++) {
+				var curObjSingle = newResultsJson.obs_singles[i];
+
+				if (checkIfDateRangeExists(curObjSingle.date, start, stop)) {
+					new_obs_singles.push(curObjSingle);
+				}
+			}
+		}
+		if (newResultsJson.patientAllergies.length > 0) {
+			for (i = 0; i < newResultsJson.patientAllergies.length; i++) {
+				var curAllergy = newResultsJson.patientAllergies[i];
+
+				if (checkIfDateRangeExists(curAllergy.allergenDate, start, stop)) {
+					new_patientAllergies.push(curAllergy);
+				}
+			}
+		}
+		if (newResultsJson.patientAppointments.length > 0) {
+			for (i = 0; i < newResultsJson.patientAppointments.length; i++) {
+				var curAppointment = newResultsJson.patientAppointments[i];
+
+				if (checkIfDateRangeExists(curAppointment.start, start, stop)) {
+					new_patientAppointments.push(curAppointment);
+				}
+			}
+		}
+
+		newResultsJson.obs_groups = new_obs_groups;
+		newResultsJson.obs_singles = new_obs_singles;
+		newResultsJson.patientAllergies = new_patientAllergies;
+		newResultsJson.patientAppointments = new_patientAppointments;
+	}
+	setResultsJsonAndApplySelectedFilter(tempJsonAfterParse, newResultsJson);
+	$("#time_anchor").text("Custom");
 }

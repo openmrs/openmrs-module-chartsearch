@@ -1849,8 +1849,8 @@ function checkIfDateRangeExists(milliSecs, start, stop) {
 	var startDate = new Date(start);
 	var stopDate = new Date(stop);
 
-	if (serverDate.setHours(0, 0, 0, 0) >= startDate.setHours(0, 0, 0, 0)
-			&& serverDate.setHours(0, 0, 0, 0) <= stopDate.setHours(0, 0, 0, 0)) {
+	if (serverDate.setHours(0, 0, 0, 0) > startDate.setHours(0, 0, 0, 0)
+			&& serverDate.setHours(0, 0, 0, 0) < stopDate.setHours(0, 0, 0, 0)) {
 		return true;
 	} else {
 		return false;

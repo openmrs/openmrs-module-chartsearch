@@ -188,7 +188,7 @@ function addAllergiesToResults(allergy, noObsSingle) {
 
 	resultText += '<div class="obsgroup_wrap" ' + allergyIdHtml
 			+ ' onclick="updateNavigationIndicesToClicked(' + allergyId + ', '
-			+ allId + '); load_allergen(' + allergyId + ');">';
+			+ allId + '); load_allergen(' + allergyId + ', this);">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
@@ -241,7 +241,7 @@ function addAppointmentsToResults(app) {
 
 	resultText += '<div class="obsgroup_wrap" ' + appointmentIdHtml
 			+ ' onclick="updateNavigationIndicesToClicked(' + id + ', ' + appId
-			+ '); load_appointment(' + id + ');">';
+			+ '); load_appointment(' + id + ', this);">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
@@ -528,14 +528,9 @@ function getAppointment(appId) {
 	}
 }
 
-function load_allergen(allergeId) {
+function load_allergen(allergeId, clickedElement) {
 	removeAllHovering();
-	if (jsonAfterParse.obs_singles.length === 0
-			&& jsonAfterParse.patientAllergies[0].allergenId === allergeId) {
-		$("#first_alergen").addClass("obsgroup_current");
-	} else {
-		$("#allergen_" + allergeId).addClass("obsgroup_current");
-	}
+	var clickedElementId = clickedElement.id;
 	var resultText = '';
 	var allergy = getAllergy(allergeId);
 	var allergen = (!allergy.allergenNonCodedName || allergy.allergenNonCodedName === "") ? allergy.allergenCodedName
@@ -547,6 +542,11 @@ function load_allergen(allergeId) {
 	var comment = allergy.allergenComment;
 	var dt = new Date(allergy.allergenDate);
 	var date = getDateStr(allergy.allergenDate, true) + " " + dt.toTimeString();
+
+	if (!clickedElementId) {
+		clickedElementId = "first_alergen";
+	}
+	$("#" + clickedElementId).addClass("obsgroup_current");
 
 	if (!severity) {
 		severity = "";
@@ -571,15 +571,9 @@ function load_allergen(allergeId) {
 	$("#obsgroup_view").html(resultText);
 }
 
-function load_appointment(appId) {
+function load_appointment(appId, clickedElement) {
 	removeAllHovering();
-	if (jsonAfterParse.obs_singles.length === 0
-			&& jsonAfterParse.patientAllergies.length === 0
-			&& jsonAfterParse.patientAppointments[0].id === appId) {
-		$("#first_appointment").addClass("obsgroup_current");
-	} else {
-		$("#appointment_" + appId).addClass("obsgroup_current");
-	}
+	var clickedElementId = clickedElement.id;
 	var resultText = '';
 	var app = getAppointment(appId);
 	var status = app.status;
@@ -591,6 +585,11 @@ function load_appointment(appId) {
 	var cancelReason = app.cancelReason;
 	var provider = app.provider;
 	var date;
+
+	if (!clickedElementId) {
+		clickedElementId = "first_appointment";
+	}
+	$("#" + clickedElementId).addClass("obsgroup_current");
 
 	typeDesc = !typeDesc ? "" : typeDesc;
 	provider = !provider ? "" : provider;
@@ -629,33 +628,34 @@ function load_appointment(appId) {
 
 function updateNavigationIndicesToClicked(id, clickedId) {
 	clickedId = clickedId.id;
-	var numberOfResults = jsonAfterParse.obs_groups.length
-			+ jsonAfterParse.obs_singles.length
-			+ jsonAfterParse.patientAllergies.length
-			+ jsonAfterParse.patientAppointments.length;
+	var json = getResultsJson()
+	var numberOfResults = getResultsJson().obs_groups.length
+			+ json.obs_singles.length
+			+ json.patientAllergies.length
+			+ json.patientAppointments.length;
 	var allPossibleIndices = new Array(numberOfResults);
 
 	if (clickedId && clickedId !== '') {
 		for (i = 0; i < allPossibleIndices.length; i++) {
-			if (i < jsonAfterParse.obs_singles.length
-					&& jsonAfterParse.obs_singles[i].observation_id === id
+			if (i < json.obs_singles.length
+					&& json.obs_singles[i].observation_id === id
 					&& (clickedId === "first_obs_single" || clickedId
 							.indexOf("obs_single_") === 0)) {
 				navigationIndicesUpdateLogic(i, numberOfResults);
-			} else if (i < jsonAfterParse.patientAllergies.length
-					&& jsonAfterParse.patientAllergies[i].allergenId === id
+			} else if (i < json.patientAllergies.length
+					&& json.patientAllergies[i].allergenId === id
 					&& (clickedId === "first_alergen" || clickedId
 							.indexOf("allergen_") === 0)) {
-				if (jsonAfterParse.obs_singles.length
-						&& jsonAfterParse.obs_singles.length > 0) {
+				if (json.obs_singles.length
+						&& json.obs_singles.length > 0) {
 					navigationIndicesUpdateLogic(i
-							+ jsonAfterParse.obs_singles.length,
+							+ json.obs_singles.length,
 							numberOfResults);
 				} else {
 					navigationIndicesUpdateLogic(i, numberOfResults);
 				}
-			} else if (i < jsonAfterParse.patientAppointments.length
-					&& jsonAfterParse.patientAppointments.length[i] === id
+			} else if (i < json.patientAppointments.length
+					&& json.patientAppointments.length[i] === id
 					&& (clickedId === "first_appointment" || clickedId
 							.indexOf("appointment_") === 0)) {
 
@@ -1616,7 +1616,8 @@ function filterResultsUsingTime(selectedPeriod) {
 	var selectedPeriodText = "Any Time";
 
 	if (selectedPeriod === "custom") {// TODO custom implementation
-		invokeDialog("#custom-date-dialog-content", "Choose Date Range", "245px")
+		invokeDialog("#custom-date-dialog-content", "Choose Date Range",
+				"245px")
 	} else {// TODO non custom time
 		if (selectedPeriod === "anyTime") {
 			// do nothing
@@ -1673,7 +1674,8 @@ function filterResultsUsingTime(selectedPeriod) {
 
 	tempJsonAfterParse = newResultsJson;
 	refresh_data(tempJsonAfterParse);
-	autoClickFirstResultToShowItsDetails(tempJsonAfterParse);
+	reInitializeGlobalVars();
+	$("#json-filtered-string").val(JSON.stringify(tempJsonAfterParse));
 
 	if (selectedPeriod === "today") {
 		selectedPeriodText = "Today";
@@ -1687,7 +1689,7 @@ function filterResultsUsingTime(selectedPeriod) {
 		selectedPeriodText = "Last 3 Months";
 	} else if (selectedPeriod === "thisYear") {
 		selectedPeriodText = "This Year";
-	} else if(selectedPeriod === "custom") {
+	} else if (selectedPeriod === "custom") {
 		selectedPeriodText = "Custom";
 	}
 	$("#time_anchor").text(selectedPeriodText);
@@ -1814,4 +1816,19 @@ function getMatchedDatePeriod(dateTime, period) {
 function storeJsonFromServer(json) {
 	var jsonStringToStore = JSON.stringify(json);
 	$("#json-stored-string").val(jsonStringToStore);
+}
+
+function getResultsJson() {
+	var storedJsonString = $("#json-stored-string").val();
+	var filteredJsonString = $("#json-filtered-string").val();
+
+	if (filteredJsonString && filteredJsonString !== "") {
+		return JSON.parse(filteredJsonString);
+	} else {
+		if (storedJsonString && storedJsonString !== "") {
+			return JSON.parse(storedJsonString);
+		} else {
+			return jsonAfterParse;
+		}
+	}
 }

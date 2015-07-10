@@ -30,5 +30,6 @@ ${ ui.includeFragment("chartsearch", "cssIncludes") }
     <div style="clear:both;"></div>
     
     <input type='hidden' id='json-stored-string' />
+    <input type='hidden' id='json-filtered-string' />
     
 </div>

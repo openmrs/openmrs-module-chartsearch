@@ -223,14 +223,13 @@
 		  };
 		})();
 		
-		jq(document).keydown(function(key) {//TODO https://issues.openmrs.org/browse/CSM-101
-			//TODO update navigationIndex variable after load_single_detailed_obs(...)
-			var single_obsJSON = jsonAfterParse.obs_singles;
+		jq(document).keydown(function(key) {
+			var single_obsJSON = getResultsJson().obs_singles;
 			
-			if (typeof single_obsJSON !== 'undefined') {
+			//if (typeof single_obsJSON !== 'undefined') {
 				if(key.keyCode == 39) {// =>>
 					var diffBtnIndecs = navigationIndex - peviousIndex;
-					var numberOfResults = jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length + jsonAfterParse.patientAppointments.length;
+					var numberOfResults = getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length + getResultsJson().patientAppointments.length;
 					
 					if(wasGoingNext) {
 						if(navigationIndex != numberOfResults) {
@@ -266,7 +265,7 @@
 						}
 					}
 				}
-			}
+			//}
 		});
 		
 		jq("#ui-datepicker-stop").change(function(event) {
@@ -338,8 +337,8 @@
 		
 		function increamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
 			var obs = single_obsJSON[navigationIndex];
-			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
-			var appointment = jsonAfterParse.patientAppointments[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length)];
+			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
+			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
 							
 			peviousIndex = navigationIndex;
 			navigationIndex++;
@@ -355,8 +354,8 @@
 		
 		function decreamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
 			var obs = single_obsJSON[navigationIndex];
-			var allergy = jsonAfterParse.patientAllergies[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length)];
-			var appointment = jsonAfterParse.patientAppointments[navigationIndex - (jsonAfterParse.obs_groups.length + jsonAfterParse.obs_singles.length + jsonAfterParse.patientAllergies.length)];
+			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
+			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
 								
 			peviousIndex = navigationIndex;
 			navigationIndex--;
@@ -372,18 +371,40 @@
 		}
 		
 		function focusOnNextObsAndDisplayItsDetails(obsId) {
-			jq('#obs_single_'+obsId).focus();
+			var elementId = 'obs_single_' + obsId;
+			
+			if(getResultsJson().obs_singles[0].observation_id === obsId) {
+				elementId = "first_obs_single";
+			}
+			
 			load_single_detailed_obs(obsId);
+			updateNavigationIndicesToClicked(obsId, elementId);
 		}
 		
 		function focusOnNextAllergenAndDisplayItsDetails(allergenId) {
-			jq('#allergen_' + allergenId).focus();
-			load_allergen(allergenId);
+			var elementId = 'allergen_' + allergenId;
+			
+			if (getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies[0].allergenId === allergenId) {
+				elementId = "first_alergen";
+			}
+			
+			var clickedElement = jq("#" + elementId)[0];
+			
+			load_allergen(allergenId, clickedElement);
+			updateNavigationIndicesToClicked(allergenId, clickedElement);
 		}
 		
 		function focusOnNextAppointmentAndDisplayItsDetails(appId) {
-			jq('#appointment_' + appId).focus();
-			load_appointment(appId);
+			var elementId = 'appointment_' + appId;
+			
+			if (getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies.length === 0 && getResultsJson().patientAppointments[0].id === appId) {
+				elementId = "first_appointment";
+			}
+			
+			var clickedElement = jq("#" + elementId)[0];
+			
+			load_appointment(appId, clickedElement);
+			updateNavigationIndicesToClicked(appId, clickedElement);
 		}
 		
 		function hideSearchSuggestions() {

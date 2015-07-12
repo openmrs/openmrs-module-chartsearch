@@ -100,6 +100,8 @@ public class GeneratingJson {
 		jsonToReturn.put("appliedCategories", (String[]) catNms.toArray(new String[catNms.size()]));
 		jsonToReturn.put("patientAllergies", allergies);
 		jsonToReturn.put("patientAppointments", appointments);
+		jsonToReturn.put("allLocations", getChartSearchService().getAllLocationsFromTheDB());
+		jsonToReturn.put("allProviders", getChartSearchService().getAllProvidersFromTheDB());
 		
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn, wholePageIsToBeLoaded);
 		
@@ -570,6 +572,7 @@ public class GeneratingJson {
 					json.put("typeDesc", appointment.getTypeDesc());
 					json.put("cancelReason", appointment.getCancelReason());
 					json.put("provider", appointment.getProvider());
+					json.put("location", appointment.getLocation());
 					
 					appointments.add(json);
 				}
@@ -708,10 +711,6 @@ public class GeneratingJson {
 			str = str.replace("\"", "\\\"");
 		}
 		return str;
-	}
-	
-	public static void main(String[] dsds) {
-		System.out.println(appendBackwardSlashBeforeMustBePassedCharacters("testst's"));
 	}
 	
 	private static <T> T getComponent(Class<T> clazz) {

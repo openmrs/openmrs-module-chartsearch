@@ -155,6 +155,7 @@ public class ChartSearchSearcher {
 			item.setEnd((Date) doc.get("appointment_end"));
 			item.setTypeDesc((String) doc.get("appointment_typeDesc"));
 			item.setCancelReason((String) doc.get("appointment_cancelReason"));
+			item.setLocation((String) doc.get("appointment_location"));
 			
 			list.add(item);
 			

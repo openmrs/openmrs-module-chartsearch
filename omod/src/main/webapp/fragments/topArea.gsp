@@ -816,7 +816,9 @@
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories" id="locationOptions">
-
+									<script type="text/javascript">
+											displayLocations(jsonAfterParse);
+									</script>
                                 </div>
                             </div>
                         </div>
@@ -827,7 +829,9 @@
                                     <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
                                 </span>
                                 <div class="filter_categories" id="providersOptions">
-                                    
+                                    <script type="text/javascript">
+											displayProviders(jsonAfterParse);
+									</script>
                                 </div>
                             </div>
                         </div>

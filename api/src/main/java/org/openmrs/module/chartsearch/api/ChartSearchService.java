@@ -29,7 +29,6 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured
  * in moduleApplicationContext.xml.
@@ -218,4 +217,8 @@ public interface ChartSearchService extends OpenmrsService {
 	public ChartSearchNote getSearchNoteByUuid(String uuid);
 	
 	public List<ChartSearchNote> getAllSearchNotes();
+	
+	String[] getAllLocationsFromTheDB();
+	
+	String[] getAllProvidersFromTheDB();
 }

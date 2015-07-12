@@ -982,6 +982,8 @@
 			stored="true" required="false" />
 		<field name="appointment_provider" type="string" indexed="true"
 			stored="true" required="false" />
+		<field name="appointment_location" type="string" indexed="true"
+			stored="true" required="false" />
 
 		<field name="appointment_text" type="text_general" indexed="true"
 			stored="true" multiValued="true" />

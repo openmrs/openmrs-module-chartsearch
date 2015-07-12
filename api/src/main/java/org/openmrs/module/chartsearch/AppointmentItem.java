@@ -31,6 +31,8 @@ public class AppointmentItem extends ChartListItem {
 	
 	private String provider;
 	
+	private String location;
+	
 	public String getReason() {
 		return reason;
 	}
@@ -101,6 +103,14 @@ public class AppointmentItem extends ChartListItem {
 	
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
 }

@@ -28,8 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Location;
 import org.openmrs.Obs;
-import org.openmrs.Patient;
+import org.openmrs.Provider;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
@@ -445,5 +446,37 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public List<ChartSearchNote> getAllSearchNotes() {
 		return dao.getAllSearchNotes();
+	}
+	
+	@Override
+	public String[] getAllProvidersFromTheDB() {
+		List<Provider> providerList = Context.getProviderService().getAllProviders();
+		String[] providers = new String[providerList.size()];
+		
+		for (int i = 0; i < providerList.size(); i++) {
+			Provider p = providerList.get(i);
+			
+			if (p != null && StringUtils.isNotBlank(p.getName())) {
+				providers[i] = p.getName();
+			}
+		}
+		
+		return providers;
+	}
+	
+	@Override
+	public String[] getAllLocationsFromTheDB() {
+		List<Location> locationList = Context.getLocationService().getAllLocations();
+		String[] locations = new String[locationList.size()];
+		
+		for (int i = 0; i < locationList.size(); i++) {
+			Location l = locationList.get(i);
+			
+			if (l != null && StringUtils.isNotBlank(l.getName())) {
+				locations[i] = l.getName();
+			}
+		}
+		
+		return locations;
 	}
 }

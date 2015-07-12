@@ -189,10 +189,12 @@ public class ChartSearchAPIIndexer {
 			        : "";
 			String cancelReason = appointment.getCancelReason() != null ? appointment.getCancelReason() : "";
 			String provider = null;
+			String location = null;
 			
 			if (appointment.getTimeSlot() != null && appointment.getTimeSlot().getAppointmentBlock() != null
 			        && appointment.getTimeSlot().getAppointmentBlock().getProvider() != null) {
 				provider = appointment.getTimeSlot().getAppointmentBlock().getProvider().getName();
+				location = appointment.getTimeSlot().getAppointmentBlock().getLocation().getDisplayString();
 			}
 			
 			doc.addField("id", uuid);
@@ -206,6 +208,7 @@ public class ChartSearchAPIIndexer {
 			doc.addField("appointment_type", type);
 			doc.addField("appointment_typeDesc", typeDesc);
 			doc.addField("appointment_cancelReason", cancelReason);
+			doc.addField("appointment_location", location);
 		}
 		
 		return doc;

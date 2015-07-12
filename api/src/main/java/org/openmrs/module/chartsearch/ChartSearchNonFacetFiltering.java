@@ -94,6 +94,12 @@ public class ChartSearchNonFacetFiltering {
 			searcher.searchAppointmentsAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 			searcher.searchEncounterTypesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 			searcher.searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
+		} else if (!checkIfCategoriesContainNonFacetCategory(selectedCategories, "allergies")
+		        && !checkIfCategoriesContainNonFacetCategory(selectedCategories, "appointments")
+		        && !selectedCategories.isEmpty()) {
+			searcher.searchObservationsAndGenerateSolrDoc(solrServer, query, list);
+			searcher.searchEncounterTypesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
+			searcher.searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
 		} else {
 			searcher.searchObservationsAndGenerateSolrDoc(solrServer, query, list);
 			searcher.searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);

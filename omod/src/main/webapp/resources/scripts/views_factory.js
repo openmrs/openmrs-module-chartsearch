@@ -1,7 +1,6 @@
 $("#passwordPopup").hide();
 
 var tryingToSubmit = false;
-var tempJsonAfterParse;
 var dates = {
 	convert : function(d) {
 		// Converts the date in d to a date-object. The input can be:
@@ -424,22 +423,8 @@ function load_single_detailed_obs(obs_id) {
 	resultText += '<div class="demo-container">'
 			+ '<div id="placeholder" class="demo-placeholder"></div>'
 			+ '</div>';
-	// resultText+='<div class="demo-container"><h1
-	// class="graph_title">Graph</h1> <div id="placeholder"
-	// class="demo-placeholder" style="width:550px;height:300px;margin:0
-	// auto;"></div></div>';
-	/* resultText+='<div class="obsgroup_all_wrapper">'; */
 	resultText += load_single_obs_history(obs_id);
-	/* resultText+='</div>'; */
-
 	resultText += '<div class="obsgroup_all_wrapper">';
-
-	/*
-	 * resultText+='<label class="cs_label">'; resultText+='Date: ';
-	 * resultText+='</label>'; resultText+='<span class="cs_span">';
-	 * resultText+=getDateStr(obsJSON.date); resultText+='</span>';
-	 * resultText+='<br />';
-	 */
 	resultText += '<label class="cs_label">';
 	resultText += 'Value Type:';
 	resultText += '</label>';
@@ -453,18 +438,8 @@ function load_single_detailed_obs(obs_id) {
 	resultText += '<span class="cs_span">';
 	resultText += obsJSON.location;
 	resultText += '</span>';
-	/* resultText+='<br />'; */
-	/*
-	 * resultText+='<label class="cs_label">'; resultText+='Value:';
-	 * resultText+='</label>';
-	 * 
-	 * resultText+='<span class="cs_span">'; resultText+=obsJSON.value; if
-	 * (obsJSON.units_of_measurement) { resultText+='<span
-	 * class="cs_span_measure">'; resultText+=' '+obsJSON.units_of_measurement;
-	 * resultText+='</span>'; } resultText+='</span>';
-	 */
-
 	resultText += '<br />';
+
 	if (obsJSON.absolute_high) {
 		resultText += '<label class="cs_label">';
 		resultText += 'Absolute High:';
@@ -958,234 +933,6 @@ function load_detailed_obs(obs_id) {
 	}
 }
 
-/* ############# Filters ############### */
-
-function get_timeback_date(time_back) {
-	var today = new Date();
-	today.setDate(today.getDate() - time_back);
-	return today;
-}
-
-function time_filter(time_back, lbl) {
-	$("#time_anchor").text(lbl);
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
-	$("#dataType_anchor").text('All Data Types');
-	var today = get_timeback_date(time_back), myDate;
-	var single_obsJSON = jsonAfterParse.obs_singles;
-	var group_obsJSON = jsonAfterParse.obs_groups;
-	var json_counter = 0;
-	var newJSON = {
-		'obs_groups' : new Array(),
-		'obs_singles' : new Array()
-	};
-	if (typeof single_obsJSON !== 'undefined') {
-		for ( var i = 0; i < single_obsJSON.length; i++) {
-			myDate = new Date(parseInt(single_obsJSON[i].date));
-			/* console.log('try to compare today: '+today+' with: '+ myDate); */
-			if (dates.compare(today, myDate) <= 0) {
-				console.log('pass!!');
-				newJSON.obs_singles[json_counter] = single_obsJSON[i];
-				json_counter++;
-			}
-		}
-	}
-
-	json_counter = 0;
-	if (group_obsJSON) {
-		for ( var i = 0; i < group_obsJSON.length; i++) {
-			var observations = group_obsJSON[i].observations;
-			for ( var j = 0; j < observations.length; j++) {
-				myDate = new Date(parseInt(observations[j].date));
-				if (dates.compare(today, myDate) <= 0) {
-					newJSON.obs_groups[json_counter] = group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
-		}
-	}
-	addAllObsGroups(newJSON);
-	addAllResultsFromJSONFromTheServer(newJSON);
-	currentJson = newJSON;
-
-}
-
-function location_filter(location, lbl) {
-	$("#location_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#provider_anchor").text('All Providers');
-	$("#dataType_anchor").text('All Data Types');
-	var single_obsJSON = jsonAfterParse.obs_singles;
-	var group_obsJSON = jsonAfterParse.obs_groups;
-	var json_counter = 0;
-	var newJSON = {
-		'obs_groups' : new Array(),
-		'obs_singles' : new Array()
-	};
-	if (typeof single_obsJSON !== 'undefined') {
-		for ( var i = 0; i < single_obsJSON.length; i++) {
-			if (single_obsJSON[i].location === location) {
-				newJSON.obs_singles[json_counter] = single_obsJSON[i];
-				json_counter++;
-			}
-		}
-	}
-
-	json_counter = 0;
-	if (group_obsJSON) {
-		for ( var i = 0; i < group_obsJSON.length; i++) {
-			var observations = group_obsJSON[i].observations;
-			for ( var j = 0; j < observations.length; j++) {
-				if (observations[j].location
-						&& observations[j].location === location) {
-					newJSON.obs_groups[json_counter] = group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
-		}
-	}
-	addAllObsGroups(newJSON);
-	addAllResultsFromJSONFromTheServer(newJSON);
-	currentJson = newJSON;
-
-}
-
-function provider_filter(provider, lbl) {
-	$("#provider_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#dataType_anchor").text('All Data Types');
-
-	var single_obsJSON = jsonAfterParse.obs_singles;
-	var group_obsJSON = jsonAfterParse.obs_groups;
-	var json_counter = 0;
-	var newJSON = {
-		'obs_groups' : new Array(),
-		'obs_singles' : new Array()
-	};
-	if (typeof single_obsJSON !== 'undefined') {
-		for ( var i = 0; i < single_obsJSON.length; i++) {
-			if (single_obsJSON[i].provider
-					&& single_obsJSON[i].provider === provider) {
-				newJSON.obs_singles[json_counter] = single_obsJSON[i];
-				json_counter++;
-			}
-		}
-	}
-
-	json_counter = 0;
-	if (group_obsJSON) {
-		for ( var i = 0; i < group_obsJSON.length; i++) {
-			var observations = group_obsJSON[i].observations;
-			for ( var j = 0; j < observations.length; j++) {
-				if (observations[j].provider
-						&& observations[j].provider === provider) {
-					newJSON.obs_groups[json_counter] = group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
-		}
-	}
-	addAllObsGroups(newJSON);
-	addAllResultsFromJSONFromTheServer(newJSON);
-	currentJson = newJSON;
-
-}
-
-function dataType_filter(type, lbl) {
-	$("#dataType_anchor").text(lbl);
-	$("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
-
-	var single_obsJSON = jsonAfterParse.obs_singles;
-	var group_obsJSON = jsonAfterParse.obs_groups;
-	var json_counter = 0;
-	var newJSON = {
-		'obs_groups' : new Array(),
-		'obs_singles' : new Array()
-	};
-
-	if (typeof single_obsJSON !== 'undefined') {
-		for ( var i = 0; i < single_obsJSON.length; i++) {
-			if (single_obsJSON[i].value_type
-					&& single_obsJSON[i].value_type === type) {
-				newJSON.obs_singles[json_counter] = single_obsJSON[i];
-				json_counter++;
-			}
-		}
-	}
-
-	json_counter = 0;
-	if (group_obsJSON) {
-		for ( var i = 0; i < group_obsJSON.length; i++) {
-			var observations = group_obsJSON[i].observations;
-			for ( var j = 0; j < observations.length; j++) {
-				if (observations[j].value_type
-						&& observations[j].value_type === type) {
-					newJSON.obs_groups[json_counter] = group_obsJSON[i];
-					json_counter++;
-					break;
-				}
-			}
-		}
-	}
-	addAllObsGroups(newJSON);
-	addAllResultsFromJSONFromTheServer(newJSON);
-	currentJson = newJSON;
-}
-
-function filterOptions_providers() {
-	var providers = jsonAfterParse.providers;
-	var result = '<hr />';
-	for ( var i = 0; i < providers.length; i++) {
-		var tmpProvider = providers[i].provider;
-		result += '<a class="single_filter_option" onclick="provider_filter(\''
-				+ tmpProvider + '\', \'' + tmpProvider + '\')">' + tmpProvider
-				+ '</a>';
-	}
-
-	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Providers</a>';
-	document.getElementById('providersOptions').innerHTML = result;
-}
-
-function filterOptions_locations() {
-	var locations = jsonAfterParse.locations;
-	var result = '<hr />';
-	for ( var i = 0; i < locations.length; i++) {
-		var tmpLocation = locations[i].location;
-		result += '<a class="single_filter_option" onclick="location_filter(\''
-				+ tmpLocation + '\', \'' + tmpLocation + '\')">' + tmpLocation
-				+ '</a>';
-	}
-
-	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Locations</a>';
-	document.getElementById('locationOptions').innerHTML = result;
-}
-
-function filterOptions_datatypes() {
-	var datatypes = jsonAfterParse.datatypes;
-	var result = '<hr />';
-	for ( var i = 0; i < datatypes.length; i++) {
-		var tmpdatatypes = datatypes[i].datatype;
-		if (tmpdatatypes !== 'N/A') {
-			result += '<a class="single_filter_option" onclick="dataType_filter(\''
-					+ tmpdatatypes
-					+ '\', \''
-					+ tmpdatatypes
-					+ '\')">'
-					+ tmpdatatypes + '</a>';
-
-		}
-	}
-
-	result += '<a class="single_filter_option" onclick="refresh_data(json)">All Data Types</a>';
-	document.getElementById('datatypesOptions').innerHTML = result;
-}
-
 function refresh_data(json) {
 	$('#searchText').val(json.search_phrase);
 	var searchText = document.getElementById('searchText');
@@ -1675,7 +1422,7 @@ function filterResultsUsingTime(selectedPeriod) {
 			newResultsJson.patientAllergies = new_patientAllergies;
 			newResultsJson.patientAppointments = new_patientAppointments;
 		}
-		setResultsJsonAndApplySelectedFilter(tempJsonAfterParse, newResultsJson);
+		setResultsJsonAndApplySelectedFilter(newResultsJson);
 
 		if (selectedPeriod === "today") {
 			selectedPeriodText = "Today";
@@ -1695,15 +1442,13 @@ function filterResultsUsingTime(selectedPeriod) {
 
 }
 
-function setResultsJsonAndApplySelectedFilter(tempJsonAfterParse,
-		newResultsJson) {
+function setResultsJsonAndApplySelectedFilter(newResultsJson) {
 	document.getElementById('obsgroups_results').innerHTML = "";
 	document.getElementById('obsgroup_view').innerHTML = "";
 
-	tempJsonAfterParse = newResultsJson;
-	refresh_data(tempJsonAfterParse);
+	refresh_data(newResultsJson);
 	reInitializeGlobalVars();
-	$("#json-filtered-string").val(JSON.stringify(tempJsonAfterParse));
+	$("#json-filtered-string").val(JSON.stringify(newResultsJson));
 }
 
 function checkIfDateIsToday(dateTime) {
@@ -1909,7 +1654,7 @@ function filterResultsUsingCustomTime() {
 		newResultsJson.patientAllergies = new_patientAllergies;
 		newResultsJson.patientAppointments = new_patientAppointments;
 	}
-	setResultsJsonAndApplySelectedFilter(tempJsonAfterParse, newResultsJson);
+	setResultsJsonAndApplySelectedFilter(newResultsJson);
 	$("#time_anchor").text("Custom");
 }
 
@@ -1996,8 +1741,7 @@ function filterResultsUsingLocation(location) {
 			newResultsJson.obs_singles = new_obs_singles;
 			newResultsJson.patientAppointments = new_patientAppointments;
 
-			setResultsJsonAndApplySelectedFilter(tempJsonAfterParse,
-					newResultsJson);
+			setResultsJsonAndApplySelectedFilter(newResultsJson);
 		}
 		$("#location_anchor").text(location);
 	}
@@ -2050,8 +1794,7 @@ function filterResultsUsingProvider(provider) {
 			newResultsJson.obs_singles = new_obs_singles;
 			newResultsJson.patientAppointments = new_patientAppointments;
 
-			setResultsJsonAndApplySelectedFilter(tempJsonAfterParse,
-					newResultsJson);
+			setResultsJsonAndApplySelectedFilter(newResultsJson);
 		}
 		$("#provider_anchor").text(provider);
 	}

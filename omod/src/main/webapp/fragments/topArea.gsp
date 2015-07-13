@@ -413,7 +413,7 @@
 				elementId = "first_obs_single";
 			}
 			
-			load_single_detailed_obs(obsId);
+			load_single_detailed_obs(obsId, elementId);
 			updateNavigationIndicesToClicked(obsId, elementId);
 		}
 		

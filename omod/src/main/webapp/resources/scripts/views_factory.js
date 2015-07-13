@@ -412,16 +412,14 @@ function enable_graph(obs_id) {
 
 function load_single_detailed_obs(obs_id, obsIdElement) {
 	if (obsIdElement) {
+		removeAllHovering();
 		obsIdElement = obsIdElement.id;
-	}
 
-	removeAllHovering();
-	
-	if (obsIdElement && obsIdElement !== ""
-			&& obsIdElement === "first_obs_single") {
-		$("#first_obs_single").addClass("obsgroup_current");
-	} else {
-		$("#obs_single_" + obs_id).addClass("obsgroup_current");
+		if (obsIdElement !== "" && obsIdElement === "first_obs_single") {
+			$("#first_obs_single").addClass("obsgroup_current");
+		} else {
+			$("#obs_single_" + obs_id).addClass("obsgroup_current");
+		}
 	}
 	var obsJSON = get_single_obs_by_id(obs_id);
 	var resultText = '';
@@ -803,8 +801,8 @@ function addObsGroupToResults(obsJSON, firstObsgroup) {
 		}
 	}
 	resultText += '<div class="obsgroup_wrap" ' + obs_id_html
-			+ ' onclick="load_detailed_obs(' + obsJSON.group_Id + ', '
-			+ clickedId + ');updateNavigationIndicesToClicked('
+			+ ' onclick="load_detailed_obs(' + obsJSON.group_Id + ', \''
+			+ clickedId + '\');updateNavigationIndicesToClicked('
 			+ obsJSON.group_Id + ', ' + clickedId + ')">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
@@ -920,16 +918,14 @@ function showOnlyIfDef(str) {
 function load_detailed_obs(obs_id, clickedElement) {
 	var obsJSON = get_obs_by_id(obs_id);
 	var resultText = '';
-
-	if (clickedElement) {
-		clickedElement = clickedElement.id;
-	} else {
-		clickedElement = "first_obs_group";
-	}
+	
 	removeAllHovering();
 
-	if (clickedElement && clickedElement !== ""
-			&& clickedElement === "first_obs_group") {
+	if (!clickedElement) {
+		clickedElement = "first_obs_group";
+	}
+
+	if (clickedElement === "first_obs_group") {
 		$("#first_obs_group").addClass("obsgroup_current");
 	} else {
 		$("#obs_group_" + obs_id).addClass("obsgroup_current");

@@ -918,7 +918,7 @@ function showOnlyIfDef(str) {
 function load_detailed_obs(obs_id, clickedElement) {
 	var obsJSON = get_obs_by_id(obs_id);
 	var resultText = '';
-	
+
 	removeAllHovering();
 
 	if (!clickedElement) {
@@ -1749,10 +1749,7 @@ function filterResultsUsingLocation(location) {
 		var new_patientAppointments = [];
 
 		if (location === "All Locations") {
-			$("#json-filtered-string")
-					.val(JSON.stringify(storedJsonAfterParse));
-			refresh_data(newResultsJson);
-			reInitializeGlobalVars();
+			setResultsJsonAndApplySelectedFilter(newResultsJson);
 		} else {
 			if (newResultsJson.obs_groups.length > 0) {
 				// TODO compare and form a new obs_groups object
@@ -1802,10 +1799,7 @@ function filterResultsUsingProvider(provider) {
 		var new_patientAppointments = [];
 
 		if (provider === "All Providers") {
-			$("#json-filtered-string")
-					.val(JSON.stringify(storedJsonAfterParse));
-			refresh_data(newResultsJson);
-			reInitializeGlobalVars();
+			setResultsJsonAndApplySelectedFilter(newResultsJson);
 		} else {
 			if (newResultsJson.obs_groups.length > 0) {
 				// TODO compare and form a new obs_groups object

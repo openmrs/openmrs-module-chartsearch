@@ -1093,11 +1093,11 @@ function displayCategories(json) {
 	}
 }
 
-function displayNonFacetCategories(cat, catName) {
+function displayNonFacetCategories(cats, catName) {
 	var displayNonFacetcheckBox;
 	var displayNonFacetDetail;
 
-	if (cat.length !== 0) {
+	if (cats.length !== 0) {
 		displayNonFacetcheckBox = "<div class='category_filter_item'><input class='category_check' id='"
 				+ catName
 				+ "_category' type='checkbox' name='categories' value='"
@@ -1106,7 +1106,7 @@ function displayNonFacetCategories(cat, catName) {
 				+ catName
 				+ "_category'>"
 				+ capitalizeFirstLetter(catName)
-				+ "</a> (" + cat.length + ") </div>";
+				+ "</a> (" + cats.length + ") </div>";
 	} else {
 		displayNonFacetcheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
 				+ catName

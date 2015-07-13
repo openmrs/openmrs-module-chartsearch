@@ -564,8 +564,8 @@
 			
 			            jsonAfterParse = JSON.parse(results);
 			            
-			            refresh_data(jsonAfterParse);
 			            storeJsonFromServer(jsonAfterParse);
+			            refresh_data(jsonAfterParse);
 			            autoClickFirstResultToShowItsDetails(jsonAfterParse);
 			
 			            jq(".results_table_wrap").fadeIn(500);

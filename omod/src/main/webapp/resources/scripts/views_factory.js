@@ -1,6 +1,8 @@
-$("#passwordPopup").hide();
-
 var tryingToSubmit = false;
+var viewsFactory;
+var doT;
+var current_JSON_OBJECT;
+
 var dates = {
 	convert : function(d) {
 		// Converts the date in d to a date-object. The input can be:
@@ -57,10 +59,6 @@ function capitalizeFirstLetter(string) {
 	}
 }
 
-var viewsFactory;
-var doT;
-var current_JSON_OBJECT;
-
 viewsFactory = {
 
 	result_row : doT
@@ -84,8 +82,16 @@ function addAllResultsFromJSONFromTheServer(json) {
 	single_obsJSON.reverse();
 	if (typeof single_obsJSON !== 'undefined') {
 		resultText += '';
+		var firstObsSingle = false;
+
 		for ( var i = 0; i < single_obsJSON.length; i++) {
-			resultText += addSingleObsToResults(single_obsJSON[i], i);
+			if (i === 0 && json.obs_groups.length === 0) {
+				firstObsSingle = true;
+			} else {
+				firstObsSingle = false;
+			}
+			resultText += addSingleObsToResults(single_obsJSON[i],
+					firstObsSingle);
 		}
 		for (i = 0; i < allergies.length; i++) {
 			var allergen = allergies[i];
@@ -104,11 +110,11 @@ function addAllResultsFromJSONFromTheServer(json) {
 	}
 }
 
-function addSingleObsToResults(obsJSON, i) {
+function addSingleObsToResults(obsJSON, firstObsSingle) {
 	var obs_id_html = '';
 	var ob_id;
 	if (typeof obsJSON.observation_id !== 'undefined') {
-		if (i == 0) {
+		if (firstObsSingle) {
 			obs_id_html = 'id="first_obs_single"';
 			ob_id = 'first_obs_single';
 		} else {
@@ -120,7 +126,8 @@ function addSingleObsToResults(obsJSON, i) {
 	resultText += '<div class="obsgroup_wrap"' + obs_id_html
 			+ ' onclick="updateNavigationIndicesToClicked('
 			+ obsJSON.observation_id + ', ' + ob_id
-			+ ');load_single_detailed_obs(' + obsJSON.observation_id + ');">';
+			+ ');load_single_detailed_obs(' + obsJSON.observation_id + ', '
+			+ ob_id + ');">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	resultText += '<h3 class="obsgroup_title">';
@@ -403,9 +410,15 @@ function enable_graph(obs_id) {
 			});
 }
 
-function load_single_detailed_obs(obs_id) {
+function load_single_detailed_obs(obs_id, obsIdElement) {
+	if (obsIdElement) {
+		obsIdElement = obsIdElement.id;
+	}
+
 	removeAllHovering();
-	if (jsonAfterParse.obs_singles[0].observation_id == obs_id) {
+	
+	if (obsIdElement && obsIdElement !== ""
+			&& obsIdElement === "first_obs_single") {
 		$("#first_obs_single").addClass("obsgroup_current");
 	} else {
 		$("#obs_single_" + obs_id).addClass("obsgroup_current");
@@ -615,26 +628,34 @@ function updateNavigationIndicesToClicked(id, clickedId) {
 
 	if (clickedId && clickedId !== '') {
 		for (i = 0; i < allPossibleIndices.length; i++) {
-			if (i < json.obs_singles.length
-					&& json.obs_singles[i].observation_id === id
-					&& (clickedId === "first_obs_single" || clickedId
-							.indexOf("obs_single_") === 0)) {
+			if (json.obs_groups.length > 0
+					&& json.obs_groups[i]
+					&& json.obs_groups[i].group_Id === id
+					&& (clickedId === "first_obs_group" || clickedId === "obs_group_"
+							+ id)) {
 				navigationIndicesUpdateLogic(i, numberOfResults);
-			} else if (i < json.patientAllergies.length
+			} else if (json.obs_singles.length > 0
+					&& json.obs_singles[i]
+					&& json.obs_singles[i].observation_id === id
+					&& (clickedId === "first_obs_single" || clickedId === "obs_single_"
+							+ id)) {
+				navigationIndicesUpdateLogic(i + json.obs_groups.length,
+						numberOfResults);
+			} else if (json.patientAllergies.length > 0
+					&& json.patientAllergies[i]
 					&& json.patientAllergies[i].allergenId === id
-					&& (clickedId === "first_alergen" || clickedId
-							.indexOf("allergen_") === 0)) {
-				if (json.obs_singles.length && json.obs_singles.length > 0) {
-					navigationIndicesUpdateLogic(i + json.obs_singles.length,
-							numberOfResults);
-				} else {
-					navigationIndicesUpdateLogic(i, numberOfResults);
-				}
-			} else if (i < json.patientAppointments.length
+					&& (clickedId === "first_alergen" || clickedId === "allergen_"
+							+ id)) {
+				navigationIndicesUpdateLogic(i + json.obs_groups.length
+						+ json.obs_singles.length, numberOfResults);
+			} else if (json.patientAppointments.length > 0
+					&& json.patientAppointments.length[i]
 					&& json.patientAppointments.length[i] === id
-					&& (clickedId === "first_appointment" || clickedId
-							.indexOf("appointment_") === 0)) {
-
+					&& (clickedId === "first_appointment" || clickedId === "appointment_"
+							+ id)) {
+				navigationIndicesUpdateLogic(i + json.obs_groups.length
+						+ json.obs_singles.length
+						+ json.patientAllergies.length, numberOfResults);
 			}
 		}
 	}
@@ -742,8 +763,15 @@ function addAllObsGroups(obsJSON) {
 	obsgroupJSON.reverse();
 	if (typeof obsgroupJSON !== 'undefined') {
 		resultText += '';
+		var firstObsgroup = false;
+
 		for ( var i = 0; i < obsgroupJSON.length; i++) {
-			resultText += addObsGroupToResults(obsgroupJSON[i]);
+			if (i === 0) {
+				firstObsgroup = true;
+			} else {
+				firstObsgroup = false;
+			}
+			resultText += addObsGroupToResults(obsgroupJSON[i], firstObsgroup);
 		}
 		document.getElementById('obsgroups_results').innerHTML += resultText;
 	}
@@ -759,15 +787,25 @@ function getDateStr(date_str, onlyDate) {
 	return ans;
 }
 
-function addObsGroupToResults(obsJSON) {
+function addObsGroupToResults(obsJSON, firstObsgroup) {
 	var resultText = '';
 	var obs_id_html = '';
 	var obs_id = 'obs_group_' + obsJSON.group_Id;
+	var clickedId = "";
+
 	if (typeof obsJSON.group_Id !== 'undefined') {
-		obs_id_html = 'id="obs_group_' + obsJSON.group_Id + '"';
+		if (firstObsgroup) {
+			obs_id_html = 'id="first_obs_group"';
+			clickedId = "first_obs_group";
+		} else {
+			obs_id_html = 'id="obs_group_' + obsJSON.group_Id + '"';
+			clickedId = "obs_group_" + obsJSON.group_Id;
+		}
 	}
 	resultText += '<div class="obsgroup_wrap" ' + obs_id_html
-			+ ' onclick="load_detailed_obs(' + obsJSON.group_Id + ');">';
+			+ ' onclick="load_detailed_obs(' + obsJSON.group_Id + ', '
+			+ clickedId + ');updateNavigationIndicesToClicked('
+			+ obsJSON.group_Id + ', ' + clickedId + ')">';
 	resultText += '<div class="obsgroup_first_row">';
 	resultText += '<div class="obsgroup_titleBox">';
 	if (typeof obsJSON.group_name !== 'undefined') {
@@ -879,11 +917,24 @@ function showOnlyIfDef(str) {
 	return '';
 }
 
-function load_detailed_obs(obs_id) {
-	removeAllHovering();
-	$("#obs_group_" + obs_id).addClass("obsgroup_current");
+function load_detailed_obs(obs_id, clickedElement) {
 	var obsJSON = get_obs_by_id(obs_id);
 	var resultText = '';
+
+	if (clickedElement) {
+		clickedElement = clickedElement.id;
+	} else {
+		clickedElement = "first_obs_group";
+	}
+	removeAllHovering();
+
+	if (clickedElement && clickedElement !== ""
+			&& clickedElement === "first_obs_group") {
+		$("#first_obs_group").addClass("obsgroup_current");
+	} else {
+		$("#obs_group_" + obs_id).addClass("obsgroup_current");
+	}
+
 	resultText += '<div class="obsgroup_view">';
 	resultText += '<h3 class="chartserach_center">';
 	resultText += obsJSON.group_name;
@@ -896,9 +947,7 @@ function load_detailed_obs(obs_id) {
 			isBold = ' bold ';
 		}
 		resultText += '<div class="obsgroup_item_row' + isBold
-				+ '" onclick="updateNavigationIndicesToClicked('
-				+ singleObs[i].observation_id
-				+ ',"");load_single_detailed_obs('
+				+ '" onclick="load_single_detailed_obs('
 				+ singleObs[i].observation_id + ');">';
 		resultText += '<div class="obsgroup_item_first inline">';
 		resultText += capitalizeFirstLetter(singleObs[i].concept_name);
@@ -1328,19 +1377,19 @@ function reInitializeGlobalVars() {
 }
 
 function autoClickFirstResultToShowItsDetails(json) {
-	if (json.obs_singles) {
-		if (json.obs_singles.length && json.obs_singles.length > 0) {
-			$('#first_obs_single').trigger('click');
-		} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
-				&& json.patientAllergies.length
-				&& json.patientAllergies.length > 0) {
-			$('#first_alergen').trigger('click');
-		} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
-				&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
-				&& json.patientAppointments.length
-				&& json.patientAppointments.length > 0) {
-			$('#first_appointment').trigger('click');
-		}
+	if (json.obs_groups.length && json.obs_groups.length > 0) {
+		$('#first_obs_group').trigger('click');
+	} else if ((!json.obs_groups.length || json.obs_groups.length === 0)
+			&& json.obs_singles.length && json.obs_singles.length > 0) {
+		$('#first_obs_single').trigger('click');
+	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+			&& json.patientAllergies.length && json.patientAllergies.length > 0) {
+		$('#first_alergen').trigger('click');
+	} else if ((!json.obs_singles.length || json.obs_singles.length === 0)
+			&& (!json.patientAllergies.length || json.patientAllergies.length === 0)
+			&& json.patientAppointments.length
+			&& json.patientAppointments.length > 0) {
+		$('#first_appointment').trigger('click');
 	}
 }
 
@@ -1737,7 +1786,7 @@ function filterResultsUsingLocation(location) {
 			}
 
 			newResultsJson.obs_groups = new_obs_groups;
-			newResultsJson.patientAllergies = new_patientAllergies;
+			// newResultsJson.patientAllergies = new_patientAllergies;
 			newResultsJson.obs_singles = new_obs_singles;
 			newResultsJson.patientAppointments = new_patientAppointments;
 
@@ -1790,7 +1839,7 @@ function filterResultsUsingProvider(provider) {
 			}
 
 			newResultsJson.obs_groups = new_obs_groups;
-			newResultsJson.patientAllergies = new_patientAllergies;
+			// newResultsJson.patientAllergies = new_patientAllergies;
 			newResultsJson.obs_singles = new_obs_singles;
 			newResultsJson.patientAppointments = new_patientAppointments;
 

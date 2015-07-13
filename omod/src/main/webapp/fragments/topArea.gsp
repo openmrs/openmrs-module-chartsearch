@@ -354,15 +354,19 @@
 		}
 		
 		function increamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
-			var obs = single_obsJSON[navigationIndex];
+			var obsGroup = getResultsJson().obs_groups[navigationIndex];
+			var obsSingle = single_obsJSON[navigationIndex - getResultsJson().obs_groups.length];
 			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
 			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
-							
+			
 			peviousIndex = navigationIndex;
 			navigationIndex++;
 			wasGoingNext = true;
-			if(obs && obs.observation_id) {
-				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
+			
+			if(obsGroup && obsGroup.group_Id) {
+				focusOnNextObsGroupAndDisplayItsDetails(obsGroup.group_Id);
+			} else if(obsSingle && obsSingle.observation_id > 0) {
+				focusOnNextObsSingleAndDisplayItsDetails(obsSingle.observation_id);
 			} else if(allergy && allergy.allergenId > 0) {
 				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
 			} else if(appointment && appointment.id > 0) {
@@ -371,16 +375,19 @@
 		}
 		
 		function decreamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
-			var obs = single_obsJSON[navigationIndex];
+			var obsGroup = getResultsJson().obs_groups[navigationIndex];
+			var obsSingle = single_obsJSON[navigationIndex - getResultsJson().obs_groups.length];
 			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
 			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
-								
+							
 			peviousIndex = navigationIndex;
 			navigationIndex--;
 			wasGoingNext = false;
 								
-			if(obs && obs.observation_id) {
-				focusOnNextObsAndDisplayItsDetails(obs.observation_id);
+			if(obsGroup && obsGroup.group_Id) {
+				focusOnNextObsGroupAndDisplayItsDetails(obsGroup.group_Id);
+			} else if(obsSingle && obsSingle.observation_id > 0) {
+				focusOnNextObsSingleAndDisplayItsDetails(obsSingle.observation_id);
 			} else if(allergy && allergy.allergenId > 0) {
 				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
 			} else if(appointment && appointment.id > 0) {
@@ -388,7 +395,18 @@
 			}
 		}
 		
-		function focusOnNextObsAndDisplayItsDetails(obsId) {
+		function focusOnNextObsGroupAndDisplayItsDetails(groupId) {
+			var elementId = 'obs_group_' + groupId;
+			
+			if(getResultsJson().obs_groups[0].group_Id === groupId) {
+				elementId = "first_obs_group";
+			}
+			
+			load_detailed_obs(groupId, elementId);
+			updateNavigationIndicesToClicked(groupId, elementId);
+		}
+		
+		function focusOnNextObsSingleAndDisplayItsDetails(obsId) {
 			var elementId = 'obs_single_' + obsId;
 			
 			if(getResultsJson().obs_singles[0].observation_id === obsId) {

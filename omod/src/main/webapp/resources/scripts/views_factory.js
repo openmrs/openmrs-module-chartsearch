@@ -1488,7 +1488,6 @@ function filterResultsUsingTime(selectedPeriod) {
 }
 
 function setResultsJsonAndApplySelectedFilter(newResultsJson) {
-	document.getElementById('obsgroups_results').innerHTML = "";
 	document.getElementById('obsgroup_view').innerHTML = "";
 
 	refresh_data(newResultsJson);

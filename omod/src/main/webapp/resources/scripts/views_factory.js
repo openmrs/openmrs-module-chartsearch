@@ -682,7 +682,11 @@ function load_single_obs_history(obs_id) {
 	var obs_obj = get_single_obs_by_id(obs_id);
 	var obs_name = obs_obj.concept_name;
 	var history_json = get_obs_history_json_by_name(obs_name);
+
 	resultText += '<table><tr><th>Date</th><th>Value</th></tr>';
+	resultText += '<tr ><td>' + getDateStr(obs_obj.date, true) + '</td><td>'
+			+ obs_obj.value + '</td></tr>';
+
 	for ( var i = 0; i < history_json.length; i++) {
 		var red = '';
 		var addition = '';
@@ -714,7 +718,8 @@ function format_date(obs_date) {
 
 function get_obs_history_json_by_name(obs_name) {
 	var result = new Array();
-	var single_obsJSON = jsonAfterParse.obs_singles;
+	var single_obsJSON = jsonAfterParse.duplicate_obs_singles;
+
 	if (typeof single_obsJSON !== 'undefined') {
 		for ( var i = 0; i < single_obsJSON.length; i++) {
 			if (single_obsJSON[i].concept_name === obs_name) {

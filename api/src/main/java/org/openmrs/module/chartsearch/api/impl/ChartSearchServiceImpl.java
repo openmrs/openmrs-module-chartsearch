@@ -251,12 +251,37 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
 	public void addSingleObsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonObs, JSONArray arr_of_obs) {
+		JSONArray duplicateJsonObs = new JSONArray();
+		
 		for (Obs obsSingle : GeneratingJson.generateObsSinglesFromSearchResults()) {
 			if (obsSingle != null) {
 				jsonObs = GeneratingJson.createJsonObservation(obsSingle);
+				
+				if (arr_of_obs.size() == 0) {
+					arr_of_obs.add(jsonObs);
+				} else {
+					JSONObject dupObsJson = null;
+					
+					for (int i = 0; i < arr_of_obs.size(); i++) {
+						JSONObject obs = arr_of_obs.getJSONObject(i);
+						
+						if (obs.getString("concept_name").equals(jsonObs.getString("concept_name"))) {
+							dupObsJson = jsonObs;
+							break;
+						}
+						
+					}
+					
+					if (dupObsJson != null && dupObsJson.equals(jsonObs)) {
+						duplicateJsonObs.add(dupObsJson);
+					} else {
+						arr_of_obs.add(jsonObs);
+					}
+				}
 			}
-			arr_of_obs.add(jsonObs);
 		}
+		
+		jsonToReturn.put("duplicate_obs_singles", duplicateJsonObs);
 		jsonToReturn.put("obs_singles", arr_of_obs);
 	}
 	

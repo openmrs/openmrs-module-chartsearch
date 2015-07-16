@@ -1503,6 +1503,7 @@ function filterResultsUsingTime(selectedPeriod) {
 
 function setResultsJsonAndApplySelectedFilter(newResultsJson) {
 	document.getElementById('obsgroup_view').innerHTML = "";
+	$("#obsgroups_results").html("");
 
 	refresh_data(newResultsJson);
 	reInitializeGlobalVars();

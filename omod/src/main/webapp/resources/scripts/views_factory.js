@@ -383,7 +383,7 @@ function enable_graph(obs_id) {
 		yaxis : {
 			axisLabel: 'Value',
 			axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 16,
+            axisLabelFontSizePixels: 14,
             axisLabelFontFamily: 'Arial'
 		},
 		xaxis : {
@@ -392,7 +392,7 @@ function enable_graph(obs_id) {
 			timeformat : "%b <br/> %y",
 			axisLabel: 'Time',
 			axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 16,
+            axisLabelFontSizePixels: 14,
             axisLabelFontFamily: 'Arial'
 		}
 	});

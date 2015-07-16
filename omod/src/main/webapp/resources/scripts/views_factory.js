@@ -380,11 +380,20 @@ function enable_graph(obs_id) {
 			hoverable : true,
 			clickable : true
 		},
-		yaxis : {},
+		yaxis : {
+			axisLabel: 'Value',
+			axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 16,
+            axisLabelFontFamily: 'Arial'
+		},
 		xaxis : {
 			mode : "time",
 			minTickSize : [ 1, "month" ],
-			timeformat : "%b <br/> %y"
+			timeformat : "%b <br/> %y",
+			axisLabel: 'Time',
+			axisLabelUseCanvas: true,
+            axisLabelFontSizePixels: 16,
+            axisLabelFontFamily: 'Arial'
 		}
 	});
 

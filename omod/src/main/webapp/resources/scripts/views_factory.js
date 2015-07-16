@@ -340,6 +340,13 @@ function get_obs_ticks(obs_id) {
 function enable_graph(obs_id) {
 	var observation_obj = get_single_obs_by_id(obs_id);
 	var data2 = get_obs_graph_points(obs_id);
+	var int_date2 = parseInt(observation_obj.date);
+	var date_formmated2 = new Date(int_date2);
+	var cur2 = [ date_formmated2.getTime(), observation_obj.value ];
+
+	data2.push(cur2);
+	data2.sort(array_sort);
+
 	var mark = {
 		enabled : true,
 		showMinMax : false,

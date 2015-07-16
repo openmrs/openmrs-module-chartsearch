@@ -343,16 +343,24 @@ function enable_graph(obs_id) {
 	var int_date2 = parseInt(observation_obj.date);
 	var date_formmated2 = new Date(int_date2);
 	var cur2 = [ date_formmated2.getTime(), observation_obj.value ];
+	var allToBePlottedDates = [];
 
 	data2.push(cur2);
 	data2.sort(array_sort);
 
+	for (i = 0; i < data2.length; i++) {
+		allToBePlottedDates.push(data2[i][0]);
+	}
+
+	var maxToBePlottedMilli = Math.max.apply(Math, allToBePlottedDates);
+	var minToBePlottedMilli = Math.min.apply(Math, allToBePlottedDates);
 	var mark = {
 		enabled : true,
 		showMinMax : false,
 		color : "rgb(6,191,2)",
 		avg : 0
 	};
+
 	if (typeof observation_obj.normal_high !== 'undefined') {
 		mark.max = parseInt(observation_obj.normal_high);
 		mark.showMinMax = true;
@@ -390,8 +398,9 @@ function enable_graph(obs_id) {
 		},
 		xaxis : {
 			mode : "time",
-			minTickSize : [ 1, "month" ],
-			timeformat : "%b <br/> %y",
+			minTickSize : [ 1, "hour" ],
+			min : minToBePlottedMilli,
+			max : maxToBePlottedMilli,
 			axisLabel : 'Time',
 			axisLabelUseCanvas : true,
 			axisLabelFontSizePixels : 14,

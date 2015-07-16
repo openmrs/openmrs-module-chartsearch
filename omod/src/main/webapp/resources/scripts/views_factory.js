@@ -381,19 +381,29 @@ function enable_graph(obs_id) {
 			clickable : true
 		},
 		yaxis : {
-			axisLabel: 'Value',
-			axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 14,
-            axisLabelFontFamily: 'Arial'
+			axisLabel : 'Value',
+			axisLabelUseCanvas : true,
+			axisLabelFontSizePixels : 14,
+			axisLabelFontFamily : 'Arial',
+			zoomRange : [ 4, 10 ],
+			panRange : [ 4, 10 ]
 		},
 		xaxis : {
 			mode : "time",
 			minTickSize : [ 1, "month" ],
 			timeformat : "%b <br/> %y",
-			axisLabel: 'Time',
-			axisLabelUseCanvas: true,
-            axisLabelFontSizePixels: 14,
-            axisLabelFontFamily: 'Arial'
+			axisLabel : 'Time',
+			axisLabelUseCanvas : true,
+			axisLabelFontSizePixels : 14,
+			axisLabelFontFamily : 'Arial',
+			zoomRange : [ 4, 10 ],
+			panRange : [ 4, 10 ]
+		},
+		zoom : {
+			interactive : true
+		},
+		pan : {
+			interactive : true
 		}
 	});
 

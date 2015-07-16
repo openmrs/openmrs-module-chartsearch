@@ -492,6 +492,8 @@ function load_single_detailed_obs(obs_id, obsIdElement) {
 	document.getElementById('obsgroup_view').innerHTML = resultText;
 	if (obsJSON.value_type == 'Numeric') {
 		enable_graph(obs_id);
+	} else {
+		$(".demo-container").hide();
 	}
 }
 

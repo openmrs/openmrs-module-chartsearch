@@ -338,7 +338,6 @@ function get_obs_ticks(obs_id) {
 }
 
 function enable_graph(obs_id) {
-
 	var observation_obj = get_single_obs_by_id(obs_id);
 	var data2 = get_obs_graph_points(obs_id);
 	var mark = {
@@ -682,10 +681,20 @@ function load_single_obs_history(obs_id) {
 	var obs_obj = get_single_obs_by_id(obs_id);
 	var obs_name = obs_obj.concept_name;
 	var history_json = get_obs_history_json_by_name(obs_name);
+	var oRed = '';
+	var oAddition = '';
 
+	if (obs_obj.value < obs_obj.normal_low) {
+		oRed = ' red ';
+		oAddition = ' less_then_normal ';
+	} else if (obs_obj.value > obs_obj.normal_low) {
+		oRed = ' red ';
+		oAddition = ' more_then_normal ';
+	}
 	resultText += '<table><tr><th>Date</th><th>Value</th></tr>';
-	resultText += '<tr ><td>' + getDateStr(obs_obj.date, true) + '</td><td>'
-			+ obs_obj.value + '</td></tr>';
+	resultText += '<tr class="' + oRed + '"><td>'
+			+ getDateStr(obs_obj.date, true) + '</td><td><div class="'
+			+ oAddition + '">' + obs_obj.value + '</td></tr>';
 
 	for ( var i = 0; i < history_json.length; i++) {
 		var red = '';

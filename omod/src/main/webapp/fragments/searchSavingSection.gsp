@@ -124,7 +124,7 @@
     	jq("#lauche-other-chartsearch-features").hide();
     	
     	displayExistingBookmarks();
-    	displayBothPersonalAndGlobalNotes();
+    	displayBothPersonalAndGlobalNotes(jsonAfterParse);
     	updateBookmarksAndNotesUI();
     	displayQuickSearches();
     
@@ -611,7 +611,7 @@
 								jsonAfterParse.globalNotes = allNotes.globalNotes;
 								jsonAfterParse.currentUser = allNotes.currentUser;
 								
-								displayBothPersonalAndGlobalNotes();
+								displayBothPersonalAndGlobalNotes(jsonAfterParse);
 								jq("#new-comment-or-note").val("");
 	    						jq("#new-comment-or-note").css("border", "");
 							}
@@ -655,7 +655,7 @@
 								jsonAfterParse.globalNotes = allNotes.globalNotes;
 								jsonAfterParse.currentUser = allNotes.currentUser;
 								
-								displayBothPersonalAndGlobalNotes();
+								displayBothPersonalAndGlobalNotes(jsonAfterParse);
 							}
 						},
 						error: function(e) {
@@ -682,7 +682,7 @@
 							jsonAfterParse.globalNotes = allNotes.globalNotes;
 							jsonAfterParse.currentUser = allNotes.currentUser;
 							
-							displayBothPersonalAndGlobalNotes();
+							displayBothPersonalAndGlobalNotes(jsonAfterParse);
 						}
 					},
 					error: function(e) {

@@ -15,7 +15,7 @@
 		jq("#ui-datepicker-stop").datepicker();
 		
 		showHistorySuggestionsOnLoad();
-		displayBothPersonalAndGlobalNotes();
+		displayBothPersonalAndGlobalNotes(jsonAfterParse);
 		updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
 		
         jq( "#date_filter_title" ).click(function() {
@@ -339,7 +339,7 @@
 								
 						showHistorySuggestionsOnLoad();
 						hideSearchSuggestions();
-	    				displayBothPersonalAndGlobalNotes();
+	    				displayBothPersonalAndGlobalNotes(jsonAfterParse);
 	    				displayQuickSearches();
 	    				updateBookmarksAndNotesUI();
 	    				updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);

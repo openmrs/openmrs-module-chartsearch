@@ -417,11 +417,11 @@ function enable_graph(obs_id) {
 			panRange : [ -maxToBePlottedMilli, maxToBePlottedMilli ]
 		},
 		zoom : {
-			interactive : true,
+			interactive : false,
 			amount : 0.5
 		},
 		pan : {
-			interactive : true
+			interactive : false
 		}
 	});
 
@@ -1047,17 +1047,21 @@ function refresh_data(json) {
 	$("#location_anchor").text('All Locations');
 	$("#provider_anchor").text('All Providers');
 
-	if (!filteredJson || filteredJson === "") {
-		displayCategories(json);
-		displayProviders(json);
-		displayLocations(json);
-	}
-	if (json.noResults.foundNoResults) {
-		document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>"
-				+ json.noResults.foundNoResultsMessage
-				+ " <b> "
-				+ searchText.value + "</b></div>";
+	if (!json || json.noResults.foundNoResults) {
+		if (json) {
+			document.getElementById('obsgroups_results').innerHTML = "<div id='found_no_results'>"
+					+ json.noResults.foundNoResultsMessage
+					+ " <b> "
+					+ searchText.value + "</b></div>";
+		} else {
+			alert("Still Indexing!");
+		}
 	} else {
+		if (!filteredJson || filteredJson === "") {
+			displayCategories(json);
+			displayProviders(json);
+			displayLocations(json);
+		}
 		searchText.value = json.search_phrase;
 		var numberOfResults = json.obs_groups.length + json.obs_singles.length
 				+ json.patientAllergies.length
@@ -1083,7 +1087,6 @@ function refresh_data(json) {
 		addAllResultsFromJSONFromTheServer(json);
 		displayFailedPrivileges(json);
 	}
-	displayBothPersonalAndGlobalNotes();
 }
 
 /*
@@ -1238,14 +1241,14 @@ function updateBookmarksAndNotesUI() {
 	}
 }
 
-function displayBothPersonalAndGlobalNotes() {
-	var personalNotes = jsonAfterParse.personalNotes;
-	var globalNotes = jsonAfterParse.globalNotes;
+function displayBothPersonalAndGlobalNotes(json) {
+	var personalNotes = json.personalNotes;
+	var globalNotes = json.globalNotes;
 	var displayPersonalNotes = "";
 	var displayGlobalNotes = "";
 	var displayAllNotes;
 	var owner;
-	var curUser = jsonAfterParse.currentUser;
+	var curUser = json.currentUser;
 
 	if (personalNotes && personalNotes.length !== 0) {
 		displayPersonalNotes += "<u>Personal Notes (LOW priority):</u><br />";

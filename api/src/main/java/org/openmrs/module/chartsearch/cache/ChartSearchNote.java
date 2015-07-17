@@ -75,17 +75,6 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 		setNoteId(id);
 	}
 	
-	/**
-	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
-	 */
-	@Basic
-	@Access(AccessType.PROPERTY)
-	@Column(name = "note_uuid", length = 38, unique = true)
-	@Override
-	public String getUuid() {
-		return super.getUuid();
-	}
-	
 	public Integer getNoteId() {
 		return noteId;
 	}
@@ -164,9 +153,10 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	 * @param displayColor
 	 */
 	public void setDisplayColor(String displayColor) {
-		if ("orange".equals(displayColor) || "yellow".equals(displayColor)|| "violet".equals(displayColor) || "lime".equals(displayColor)
-		        || "beige".equals(displayColor) || "cyan".equals(displayColor) || "lightgreen".equals(displayColor)
-		        || "deeppink".equals(displayColor) || "magenta".equals(displayColor) || "red".equals(displayColor)) {//don't persist the first option
+		if ("orange".equals(displayColor) || "yellow".equals(displayColor) || "violet".equals(displayColor)
+		        || "lime".equals(displayColor) || "beige".equals(displayColor) || "cyan".equals(displayColor)
+		        || "lightgreen".equals(displayColor) || "deeppink".equals(displayColor) || "magenta".equals(displayColor)
+		        || "red".equals(displayColor)) {//don't persist the first option
 			this.displayColor = displayColor;
 		} else {
 			this.displayColor = "white";

@@ -397,4 +397,23 @@
 			<column name="uuid" value="663f961e-24bd-11e5-b345-feff819cdc9f" />
 		</insert>
 	</changeSet>
+	<changeSet id="CSM-111_17072015_1513" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="chartsearch_history"
+				columnName="history_uuid" />
+			<columnExists tableName="chartsearch_bookmark"
+				columnName="bookmark_uuid" />
+			<columnExists tableName="chartsearch_note" columnName="note_uuid" />
+		</preConditions>
+		<comment>
+			Re-Renaming history_uuid , bookmark_uuid and note_uuid
+			to uuid
+		</comment>
+		<renameColumn tableName="chartsearch_history"
+			oldColumnName="history_uuid" newColumnName="uuid" columnDataType="char(38)" />
+		<renameColumn tableName="chartsearch_bookmark"
+	oldColumnName="bookmark_uuid" newColumnName="uuid" columnDataType="char(38)" />
+		<renameColumn tableName="chartsearch_note" oldColumnName="note_uuid"
+			newColumnName="uuid" columnDataType="char(38)" />
+	</changeSet>
 </databaseChangeLog>

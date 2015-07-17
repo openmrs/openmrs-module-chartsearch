@@ -65,17 +65,6 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	@Column(name = "selected_categories")
 	private String selectedCategories;
 	
-	/**
-	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
-	 */
-	@Basic
-	@Access(AccessType.PROPERTY)
-	@Column(name = "bookmark_uuid", length = 38, unique = true)
-	@Override
-	public String getUuid() {
-		return super.getUuid();
-	}
-	
 	@Override
 	public Integer getId() {
 		return getBookmarkId();

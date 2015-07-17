@@ -55,17 +55,6 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 	@JoinColumn(name = "user_id", nullable = false)
 	private User historyOwner;
 	
-	/**
-	 * @see org.openmrs.BaseOpenmrsObject#getUuid()
-	 */
-	@Basic
-	@Access(AccessType.PROPERTY)
-	@Column(name = "history_uuid", length = 38, unique = true)
-	@Override
-	public String getUuid() {
-		return super.getUuid();
-	}
-	
 	@Override
 	public Integer getId() {
 		return getSearchId();

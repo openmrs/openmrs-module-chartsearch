@@ -344,16 +344,24 @@ function enable_graph(obs_id) {
 	var date_formmated2 = new Date(int_date2);
 	var cur2 = [ date_formmated2.getTime(), observation_obj.value ];
 	var allToBePlottedDates = [];
+	var allToBePlottedVals = [];
 
 	data2.push(cur2);
 	data2.sort(array_sort);
 
 	for (i = 0; i < data2.length; i++) {
 		allToBePlottedDates.push(data2[i][0]);
+		allToBePlottedVals.push(data2[i][1]);
 	}
 
 	var maxToBePlottedMilli = Math.max.apply(Math, allToBePlottedDates);
 	var minToBePlottedMilli = Math.min.apply(Math, allToBePlottedDates);
+	var maxToBePlottedVal = Math.max.apply(Math, allToBePlottedVals);
+	var minToBePlottedVal = Math.min.apply(Math, allToBePlottedVals);
+	var xaxisRange = (maxToBePlottedMilli - minToBePlottedMilli)
+			/ allToBePlottedDates.length;
+	var yaxisRange = (maxToBePlottedVal - minToBePlottedVal)
+			/ allToBePlottedVals.length;
 	var mark = {
 		enabled : true,
 		showMinMax : false,
@@ -393,8 +401,8 @@ function enable_graph(obs_id) {
 			axisLabelUseCanvas : true,
 			axisLabelFontSizePixels : 14,
 			axisLabelFontFamily : 'Arial',
-			zoomRange : [ 4, 10 ],
-			panRange : [ 4, 10 ]
+			zoomRange : false,
+			panRange : false
 		},
 		xaxis : {
 			mode : "time",
@@ -405,11 +413,12 @@ function enable_graph(obs_id) {
 			axisLabelUseCanvas : true,
 			axisLabelFontSizePixels : 14,
 			axisLabelFontFamily : 'Arial',
-			zoomRange : [ 4, 10 ],
-			panRange : [ 4, 10 ]
+			zoomRange : [ minToBePlottedMilli, maxToBePlottedMilli ],
+			panRange : [ -maxToBePlottedMilli, maxToBePlottedMilli ]
 		},
 		zoom : {
-			interactive : true
+			interactive : true,
+			amount : 0.5
 		},
 		pan : {
 			interactive : true

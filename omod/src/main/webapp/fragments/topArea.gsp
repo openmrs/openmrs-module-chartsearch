@@ -118,8 +118,8 @@
 			return false;
 		});
 		
-		jq('#category_dropdown').on('click', function(e){
-			if(e.target.localName !== "a" && e.target.localName !== "input") {
+		jq('#category_dropdown, #category-filter_method').on('click', function(e){
+			if(e.target.localName !== "a" && e.target.localName !== "input" || e.target.id === "category-filter_method") {
 		    	jq('#filter_categories_categories').toggleClass('display_filter_onclick');
 		    }
 		});
@@ -128,15 +128,15 @@
 		    return false;
 		});
 		
-		jq('#time_dropdown').on('click', function(e){
+		jq('#time_dropdown, #time_anchor').on('click', function(e){
 		    jq('#filter_categories_time').toggleClass('display_filter_onclick');
 		});
 		
-		jq('#location_dropdown').on('click', function(e){
+		jq('#location_dropdown, #location_anchor').on('click', function(e){
 		    jq('#locationOptions').toggleClass('display_filter_onclick');
 		});
 		
-		jq('#provider_dropdown').on('click', function(e){
+		jq('#provider_dropdown, #provider_anchor').on('click', function(e){
 		    jq('#providersOptions').toggleClass('display_filter_onclick');
 		});
 		
@@ -550,219 +550,152 @@
 
 <style type="text/css">
     .chart-search-input {
-        background: #00463f;
-        text-align: left;
-        color: white;
-        padding: 20px 30px;
-        -moz-border-radius: 5px;
-        -webkit-border-radius: 5px;
-        -o-border-radius: 5px;
-        -ms-border-radius: 5px;
-        -khtml-border-radius: 5px;
-        border-radius: 5px;
-    }
-    .chart_search_form_text_input {
-        min-width: 82% !important;
-    }
-    .inline {
-        display: inline-block;
-    }
-    .chart_search_form_button {
-        margin-left: 30px;
-    }
-    .form_label_style {
-        margin-bottom: 10px !important;
-    }
-    .filter_options {
-        display: none;
-        background: white;
-        width: 90px;
-        padding: 13px;
-        position: absolute;
-        border: 1px solid black;
-        left:242px;
-    }
-    .date_filter_title {
-        display: inline-block;
-        white-space: nowrap;
-        background-color: #ddd;
-        background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
-        background-image: -webkit-linear-gradient(top, #eee, #ccc);
-        background-image: -moz-linear-gradient(top, #eee, #ccc);
-        background-image: -ms-linear-gradient(top, #eee, #ccc);
-        background-image: -o-linear-gradient(top, #eee, #ccc);
-        background-image: linear-gradient(top, #eee, #ccc);
-        border: 1px solid #777;
-        padding: 0 1.5em;
-        margin: 0.5em 0;
-        font: bold 1em/2em Arial, Helvetica;
-        text-decoration: none;
-        color: #333;
-        text-shadow: 0 1px 0 rgba(255,255,255,.8);
-        -moz-border-radius: .2em;
-        -webkit-border-radius: .2em;
-        border-radius: .2em;
-        -moz-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
-        -webkit-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
-        box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
-    }
-    .date_filter_title:hover
-    {
-        background-color: #eee;
-        background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#ddd));
-        background-image: -webkit-linear-gradient(top, #fafafa, #ddd);
-        background-image: -moz-linear-gradient(top, #fafafa, #ddd);
-        background-image: -ms-linear-gradient(top, #fafafa, #ddd);
-        background-image: -o-linear-gradient(top, #fafafa, #ddd);
-        background-image: linear-gradient(top, #fafafa, #ddd);
-        cursor: pointer;
-    }
-
-    .date_filter_title:active
-    {
-        -moz-box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
-        -webkit-box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
-        box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
-        position: relative;
-        top: 1px;
-    }
-    .date_filter_title:after {
-        content:' ↓'
-    }
-    .single_filter_option {
-        display: block;
-        cursor: pointer;
-    }
-
-    .demo-container {
-        box-sizing: border-box;
-        width: 400px;
-        height: 300px;
-        padding: 20px 15px 15px 15px;
-        margin: 15px auto 30px auto;
-        border: 1px solid #ddd;
-        background: #fff;
-        background: linear-gradient(#f6f6f6 0, #fff 50px);
-        background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
-        background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
-        background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
-        background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
-        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-        -o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        -ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        -moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        -webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-
-    .demo-placeholder {
-        width: 100%;
-        height: 100%;
-        font-size: 14px;
-        line-height: 1.2em;
-    }
-
-    .legend, .legend div {
-        display: none;
-    }
-
-    .bold {
-        font-weight: bold;
-    }
-    
-    .category_filter_item {
-    
-    }
-    
-    .search-spinner {
-    	display: block;
-   		margin-left: auto;
-    	margin-right: auto;
-    	padding-top: 230px;
-    	height:120px;
-    	width:120px;
-    }
-    
-    #found_no_results {
-    	text-align:center;
-    	font-size: 25px;
-    }
-    
-    #chart_search_form_inputs-searchPhrase {
-    	position:relative;
-    }
-    
-    #chart-previous-searches {
-    	position:absolute;
-    }
-    
-    #searchBtn {
-    	margin-left:45px;
-    }
-    
-    #chart-previous-searches {
-    	cursor: pointer;
-    }
-    
-    .filters_section, #category_dropdown, #time_dropdown, #location_dropdown, #provider_dropdown {
-    	z-index: 0;
-    }
-    
-    #chart-previous-searches-display {
-    	position: absolute;
-		z-index: 1;
-		height: 250px;
-		width: 775px;
-		overflow: scroll;
-		background-color: white;
-		padding-left: 10px;
-		padding-right: 5px;
-		border-left: 2px solid #9C9A9A;
-		color: #949494;
-    }
-    
-    #chart-searches-suggestions {
-    	position: absolute;
-		z-index: 2;
-		height: 108px;
-		width: 764px;
-		background-color: white;
-		padding-left: 10px;
-		border: 2px solid #007fff;
-		color: black;
-		overflow: hidden;
-    }
-    
-    .search-text-suggestion {
-    	cursor: pointer;
-    }
-    
-    .category_filter_item-disabled {
-    	pointer-events:none;
-    }
-    
-    #found-results-summary {
-    	color:rgb(131, 128, 128);
-    	text-align:center;
-    }
-    
-    .search-history-item {
-		height: 25px;
-		border-bottom: 1px solid #A8ACAC;
+	    background: #00463f;
+	    text-align: left;
+	    color: white;
+	    padding: 20px 30px;
+	    -moz-border-radius: 5px;
+	    -webkit-border-radius: 5px;
+	    -o-border-radius: 5px;
+	    -ms-border-radius: 5px;
+	    -khtml-border-radius: 5px;
+	    border-radius: 5px;
 	}
-	
-    .delete-search-history {
-    	float:right;
-    	cursor: pointer;
-    }
-    
-    #hide-search-suggestions-ui {
-    	float:right;
-    	padding-right:10px;
-    	cursor:pointer;
-    	color:rgb(79, 100, 155);
-    }
-    
-	
+	.chart_search_form_text_input {
+	    min-width: 82% !important;
+	}
+	.inline {
+	    display: inline-block;
+	}
+	.chart_search_form_button {
+	    margin-left: 30px;
+	}
+	.form_label_style {
+	    margin-bottom: 10px !important;
+	}
+	.filter_options {
+	    display: none;
+	    background: white;
+	    width: 90px;
+	    padding: 13px;
+	    position: absolute;
+	    border: 1px solid black;
+	    left: 242px;
+	}
+	.single_filter_option {
+	    display: block;
+	    cursor: pointer;
+	}
+	.demo-container {
+	    box-sizing: border-box;
+	    width: 400px;
+	    height: 300px;
+	    padding: 20px 15px 15px 15px;
+	    margin: 15px auto 30px auto;
+	    border: 1px solid #ddd;
+	    background: #fff;
+	    background: linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+	    background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+	    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+	    -o-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+	    -ms-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+	    -moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+	    -webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+	}
+	.demo-placeholder {
+	    width: 100%;
+	    height: 100%;
+	    font-size: 14px;
+	    line-height: 1.2em;
+	}
+	.legend,
+	.legend div {
+	    display: none;
+	}
+	.bold {
+	    font-weight: bold;
+	}
+	.search-spinner {
+	    display: block;
+	    margin-left: auto;
+	    margin-right: auto;
+	    padding-top: 230px;
+	    height: 120px;
+	    width: 120px;
+	}
+	#found_no_results {
+	    text-align: center;
+	    font-size: 25px;
+	}
+	#chart_search_form_inputs-searchPhrase {
+	    position: relative;
+	}
+	#chart-previous-searches {
+	    position: absolute;
+	}
+	#searchBtn {
+	    margin-left: 45px;
+	}
+	#chart-previous-searches {
+	    cursor: pointer;
+	}
+	.filters_section,
+	#category_dropdown,
+	#time_dropdown,
+	#location_dropdown,
+	#provider_dropdown {
+	    z-index: 1;
+	}
+	#chart-previous-searches-display {
+	    position: absolute;
+	    z-index: 2;
+	    height: 250px;
+	    width: 775px;
+	    overflow: scroll;
+	    background-color: white;
+	    padding-left: 10px;
+	    padding-right: 5px;
+	    border-left: 2px solid #9C9A9A;
+	    color: #949494;
+	}
+	#chart-searches-suggestions {
+	    position: absolute;
+	    z-index: 2;
+	    height: 108px;
+	    width: 764px;
+	    background-color: white;
+	    padding-left: 10px;
+	    border: 2px solid #007fff;
+	    color: black;
+	    overflow: hidden;
+	}
+	.search-text-suggestion {
+	    cursor: pointer;
+	}
+	.category_filter_item-disabled {
+	    pointer-events: none;
+	}
+	#found-results-summary {
+	    color: rgb(131, 128, 128);
+	    text-align: center;
+	}
+	.search-history-item {
+	    height: 25px;
+	    border-bottom: 1px solid #A8ACAC;
+	}
+	.delete-search-history {
+	    float: right;
+	    cursor: pointer;
+	}
+	#hide-search-suggestions-ui {
+	    float: right;
+	    padding-right: 10px;
+	    cursor: pointer;
+	    color: rgb(79, 100, 155);
+	}
 </style>
 
 <article id="search-box">
@@ -788,7 +721,7 @@
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
 								<a href="#" class="filter_method" id="category-filter_method">All Categories</a>
-								<i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+								<i class="icon-sort-down"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">
 									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
@@ -807,7 +740,7 @@
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">
                                     <a href="#" class="filter_method" id="time_anchor">Any Time</a>
-                                    <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+                                    <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="filter_categories_time">
                                     <hr />
@@ -831,7 +764,7 @@
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
                                     <a href="#" class="filter_method" id="location_anchor">All Locations</a>
-                                    <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+                                    <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="locationOptions">
 									<script type="text/javascript">
@@ -844,7 +777,7 @@
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
                                     <a href="#" class="filter_method" id="provider_anchor">All Providers</a>
-                                    <i class="icon-sort-down" id="icon-arrow-dropdown"></i>
+                                    <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="providersOptions">
                                     <script type="text/javascript">

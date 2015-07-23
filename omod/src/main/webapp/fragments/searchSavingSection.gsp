@@ -44,7 +44,7 @@
 	}
 	
 	.detailed_results {
-		z-index:1;
+		z-index:3;
 	}
 	
 	#lauche-other-chartsearch-features {

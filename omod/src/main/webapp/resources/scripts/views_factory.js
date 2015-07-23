@@ -535,9 +535,8 @@ function load_single_detailed_obs(obs_id, obsIdElement) {
 
 	document.getElementById('obsgroup_view').innerHTML = resultText;
 	var obsJSONDups = get_obs_history_json_by_name(obsJSON.concept_name);
-	
-	if (obsJSON.value_type == 'Numeric'
-			&& obsJSONDups.length > 0) {
+
+	if (obsJSON.value_type == 'Numeric' && obsJSONDups.length > 0) {
 		enable_graph(obs_id);
 	} else {
 		$(".demo-container").hide();
@@ -732,6 +731,7 @@ function load_single_obs_history(obs_id) {
 	var history_json = get_obs_history_json_by_name(obs_name);
 	var oRed = '';
 	var oAddition = '';
+	var time1 = new Date(parseInt(obs_obj.date));
 
 	if (obs_obj.value < obs_obj.normal_low) {
 		oRed = ' red ';
@@ -742,12 +742,15 @@ function load_single_obs_history(obs_id) {
 	}
 	resultText += '<table><tr><th>Date</th><th>Value</th></tr>';
 	resultText += '<tr class="' + oRed + '"><td>'
-			+ getDateStr(obs_obj.date, true) + '</td><td><div class="'
-			+ oAddition + '">' + obs_obj.value + '</td></tr>';
+			+ getDateStr(obs_obj.date, true) + ' ' + time1.toTimeString()
+			+ '</td><td><div class="' + oAddition + '">' + obs_obj.value
+			+ '</td></tr>';
 
 	for ( var i = 0; i < history_json.length; i++) {
 		var red = '';
 		var addition = '';
+		var time2 = new Date(parseInt(history_json[i].date));
+
 		if (typeof history_json[i].normal_high !== 'undefined') {
 			if (history_json[i].value > history_json[i].normal_high) {
 				red = ' red ';
@@ -761,9 +764,9 @@ function load_single_obs_history(obs_id) {
 			}
 		}
 		resultText += '<tr class="' + red + '"><td>'
-				+ getDateStr(history_json[i].date, true)
-				+ '</td><td><div class="' + addition + '">'
-				+ history_json[i].value + '</div></td></tr>';
+				+ getDateStr(history_json[i].date, true) + ' '
+				+ time2.toTimeString() + '</td><td><div class="' + addition
+				+ '">' + history_json[i].value + '</div></td></tr>';
 	}
 	resultText += '</table>';
 	return resultText;
@@ -1019,26 +1022,13 @@ function load_detailed_obs(obs_id, clickedElement) {
 		resultText += '<div class="obsgroup_item_frth inline">';
 		resultText += getDateStr(singleObs[i].date, true);
 		resultText += '</div>';
-		resultText += '<span id="single_spark_' + singleObs[i].observation_id
-				+ '">Load</span>';
+		resultText += '<span><i>' + singleObs[i].value_type + '</i></span>';
 		resultText += '</div>';
 	}
 	resultText += '</div>';
 	resultText += '</div>';
+
 	$("#obsgroup_view").html(resultText);
-	var singleObs = obsJSON.observations;
-	for ( var i = 0; i < singleObs.length; i++) {
-		var spark = get_obs_spark_points(singleObs[i].observation_id);
-		$("#single_spark_" + singleObs[i].observation_id).sparkline(spark, {
-			type : 'line',
-			width : '150',
-			normalRangeMin : singleObs[i].normal_low,
-			normalRangeMax : singleObs[i].normal_high,
-			normalRangeColor : '#d3ffa8',
-			fillColor : false,
-			drawNormalOnTop : true
-		});
-	}
 }
 
 function refresh_data(json) {

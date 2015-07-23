@@ -718,7 +718,7 @@
                     	<div class="dropdown" id="category_dropdown">
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
-								<a href="#" class="filter_method" id="category-filter_method">All Categories</a>
+								<a class="filter_method" id="category-filter_method">All Categories</a>
 								<i class="icon-sort-down"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">
@@ -737,7 +737,7 @@
                         <div class="dropdown" id="time_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">
-                                    <a href="#" class="filter_method" id="time_anchor">Any Time</a>
+                                    <a class="filter_method" id="time_anchor">Any Time</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="filter_categories_time">
@@ -761,7 +761,7 @@
                         <div class="dropdown" id="location_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method" id="location_anchor">All Locations</a>
+                                    <a class="filter_method" id="location_anchor">All Locations</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="locationOptions">
@@ -774,7 +774,7 @@
                         <div class="dropdown" id="provider_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a href="#" class="filter_method" id="provider_anchor">All Providers</a>
+                                    <a class="filter_method" id="provider_anchor">All Providers</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="providersOptions">

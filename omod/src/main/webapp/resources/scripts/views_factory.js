@@ -534,7 +534,10 @@ function load_single_detailed_obs(obs_id, obsIdElement) {
 	resultText += '</div>';
 
 	document.getElementById('obsgroup_view').innerHTML = resultText;
-	if (obsJSON.value_type == 'Numeric') {
+	var obsJSONDups = get_obs_history_json_by_name(obsJSON.concept_name);
+	
+	if (obsJSON.value_type == 'Numeric'
+			&& obsJSONDups.length > 0) {
 		enable_graph(obs_id);
 	} else {
 		$(".demo-container").hide();

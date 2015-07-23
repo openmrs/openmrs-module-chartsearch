@@ -113,16 +113,16 @@
 		cursor: pointer;
 	}
 	
+	#lauche-stored-bookmark, #lauche-other-chartsearch-features {
+		display:none;
+	}
+	
 </style>
 
 <script type="text/javascript">
 	var jq = jQuery;
     
     jq(document).ready(function() {
-    
-    	jq("#lauche-stored-bookmark").hide();
-    	jq("#lauche-other-chartsearch-features").hide();
-    	
     	displayExistingBookmarks();
     	displayBothPersonalAndGlobalNotes(jsonAfterParse);
     	updateBookmarksAndNotesUI();

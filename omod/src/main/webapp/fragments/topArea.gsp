@@ -7,10 +7,7 @@
     var reversed = false;
     
     jq(document).ready(function() {
-    
 		jq('#searchText').focus();
-		jq("#chart-previous-searches-display").hide();
-		jq("#custom-date-dialog-content").hide();
 		jq("#ui-datepicker-start").datepicker();
 		jq("#ui-datepicker-stop").datepicker();
 		
@@ -22,8 +19,6 @@
             jq( "#date_filter_options" ).toggle();
         });
         
-        jq("#chart-searches-suggestions").hide();
-
         jq( "#date_filter_options" ).click(function(e) {
             jq( "#date_filter_options" ).hide();
             var txt = jq(e.target).text();
@@ -695,6 +690,9 @@
 	    padding-right: 10px;
 	    cursor: pointer;
 	    color: rgb(79, 100, 155);
+	}
+	#chart-previous-searches-display, #custom-date-dialog-content, #chart-searches-suggestions {
+		display:none;
 	}
 </style>
 

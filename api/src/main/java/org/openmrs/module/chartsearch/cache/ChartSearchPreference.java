@@ -25,8 +25,8 @@ import org.openmrs.User;
  * One row column (for each user) table which stores and updates preferences defined by a user
  */
 @Entity
-@Table(name = "chartsearch_preferences")
-public class ChartSearchPreferences implements Serializable {
+@Table(name = "chartsearch_preference")
+public class ChartSearchPreference implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -62,14 +62,14 @@ public class ChartSearchPreferences implements Serializable {
 	@Column(name = "personalnotes_colors")
 	private String personalNotesColors;
 	
-	@Column(name = "enable_history")
+	@Column(name = "enable_quicksearches")
 	private boolean enableQuickSearches;
 	
 	@Column(name = "enable_defaultsearch")
 	private boolean enableDefaultSearch;
 	
 	@Column(name = "user_id", nullable = false)
-	private User loggedInUSer;
+	private User preferenceOwner;
 	
 	public String getUuid() {
 		return uuid;
@@ -155,12 +155,12 @@ public class ChartSearchPreferences implements Serializable {
 		this.enableDefaultSearch = enableDefaultSearch;
 	}
 	
-	public User getLoggedInUSer() {
-		return loggedInUSer;
+	public User getPreferenceOwner() {
+		return preferenceOwner;
 	}
 	
-	public void setLoggedInUSer(User loggedInUSer) {
-		this.loggedInUSer = loggedInUSer;
+	public void setPreferenceOwner(User preferenceOwner) {
+		this.preferenceOwner = preferenceOwner;
 	}
 	
 }

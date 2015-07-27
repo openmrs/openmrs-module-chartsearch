@@ -20,7 +20,7 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
-
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 
 /**
  * Database methods for {@link ChartSearchService}.
@@ -59,4 +59,18 @@ public interface ChartSearchDAO {
 	public ChartSearchNote getSearchNoteByUuid(String uuid);
 	
 	public List<ChartSearchNote> getAllSearchNotes();
+	
+	public boolean saveANewChartSearchPreference(ChartSearchPreference preference);
+	
+	public void deleteChartSearchPreference(ChartSearchPreference preference);
+	
+	public ChartSearchPreference getChartSearchPreference(Integer preferenceId);
+	
+	public List<ChartSearchPreference> getAllChartSearchPreferences();
+	
+	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid);
+	
+	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
+
+	void updateChartSearchPreference(ChartSearchPreference pref);
 }

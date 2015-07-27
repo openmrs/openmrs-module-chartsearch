@@ -50,6 +50,7 @@ import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
@@ -504,4 +505,40 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 		
 		return locations;
 	}
+	
+	@Override
+	public boolean saveANewChartSearchPreference(ChartSearchPreference preference) {
+		return dao.saveANewChartSearchPreference(preference);
+		
+	}
+	
+	@Override
+	public void deleteChartSearchPreference(ChartSearchPreference preference) {
+		dao.deleteChartSearchPreference(preference);
+	}
+	
+	@Override
+	public List<ChartSearchPreference> getAllChartSearchPreferences() {
+		return dao.getAllChartSearchPreferences();
+	}
+	
+	@Override
+	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid) {
+		return dao.getChartSearchPreferenceByUuid(uuid);
+	}
+	
+	@Override
+	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId) {
+		return dao.getChartSearchPreferenceOfAUser(userId);
+	}
+	
+	@Override
+	public void updateChartSearchPreference(ChartSearchPreference pref) {
+		dao.updateChartSearchPreference(pref);
+	}
+
+	@Override
+    public ChartSearchPreference getChartSearchPreference(Integer preferenceId) {
+		return dao.getChartSearchPreference(preferenceId);
+    }
 }

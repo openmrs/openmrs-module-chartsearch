@@ -30,6 +30,7 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
 /**
@@ -246,6 +247,69 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public List<ChartSearchNote> getAllSearchNotes() {
 		return sessionFactory.getCurrentSession().createCriteria(ChartSearchNote.class).list();
+	}
+	
+	@Override
+	public boolean saveANewChartSearchPreference(ChartSearchPreference preference) {
+		List<ChartSearchPreference> prefs = getAllChartSearchPreferences();
+		boolean prefExistsForCurrentUser = false;
+		
+		for (ChartSearchPreference pref : prefs) {
+			if (pref.getPreferenceOwner().getUserId().equals(preference.getPreferenceOwner().getUserId())) {
+				prefExistsForCurrentUser = true;
+				break;
+			}
+		}
+		
+		if (!prefExistsForCurrentUser) {
+			sessionFactory.getCurrentSession().save(preference);
+			return true;
+		} else
+			return false;
+	}
+	
+	@Override
+	public void updateChartSearchPreference(ChartSearchPreference pref) {
+		sessionFactory.getCurrentSession().update(pref);
+	}
+	
+	@Override
+	public void deleteChartSearchPreference(ChartSearchPreference preference) {
+		sessionFactory.getCurrentSession().delete(preference);
+	}
+	
+	@Override
+	public List<ChartSearchPreference> getAllChartSearchPreferences() {
+		return sessionFactory.getCurrentSession().createCriteria(ChartSearchPreference.class).list();
+	}
+	
+	@Override
+	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid) {
+		ChartSearchPreference pref = (ChartSearchPreference) sessionFactory.getCurrentSession()
+		        .createQuery("from ChartSearchPreference pref where pref.uuid = :uuid").setParameter("uuid", uuid)
+		        .uniqueResult();
+		
+		return pref;
+	}
+	
+	@Override
+	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId) {
+		List<ChartSearchPreference> prefs = getAllChartSearchPreferences();
+		ChartSearchPreference rightPref = null;
+		
+		for (ChartSearchPreference pref : prefs) {
+			if (pref.getPreferenceOwner().getUserId().equals(userId)) {
+				rightPref = pref;
+				break;
+			}
+		}
+		
+		return rightPref;
+	}
+	
+	@Override
+	public ChartSearchPreference getChartSearchPreference(Integer preferenceId) {
+		return (ChartSearchPreference) sessionFactory.getCurrentSession().get(ChartSearchPreference.class, preferenceId);
 	}
 	
 }

@@ -24,6 +24,7 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
@@ -221,4 +222,26 @@ public interface ChartSearchService extends OpenmrsService {
 	String[] getAllLocationsFromTheDB();
 	
 	String[] getAllProvidersFromTheDB();
+	
+	/**
+	 * @return ifSaved boolean status
+	 */
+	public boolean saveANewChartSearchPreference(ChartSearchPreference preference);
+	
+	public void updateChartSearchPreference(ChartSearchPreference pref);
+	
+	public ChartSearchPreference getChartSearchPreference(Integer preferenceId);
+	
+	public void deleteChartSearchPreference(ChartSearchPreference preference);
+	
+	/**
+	 * Fetches all preferences of all the users that have set it up
+	 * 
+	 * @return
+	 */
+	public List<ChartSearchPreference> getAllChartSearchPreferences();
+	
+	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid);
+	
+	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
 }

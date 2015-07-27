@@ -412,8 +412,62 @@
 		<renameColumn tableName="chartsearch_history"
 			oldColumnName="history_uuid" newColumnName="uuid" columnDataType="char(38)" />
 		<renameColumn tableName="chartsearch_bookmark"
-	oldColumnName="bookmark_uuid" newColumnName="uuid" columnDataType="char(38)" />
+			oldColumnName="bookmark_uuid" newColumnName="uuid" columnDataType="char(38)" />
 		<renameColumn tableName="chartsearch_note" oldColumnName="note_uuid"
 			newColumnName="uuid" columnDataType="char(38)" />
+	</changeSet>
+
+	<changeSet id="CSM-95_28072015_1241" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<not>
+				<tableExists tableName="chartsearch_preference" />
+			</not>
+		</preConditions>
+		<comment>
+			Create chartsearch_preferences table
+		</comment>
+		<createTable tableName="chartsearch_preference">
+			<column name="preference_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_history" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_bookmark" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_notes" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_duplicateresults" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_multiplefiltering" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_quicksearches" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="enable_defaultsearch" type="boolean"
+				defaultValueNumeric="1">
+				<constraints nullable="false" />
+			</column>
+			<column name="personalnotes_colors" type="varchar(255)" />
+			<column name="user_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addForeignKeyConstraint constraintName="preference_owner-fk"
+			baseTableName="chartsearch_preference" baseColumnNames="user_id"
+			referencedTableName="users" referencedColumnNames="user_id" />
 	</changeSet>
 </databaseChangeLog>

@@ -12,6 +12,7 @@ package org.openmrs.module.chartsearch.cache;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,13 +24,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
-import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
 @Entity
 @Table(name = "chartsearch_bookmark")
-public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializable {
+public class ChartSearchBookmark implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -37,6 +37,9 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "bookmark_id")
 	private Integer bookmarkId;
+	
+	@Column(name = "uuid", unique = true, nullable = false, length = 38)
+	private String uuid = UUID.randomUUID().toString();
 	
 	@Column(name = "bookmark_name", nullable = false)
 	private String bookmarkName;
@@ -62,14 +65,12 @@ public class ChartSearchBookmark extends BaseOpenmrsObject implements Serializab
 	@Column(name = "selected_categories")
 	private String selectedCategories;
 	
-	@Override
-	public Integer getId() {
-		return getBookmarkId();
+	public String getUuid() {
+		return uuid;
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		setBookmarkId(id);
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 	public Integer getBookmarkId() {

@@ -32,7 +32,6 @@ import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
 
-
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
  */
@@ -180,7 +179,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public ChartSearchHistory getSearchHistoryByUuid(String uuid) {
 		ChartSearchHistory history = (ChartSearchHistory) sessionFactory.getCurrentSession()
-		        .createQuery("from ChartSearchHistory h where h.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		        .createQuery("from ChartSearchHistory h where h.uuid = :uuid").setParameter("uuid", uuid).uniqueResult();
 		
 		return history;
 	}
@@ -238,7 +237,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public ChartSearchNote getSearchNoteByUuid(String uuid) {
 		ChartSearchNote note = (ChartSearchNote) sessionFactory.getCurrentSession()
-		        .createQuery("from ChartSearchNote n where n.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		        .createQuery("from ChartSearchNote n where n.uuid = :uuid").setParameter("uuid", uuid).uniqueResult();
 		
 		return note;
 	}

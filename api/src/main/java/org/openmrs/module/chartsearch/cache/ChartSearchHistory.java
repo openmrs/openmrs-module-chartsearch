@@ -11,6 +11,7 @@ package org.openmrs.module.chartsearch.cache;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,19 +22,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
 @Entity
 @Table(name = "chartsearch_history")
-@SuppressWarnings("serial")
-public class ChartSearchHistory extends BaseOpenmrsObject implements Serializable {
+public class ChartSearchHistory implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "search_id")
 	private Integer searchId;
+	
+	@Column(name = "uuid", unique = true, nullable = false, length = 38)
+	private String uuid = UUID.randomUUID().toString();
 	
 	/**
 	 * Phrase or text searched for
@@ -52,14 +56,12 @@ public class ChartSearchHistory extends BaseOpenmrsObject implements Serializabl
 	@JoinColumn(name = "user_id", nullable = false)
 	private User historyOwner;
 	
-	@Override
-	public Integer getId() {
-		return getSearchId();
+	public String getUuid() {
+		return uuid;
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		setSearchId(id);
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 	public Integer getSearchId() {

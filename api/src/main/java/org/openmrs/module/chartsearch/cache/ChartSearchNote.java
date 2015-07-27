@@ -11,6 +11,7 @@ package org.openmrs.module.chartsearch.cache;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.openmrs.BaseOpenmrsObject;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
@@ -30,7 +30,7 @@ import org.openmrs.User;
  */
 @Entity
 @Table(name = "chartsearch_note")
-public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
+public class ChartSearchNote implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -38,6 +38,9 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "note_id")
 	private Integer noteId;
+	
+	@Column(name = "uuid", unique = true, nullable = false, length = 38)
+	private String uuid = UUID.randomUUID().toString();
 	
 	@Column(name = "comment", nullable = false)
 	private String comment;
@@ -62,14 +65,12 @@ public class ChartSearchNote extends BaseOpenmrsObject implements Serializable {
 	@Column(name = "display_color", length = 10)
 	private String displayColor;
 	
-	@Override
-	public Integer getId() {
-		return getNoteId();
+	public String getUuid() {
+		return uuid;
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		setNoteId(id);
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 	public Integer getNoteId() {

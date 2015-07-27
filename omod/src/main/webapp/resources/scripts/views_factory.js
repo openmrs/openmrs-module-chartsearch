@@ -399,19 +399,20 @@ function enable_graph(obs_id) {
 		yaxis : {
 			axisLabel : 'Value',
 			axisLabelUseCanvas : true,
-			axisLabelFontSizePixels : 14,
+			axisLabelFontSizePixels : 16,
 			axisLabelFontFamily : 'Arial',
 			zoomRange : false,
 			panRange : false
 		},
 		xaxis : {
 			mode : "time",
-			minTickSize : [ 1, "hour" ],
+			minTickSize : [ 1, "minute" ],
+			timezone : "browser",
 			min : minToBePlottedMilli,
 			max : maxToBePlottedMilli,
 			axisLabel : 'Time',
 			axisLabelUseCanvas : true,
-			axisLabelFontSizePixels : 14,
+			axisLabelFontSizePixels : 16,
 			axisLabelFontFamily : 'Arial',
 			zoomRange : [ minToBePlottedMilli, maxToBePlottedMilli ],
 			panRange : [ -maxToBePlottedMilli, maxToBePlottedMilli ]
@@ -1059,11 +1060,12 @@ function refresh_data(json) {
 		var numberOfResults = json.obs_groups.length + json.obs_singles.length
 				+ json.patientAllergies.length
 				+ json.patientAppointments.length;
-		var noResultsMessage = "<b>" + numberOfResults + "</b> Results (<b>"
-				+ json.retrievalTime + "</b> seconds)";
+		var noResultsMessage = "<b>" + numberOfResults
+				+ "</b> Summarized Results (<b>" + json.retrievalTime
+				+ "</b> seconds)";
 		var noResultsMessageNote = "";
 
-		if (numberOfResults === 0 && json.searchSuggestions.length > 0
+		if (numberOfResults === 0 && json.searchSuggestions.length === 0
 				&& json.search_phrase === "") {
 			noResultsMessageNote = "<br /><br /><br /><br /><p style='color:black;'><b>NOTE:</b> If this is the first time you are accessing this patient's chart, <b>Indexing patient data could still be in progress. </b>"
 					+ "So refresh the page a few moments from now. Otherwise the <b>patient has no data</b> (observations, allergies and appointments) that matches the current search or filter tried</p>";
@@ -1116,7 +1118,7 @@ function displayCategories(json) {
 			var displaycheckBox;
 			var displayDetail;
 
-			if (count != 0) {
+			if (count != 0 && name !== "convset") {
 				displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='"
 						+ name
 						+ "_category' type='checkbox' name='categories' value='"

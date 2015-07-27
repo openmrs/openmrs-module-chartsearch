@@ -227,7 +227,7 @@ public class ChartSearchSearcher {
 			}
 			list.add(item);
 			System.out.println(document.get("obs_id") + ", " + document.get("concept_name") + ", "
-			        + document.get("obs_datetime"));
+			        + document.get("obs_datetime") + ", " + document.get("text"));
 		}
 	}
 	

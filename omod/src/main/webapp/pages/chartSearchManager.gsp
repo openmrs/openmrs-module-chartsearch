@@ -29,11 +29,6 @@ input[type="radio"], input[type="checkbox"] {
 
 <div class="ui-tabs">
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
-	    <li class="ui-state-default ui-corner-top">
-	    	<a class="ui-tabs-anchor" href="#launcher">
-	        	Launcher
-	        </a>
-	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#history" >
 	             History
@@ -65,15 +60,12 @@ input[type="radio"], input[type="checkbox"] {
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#aggregate-searches" >
-	             Aggregate Searches
+	        <a class="ui-tabs-anchor" href="#feedback" >
+	             Feedback
 	        </a>
 	    </li>
     </ul>
     
-    <div id="launcher">
-    	${ ui.includeFragment("chartsearch", "chartsearchLauncher") }
-    </div>
     <div id="preferences">
     	${ ui.includeFragment("chartsearch", "managePreferences") }
     </div>
@@ -92,8 +84,8 @@ input[type="radio"], input[type="checkbox"] {
     <div id="notes">
     	${ ui.includeFragment("chartsearch", "manageNotes") }
     </div>
-    <div id="aggregate-searches">
-    	${ ui.includeFragment("chartsearch", "aggregateSearches") }
+    <div id="feedback">
+    	${ ui.includeFragment("chartsearch", "chartsearchFeedback") }
     </div>
     
 </div>

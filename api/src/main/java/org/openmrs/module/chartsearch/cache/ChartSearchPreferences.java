@@ -10,6 +10,7 @@
 package org.openmrs.module.chartsearch.cache;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,46 +19,64 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.openmrs.BaseOpenmrsObject;
+import org.openmrs.User;
 
+/**
+ * One row column (for each user) table which stores and updates preferences defined by a user
+ */
 @Entity
 @Table(name = "chartsearch_preferences")
-public class ChartSearchPreferences extends BaseOpenmrsObject implements Serializable {
+public class ChartSearchPreferences implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "preference_id")
+	@Column(name = "preference_id", nullable = false)
 	private Integer preferenceId;
+	
+	@Column(name = "uuid", unique = true, nullable = false, length = 38)
+	private String uuid = UUID.randomUUID().toString();
 	
 	/**
 	 * Enabling and disabling history similar to Google chrome's Incognito mode
 	 */
+	@Column(name = "enable_history")
 	private boolean enableHistory;
 	
+	@Column(name = "enable_bookmark")
 	private boolean enableBookmarks;
 	
+	@Column(name = "enable_notes")
 	private boolean enableNotes;
 	
+	@Column(name = "enable_duplicateresults")
 	private boolean enableDuplicateResults;
 	
+	@Column(name = "enable_multiplefiltering")
 	private boolean enableMultipleFiltering;
 	
-	private String[] personalNotesColors;
+	/**
+	 * Comma separated personal notes colors
+	 */
+	@Column(name = "personalnotes_colors")
+	private String personalNotesColors;
 	
+	@Column(name = "enable_history")
 	private boolean enableQuickSearches;
 	
+	@Column(name = "enable_defaultsearch")
 	private boolean enableDefaultSearch;
 	
-	@Override
-	public Integer getId() {
-		return getPreferenceId();
+	@Column(name = "user_id", nullable = false)
+	private User loggedInUSer;
+	
+	public String getUuid() {
+		return uuid;
 	}
 	
-	@Override
-	public void setId(Integer id) {
-		setPreferenceId(id);
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 	
 	public Integer getPreferenceId() {
@@ -108,12 +127,16 @@ public class ChartSearchPreferences extends BaseOpenmrsObject implements Seriali
 		this.enableMultipleFiltering = enableMultipleFiltering;
 	}
 	
-	public String[] getPersonalNotesColors() {
+	public String getPersonalNotesColors() {
 		return personalNotesColors;
 	}
 	
-	public void setPersonalNotesColors(String[] personalNotesColors) {
+	public void setPersonalNotesColors(String personalNotesColors) {
 		this.personalNotesColors = personalNotesColors;
+	}
+	
+	public String[] personalNotesColorsArray() {
+		return personalNotesColors.split(", ");
 	}
 	
 	public boolean isEnableQuickSearches() {
@@ -130,6 +153,14 @@ public class ChartSearchPreferences extends BaseOpenmrsObject implements Seriali
 	
 	public void setEnableDefaultSearch(boolean enableDefaultSearch) {
 		this.enableDefaultSearch = enableDefaultSearch;
+	}
+	
+	public User getLoggedInUSer() {
+		return loggedInUSer;
+	}
+	
+	public void setLoggedInUSer(User loggedInUSer) {
+		this.loggedInUSer = loggedInUSer;
 	}
 	
 }

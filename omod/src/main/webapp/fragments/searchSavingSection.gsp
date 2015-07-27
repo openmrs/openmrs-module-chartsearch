@@ -267,12 +267,8 @@
     		window.open('../chartsearch/chartSearchManager.page#notes', '_blank');
     	});
     	
-    	jq("#aggregate-searches").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#aggregate-searches', '_blank');
-    	});
-    	
-    	jq("#chartsearch-laucher").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#launcher', '_blank');
+    	jq("#feedback").click(function(event) {
+    		window.open('../chartsearch/chartSearchManager.page#feedback', '_blank');
     	});
     	
     	jq("#new-note-color").change(function(event) {
@@ -764,6 +760,5 @@
 	<div class="possible-task-list-item" id="commands-task-list-item">Commands</div>
 	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
 	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
-	<div class="possible-task-list-item" id="aggregate-searches">Aggregate Searches</div>
-	<div class="possible-task-list-item" id="chartsearch-laucher">Choose Another Patient</div>
+	<div class="possible-task-list-item" id="feedback">Feedback</div>
 </div>

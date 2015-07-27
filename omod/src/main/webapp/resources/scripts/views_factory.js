@@ -457,7 +457,10 @@ function enable_graph(obs_id) {
 function load_single_detailed_obs(obs_id, obsIdElement) {
 	if (obsIdElement) {
 		removeAllHovering();
-		obsIdElement = obsIdElement.id;
+
+		if (obsIdElement !== "first_obs_single") {
+			obsIdElement = obsIdElement.id;
+		}
 
 		if (obsIdElement !== "" && obsIdElement === "first_obs_single") {
 			$("#first_obs_single").addClass("obsgroup_current");

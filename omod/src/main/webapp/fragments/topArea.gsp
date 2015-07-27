@@ -404,7 +404,7 @@
 		function focusOnNextObsSingleAndDisplayItsDetails(obsId) {
 			var elementId = 'obs_single_' + obsId;
 			
-			if(getResultsJson().obs_singles[0].observation_id === obsId) {
+			if(getResultsJson().obs_groups.length === 0 && getResultsJson().obs_singles[0].observation_id === obsId) {
 				elementId = "first_obs_single";
 			}
 			
@@ -415,7 +415,7 @@
 		function focusOnNextAllergenAndDisplayItsDetails(allergenId) {
 			var elementId = 'allergen_' + allergenId;
 			
-			if (getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies[0].allergenId === allergenId) {
+			if (getResultsJson().obs_groups.length === 0 && getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies[0].allergenId === allergenId) {
 				elementId = "first_alergen";
 			}
 			
@@ -428,7 +428,7 @@
 		function focusOnNextAppointmentAndDisplayItsDetails(appId) {
 			var elementId = 'appointment_' + appId;
 			
-			if (getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies.length === 0 && getResultsJson().patientAppointments[0].id === appId) {
+			if (getResultsJson().obs_groups.length === 0 && getResultsJson().obs_singles.length === 0 && getResultsJson().patientAllergies.length === 0 && getResultsJson().patientAppointments[0].id === appId) {
 				elementId = "first_appointment";
 			}
 			

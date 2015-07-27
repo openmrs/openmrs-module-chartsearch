@@ -214,7 +214,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public ChartSearchBookmark getSearchBookmarkByUuid(String uuid) {
 		ChartSearchBookmark bookmark = (ChartSearchBookmark) sessionFactory.getCurrentSession()
-		        .createQuery("from ChartSearchBookmark b where b.uuid = :uuid").setString("uuid", uuid).uniqueResult();
+		        .createQuery("from ChartSearchBookmark b where b.uuid = :uuid").setParameter("uuid", uuid).uniqueResult();
 		
 		return bookmark;
 	}

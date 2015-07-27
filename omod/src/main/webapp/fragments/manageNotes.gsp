@@ -104,7 +104,7 @@
 								notesAfterparse = remainingNotes;
 								displayExistingNotes();
 									
-								alert("Successfully Saved Note");
+								alert("Successfully Deleted Note");
 							},
 							error: function(e) {
 							}
@@ -150,7 +150,7 @@
 	    		});
 	    		jq(".m-notes-comment").each(function(event) {
 	    			if(jq(this).attr("class").indexOf(uuid) >= 0) {
-	    				comment = jq(this).text();
+	    				comment = jq(this).val();
 	    			}
 	    		});
 	    		
@@ -165,7 +165,7 @@
 								notesAfterparse = allExistingNotes;
 								displayExistingNotes();
 										
-								alert("Successfully Editted Note");
+								alert("Successfully Edited Note");
 							} else {
 								alert("Note is not edited to be saved!");
 							}

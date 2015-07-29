@@ -278,7 +278,8 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		sessionFactory.getCurrentSession().delete(preference);
 	}
 	
-	@Override
+	@SuppressWarnings("unchecked")
+    @Override
 	public List<ChartSearchPreference> getAllChartSearchPreferences() {
 		return sessionFactory.getCurrentSession().createCriteria(ChartSearchPreference.class).list();
 	}
@@ -310,6 +311,21 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	@Override
 	public ChartSearchPreference getChartSearchPreference(Integer preferenceId) {
 		return (ChartSearchPreference) sessionFactory.getCurrentSession().get(ChartSearchPreference.class, preferenceId);
+	}
+	
+	public ChartSearchPreference getRightMatchedPreferences() {
+		ChartSearchPreference pref = getChartSearchPreferenceOfAUser(Context.getAuthenticatedUser().getUserId());
+		
+		if (pref == null) {//default preferences for daemon user
+			if (Context.getUserService().getUser(2).getUsername().equals("daemon")) {
+				pref = getChartSearchPreferenceOfAUser(2);
+			} else {
+				pref = getChartSearchPreference(1);
+			}
+			
+		}
+		
+		return pref;
 	}
 	
 }

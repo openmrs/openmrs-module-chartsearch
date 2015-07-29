@@ -470,4 +470,21 @@
 			baseTableName="chartsearch_preference" baseColumnNames="user_id"
 			referencedTableName="users" referencedColumnNames="user_id" />
 	</changeSet>
+
+	<changeSet id="CSM-95_29072015_1239" author="k-joseph">
+		<comment>Adding default preferences for daemon user
+		</comment>
+		<insert tableName="chartsearch_preference">
+			<column name="uuid" value="949e76d2-3571-11e5-a151-feff819cdc9f" />
+			<column name="enable_history" value="1" />
+			<column name="enable_bookmark" value="1" />
+			<column name="enable_notes" value="1" />
+			<column name="enable_duplicateresults" value="1" />
+			<column name="enable_multiplefiltering" value="1" />
+			<column name="enable_quicksearches" value="1" />
+			<column name="enable_defaultsearch" value="1" />
+			<column name="personalnotes_colors" value="" />
+			<column name="user_id" value="2" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

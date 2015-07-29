@@ -17,6 +17,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.openmrs.User;
@@ -68,7 +70,8 @@ public class ChartSearchPreference implements Serializable {
 	@Column(name = "enable_defaultsearch")
 	private boolean enableDefaultSearch;
 	
-	@Column(name = "user_id", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
 	private User preferenceOwner;
 	
 	public String getUuid() {
@@ -135,7 +138,7 @@ public class ChartSearchPreference implements Serializable {
 		this.personalNotesColors = personalNotesColors;
 	}
 	
-	public String[] personalNotesColorsArray() {
+	public String[] gePersonalNotesColorsArray() {
 		return personalNotesColors.split(", ");
 	}
 	

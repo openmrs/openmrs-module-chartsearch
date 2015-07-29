@@ -36,6 +36,7 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
 /**
@@ -711,6 +712,24 @@ public class GeneratingJson {
 			str = str.replace("\"", "\\\"");
 		}
 		return str;
+	}
+	
+	public static JSONObject generatePreferencesJSON() {
+		JSONObject json = new JSONObject();
+		ChartSearchPreference pref = chartSearchService.getRightMatchedPreferences();
+		
+		json.put("owner", pref.getPreferenceOwner().getUsername());
+		json.put("notesColors", pref.gePersonalNotesColorsArray());
+		json.put("uuid", pref.getUuid());
+		json.put("enableBookmarks", pref.isEnableBookmarks());
+		json.put("enableDefaultSearch", pref.isEnableDefaultSearch());
+		json.put("enableDuplicateResults", pref.isEnableDuplicateResults());
+		json.put("enableHistory", pref.isEnableHistory());
+		json.put("enableMultipleFiltering", pref.isEnableMultipleFiltering());
+		json.put("enableNotes", pref.isEnableNotes());
+		json.put("enableQuickSearches", pref.isEnableQuickSearches());
+		
+		return json;
 	}
 	
 	private static <T> T getComponent(Class<T> clazz) {

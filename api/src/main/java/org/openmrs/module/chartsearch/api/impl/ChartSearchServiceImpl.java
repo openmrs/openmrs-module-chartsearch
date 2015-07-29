@@ -536,9 +536,14 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	public void updateChartSearchPreference(ChartSearchPreference pref) {
 		dao.updateChartSearchPreference(pref);
 	}
-
+	
 	@Override
-    public ChartSearchPreference getChartSearchPreference(Integer preferenceId) {
+	public ChartSearchPreference getChartSearchPreference(Integer preferenceId) {
 		return dao.getChartSearchPreference(preferenceId);
-    }
+	}
+	
+	@Override
+	public ChartSearchPreference getRightMatchedPreferences() {
+		return dao.getRightMatchedPreferences();
+	}
 }

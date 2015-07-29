@@ -244,4 +244,6 @@ public interface ChartSearchService extends OpenmrsService {
 	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid);
 	
 	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
+	
+	public ChartSearchPreference getRightMatchedPreferences();
 }

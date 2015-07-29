@@ -25,6 +25,7 @@ import org.openmrs.module.chartsearch.AppointmentItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
+import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
@@ -55,6 +56,8 @@ public class ChartsearchPageController {
 			indexPatientData(patient);
 			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, true);
 		}
+		
+		model.put("preferences", GeneratingJson.generatePreferencesJSON().toString());
 	}
 	
 	private void indexPatientData(Patient patient) {

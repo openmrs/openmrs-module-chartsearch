@@ -73,4 +73,6 @@ public interface ChartSearchDAO {
 	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
 
 	void updateChartSearchPreference(ChartSearchPreference pref);
+	
+	public ChartSearchPreference getRightMatchedPreferences();
 }

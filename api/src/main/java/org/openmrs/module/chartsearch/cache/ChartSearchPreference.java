@@ -139,7 +139,10 @@ public class ChartSearchPreference implements Serializable {
 	}
 	
 	public String[] gePersonalNotesColorsArray() {
-		return personalNotesColors.split(", ");
+		if (personalNotesColors == null) {
+			return null;
+		} else
+			return personalNotesColors.split(", ");
 	}
 	
 	public boolean isEnableQuickSearches() {

@@ -9,13 +9,35 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
+import net.sf.json.JSONObject;
+
+import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.ui.framework.fragment.FragmentModel;
+import org.springframework.web.bind.annotation.RequestParam;
 
 public class ManagePreferencesFragmentController {
 	
+	ChartSearchCache cache = new ChartSearchCache();
+	
 	public void controller(FragmentModel model) {
-		model.put("preferences", GeneratingJson.generatePreferencesJSON().toString());
+		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
+		model.put("daemonPreferences", GeneratingJson.generateDaemonPreferencesJSON().toString());
 	}
 	
+	public JSONObject saveOrUpdatePrefereces(@RequestParam("history") Boolean enableHistory,
+	                                         @RequestParam("bookmarks") Boolean enableBookmarks,
+	                                         @RequestParam("notes") Boolean enableNotes,
+	                                         @RequestParam("quickSearches") Boolean enableQuickSearches,
+	                                         @RequestParam("defaultSearch") Boolean enableDefaultSearch,
+	                                         @RequestParam("duplicateResults") Boolean enableDuplicateResults,
+	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering) {
+		
+		return cache.saveOrUpdatePreferences(enableHistory, enableBookmarks, enableNotes, enableQuickSearches,
+		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering);
+	}
+	
+	public JSONObject restoreDefaultPrefereces() {
+		return cache.restorePreferences();
+	}
 }

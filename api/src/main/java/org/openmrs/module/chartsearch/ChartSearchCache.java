@@ -26,6 +26,7 @@ import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
+import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 
 import com.google.common.collect.Lists;
 
@@ -442,6 +443,51 @@ public class ChartSearchCache {
 			}
 		} else
 			return null;
+	}
+	
+	public JSONObject restorePreferences() {
+		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
+		
+		for (ChartSearchPreference pref : allPrefs) {
+			if (pref.getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
+				chartSearchService.deleteChartSearchPreference(pref);
+				break;
+			}
+		}
+		return GeneratingJson.generateDaemonPreferencesJSON();
+	}
+	
+	public JSONObject saveOrUpdatePreferences(Boolean enableHistory, Boolean enableBookmarks, Boolean enableNotes,
+	                                          Boolean enableQuickSearches, Boolean enableDefaultSearch,
+	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering) {
+		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
+		Boolean exists = false;
+		ChartSearchPreference preference = new ChartSearchPreference();
+		
+		for (ChartSearchPreference pref : allPrefs) {
+			if (pref.getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
+				exists = true;
+				preference = pref;
+				break;
+			}
+		}
+		
+		preference.setEnableBookmarks(enableBookmarks);
+		preference.setEnableDefaultSearch(enableDefaultSearch);
+		preference.setEnableDuplicateResults(enableDuplicateResults);
+		preference.setEnableHistory(enableHistory);
+		preference.setEnableMultipleFiltering(enableMultiFiltering);
+		preference.setEnableNotes(enableNotes);
+		preference.setEnableQuickSearches(enableQuickSearches);
+		
+		if (exists) {
+			chartSearchService.updateChartSearchPreference(preference);
+		} else {
+			preference.setPreferenceOwner(Context.getAuthenticatedUser());
+			chartSearchService.saveANewChartSearchPreference(preference);
+		}
+		
+		return GeneratingJson.generateRightMatchedPreferencesJSON();
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

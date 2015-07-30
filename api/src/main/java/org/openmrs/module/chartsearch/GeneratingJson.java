@@ -714,22 +714,31 @@ public class GeneratingJson {
 		return str;
 	}
 	
-	public static JSONObject generatePreferencesJSON() {
+	private static JSONObject generatePreferencesJSON(ChartSearchPreference pref) {
 		JSONObject json = new JSONObject();
-		ChartSearchPreference pref = chartSearchService.getRightMatchedPreferences();
+		//ChartSearchPreference pref = chartSearchService.getRightMatchedPreferences();
 		
-		json.put("owner", pref.getPreferenceOwner().getUsername());
-		json.put("notesColors", pref.gePersonalNotesColorsArray());
-		json.put("uuid", pref.getUuid());
-		json.put("enableBookmarks", pref.isEnableBookmarks());
-		json.put("enableDefaultSearch", pref.isEnableDefaultSearch());
-		json.put("enableDuplicateResults", pref.isEnableDuplicateResults());
-		json.put("enableHistory", pref.isEnableHistory());
-		json.put("enableMultipleFiltering", pref.isEnableMultipleFiltering());
-		json.put("enableNotes", pref.isEnableNotes());
-		json.put("enableQuickSearches", pref.isEnableQuickSearches());
-		
+		if (pref != null) {
+			json.put("owner", pref.getPreferenceOwner().getUsername());
+			json.put("notesColors", pref.gePersonalNotesColorsArray());
+			json.put("uuid", pref.getUuid());
+			json.put("enableBookmarks", pref.isEnableBookmarks());
+			json.put("enableDefaultSearch", pref.isEnableDefaultSearch());
+			json.put("enableDuplicateResults", pref.isEnableDuplicateResults());
+			json.put("enableHistory", pref.isEnableHistory());
+			json.put("enableMultipleFiltering", pref.isEnableMultipleFiltering());
+			json.put("enableNotes", pref.isEnableNotes());
+			json.put("enableQuickSearches", pref.isEnableQuickSearches());
+		}
 		return json;
+	}
+	
+	public static JSONObject generateDaemonPreferencesJSON() {
+		return generatePreferencesJSON(chartSearchService.getChartSearchPreferenceOfAUser(2));
+	}
+	
+	public static JSONObject generateRightMatchedPreferencesJSON() {
+		return generatePreferencesJSON(chartSearchService.getRightMatchedPreferences());
 	}
 	
 	private static <T> T getComponent(Class<T> clazz) {

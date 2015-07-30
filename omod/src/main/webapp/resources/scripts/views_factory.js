@@ -744,7 +744,7 @@ function load_single_obs_history(obs_id) {
 		oRed = ' red ';
 		oAddition = ' more_then_normal ';
 	}
-	resultText += '<table><tr><th>Date</th><th>Value</th></tr>';
+	resultText += '<table><tr><th>Time</th><th>Value</th></tr>';
 	resultText += '<tr class="' + oRed + '"><td>'
 			+ getDateStr(obs_obj.date, true) + ' ' + time1.toTimeString()
 			+ '</td><td><div class="' + oAddition + '">' + obs_obj.value

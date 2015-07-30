@@ -279,9 +279,14 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	public List<ChartSearchPreference> getAllChartSearchPreferences() {
-		return sessionFactory.getCurrentSession().createCriteria(ChartSearchPreference.class).list();
+		List<ChartSearchPreference> allPrefs = sessionFactory.getCurrentSession()
+		        .createCriteria(ChartSearchPreference.class).list();
+		
+		System.out.println("Number of preferences currently in the DB: " + allPrefs.size());
+		
+		return allPrefs;
 	}
 	
 	@Override

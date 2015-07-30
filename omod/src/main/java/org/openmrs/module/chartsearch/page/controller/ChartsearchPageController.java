@@ -57,7 +57,7 @@ public class ChartsearchPageController {
 			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, true);
 		}
 		
-		model.put("preferences", GeneratingJson.generatePreferencesJSON().toString());
+		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
 	}
 	
 	private void indexPatientData(Patient patient) {

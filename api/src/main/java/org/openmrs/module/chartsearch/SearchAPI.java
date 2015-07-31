@@ -73,7 +73,8 @@ public class SearchAPI {
 		List<String> categories = null;
 		ChartSearchCache cache = new ChartSearchCache();
 		
-		if (reloadWholePage && (searchPhrase.getPhrase().equals(",") || searchPhrase.getPhrase().equals(""))) {
+		if (reloadWholePage && cache.fetchRightMatchedPreferences().isEnableDefaultSearch()
+		        && (searchPhrase.getPhrase().equals(",") || searchPhrase.getPhrase().equals(""))) {
 			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
 			    SearchAPI.getPatientId());
 			String phrase = (String) defaultSearchProps.get("searchPhrase");

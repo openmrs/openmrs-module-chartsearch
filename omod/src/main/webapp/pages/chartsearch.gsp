@@ -25,12 +25,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient.patient ])
 ${ ui.includeFragment("chartsearch", "cssIncludes") }
 
 <div class="search_container">
+    <input type='hidden' id='json-stored-string' />
+    <input type='hidden' id='json-filtered-string' />
+    <input type='hidden' id='stored-preferences' />
+    
     ${ ui.includeFragment("chartsearch", "resultBox") }
     ${ ui.includeFragment("chartsearch", "filters") }
     ${ ui.includeFragment("chartsearch", "topArea") }
     <div style="clear:both;"></div>
-    
-    <input type='hidden' id='json-stored-string' />
-    <input type='hidden' id='json-filtered-string' />
-    
 </div>

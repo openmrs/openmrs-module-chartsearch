@@ -346,8 +346,10 @@ function enable_graph(obs_id) {
 	var allToBePlottedDates = [];
 	var allToBePlottedVals = [];
 
-	data2.push(cur2);
-	data2.sort(array_sort);
+	if (jsonAfterParse.duplicate_obs_singles != undefined) {
+		data2.push(cur2);
+		data2.sort(array_sort);
+	}
 
 	for (i = 0; i < data2.length; i++) {
 		allToBePlottedDates.push(data2[i][0]);
@@ -783,7 +785,13 @@ function format_date(obs_date) {
 
 function get_obs_history_json_by_name(obs_name) {
 	var result = new Array();
-	var single_obsJSON = jsonAfterParse.duplicate_obs_singles;
+	var single_obsJSON;
+
+	if (jsonAfterParse.duplicate_obs_singles !== undefined) {
+		single_obsJSON = jsonAfterParse.duplicate_obs_singles;
+	} else {
+		single_obsJSON = jsonAfterParse.obs_singles;
+	}
 
 	if (typeof single_obsJSON !== 'undefined') {
 		for ( var i = 0; i < single_obsJSON.length; i++) {
@@ -1039,10 +1047,18 @@ function refresh_data(json) {
 	$('#searchText').val(json.search_phrase);
 	var searchText = document.getElementById('searchText');
 	var filteredJson = $("#json-filtered-string").val();
+	var pref = $("#stored-preferences").val();
+	var preferences;
+	
+	if (pref !== "" && pref !== undefined) {
+		preferences = JSON.parse(pref);
+	}
 
-	$("#time_anchor").text('Any Time');
-	$("#location_anchor").text('All Locations');
-	$("#provider_anchor").text('All Providers');
+	if (preferences.enableMultipleFiltering === false) {
+		$("#time_anchor").text('Any Time');
+		$("#location_anchor").text('All Locations');
+		$("#provider_anchor").text('All Providers');
+	}
 
 	if (!json || json.noResults.foundNoResults) {
 		if (json) {
@@ -1468,12 +1484,30 @@ function isLoggedInSynchronousCheck() {// $.getJSON(emr.fragmentActionLink('html
 
 function filterResultsUsingTime(selectedPeriod) {
 	var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
-	var newResultsJson = storedJsonAfterParse;
+	var filtered = $("#json-filtered-string").val();
+	var filteredJSONAfterParse;
+	if (filtered !== "") {
+		filteredJSONAfterParse = JSON.parse(filtered);
+	}
+	var pref = $("#stored-preferences").val();
+	var preferences;
+	if (pref !== "" && pref !== undefined) {
+		preferences = JSON.parse(pref);
+	}
+	var newResultsJson;
 	var new_obs_groups = [];
 	var new_obs_singles = [];
 	var new_patientAllergies = [];
 	var new_patientAppointments = [];
 	var selectedPeriodText = "Any Time";
+
+	if (preferences !== undefined && preferences !== undefined
+			&& preferences.enableMultipleFiltering === true
+			&& filteredJSONAfterParse !== undefined) {
+		newResultsJson = filteredJSONAfterParse;
+	} else {
+		newResultsJson = storedJsonAfterParse;
+	}
 
 	if (selectedPeriod === "custom") {
 		jq("#submit-custom-date-filter").attr('disabled', 'disabled');
@@ -1717,11 +1751,25 @@ function filterResultsUsingCustomTime() {
 	var start = $("#ui-datepicker-start").val();
 	var stop = $("#ui-datepicker-stop").val();
 	var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
-	var newResultsJson = storedJsonAfterParse;
-	var new_obs_groups = [];
-	var new_obs_singles = [];
-	var new_patientAllergies = [];
-	var new_patientAppointments = [];
+	var filtered = $("#json-filtered-string").val();
+	var filteredJSONAfterParse;
+	if (filtered !== "") {
+		filteredJSONAfterParse = JSON.parse(filtered);
+	}
+	var pref = $("#stored-preferences").val();
+	var preferences;
+	if (pref !== "" && pref !== undefined) {
+		preferences = JSON.parse(pref);
+	}
+	var newResultsJson;
+
+	if (preferences !== undefined
+			&& preferences.enableMultipleFiltering === true
+			&& filteredJSONAfterParse !== undefined) {
+		newResultsJson = filteredJSONAfterParse;
+	} else {
+		newResultsJson = storedJsonAfterParse;
+	}
 
 	if (start && start !== "" && stop && stop !== "") {
 		if (newResultsJson.obs_groups.length > 0) {
@@ -1803,11 +1851,29 @@ function displayProviders(json) {
 function filterResultsUsingLocation(location) {
 	if (location && location != "") {
 		var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
-		var newResultsJson = storedJsonAfterParse;
+		var filtered = $("#json-filtered-string").val();
+		var filteredJSONAfterParse;
+		if (filtered !== "") {
+			filteredJSONAfterParse = JSON.parse(filtered);
+		}
+		var pref = $("#stored-preferences").val();
+		var preferences;
+		if (pref !== "" && pref !== undefined) {
+			preferences = JSON.parse(pref);
+		}
+		var newResultsJson;
 		var new_obs_groups = [];
 		var new_obs_singles = [];
 		var new_patientAllergies = [];
 		var new_patientAppointments = [];
+
+		if (preferences !== undefined
+				&& preferences.enableMultipleFiltering === true
+				&& filteredJSONAfterParse !== undefined) {
+			newResultsJson = filteredJSONAfterParse;
+		} else {
+			newResultsJson = storedJsonAfterParse;
+		}
 
 		if (location === "All Locations") {
 			setResultsJsonAndApplySelectedFilter(newResultsJson);
@@ -1853,11 +1919,29 @@ function filterResultsUsingLocation(location) {
 function filterResultsUsingProvider(provider) {
 	if (provider && provider !== "") {
 		var storedJsonAfterParse = JSON.parse($("#json-stored-string").val());
-		var newResultsJson = storedJsonAfterParse;
+		var filtered = $("#json-filtered-string").val();
+		var filteredJSONAfterParse;
+		if (filtered !== "") {
+			filteredJSONAfterParse = JSON.parse(filtered);
+		}
+		var pref = $("#stored-preferences").val();
+		var preferences;
+		if (pref !== "" && pref !== undefined) {
+			preferences = JSON.parse(pref);
+		}
+		var newResultsJson;
 		var new_obs_groups = [];
 		var new_obs_singles = [];
 		var new_patientAllergies = [];
 		var new_patientAppointments = [];
+
+		if (preferences !== undefined
+				&& preferences.enableMultipleFiltering === true
+				&& filteredJSONAfterParse !== undefined) {
+			newResultsJson = filteredJSONAfterParse;
+		} else {
+			newResultsJson = storedJsonAfterParse;
+		}
 
 		if (provider === "All Providers") {
 			setResultsJsonAndApplySelectedFilter(newResultsJson);
@@ -1897,5 +1981,35 @@ function filterResultsUsingProvider(provider) {
 			setResultsJsonAndApplySelectedFilter(newResultsJson);
 		}
 		$("#provider_anchor").text(provider);
+	}
+}
+
+function applyPreferencesToUIDisplays() {
+	var preferences = jq("#stored-preferences").val();
+	var pref;
+
+	if (preferences !== undefined && preferences !== "") {
+		pref = JSON.parse(preferences);
+
+		if (pref.enableQuickSearches === false) {
+			jq("#quick-searches").hide();
+		} else {
+			jq("#quick-searches").show();
+		}
+		if (pref.enableBookmarks === false) {
+			jq("#favorite-search-record").hide();
+		} else {
+			jq("#favorite-search-record").show();
+		}
+		if (pref.enableNotes === false) {
+			jq("#comment-on-search-record").hide();
+		} else {
+			jq("#comment-on-search-record").show();
+		}
+		if (pref.enableHistory === false) {
+			jq("#chart-previous-searches").hide();
+		} else {
+			jq("#chart-previous-searches").show();
+		}
 	}
 }

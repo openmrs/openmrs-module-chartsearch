@@ -487,4 +487,18 @@
 			<column name="user_id" value="2" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="CSM-113_31072015_1224" author="k-joseph">
+		<comment>Enable duplicate and Enable Multiple filtering should be set
+			to false by default
+		</comment>
+		<update tableName="chartsearch_preference">
+			<column name="enable_duplicateresults" value="0" />
+			<where>user_id=2</where>
+		</update>
+		<update tableName="chartsearch_preference">
+			<column name="enable_multiplefiltering" value="0" />
+			<where>user_id=2</where>
+		</update>
+	</changeSet>
 </databaseChangeLog>

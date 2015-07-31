@@ -50,7 +50,7 @@ public class ChartSearchCache {
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText, patientId);
 		
-		if (StringUtils.isNotBlank(searchText) && null != patientId) {
+		if (StringUtils.isNotBlank(searchText) && null != patientId && fetchRightMatchedPreferences().isEnableHistory()) {
 			history.setLastSearchedAt(new Date());
 			
 			if (null != exisitingHistory) {
@@ -129,7 +129,8 @@ public class ChartSearchCache {
 	                                       Integer patientId) {
 		JSONObject json = new JSONObject();
 		
-		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId) {
+		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId
+		        && fetchRightMatchedPreferences().isEnableBookmarks()) {
 			ChartSearchBookmark bookmark = new ChartSearchBookmark();
 			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, selectedCategories,
 			    patientId);
@@ -218,7 +219,7 @@ public class ChartSearchCache {
 	
 	public JSONArray saveBookmarkProperties(String uuid, String bookmarkName, String searchPhrase, String selectedCategories) {
 		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
-		if (bookmark != null) {
+		if (bookmark != null && fetchRightMatchedPreferences().isEnableBookmarks()) {
 			bookmark.setBookmarkName(bookmarkName);
 			//bookmark.setSearchPhrase(searchPhrase); search phrase needs not to be modified
 			bookmark.setSelectedCategories(selectedCategories);
@@ -258,7 +259,8 @@ public class ChartSearchCache {
 	
 	public JSONObject saveANewNoteOrCommentOnToASearch(String searchPhrase, Integer patientId, String comment,
 	                                                   String priority, String backgroundColor) {
-		if (null != patientId && StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(comment)) {
+		if (null != patientId && StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(comment)
+		        && fetchRightMatchedPreferences().isEnableNotes()) {
 			JSONObject json = new JSONObject();
 			ChartSearchNote note = new ChartSearchNote();
 			
@@ -488,6 +490,10 @@ public class ChartSearchCache {
 		}
 		
 		return GeneratingJson.generateRightMatchedPreferencesJSON();
+	}
+	
+	public ChartSearchPreference fetchRightMatchedPreferences() {
+		return chartSearchService.getRightMatchedPreferences();
 	}
 	
 	private <T> T getComponent(Class<T> clazz) {

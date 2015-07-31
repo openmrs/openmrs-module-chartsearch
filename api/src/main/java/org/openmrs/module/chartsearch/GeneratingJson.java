@@ -52,6 +52,8 @@ public class GeneratingJson {
 		return chartSearchService;
 	}
 	
+	private ChartSearchCache cache = new ChartSearchCache();
+	
 	public static String generateJson(boolean wholePageIsToBeLoaded) {
 		
 		JSONObject jsonToReturn = new JSONObject();

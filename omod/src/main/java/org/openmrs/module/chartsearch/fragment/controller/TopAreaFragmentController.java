@@ -28,6 +28,7 @@ public class TopAreaFragmentController {
 	
 	public void controller(FragmentModel model, @RequestParam("patientId") Patient patient) {
 		model.addAttribute("patientId", patient);
+		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
 	}
 	
 	public String getResultsFromTheServer(FragmentModel model,

@@ -127,6 +127,7 @@
     	displayBothPersonalAndGlobalNotes(jsonAfterParse);
     	updateBookmarksAndNotesUI();
     	displayQuickSearches();
+    	applyPreferencesToUIDisplays();
     
     	jq("#favorite-search-record").click(function(event) {
     		jq("#favorite-search-record").prop('disabled', true);
@@ -138,21 +139,23 @@
 	    	if(!phrase) {
 	    		failedToShowBookmark("A bookmark is only added after searching with a non blank phrase, Enter phrase and search first");
 	    	} else {
-	    		if(jq("#favorite-search-record").hasClass("icon-star-empty")) {
-		    		saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
-			    } else {
-			    	var bookmarks = jsonAfterParse.searchBookmarks;
-			    	var bookmarkName;
-			    	
-				    for (i = 0; i < bookmarks.length; i++) {
-						if (bookmarks[i].searchPhrase === phrase) {
-							bookmarkName = bookmarks[i].bookmarkName;
-							break;
+	    		if(preferences.enableBookmarks === true) {
+		    		if(jq("#favorite-search-record").hasClass("icon-star-empty")) {
+			    		saveOrUpdateBookmark(selectedCats, phrase, phrase, patientId);
+				    } else {
+				    	var bookmarks = jsonAfterParse.searchBookmarks;
+				    	var bookmarkName;
+				    	
+					    for (i = 0; i < bookmarks.length; i++) {
+							if (bookmarks[i].searchPhrase === phrase) {
+								bookmarkName = bookmarks[i].bookmarkName;
+								break;
+							}
 						}
-					}
-			    	addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
+				    	addBookmarkAtUIlayer(phrase, selectedCats, bookmarkName);
+				    }
+				    updateBookmarksAndNotesUI();
 			    }
-			    updateBookmarksAndNotesUI();
 			}
     	});
     	
@@ -162,9 +165,11 @@
 			var selectedCats = getSelectedCategoryNames();
 			var patientId = jq("#patient_id").val().replace("Patient#", "");
 			
-			saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId);
-			jq("#favorite-search-record-dialog").dialog("close");
-			updateBookmarksAndNotesUI();
+			if(preferences.enableBookmarks === true) {
+				saveOrUpdateBookmark(selectedCats, phrase, bookmarkName, patientId);
+				jq("#favorite-search-record-dialog").dialog("close");
+				updateBookmarksAndNotesUI();
+			}
     	});
     	
     	jq("#remove-current-bookmark").click(function(event) {

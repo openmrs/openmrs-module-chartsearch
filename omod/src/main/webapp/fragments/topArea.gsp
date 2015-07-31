@@ -6,6 +6,10 @@
     var categoryFilterLabel = "";
     var reversed = false;
     
+    
+    var prefs ='${preferences}';
+    jq("#stored-preferences").val(prefs);
+    
     jq(document).ready(function() {
 		jq('#searchText').focus();
 		jq("#ui-datepicker-start").datepicker();

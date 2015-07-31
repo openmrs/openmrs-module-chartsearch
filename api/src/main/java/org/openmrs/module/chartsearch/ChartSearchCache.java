@@ -153,7 +153,7 @@ public class ChartSearchCache {
 				
 				json.put("currentUuid", chartSearchService.getSearchBookmarkByUuid(bookmark.getUuid()).getUuid());
 			}
-			json.put("allBookmarks", GeneratingJson.getAllSearchBookmarksToReturnToUI(false));
+			json.put("allBookmarks", GeneratingJson.getAllSearchBookmarksToReturnToUI());
 			
 			return json;
 		} else {
@@ -195,7 +195,7 @@ public class ChartSearchCache {
 		
 		if (StringUtils.isNotBlank(uuid) && null != bookmark) {
 			chartSearchService.deleteSearchBookmark(bookmark);
-			return GeneratingJson.getAllSearchBookmarksToReturnToUI(false);
+			return GeneratingJson.getAllSearchBookmarksToReturnToUI();
 		} else
 			return null;
 	}
@@ -226,7 +226,7 @@ public class ChartSearchCache {
 			
 			chartSearchService.saveSearchBookmark(bookmark);
 		}
-		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI();
 	}
 	
 	public JSONArray deleteBookmarkInTheDialog(String uuid) {
@@ -234,7 +234,7 @@ public class ChartSearchCache {
 		if (bookmark != null) {
 			chartSearchService.deleteSearchBookmark(bookmark);
 		}
-		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI();
 	}
 	
 	public String fetchLastHistorySearchPhrase(Integer patientId) {
@@ -275,7 +275,7 @@ public class ChartSearchCache {
 			chartSearchService.saveSearchNote(note);
 			
 			if (null != chartSearchService.getSearchNote(note.getNoteId())) {
-				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
+				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 			} else {
 				json = null;
 			}
@@ -295,7 +295,7 @@ public class ChartSearchCache {
 			}
 		}
 		
-		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
+		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 		
 		return json;
 	}
@@ -308,7 +308,7 @@ public class ChartSearchCache {
 				chartSearchService.deleteSearchHistory(history);
 			}
 		}
-		return GeneratingJson.getAllSearchHistoriesToSendToTheManageUI(false);
+		return GeneratingJson.getAllSearchHistoriesToSendToTheManageUI();
 	}
 	
 	public JSONArray deleteBookmarkOfSelectedUuids(String[] uuids) {
@@ -319,7 +319,7 @@ public class ChartSearchCache {
 				chartSearchService.deleteSearchBookmark(bookmark);
 			}
 		}
-		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI();
 	}
 	
 	/**
@@ -390,10 +390,10 @@ public class ChartSearchCache {
 				}
 			}
 		}
-		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(false);
+		return GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI();
 	}
 	
-	public JSONArray fetchAllNotesForManageUI(boolean wholePageIsToBeLoaded) {
+	public JSONArray fetchAllNotesForManageUI() {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = Lists.reverse(chartSearchService.getAllSearchNotes());//re-arrange to get the most recent/added first
 		
@@ -406,7 +406,7 @@ public class ChartSearchCache {
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
 				
-				GeneratingJson.addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
+				GeneratingJson.addPhraseAndCommentNotesAttributes(note, json);
 				
 				json.put("patientId", note.getPatient().getPatientId());
 				json.put("patientFName", note.getPatient().getFamilyName());
@@ -427,7 +427,7 @@ public class ChartSearchCache {
 				}
 			}
 		}
-		return fetchAllNotesForManageUI(false);
+		return fetchAllNotesForManageUI();
 	}
 	
 	public JSONArray saveEdittedNote(String uuid, String comment, String priority) {
@@ -441,7 +441,7 @@ public class ChartSearchCache {
 				
 				chartSearchService.saveSearchNote(note);
 				
-				return fetchAllNotesForManageUI(false);
+				return fetchAllNotesForManageUI();
 			}
 		} else
 			return null;

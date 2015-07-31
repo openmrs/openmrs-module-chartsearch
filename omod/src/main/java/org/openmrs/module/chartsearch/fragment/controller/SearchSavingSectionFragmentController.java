@@ -22,7 +22,6 @@ import org.openmrs.module.chartsearch.page.controller.ChartsearchPageController;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
 public class SearchSavingSectionFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();
@@ -80,8 +79,8 @@ public class SearchSavingSectionFragmentController {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, false);
-		return GeneratingJson.generateJson(false);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+		return GeneratingJson.generateJson();
 	}
 	
 	public JSONObject saveANewNoteOnToASearch(@RequestParam("searchPhrase") String searchPhrase,
@@ -101,7 +100,7 @@ public class SearchSavingSectionFragmentController {
 	                                     @RequestParam("patientId") Integer patientId) {
 		JSONObject json = new JSONObject();
 		
-		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json, false);
+		GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 		
 		return json;
 	}

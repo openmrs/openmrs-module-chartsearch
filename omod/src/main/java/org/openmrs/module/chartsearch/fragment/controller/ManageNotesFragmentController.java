@@ -12,6 +12,7 @@ package org.openmrs.module.chartsearch.fragment.controller;
 import net.sf.json.JSONArray;
 
 import org.openmrs.module.chartsearch.ChartSearchCache;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,15 +20,16 @@ public class ManageNotesFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();
 	
-	public void controller(FragmentModel fragmentModel) {
-		fragmentModel.addAttribute("allFoundNotes", cache.fetchAllNotesForManageUI(true).toString());
+	public void controller(FragmentModel fragmentModel, UiUtils ui) {
+		fragmentModel.addAttribute("allFoundNotes", ui.escapeJs(cache.fetchAllNotesForManageUI().toString()));
 	}
 	
 	public JSONArray deleteSelectedNotes(@RequestParam("selectedUuids[]") String[] selectedUuids) {
 		return cache.deleteSelectedNotes(selectedUuids);
 	}
 	
-	public JSONArray saveEdittedNote(@RequestParam("uuid") String uuid, @RequestParam("comment") String comment, @RequestParam("priority") String priority) {
+	public JSONArray saveEdittedNote(@RequestParam("uuid") String uuid, @RequestParam("comment") String comment,
+	                                 @RequestParam("priority") String priority) {
 		return cache.saveEdittedNote(uuid, comment, priority);
 	}
 }

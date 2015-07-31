@@ -38,8 +38,8 @@ public class TopAreaFragmentController {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, false);
-		return GeneratingJson.generateJson(false);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+		return GeneratingJson.generateJson();
 	}
 	
 	public JSONObject deleteSearchHistory(@RequestParam("historyUuid") String historyUuid) {
@@ -47,7 +47,7 @@ public class TopAreaFragmentController {
 		ChartSearchCache cache = new ChartSearchCache();
 		
 		if (cache.deleteSearchHistory(historyUuid)) {
-			json.put("searchHistory", GeneratingJson.getAllSearchHistoriesToSendToTheUI(false));
+			json.put("searchHistory", GeneratingJson.getAllSearchHistoriesToSendToTheUI());
 			
 			return json;
 		} else

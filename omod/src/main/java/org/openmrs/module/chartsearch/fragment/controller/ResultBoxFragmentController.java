@@ -22,13 +22,12 @@ import java.util.ArrayList;
 
 public class ResultBoxFragmentController {
 	
-	public void controller(FragmentModel fragmentModel,
-                           UiUtils ui) {
+	public void controller(FragmentModel fragmentModel, UiUtils ui) {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		ArrayList<String> resultList = new ArrayList<String>();
-		resultList.add(ui.escapeJs(GeneratingJson.generateJson(true)));
+		resultList.add(ui.escapeJs(GeneratingJson.generateJson()));
 		searchAPI.clearResults();
 		fragmentModel.addAttribute("resultList", resultList);//bind the result list for the view
 	}
-
+	
 }

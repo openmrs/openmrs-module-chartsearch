@@ -54,7 +54,7 @@ public class GeneratingJson {
 	
 	private ChartSearchCache cache = new ChartSearchCache();
 	
-	public static String generateJson(boolean wholePageIsToBeLoaded) {
+	public static String generateJson() {
 		
 		JSONObject jsonToReturn = new JSONObject();
 		List<ChartListItem> returnedResults = SearchAPI.getInstance().getResults();
@@ -89,8 +89,8 @@ public class GeneratingJson {
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
 		Integer patientId = SearchAPI.getInstance().getPatientId();
 		
-		JSONArray history = getAllSearchHistoriesToSendToTheUI(wholePageIsToBeLoaded);
-		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI(wholePageIsToBeLoaded);
+		JSONArray history = getAllSearchHistoriesToSendToTheUI();
+		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI();
 		List<String> catNms = SearchAPI.getSelectedCategoryNames();
 		JSONArray allergies = generateAllergiesJSONFromResults(returnedResults);
 		JSONArray appointments = generateAppointmentsJSONFromResults(returnedResults);
@@ -106,16 +106,14 @@ public class GeneratingJson {
 		jsonToReturn.put("allLocations", getChartSearchService().getAllLocationsFromTheDB());
 		jsonToReturn.put("allProviders", getChartSearchService().getAllProvidersFromTheDB());
 		
-		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn, wholePageIsToBeLoaded);
+		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
 		
 		return jsonToReturn.toString();
 	}
 	
-	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json,
-	                                                       boolean wholePageIsToBeLoaded) {
-		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId,
-		    wholePageIsToBeLoaded);
-		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId, wholePageIsToBeLoaded);
+	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json) {
+		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
+		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
 		String userName = Context.getAuthenticatedUser().getUsername();
 		String systemId = Context.getAuthenticatedUser().getSystemId();
 		
@@ -131,7 +129,7 @@ public class GeneratingJson {
 		return searchSuggestions;
 	}
 	
-	public static JSONArray getAllSearchHistoriesToSendToTheUI(boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllSearchHistoriesToSendToTheUI() {
 		JSONArray histories = new JSONArray();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		
@@ -139,7 +137,7 @@ public class GeneratingJson {
 			JSONObject json = null;
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
 			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
-				json = generateHistoryJSON(wholePageIsToBeLoaded, history);
+				json = generateHistoryJSON(history);
 			}
 			if (null != json) {
 				histories.add(json);
@@ -149,14 +147,14 @@ public class GeneratingJson {
 		return histories;
 	}
 	
-	public static JSONArray getAllSearchHistoriesToSendToTheManageUI(boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllSearchHistoriesToSendToTheManageUI() {
 		JSONArray histories = new JSONArray();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
 		
 		for (ChartSearchHistory history : allHistory) {
 			JSONObject json = null;
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
-				json = generateHistoryJSON(wholePageIsToBeLoaded, history);
+				json = generateHistoryJSON(history);
 			}
 			if (null != json) {
 				histories.add(json);
@@ -166,15 +164,10 @@ public class GeneratingJson {
 		return histories;
 	}
 	
-	private static JSONObject generateHistoryJSON(boolean wholePageIsToBeLoaded, ChartSearchHistory history) {
+	private static JSONObject generateHistoryJSON(ChartSearchHistory history) {
 		JSONObject json;
 		json = new JSONObject();
-		
-		if (wholePageIsToBeLoaded) {
-			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(history.getSearchPhrase()));
-		} else {
-			json.put("searchPhrase", history.getSearchPhrase());
-		}
+		json.put("searchPhrase", history.getSearchPhrase());
 		json.put("lastSearchedAt", history.getLastSearchedAt().getTime());//passing timestamp from java to client js is a better practice
 		json.put("formattedLastSearchedAt", Context.getDateFormat().format(history.getLastSearchedAt()));
 		json.put("uuid", history.getUuid());
@@ -183,8 +176,7 @@ public class GeneratingJson {
 		return json;
 	}
 	
-	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId,
-	                                                     boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allPersonalNotes = new ArrayList<ChartSearchNote>();
@@ -208,7 +200,7 @@ public class GeneratingJson {
 				json.put("backgroundColor", note.getDisplayColor());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
-				addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
+				addPhraseAndCommentNotesAttributes(note, json);
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
 				jsonArr.add(json);
@@ -217,18 +209,12 @@ public class GeneratingJson {
 		return jsonArr;
 	}
 	
-	public static void addPhraseAndCommentNotesAttributes(boolean wholePageIsToBeLoaded, ChartSearchNote note,
-	                                                      JSONObject json) {
-		if (wholePageIsToBeLoaded) {
-			json.put("comment", appendBackwardSlashBeforeMustBePassedCharacters(note.getComment()));
-			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(note.getSearchPhrase()));
-		} else {
-			json.put("comment", note.getComment());
-			json.put("searchPhrase", note.getSearchPhrase());
-		}
+	public static void addPhraseAndCommentNotesAttributes(ChartSearchNote note, JSONObject json) {
+		json.put("comment", note.getComment());
+		json.put("searchPhrase", note.getSearchPhrase());
 	}
 	
-	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId, boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allGlobalNotes = new ArrayList<ChartSearchNote>();
@@ -252,7 +238,7 @@ public class GeneratingJson {
 				        .format(note.getCreatedOrLastModifiedAt()));
 				json.put("backgroundColor", note.getDisplayColor());
 				
-				addPhraseAndCommentNotesAttributes(wholePageIsToBeLoaded, note, json);
+				addPhraseAndCommentNotesAttributes(note, json);
 				
 				json.put("noteOwner", null == userName ? systemId : userName);
 				
@@ -262,7 +248,7 @@ public class GeneratingJson {
 		return jsonArr;
 	}
 	
-	public static JSONArray getAllSearchBookmarksToReturnToUI(boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllSearchBookmarksToReturnToUI() {
 		JSONArray bookmarks = new JSONArray();
 		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
 		
@@ -271,7 +257,7 @@ public class GeneratingJson {
 			
 			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())
 			        && curBookmark.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
-				json = generateBookmarksJSON(wholePageIsToBeLoaded, curBookmark);
+				json = generateBookmarksJSON(curBookmark);
 			}
 			
 			if (null != json) {
@@ -281,7 +267,7 @@ public class GeneratingJson {
 		return bookmarks;
 	}
 	
-	public static JSONArray getAllSearchBookmarksToReturnTomanagerUI(boolean wholePageIsToBeLoaded) {
+	public static JSONArray getAllSearchBookmarksToReturnTomanagerUI() {
 		JSONArray bookmarks = new JSONArray();
 		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
 		
@@ -289,7 +275,7 @@ public class GeneratingJson {
 			JSONObject json = null;
 			
 			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())) {
-				json = generateBookmarksJSON(wholePageIsToBeLoaded, curBookmark);
+				json = generateBookmarksJSON(curBookmark);
 			}
 			
 			if (null != json) {
@@ -299,17 +285,12 @@ public class GeneratingJson {
 		return bookmarks;
 	}
 	
-	private static JSONObject generateBookmarksJSON(boolean wholePageIsToBeLoaded, ChartSearchBookmark curBookmark) {
+	private static JSONObject generateBookmarksJSON(ChartSearchBookmark curBookmark) {
 		JSONObject json;
 		json = new JSONObject();
 		
-		if (wholePageIsToBeLoaded) {
-			json.put("bookmarkName", appendBackwardSlashBeforeMustBePassedCharacters(curBookmark.getBookmarkName()));
-			json.put("searchPhrase", appendBackwardSlashBeforeMustBePassedCharacters(curBookmark.getSearchPhrase()));
-		} else {
-			json.put("bookmarkName", curBookmark.getBookmarkName());
-			json.put("searchPhrase", curBookmark.getSearchPhrase());
-		}
+		json.put("bookmarkName", curBookmark.getBookmarkName());
+		json.put("searchPhrase", curBookmark.getSearchPhrase());
 		json.put("categories", curBookmark.getSelectedCategories());
 		json.put("uuid", curBookmark.getUuid());
 		json.put("patientId", curBookmark.getPatient().getPatientId());
@@ -704,16 +685,6 @@ public class GeneratingJson {
 		counts.put("name", facet.getName());
 		counts.put("count", facet.getCount());
 		return counts;
-	}
-	
-	private static String appendBackwardSlashBeforeMustBePassedCharacters(String str) {
-		if (str.contains("'")) {
-			//str = str.replace("'", "\\'");
-		}
-		if (str.contains("\"")) {
-			str = str.replace("\"", "\\\"");
-		}
-		return str;
 	}
 	
 	private static JSONObject generatePreferencesJSON(ChartSearchPreference pref) {

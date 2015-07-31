@@ -25,7 +25,6 @@ import org.openmrs.module.chartsearch.AppointmentItem;
 import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.EncounterItem;
 import org.openmrs.module.chartsearch.FormItem;
-import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.ObsItem;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.module.chartsearch.SearchPhrase;
@@ -54,7 +53,7 @@ public class ChartsearchPageController {
 			model.addAttribute("patient", patientDomainWrapper);
 			SearchAPI searchAPIInstance = SearchAPI.getInstance();
 			indexPatientData(patient);
-			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance, true);
+			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
 		}
 	}
 	
@@ -68,7 +67,7 @@ public class ChartsearchPageController {
 	}
 	
 	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, String[] categories,
-	                                          SearchAPI searchAPIInstance, boolean reloadWholePage) {
+	                                          SearchAPI searchAPIInstance) {
 		if (search_phrase == null) {
 			search_phrase = new SearchPhrase();
 		}
@@ -76,8 +75,7 @@ public class ChartsearchPageController {
 			categories = new String[0];
 		}
 		List<String> selectedCategories = Arrays.asList(categories);
-		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories,
-		    reloadWholePage);
+		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
 		
 		for (ChartListItem chartListItem : items) {

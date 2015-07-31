@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
 
 import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -21,9 +22,9 @@ public class ManageBookmarksFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();
 	
-	public void controller(FragmentModel fragmentModel) {
-		fragmentModel.addAttribute("allFoundBookmarks", GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI(true)
-		        .toString());
+	public void controller(FragmentModel fragmentModel, UiUtils ui) {
+		fragmentModel.addAttribute("allFoundBookmarks",
+		    ui.escapeJs(GeneratingJson.getAllSearchBookmarksToReturnTomanagerUI().toString()));
 	}
 	
 	public JSONObject fetchBookmarkDetails(@RequestParam("uuid") String uuid) {

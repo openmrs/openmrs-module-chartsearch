@@ -67,13 +67,12 @@ public class SearchAPI {
 		SearchAPI.resultList.clear();
 	}
 	
-	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames,
-	                                  boolean reloadWholePage) {
+	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames) {
 		SearchAPI.patientId = patientId;
 		List<String> categories = null;
 		ChartSearchCache cache = new ChartSearchCache();
 		
-		if (reloadWholePage && cache.fetchRightMatchedPreferences().isEnableDefaultSearch()
+		if (cache.fetchRightMatchedPreferences().isEnableDefaultSearch()
 		        && (searchPhrase.getPhrase().equals(",") || searchPhrase.getPhrase().equals(""))) {
 			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
 			    SearchAPI.getPatientId());

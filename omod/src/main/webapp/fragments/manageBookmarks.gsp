@@ -36,7 +36,7 @@
 		});
 		
 		jq("table").on('mouseenter', 'tr', function(event) {
-			if(event.delegateTarget.id !== "manage-notes-display-table" && event.delegateTarget.id !== "patient-search-results-table" && event.target.localName !== "th" && event.target.localName !== "input" && event.target.localName !== "label" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history" && event.target.offsetParent.id !== "this-year-history") {
+			if(event.delegateTarget.id !== "manage-notes-display-table" && event.delegateTarget.id !== "patient-search-results-table" && event.target.localName !== "th" && event.target.localName !== "input" && event.target.localName !== "label" && event.target.offsetParent.id !== "todays-history" && event.target.offsetParent.id !== "preferences-cats" && event.target.offsetParent.id !== "this-weeks-history" && event.target.offsetParent.id !== "this-month-history" && event.target.offsetParent.id !== "other-history" && event.target.offsetParent.id !== "this-year-history") {
 				jq(this).css("cursor", "pointer");
 				jq(this).css('background', '#F0EAEA');
 			}

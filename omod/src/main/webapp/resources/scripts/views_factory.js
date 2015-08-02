@@ -1049,7 +1049,7 @@ function refresh_data(json) {
 	var filteredJson = $("#json-filtered-string").val();
 	var pref = $("#stored-preferences").val();
 	var preferences;
-	
+
 	if (pref !== "" && pref !== undefined) {
 		preferences = JSON.parse(pref);
 	}
@@ -1111,6 +1111,7 @@ function displayCategories(json) {
 	var checkedCategories = new Object();
 	var allergies = json.patientAllergies;
 	var appointments = json.patientAppointments;
+	var catFilters = json.categoryFilters;
 
 	if (json.noResults.foundNoResults) {
 		document.getElementById('inside_filter_categories').innerHTML = "";
@@ -1128,14 +1129,23 @@ function displayCategories(json) {
 
 		// now fetch and display new categories from the server
 
-		displayNonFacetCategories(allergies, "allergies");
-		displayNonFacetCategories(appointments, "appointments");
+		displayNonFacetCategories(allergies, "allergies", json);
+		displayNonFacetCategories(appointments, "appointments", json);
 
 		for ( var i = 0; i < json.facets.length; i++) {
 			var name = json.facets[i].facet.name;
 			var count = json.facets[i].facet.count;
 			var displaycheckBox;
 			var displayDetail;
+			var displayName = name;
+
+			for (i = 0; i < json.categoryFilters.length; i++) {
+				if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(name)) {
+					displayName = json.categoryFilters[i].displayName === undefined ? json.categoryFilters[i].name
+							: json.categoryFilters[i].displayName;
+					break;
+				}
+			}
 
 			if (count != 0 && name !== "convset") {
 				displaycheckBox = "<div class='category_filter_item'><input class='category_check' id='"
@@ -1145,8 +1155,10 @@ function displayCategories(json) {
 				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
-						+ capitalizeFirstLetter(name)
-						+ "</a> (" + count + ") </div>";
+						+ capitalizeFirstLetter(displayName)
+						+ "</a> ("
+						+ count
+						+ ") </div>";
 			} else {
 				displaycheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
 						+ name
@@ -1155,8 +1167,10 @@ function displayCategories(json) {
 				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
-						+ capitalizeFirstLetter(name)
-						+ "</a> (" + count + ") </div>";
+						+ capitalizeFirstLetter(displayName)
+						+ "</a> ("
+						+ count
+						+ ") </div>";
 			}
 
 			document.getElementById('inside_filter_categories').innerHTML += displaycheckBox
@@ -1170,9 +1184,18 @@ function displayCategories(json) {
 	}
 }
 
-function displayNonFacetCategories(cats, catName) {
+function displayNonFacetCategories(cats, catName, json) {
 	var displayNonFacetcheckBox;
 	var displayNonFacetDetail;
+	var displayName = catName;
+
+	for (i = 0; i < json.categoryFilters.length; i++) {
+		if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(catName)) {
+			displayName = json.categoryFilters[i].displayName === undefined ? json.categoryFilters[i].name
+					: json.categoryFilters[i].displayName;
+			break;
+		}
+	}
 
 	if (cats.length !== 0) {
 		displayNonFacetcheckBox = "<div class='category_filter_item'><input class='category_check' id='"
@@ -1182,7 +1205,7 @@ function displayNonFacetCategories(cats, catName) {
 		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
 				+ catName
 				+ "_category'>"
-				+ capitalizeFirstLetter(catName)
+				+ capitalizeFirstLetter(displayName)
 				+ "</a> (" + cats.length + ") </div>";
 	} else {
 		displayNonFacetcheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
@@ -1192,7 +1215,7 @@ function displayNonFacetCategories(cats, catName) {
 		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
 				+ catName
 				+ "_category'>"
-				+ capitalizeFirstLetter(catName)
+				+ capitalizeFirstLetter(displayName)
 				+ "</a> (" + 0 + ") </div>";
 	}
 	document.getElementById('inside_filter_categories').innerHTML += displayNonFacetcheckBox
@@ -1510,7 +1533,7 @@ function filterResultsUsingTime(selectedPeriod) {
 	}
 
 	if (selectedPeriod === "custom") {
-		jq("#submit-custom-date-filter").attr('disabled', 'disabled');
+		$("#submit-custom-date-filter").attr('disabled', 'disabled');
 		invokeDialog("#custom-date-dialog-content", "Choose Date Range",
 				"245px")
 	} else {
@@ -1985,31 +2008,60 @@ function filterResultsUsingProvider(provider) {
 }
 
 function applyPreferencesToUIDisplays() {
-	var preferences = jq("#stored-preferences").val();
+	var preferences = $("#stored-preferences").val();
 	var pref;
 
 	if (preferences !== undefined && preferences !== "") {
 		pref = JSON.parse(preferences);
 
 		if (pref.enableQuickSearches === false) {
-			jq("#quick-searches").hide();
+			$("#quick-searches").hide();
 		} else {
-			jq("#quick-searches").show();
+			$("#quick-searches").show();
 		}
 		if (pref.enableBookmarks === false) {
-			jq("#favorite-search-record").hide();
+			$("#favorite-search-record").hide();
 		} else {
-			jq("#favorite-search-record").show();
+			$("#favorite-search-record").show();
 		}
 		if (pref.enableNotes === false) {
-			jq("#comment-on-search-record").hide();
+			$("#comment-on-search-record").hide();
 		} else {
-			jq("#comment-on-search-record").show();
+			$("#comment-on-search-record").show();
 		}
 		if (pref.enableHistory === false) {
-			jq("#chart-previous-searches").hide();
+			$("#chart-previous-searches").hide();
 		} else {
-			jq("#chart-previous-searches").show();
+			$("#chart-previous-searches").show();
 		}
 	}
+}
+
+function displayCategoriesForPreferences(cats) {
+	var displayHtml = "<tr><th>Category Name</th><th>Category Display Name</th></tr>";
+
+	for (i = 0; i < cats.length; i++) {
+		var displayName = cats[i].displayName === undefined ? ""
+				: cats[i].displayName;
+
+		displayHtml += "<tr><td>" + cats[i].name
+				+ "</td><td><input type='textbox' class='pref-cat-names' id='"
+				+ cats[i].uuid + "' value='" + displayName + "' /></td></tr>";
+	}
+
+	$("#preferences-cats").html(displayHtml);
+}
+
+function checkIfCatDisplayNamesHaveRightNumberOfCharacters() {
+	var alright = true;
+
+	$(".pref-cat-names").each(function(event) {
+		var name = $(this).val();
+
+		if (name.length > 12) {
+			alright = false;
+		}
+	});
+
+	return alright;
 }

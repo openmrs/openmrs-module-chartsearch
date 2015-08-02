@@ -14,13 +14,11 @@ package org.openmrs.module.chartsearch.categories;
 
 import java.io.Serializable;
 
-import org.openmrs.BaseOpenmrsObject;
-
 /**
  * This class represents A category to be used to filter returned results; items such as; diagnosis,
  * labs, meds, orders, Others, reports, vitals
  */
-public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
+public class CategoryFilter implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -83,16 +81,6 @@ public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
 		this.categoryDescription = catDescription;
 	}
 	
-	@Override
-	public Integer getId() {
-		return getCategoryId();
-	}
-	
-	@Override
-	public void setId(Integer id) {
-		setCategoryId(id);
-	}
-	
 	public String getFilterQuery() {
 		return filterQuery;
 	}
@@ -100,13 +88,13 @@ public class CategoryFilter extends BaseOpenmrsObject implements Serializable {
 	public void setFilterQuery(String filterQuery) {
 		this.filterQuery = filterQuery;
 	}
-
+	
 	public String getDisplayName() {
-	    return displayName;
-    }
-
+		return displayName;
+	}
+	
 	public void setDisplayName(String displayName) {
-	    this.displayName = displayName;
-    }
+		this.displayName = displayName;
+	}
 	
 }

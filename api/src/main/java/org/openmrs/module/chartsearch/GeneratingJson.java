@@ -37,6 +37,7 @@ import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 
 /**
@@ -702,6 +703,7 @@ public class GeneratingJson {
 			json.put("enableMultipleFiltering", pref.isEnableMultipleFiltering());
 			json.put("enableNotes", pref.isEnableNotes());
 			json.put("enableQuickSearches", pref.isEnableQuickSearches());
+			json.put("categoryFilters", generateAllCategoriesJSON());
 		}
 		return json;
 	}
@@ -712,6 +714,23 @@ public class GeneratingJson {
 	
 	public static JSONObject generateRightMatchedPreferencesJSON() {
 		return generatePreferencesJSON(chartSearchService.getRightMatchedPreferences());
+	}
+	
+	public static JSONArray generateAllCategoriesJSON() {
+		JSONArray jsonArray = new JSONArray();
+		List<CategoryFilter> allCats = chartSearchService.getAllCategoryFilters();
+		
+		for (CategoryFilter cat : allCats) {
+			JSONObject json = new JSONObject();
+			
+			json.put("name", cat.getCategoryName());
+			json.put("displayName", cat.getDisplayName());
+			json.put("uuid", cat.getCategoryUuid());
+			
+			jsonArray.add(json);
+		}
+		
+		return jsonArray;
 	}
 	
 	private static <T> T getComponent(Class<T> clazz) {

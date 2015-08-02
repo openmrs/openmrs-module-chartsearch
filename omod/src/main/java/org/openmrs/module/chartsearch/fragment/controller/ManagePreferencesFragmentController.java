@@ -9,10 +9,12 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,9 +22,10 @@ public class ManagePreferencesFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();
 	
-	public void controller(FragmentModel model) {
+	public void controller(FragmentModel model, UiUtils ui) {
 		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
 		model.put("daemonPreferences", GeneratingJson.generateDaemonPreferencesJSON().toString());
+		model.put("categoryFilters", ui.escapeJs(GeneratingJson.generateAllCategoriesJSON().toString()));
 	}
 	
 	public JSONObject saveOrUpdatePrefereces(@RequestParam("history") Boolean enableHistory,
@@ -31,10 +34,11 @@ public class ManagePreferencesFragmentController {
 	                                         @RequestParam("quickSearches") Boolean enableQuickSearches,
 	                                         @RequestParam("defaultSearch") Boolean enableDefaultSearch,
 	                                         @RequestParam("duplicateResults") Boolean enableDuplicateResults,
-	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering) {
+	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering,
+	                                         @RequestParam("categories[]") JSONArray cats) {
 		
 		return cache.saveOrUpdatePreferences(enableHistory, enableBookmarks, enableNotes, enableQuickSearches,
-		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering);
+		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats);
 	}
 	
 	public JSONObject restoreDefaultPrefereces() {

@@ -29,10 +29,13 @@
 	var prefs ='${preferences}';
 	var daemonPrefs = '${daemonPreferences}';
     var preferences = JSON.parse(prefs);
-    var daemonPreferences = JSON.parse(daemonPrefs);//TODO use for restoring default preferences
+    var daemonPreferences = JSON.parse(daemonPrefs);//used for restoring default preferences
+    var catFilters = '${categoryFilters}';
+    var cats = JSON.parse(catFilters);
     
 	jq(document).ready(function() {
 	
+		displayCategoriesForPreferences(cats);
 		updatePreferencesDisplay(preferences);
 	
 		jq('#pref-summary-item-toggle').click(function(event) {
@@ -53,7 +56,11 @@
 		});
 		
 		jq("#apply-and-save-prefs").click(function(event) {
-			submitPreferences(true);
+			if(checkIfCatDisplayNamesHaveRightNumberOfCharacters()) {
+				submitPreferences(true);
+			} else {
+				alert("Display Names must not exceed 12 characters!");
+			}
 		});
 		
 		jq("#cancel-prefs-changing").click(function(event) {
@@ -71,6 +78,7 @@
 			jq("#enable_defaultsearch").prop('checked', prefs.enableDefaultSearch);
 			jq("#enable_multiplefiltering").prop('checked', prefs.enableMultipleFiltering);
 			jq("#enable_duplicateresults").prop('checked', prefs.enableDuplicateResults);
+			displayCategoriesForPreferences(prefs.categoryFilters);
 		}
 		//TODO add support for filters and note colors here
 	}
@@ -86,10 +94,19 @@
 		var multiFiltering = jq("#enable_multiplefiltering").prop('checked');
 		var url = "${ ui.actionLink('restoreDefaultPrefereces') }";
 		var data = {};
+		var categories = {};
+		
+		jq(".pref-cat-names").each(function(event) {
+			var id = jq(this).attr("id");
+			var name = jq(this).val();
+			var json = { "uuid" : id, "name" : name };
+		
+			categories.push(json); 
+		});
 		
 		if(isNotDefault === true) {
 			url = "${ ui.actionLink('saveOrUpdatePrefereces') }";
-			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering};
+			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering, "categories" : categories};
 		}
 		
 		if(isNotDefault === false && (confirm("Are you sure you want to Restore Preferences?")) || isNotDefault === true) {
@@ -128,7 +145,8 @@
 <div class="pref-summary-item" id="pref-summary-item-categoryfilter">Category Filters</div>
 <div id="pref-summary-item-categoryfilter-details" class="pref-summary-item-details">
 	<br />
-	Details for cat filters
+		<b>NOTE:</b> Category Names are displayed by default, providing your preferred Display name will instead display your name than the default<br /><br />
+		<table id="preferences-cats"></table>
 	<br /><br />
 </div>
 
@@ -142,9 +160,3 @@
 	<input type="button" value="Restore Default" id="restore-default-prefs" /> <input type="button" value="Apply and Save" id="apply-and-save-prefs" />
 	<input type="button" value="Cancel" id="cancel-prefs-changing" />
 </div>
-
-
-
-
-
-

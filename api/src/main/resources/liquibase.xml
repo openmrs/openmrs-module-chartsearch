@@ -511,4 +511,21 @@
 			</column>
 		</addColumn>
 	</changeSet>
+
+	<changeSet id="CSM-95_02082015_1517" author="k-joseph">
+		<comment>Save allergies and appointments category filters
+		</comment>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Allergies" />
+			<column name="filter_query" value="none" />
+			<column name="description" value="Category filter item for Patient Allergies" />
+			<column name="uuid" value="dc33c2c0-3910-11e5-a151-feff819cdc9f" />
+		</insert>
+		<insert tableName="chartsearch_categories">
+			<column name="name" value="Appointments" />
+			<column name="filter_query" value="none" />
+			<column name="description" value="Category filter item for Patient Appointments" />
+			<column name="uuid" value="dc33c630-3910-11e5-a151-feff819cdc9f" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>

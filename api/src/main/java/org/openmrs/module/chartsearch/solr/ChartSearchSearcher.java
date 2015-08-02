@@ -116,9 +116,7 @@ public class ChartSearchSearcher {
 		}
 		
 		query.addFilterQuery(String.format("person_id:%d", patientId));
-		
 		addSelectedFilterQueriesToQuery(query, selectedCategories);
-		
 		query.setStart(start);
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");

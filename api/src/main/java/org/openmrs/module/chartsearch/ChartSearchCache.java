@@ -27,6 +27,7 @@ import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
+import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
 import com.google.common.collect.Lists;
 
@@ -461,10 +462,24 @@ public class ChartSearchCache {
 	
 	public JSONObject saveOrUpdatePreferences(Boolean enableHistory, Boolean enableBookmarks, Boolean enableNotes,
 	                                          Boolean enableQuickSearches, Boolean enableDefaultSearch,
-	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering) {
+	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering, JSONArray cats) {
 		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
 		Boolean exists = false;
 		ChartSearchPreference preference = new ChartSearchPreference();
+		
+		if (cats != null && !cats.isEmpty()) {
+			for (int i = 0; i < cats.size(); i++) {
+				JSONObject json = cats.getJSONObject(i);
+				String uuid = json.getString("uuid");
+				String name = json.getString("name");
+				CategoryFilter cat = chartSearchService.getACategoryFilterByItsUuid(uuid);
+				
+				if (StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(name) && cat != null) {
+					cat.setDisplayName(name);
+					chartSearchService.updateACategoryFilter(cat);
+				}
+			}
+		}
 		
 		for (ChartSearchPreference pref : allPrefs) {
 			if (pref.getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {

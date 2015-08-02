@@ -462,16 +462,16 @@ public class ChartSearchCache {
 	
 	public JSONObject saveOrUpdatePreferences(Boolean enableHistory, Boolean enableBookmarks, Boolean enableNotes,
 	                                          Boolean enableQuickSearches, Boolean enableDefaultSearch,
-	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering, JSONArray cats) {
+	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering, String[] cats) {
 		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
 		Boolean exists = false;
 		ChartSearchPreference preference = new ChartSearchPreference();
 		
-		if (cats != null && !cats.isEmpty()) {
-			for (int i = 0; i < cats.size(); i++) {
-				JSONObject json = cats.getJSONObject(i);
-				String uuid = json.getString("uuid");
-				String name = json.getString("name");
+		if (cats != null && cats.length != 0) {
+			for (int i = 0; i < cats.length; i++) {
+				String[] catUuidAndName = cats[i].split("<=>");
+				String uuid = catUuidAndName[0];
+				String name = catUuidAndName[1];
 				CategoryFilter cat = chartSearchService.getACategoryFilterByItsUuid(uuid);
 				
 				if (StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(name) && cat != null) {

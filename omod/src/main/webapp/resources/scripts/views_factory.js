@@ -1137,13 +1137,12 @@ function displayCategories(json) {
 			var count = json.facets[i].facet.count;
 			var displaycheckBox;
 			var displayDetail;
-			var displayName = name;
+			var displayName = capitalizeFirstLetter(name);
 
-			for (i = 0; i < json.categoryFilters.length; i++) {
-				if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(name)) {
-					displayName = json.categoryFilters[i].displayName === undefined ? json.categoryFilters[i].name
-							: json.categoryFilters[i].displayName;
-					break;
+			for (j = 0; j < json.categoryFilters.length; j++) {
+				if (capitalizeFirstLetter(json.categoryFilters[j].name) === capitalizeFirstLetter(name)
+						&& json.categoryFilters[j].displayName !== undefined) {
+					displayName = json.categoryFilters[j].displayName;
 				}
 			}
 
@@ -1155,7 +1154,7 @@ function displayCategories(json) {
 				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
-						+ capitalizeFirstLetter(displayName)
+						+ displayName
 						+ "</a> ("
 						+ count
 						+ ") </div>";
@@ -1167,7 +1166,7 @@ function displayCategories(json) {
 				displayDetail = "<a href='' class='select_one_category' id='select_"
 						+ name
 						+ "_category'>"
-						+ capitalizeFirstLetter(displayName)
+						+ displayName
 						+ "</a> ("
 						+ count
 						+ ") </div>";
@@ -1187,13 +1186,12 @@ function displayCategories(json) {
 function displayNonFacetCategories(cats, catName, json) {
 	var displayNonFacetcheckBox;
 	var displayNonFacetDetail;
-	var displayName = catName;
+	var displayName = capitalizeFirstLetter(catName);
 
 	for (i = 0; i < json.categoryFilters.length; i++) {
-		if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(catName)) {
-			displayName = json.categoryFilters[i].displayName === undefined ? json.categoryFilters[i].name
-					: json.categoryFilters[i].displayName;
-			break;
+		if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(catName)
+				&& json.categoryFilters[i].displayName !== undefined) {
+			displayName = json.categoryFilters[i].displayName;
 		}
 	}
 
@@ -1205,7 +1203,7 @@ function displayNonFacetCategories(cats, catName, json) {
 		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
 				+ catName
 				+ "_category'>"
-				+ capitalizeFirstLetter(displayName)
+				+ displayName
 				+ "</a> (" + cats.length + ") </div>";
 	} else {
 		displayNonFacetcheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
@@ -1215,7 +1213,7 @@ function displayNonFacetCategories(cats, catName, json) {
 		displayNonFacetDetail = "<a href='' class='select_one_category' id='select_"
 				+ catName
 				+ "_category'>"
-				+ capitalizeFirstLetter(displayName)
+				+ displayName
 				+ "</a> (" + 0 + ") </div>";
 	}
 	document.getElementById('inside_filter_categories').innerHTML += displayNonFacetcheckBox

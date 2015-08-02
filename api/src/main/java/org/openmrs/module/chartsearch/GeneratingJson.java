@@ -53,8 +53,6 @@ public class GeneratingJson {
 		return chartSearchService;
 	}
 	
-	private ChartSearchCache cache = new ChartSearchCache();
-	
 	public static String generateJson() {
 		
 		JSONObject jsonToReturn = new JSONObject();
@@ -106,6 +104,7 @@ public class GeneratingJson {
 		jsonToReturn.put("patientAppointments", appointments);
 		jsonToReturn.put("allLocations", getChartSearchService().getAllLocationsFromTheDB());
 		jsonToReturn.put("allProviders", getChartSearchService().getAllProvidersFromTheDB());
+		jsonToReturn.put("categoryFilters", generateAllCategoriesJSON());
 		
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
 		

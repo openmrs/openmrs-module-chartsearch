@@ -94,14 +94,16 @@
 		var multiFiltering = jq("#enable_multiplefiltering").prop('checked');
 		var url = "${ ui.actionLink('restoreDefaultPrefereces') }";
 		var data = {};
-		var categories = {};
+		var categories = [];
 		
 		jq(".pref-cat-names").each(function(event) {
 			var id = jq(this).attr("id");
 			var name = jq(this).val();
-			var json = { "uuid" : id, "name" : name };
+			var obj = id + "<=>" + name;
 		
-			categories.push(json); 
+			if(name !== "") {
+				categories.push(obj);
+			}
 		});
 		
 		if(isNotDefault === true) {
@@ -109,6 +111,7 @@
 			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering, "categories" : categories};
 		}
 		
+		console.log(data);
 		if(isNotDefault === false && (confirm("Are you sure you want to Restore Preferences?")) || isNotDefault === true) {
 			jq.ajax({
 			    type: "POST",
@@ -119,7 +122,9 @@
 			        updatePreferencesDisplay(prefs);
 			        alert("Successfully Updated Preferences");
 			    },
-			    error: function(e) {}
+			    error: function(e) {
+			    	alert(e);
+			    }
 			});
 		}
 	}

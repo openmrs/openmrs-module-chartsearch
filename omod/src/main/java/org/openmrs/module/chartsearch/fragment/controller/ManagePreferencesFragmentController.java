@@ -35,7 +35,7 @@ public class ManagePreferencesFragmentController {
 	                                         @RequestParam("defaultSearch") Boolean enableDefaultSearch,
 	                                         @RequestParam("duplicateResults") Boolean enableDuplicateResults,
 	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering,
-	                                         @RequestParam("categories[]") JSONArray cats) {
+	                                         @RequestParam("categories[]") String[] cats) {
 		
 		return cache.saveOrUpdatePreferences(enableHistory, enableBookmarks, enableNotes, enableQuickSearches,
 		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats);

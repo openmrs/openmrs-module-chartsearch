@@ -92,17 +92,19 @@
 			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering};
 		}
 		
-		jq.ajax({
-		    type: "POST",
-		    url: url,
-		    data: data,
-		    dataType: "json",
-		    success: function(prefs) {
-		        updatePreferencesDisplay(prefs);
-		        alert("Successfully Updated Preferences");
-		    },
-		    error: function(e) {}
-		});
+		if(isNotDefault === false && (confirm("Are you sure you want to Restore Preferences?")) || isNotDefault === true) {
+			jq.ajax({
+			    type: "POST",
+			    url: url,
+			    data: data,
+			    dataType: "json",
+			    success: function(prefs) {
+			        updatePreferencesDisplay(prefs);
+			        alert("Successfully Updated Preferences");
+			    },
+			    error: function(e) {}
+			});
+		}
 	}
 
 </script>
@@ -125,7 +127,9 @@
 
 <div class="pref-summary-item" id="pref-summary-item-categoryfilter">Category Filters</div>
 <div id="pref-summary-item-categoryfilter-details" class="pref-summary-item-details">
+	<br />
 	Details for cat filters
+	<br /><br />
 </div>
 
 <div class="pref-summary-item" id="pref-summary-item-notescolors">Notes Colors</div>

@@ -501,4 +501,14 @@
 			<where>user_id=2</where>
 		</update>
 	</changeSet>
+
+	<changeSet id="CSM-95_01082015_23:38" author="k-joseph">
+		<comment>Adding display_name column onto chartsearch_categories table
+		</comment>
+		<addColumn tableName="chartsearch_categories">
+			<column name="display_name" type="varchar(50)">
+				<constraints nullable="true" />
+			</column>
+		</addColumn>
+	</changeSet>
 </databaseChangeLog>

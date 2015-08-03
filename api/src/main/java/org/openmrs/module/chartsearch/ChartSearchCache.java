@@ -451,6 +451,13 @@ public class ChartSearchCache {
 	
 	public JSONObject restorePreferences() {
 		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
+		List<ChartSearchCategoryDisplayName> allDNames = chartSearchService.getAllCategoryDisplayNames();
+		
+		for (ChartSearchCategoryDisplayName name : allDNames) {
+			if (name.getPreference().getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
+				chartSearchService.deleteChartSearchCategoryDisplayName(name);
+			}
+		}
 		
 		for (ChartSearchPreference pref : allPrefs) {
 			if (pref.getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
@@ -458,6 +465,7 @@ public class ChartSearchCache {
 				break;
 			}
 		}
+		
 		return GeneratingJson.generateDaemonPreferencesJSON();
 	}
 	
@@ -535,9 +543,27 @@ public class ChartSearchCache {
 			if (name2.getDisplayName().toLowerCase().equals(displayName.toLowerCase())
 			        && Context.getAuthenticatedUser().getUserId()
 			                .equals(name2.getPreference().getPreferenceOwner().getUserId())
-			        && name.toLowerCase().equals(name2.getCategoryFilter().getCategoryName())) {
+			        && name.toLowerCase().equals(name2.getCategoryFilter().getCategoryName())
+			        && !categoryDisplayNameExistAmongDisplayNames(displayName)) {
 				exist = true;
 			}
+		}
+		
+		return exist;
+	}
+	
+	public boolean categoryDisplayNameExistAmongDisplayNames(String dName) {
+		List<ChartSearchCategoryDisplayName> allCatDNames = chartSearchService.getAllCategoryDisplayNames();
+		boolean exist = false;
+		List<String> dNames = new ArrayList<String>();
+		
+		for (ChartSearchCategoryDisplayName name : allCatDNames) {
+			if (Context.getAuthenticatedUser().getUserId().equals(name.getPreference().getPreferenceOwner().getUserId())) {
+				dNames.add(name.getDisplayName());
+			}
+		}
+		if (dNames.contains(dName)) {
+			exist = true;
 		}
 		
 		return exist;

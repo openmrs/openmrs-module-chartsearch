@@ -34,6 +34,7 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -717,14 +718,28 @@ public class GeneratingJson {
 	
 	public static JSONArray generateAllCategoriesJSON() {
 		JSONArray jsonArray = new JSONArray();
+		List<ChartSearchCategoryDisplayName> allDisplayNames = chartSearchService.getAllCategoryDisplayNames();
 		List<CategoryFilter> allCats = chartSearchService.getAllCategoryFilters();
 		
 		for (CategoryFilter cat : allCats) {
 			JSONObject json = new JSONObject();
+			String name = cat.getCategoryName();
+			String displayName = "";
+			String uuid = cat.getCategoryUuid();
 			
-			json.put("name", cat.getCategoryName());
-			json.put("displayName", cat.getDisplayName());
-			json.put("uuid", cat.getCategoryUuid());
+			for (ChartSearchCategoryDisplayName catName : allDisplayNames) {
+				
+				if (Context.getAuthenticatedUser().getUserId()
+				        .equals(catName.getPreference().getPreferenceOwner().getUserId())
+				        && catName.getCategoryFilter().getCategoryName().equals(name)) {
+					displayName = catName.getDisplayName();
+					uuid = catName.getUuid();
+				}
+			}
+			
+			json.put("name", name);
+			json.put("uuid", uuid);
+			json.put("displayName", displayName);
 			
 			jsonArray.add(json);
 		}

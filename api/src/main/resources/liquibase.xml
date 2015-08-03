@@ -528,4 +528,45 @@
 			<column name="uuid" value="dc33c630-3910-11e5-a151-feff819cdc9f" />
 		</insert>
 	</changeSet>
+
+	<changeSet id="CSM-95_03082015_0101" author="k-joseph">
+		<preConditions onFail="MARK_RAN">
+			<columnExists tableName="chartsearch_categories"
+				columnName="display_name" />
+			<not>
+				<tableExists tableName="chartsearch_category_displayname" />
+			</not>
+		</preConditions>
+
+		<comment>Dropping display_name it from chartsearch_categories table
+			and creating a resolving table
+		</comment>
+
+		<dropColumn tableName="chartsearch_categories" columnName="display_name" />
+
+		<createTable tableName="chartsearch_category_displayname">
+			<column name="displayname_id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="uuid" type="char(38)">
+				<constraints nullable="false" />
+			</column>
+			<column name="diplay_name" type="varchar(15)">
+				<constraints nullable="false" />
+			</column>
+			<column name="preference_id" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="category_id" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint constraintName="categtory_displayname-fk"
+			baseTableName="chartsearch_category_displayname" baseColumnNames="preference_id"
+			referencedTableName="chartsearch_preference" referencedColumnNames="preference_id" />
+		<addForeignKeyConstraint constraintName="displayname_owner-fk"
+			baseTableName="chartsearch_category_displayname" baseColumnNames="category_id"
+			referencedTableName="chartsearch_categories" referencedColumnNames="category_id" />
+	</changeSet>
 </databaseChangeLog>

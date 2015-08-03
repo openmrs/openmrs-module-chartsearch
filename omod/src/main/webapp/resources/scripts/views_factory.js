@@ -1141,7 +1141,8 @@ function displayCategories(json) {
 
 			for (j = 0; j < json.categoryFilters.length; j++) {
 				if (capitalizeFirstLetter(json.categoryFilters[j].name) === capitalizeFirstLetter(name)
-						&& json.categoryFilters[j].displayName !== undefined) {
+						&& json.categoryFilters[j].displayName !== undefined
+						&& json.categoryFilters[j].displayName !== "") {
 					displayName = json.categoryFilters[j].displayName;
 				}
 			}
@@ -1190,7 +1191,8 @@ function displayNonFacetCategories(cats, catName, json) {
 
 	for (i = 0; i < json.categoryFilters.length; i++) {
 		if (capitalizeFirstLetter(json.categoryFilters[i].name) === capitalizeFirstLetter(catName)
-				&& json.categoryFilters[i].displayName !== undefined) {
+				&& json.categoryFilters[i].displayName !== undefined
+				&& json.categoryFilters[i].displayName !== "") {
 			displayName = json.categoryFilters[i].displayName;
 		}
 	}
@@ -1204,7 +1206,8 @@ function displayNonFacetCategories(cats, catName, json) {
 				+ catName
 				+ "_category'>"
 				+ displayName
-				+ "</a> (" + cats.length + ") </div>";
+				+ "</a> ("
+				+ cats.length + ") </div>";
 	} else {
 		displayNonFacetcheckBox = "<div class='category_filter_item-disabled'><input class='category_check' id='"
 				+ catName
@@ -1214,7 +1217,9 @@ function displayNonFacetCategories(cats, catName, json) {
 				+ catName
 				+ "_category'>"
 				+ displayName
-				+ "</a> (" + 0 + ") </div>";
+				+ "</a> ("
+				+ 0
+				+ ") </div>";
 	}
 	document.getElementById('inside_filter_categories').innerHTML += displayNonFacetcheckBox
 			+ displayNonFacetDetail;
@@ -2044,7 +2049,8 @@ function displayCategoriesForPreferences(cats) {
 
 		displayHtml += "<tr><td>" + cats[i].name
 				+ "</td><td><input type='textbox' class='pref-cat-names' id='"
-				+ cats[i].uuid + "' value='" + displayName + "' /></td></tr>";
+				+ cats[i].uuid + "' value='" + displayName + "' title='"
+				+ cats[i].name + "' /></td></tr>";
 	}
 
 	$("#preferences-cats").html(displayHtml);

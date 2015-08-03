@@ -18,6 +18,7 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -71,8 +72,16 @@ public interface ChartSearchDAO {
 	public ChartSearchPreference getChartSearchPreferenceByUuid(String uuid);
 	
 	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
-
+	
 	void updateChartSearchPreference(ChartSearchPreference pref);
 	
 	public ChartSearchPreference getRightMatchedPreferences();
+	
+	public ChartSearchCategoryDisplayName getCategoryDisplayNameByUuid(String uuid);
+	
+	public List<ChartSearchCategoryDisplayName> getAllCategoryDisplayNames();
+	
+	public void saveChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName);
+	
+	public void deleteChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName);
 }

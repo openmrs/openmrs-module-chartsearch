@@ -98,8 +98,9 @@
 		
 		jq(".pref-cat-names").each(function(event) {
 			var id = jq(this).attr("id");
-			var name = jq(this).val();
-			var obj = id + "<=>" + name;
+			var name = jq(this).attr("title");
+			var dName = jq(this).val();
+			var obj = id + "<=>" + dName + "<=>" + name;
 		
 			if(name !== "") {
 				categories.push(obj);

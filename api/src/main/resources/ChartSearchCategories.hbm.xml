@@ -19,7 +19,5 @@
 			length="38" unique="true" />
 		<property name="categoryDescription" type="java.lang.String"
 			column="description" length="255" />
-		<property name="displayName" type="java.lang.String" column="display_name"
-	length="255" unique="true" />
 	</class>
 </hibernate-mapping>

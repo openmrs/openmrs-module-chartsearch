@@ -28,6 +28,7 @@ import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -331,6 +332,31 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		}
 		
 		return pref;
+	}
+	
+	@Override
+	public ChartSearchCategoryDisplayName getCategoryDisplayNameByUuid(String uuid) {
+		ChartSearchCategoryDisplayName name = (ChartSearchCategoryDisplayName) sessionFactory.getCurrentSession()
+		        .createQuery("from ChartSearchCategoryDisplayName n where n.uuid = :uuid").setParameter("uuid", uuid)
+		        .uniqueResult();
+		
+		return name;
+	}
+	
+	@SuppressWarnings("unchecked")
+    @Override
+	public List<ChartSearchCategoryDisplayName> getAllCategoryDisplayNames() {
+		return sessionFactory.getCurrentSession().createCriteria(ChartSearchCategoryDisplayName.class).list();
+	}
+	
+	@Override
+	public void saveChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName) {
+		sessionFactory.getCurrentSession().save(displayName);
+	}
+	
+	@Override
+	public void deleteChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName) {
+		sessionFactory.getCurrentSession().delete(displayName);
 	}
 	
 }

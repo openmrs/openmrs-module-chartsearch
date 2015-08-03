@@ -9,7 +9,6 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.openmrs.module.chartsearch.ChartSearchCache;

@@ -48,6 +48,7 @@ import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymDAO;
 import org.openmrs.module.chartsearch.api.db.SynonymGroupDAO;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -551,5 +552,26 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	@Override
 	public ChartSearchPreference getRightMatchedPreferences() {
 		return dao.getRightMatchedPreferences();
+	}
+	
+	@Override
+	public ChartSearchCategoryDisplayName getCategoryDisplayNameByUuid(String uuid) {
+		return dao.getCategoryDisplayNameByUuid(uuid);
+	}
+	
+	@Override
+	public List<ChartSearchCategoryDisplayName> getAllCategoryDisplayNames() {
+		return dao.getAllCategoryDisplayNames();
+	}
+	
+	@Override
+	public void saveChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName) {
+		dao.saveChartSearchCategoryDisplayName(displayName);
+		
+	}
+	
+	@Override
+	public void deleteChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName) {
+		dao.deleteChartSearchCategoryDisplayName(displayName);
 	}
 }

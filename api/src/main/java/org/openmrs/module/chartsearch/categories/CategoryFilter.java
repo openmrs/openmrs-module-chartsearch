@@ -44,11 +44,6 @@ public class CategoryFilter implements Serializable {
 	 */
 	private String filterQuery;
 	
-	/**
-	 * Name to be set by the user from the UI
-	 */
-	private String displayName;
-	
 	public String getCategoryName() {
 		return categoryName;
 	}
@@ -88,13 +83,4 @@ public class CategoryFilter implements Serializable {
 	public void setFilterQuery(String filterQuery) {
 		this.filterQuery = filterQuery;
 	}
-	
-	public String getDisplayName() {
-		return displayName;
-	}
-	
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
-	
 }

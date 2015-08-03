@@ -24,6 +24,7 @@ import org.openmrs.User;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.api.ChartSearchService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -467,20 +468,6 @@ public class ChartSearchCache {
 		Boolean exists = false;
 		ChartSearchPreference preference = new ChartSearchPreference();
 		
-		if (cats != null && cats.length != 0) {
-			for (int i = 0; i < cats.length; i++) {
-				String[] catUuidAndName = cats[i].split("<=>");
-				String uuid = catUuidAndName[0];
-				String name = catUuidAndName[1];
-				CategoryFilter cat = chartSearchService.getACategoryFilterByItsUuid(uuid);
-				
-				if (StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(name) && cat != null) {
-					cat.setDisplayName(name);
-					chartSearchService.updateACategoryFilter(cat);
-				}
-			}
-		}
-		
 		for (ChartSearchPreference pref : allPrefs) {
 			if (pref.getPreferenceOwner().getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
 				exists = true;
@@ -504,7 +491,56 @@ public class ChartSearchCache {
 			chartSearchService.saveANewChartSearchPreference(preference);
 		}
 		
+		if (cats != null && cats.length != 0) {
+			for (int i = 0; i < cats.length; i++) {
+				String[] catUuidAndName = cats[i].split("<=>");
+				String uuid = catUuidAndName[0];
+				String displayName = catUuidAndName[1];
+				String name = catUuidAndName[2];
+				ChartSearchCategoryDisplayName catName = chartSearchService.getCategoryDisplayNameByUuid(uuid);
+				List<CategoryFilter> cfs = chartSearchService.getAllCategoryFilters();
+				CategoryFilter categoryFilter = null;
+				
+				for (CategoryFilter cf : cfs) {
+					if (name.equals(cf.getCategoryName())) {
+						categoryFilter = cf;
+					}
+				}
+				
+				if (StringUtils.isNotBlank(uuid) && StringUtils.isNotBlank(displayName)) {
+					if (catName != null && categoryDiplayNameDoesExist(displayName, name)) {
+						catName.setDisplayName(displayName);
+						chartSearchService.saveChartSearchCategoryDisplayName(catName);
+					} else {
+						ChartSearchCategoryDisplayName newName = new ChartSearchCategoryDisplayName();
+						
+						newName.setDisplayName(displayName);
+						newName.setPreference(preference);
+						newName.setCategoryFilter(categoryFilter);
+						
+						chartSearchService.saveChartSearchCategoryDisplayName(newName);
+					}
+				}
+			}
+		}
+		
 		return GeneratingJson.generateRightMatchedPreferencesJSON();
+	}
+	
+	private boolean categoryDiplayNameDoesExist(String displayName, String name) {
+		boolean exist = false;
+		List<ChartSearchCategoryDisplayName> allCatDNames = chartSearchService.getAllCategoryDisplayNames();
+		
+		for (ChartSearchCategoryDisplayName name2 : allCatDNames) {
+			if (name2.getDisplayName().toLowerCase().equals(displayName.toLowerCase())
+			        && Context.getAuthenticatedUser().getUserId()
+			                .equals(name2.getPreference().getPreferenceOwner().getUserId())
+			        && name.toLowerCase().equals(name2.getCategoryFilter().getCategoryName())) {
+				exist = true;
+			}
+		}
+		
+		return exist;
 	}
 	
 	public ChartSearchPreference fetchRightMatchedPreferences() {

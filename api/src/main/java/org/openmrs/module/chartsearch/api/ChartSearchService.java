@@ -22,6 +22,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
+import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
 import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
@@ -236,8 +237,6 @@ public interface ChartSearchService extends OpenmrsService {
 	
 	/**
 	 * Fetches all preferences of all the users that have set it up
-	 * 
-	 * @return
 	 */
 	public List<ChartSearchPreference> getAllChartSearchPreferences();
 	
@@ -246,4 +245,12 @@ public interface ChartSearchService extends OpenmrsService {
 	public ChartSearchPreference getChartSearchPreferenceOfAUser(Integer userId);
 	
 	public ChartSearchPreference getRightMatchedPreferences();
+	
+	public ChartSearchCategoryDisplayName getCategoryDisplayNameByUuid(String uuid);
+	
+	public List<ChartSearchCategoryDisplayName> getAllCategoryDisplayNames();
+	
+	public void saveChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName);
+	
+	public void deleteChartSearchCategoryDisplayName(ChartSearchCategoryDisplayName displayName);
 }

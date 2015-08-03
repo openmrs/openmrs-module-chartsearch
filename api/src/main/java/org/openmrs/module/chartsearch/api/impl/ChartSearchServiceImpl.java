@@ -263,31 +263,29 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 				if (arr_of_obs.size() == 0) {
 					arr_of_obs.add(jsonObs);
 				} else {
-					if (enableDupResults) {
-						JSONObject dupObsJson = null;
+					JSONObject dupObsJson = null;
+					
+					for (int i = 0; i < arr_of_obs.size(); i++) {
+						JSONObject obs = arr_of_obs.getJSONObject(i);
 						
-						for (int i = 0; i < arr_of_obs.size(); i++) {
-							JSONObject obs = arr_of_obs.getJSONObject(i);
-							
-							if (obs.getString("concept_name").equals(jsonObs.getString("concept_name"))) {
-								dupObsJson = jsonObs;
-								break;
-							}
-							
+						if (obs.getString("concept_name").equals(jsonObs.getString("concept_name"))) {
+							dupObsJson = jsonObs;
+							break;
 						}
 						
-						if (dupObsJson != null && dupObsJson.equals(jsonObs)
-						        && getRightMatchedPreferences().isEnableDuplicateResults()) {
-							duplicateJsonObs.add(dupObsJson);
-						} else {
-							arr_of_obs.add(jsonObs);
-						}
+					}
+					
+					if (!enableDupResults && dupObsJson != null && dupObsJson.equals(jsonObs)) {
+						duplicateJsonObs.add(dupObsJson);
+					} else {
+						arr_of_obs.add(jsonObs);
 					}
 				}
 			}
+			
 		}
 		
-		if (enableDupResults) {
+		if (!enableDupResults) {
 			jsonToReturn.put("duplicate_obs_singles", duplicateJsonObs);
 		}
 		jsonToReturn.put("obs_singles", arr_of_obs);

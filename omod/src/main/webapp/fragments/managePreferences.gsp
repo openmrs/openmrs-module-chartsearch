@@ -156,7 +156,7 @@
 	<br /><br />
 </div>
 
-<div class="pref-summary-item" id="pref-summary-item-notescolors">Notes Colors</div>
+<div class="pref-summary-item" id="pref-summary-item-notescolors">Notes Background Colors</div>
 <div id="pref-summary-item-notescolors-details" class="pref-summary-item-details">
 	Details for notes colors
 </div>

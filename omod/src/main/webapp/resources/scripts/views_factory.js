@@ -1079,8 +1079,11 @@ function refresh_data(json) {
 		var numberOfResults = json.obs_groups.length + json.obs_singles.length
 				+ json.patientAllergies.length
 				+ json.patientAppointments.length;
-		var noResultsMessage = "<b>" + numberOfResults
-				+ "</b> Summarized Results (<b>" + json.retrievalTime
+		var noResultsMessage = "<b>" + numberOfResults + "</b> ";
+		if (json.duplicate_obs_singles !== undefined) {
+			noResultsMessage += "Summarized ";
+		}
+		noResultsMessage += "Results (<b>" + json.retrievalTime
 				+ "</b> seconds)";
 		var noResultsMessageNote = "";
 

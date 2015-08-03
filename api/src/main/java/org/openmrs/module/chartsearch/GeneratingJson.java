@@ -724,6 +724,7 @@ public class GeneratingJson {
 		for (CategoryFilter cat : allCats) {
 			JSONObject json = new JSONObject();
 			String name = cat.getCategoryName();
+			String description = cat.getCategoryDescription();
 			String displayName = "";
 			String uuid = cat.getCategoryUuid();
 			
@@ -740,6 +741,7 @@ public class GeneratingJson {
 			json.put("name", name);
 			json.put("uuid", uuid);
 			json.put("displayName", displayName);
+			json.put("description", description);
 			
 			jsonArray.add(json);
 		}

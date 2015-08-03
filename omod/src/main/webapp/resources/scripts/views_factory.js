@@ -2041,13 +2041,14 @@ function applyPreferencesToUIDisplays() {
 }
 
 function displayCategoriesForPreferences(cats) {
-	var displayHtml = "<tr><th>Category Name</th><th>Category Display Name</th></tr>";
+	var displayHtml = "<tr><th>Category Name</th><th>Category Description</th><th>Category Display Name</th></tr>";
 
 	for (i = 0; i < cats.length; i++) {
 		var displayName = cats[i].displayName === undefined ? ""
 				: cats[i].displayName;
 
-		displayHtml += "<tr><td>" + cats[i].name
+		displayHtml += "<tr><td>" + cats[i].name + "</td><td>"
+				+ cats[i].description
 				+ "</td><td><input type='textbox' class='pref-cat-names' id='"
 				+ cats[i].uuid + "' value='" + displayName + "' title='"
 				+ cats[i].name + "' /></td></tr>";

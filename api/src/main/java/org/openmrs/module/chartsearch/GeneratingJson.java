@@ -694,7 +694,7 @@ public class GeneratingJson {
 		
 		if (pref != null) {
 			json.put("owner", pref.getPreferenceOwner().getUsername());
-			json.put("notesColors", pref.gePersonalNotesColorsArray());
+			json.put("notesColors", pref.getPersonalNotesColors());
 			json.put("uuid", pref.getUuid());
 			json.put("enableBookmarks", pref.isEnableBookmarks());
 			json.put("enableDefaultSearch", pref.isEnableDefaultSearch());

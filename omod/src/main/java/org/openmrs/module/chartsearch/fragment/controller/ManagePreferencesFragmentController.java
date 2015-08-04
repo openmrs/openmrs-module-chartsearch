@@ -48,6 +48,7 @@ public class ManagePreferencesFragmentController {
 		model.put("redBasedColors", allColors.REDBASEDCOLORS);
 		model.put("greenBasedColors", allColors.GREENBASEDCOLORS);
 		model.put("blueBasedColors", allColors.BLUEBASEDCOLORS);
+		model.put("personalColorsNotes", cache.fetchPersonalNotesColors());
 	}
 	
 	public JSONObject saveOrUpdatePrefereces(@RequestParam("history") Boolean enableHistory,

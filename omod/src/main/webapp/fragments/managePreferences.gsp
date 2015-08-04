@@ -41,7 +41,8 @@
 	var redBasedColors = '${redBasedColors}'.replace("[", "").replace("]", "").split(", ");
 	var greenBasedColors = '${greenBasedColors}'.replace("[", "").replace("]", "").split(", ");
     var blueBasedColors = '${blueBasedColors}'.replace("[", "").replace("]", "").split(", ");
-	    	
+	var personalNotesColors = '${personalColorsNotes}'.replace("[", "").replace("]", "").split(", ");
+        	
 	jq(document).ready(function() {
 	
 		displayCategoriesForPreferences(cats);
@@ -104,9 +105,9 @@
 			jq("#enable_defaultsearch").prop('checked', prefs.enableDefaultSearch);
 			jq("#enable_multiplefiltering").prop('checked', prefs.enableMultipleFiltering);
 			jq("#enable_duplicateresults").prop('checked', prefs.enableDuplicateResults);
+			jq("#selectedColors").val(prefs.notesColors);
 			displayCategoriesForPreferences(prefs.categoryFilters);
 		}
-		//TODO add support for filters and note colors here
 	}
 
 	function submitPreferences(isNotDefault) {

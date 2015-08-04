@@ -121,6 +121,7 @@
 
 <script type="text/javascript">
 	var jq = jQuery;
+	var pColors = '${personalColorsNotes}'.replace("[", "").replace("]", "").split(", ");
     
     jq(document).ready(function() {
     	displayExistingBookmarks();
@@ -696,12 +697,11 @@
     	}
     	
     	function addPersonalColorsToSelectColorElement() {
-    		//new-note-color
-    		var pColors = '${personalNotes}';
-    		
-    		if(pColors !== undefined) {
+    		if(pColors !== undefined && pColors !== "null") {
     			for(i = 0; i < pColors.length; i++) {
-    				jq("#new-note-color").append("<option>" + pColors[i] + "</option>");
+    				if(pColors[i] !== null) {
+    					jq("#new-note-color").append("<option>" + pColors[i] + "</option>");
+    				}
     			}
     		}
     	}

@@ -586,9 +586,9 @@ public class ChartSearchCache {
 		ChartSearchPreference preference = Context.getService(ChartSearchService.class).getRightMatchedPreferences();
 		String[] pColors = null;
 		
-		if (preference != null && preference.gePersonalNotesColorsArray() != null
-		        && preference.gePersonalNotesColorsArray().length > 0) {
-			pColors = preference.gePersonalNotesColorsArray();
+		if (preference != null && preference.getPersonalNotesColorsArray() != null
+		        && preference.getPersonalNotesColorsArray().length > 0) {
+			pColors = preference.getPersonalNotesColorsArray();
 		}
 		
 		return pColors;

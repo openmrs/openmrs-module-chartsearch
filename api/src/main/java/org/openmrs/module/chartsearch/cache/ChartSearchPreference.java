@@ -138,7 +138,7 @@ public class ChartSearchPreference implements Serializable {
 		this.personalNotesColors = personalNotesColors;
 	}
 	
-	public String[] gePersonalNotesColorsArray() {
+	public String[] getPersonalNotesColorsArray() {
 		if (personalNotesColors == null) {
 			return null;
 		} else

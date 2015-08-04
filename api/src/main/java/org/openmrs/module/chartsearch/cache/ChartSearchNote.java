@@ -167,9 +167,9 @@ public class ChartSearchNote implements Serializable {
 		ChartSearchPreference preference = Context.getService(ChartSearchService.class).getRightMatchedPreferences();
 		boolean exists = false;
 		
-		if (preference != null && preference.gePersonalNotesColorsArray() != null
-		        && preference.gePersonalNotesColorsArray().length > 0) {
-			String[] pColors = preference.gePersonalNotesColorsArray();
+		if (preference != null && preference.getPersonalNotesColorsArray() != null
+		        && preference.getPersonalNotesColorsArray().length > 0) {
+			String[] pColors = preference.getPersonalNotesColorsArray();
 			for (int i = 0; i < pColors.length; i++) {
 				if (pColors[i].equals(color)) {
 					exists = true;

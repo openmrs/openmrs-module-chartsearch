@@ -22,6 +22,10 @@
 		padding-left:10px;
 		font-size:1.2em;
 	}
+	
+	#selectedColors {
+		width:940px;
+	}
 </style>
 
 <script type="text/javascript">
@@ -32,11 +36,18 @@
     var daemonPreferences = JSON.parse(daemonPrefs);//used for restoring default preferences
     var catFilters = '${categoryFilters}';
     var cats = JSON.parse(catFilters);
-    
+    var defaultColors = jq.fn.colorPicker.defaults.colors;
+	var allColors = '${allColors}'.replace("[", "").replace("]", "").split(", ");
+	var redBasedColors = '${redBasedColors}'.replace("[", "").replace("]", "").split(", ");
+	var greenBasedColors = '${greenBasedColors}'.replace("[", "").replace("]", "").split(", ");
+    var blueBasedColors = '${blueBasedColors}'.replace("[", "").replace("]", "").split(", ");
+	    	
 	jq(document).ready(function() {
 	
 		displayCategoriesForPreferences(cats);
 		updatePreferencesDisplay(preferences);
+		
+		jq('#color1').colorPicker();
 	
 		jq('#pref-summary-item-toggle').click(function(event) {
 			jq('#pref-summary-item-toggle-details').toggle();
@@ -65,6 +76,21 @@
 		
 		jq("#cancel-prefs-changing").click(function(event) {
 			updatePreferencesDisplay(preferences);
+		});
+		
+		jq("#color1").change(function(event) {
+			var color = jq("#color1").val();
+			var previousDelectedColors = jq("#selectedColors").val() === "" ? "" : jq("#selectedColors").val() + ", ";
+				
+			if(color !== undefined && color !== "" && previousDelectedColors.indexOf(color) < 0) {
+				jq("#selectedColors").val(previousDelectedColors + color);
+			}
+		});
+		
+		jq("#choose-color-collection").change(function(event) {
+			var selectedColorColn = jq("#choose-color-collection :selected").text();
+			
+			chooseColorsCollectionToChooseFrom(selectedColorColn);
 		});
 	
 	});
@@ -95,6 +121,7 @@
 		var url = "${ ui.actionLink('restoreDefaultPrefereces') }";
 		var data = {};
 		var categories = [];
+		var colors = jq("#selectedColors").val();
 		
 		jq(".pref-cat-names").each(function(event) {
 			var id = jq(this).attr("id");
@@ -109,7 +136,7 @@
 		
 		if(isNotDefault === true) {
 			url = "${ ui.actionLink('saveOrUpdatePrefereces') }";
-			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering, "categories" : categories};
+			data = {"history" : history, "bookmarks" : bookmarks, "notes" : notes, "quickSearches" : quickSearches, "defaultSearch" : defaultSearch, "duplicateResults" : duplicateResults, "multiFiltering" : multiFiltering, "categories" : categories, "selectedColors":colors};
 		}
 		
 		console.log(data);
@@ -130,9 +157,25 @@
 		}
 	}
 
+	function chooseColorsCollectionToChooseFrom(selectedCategory) {
+		if(selectedCategory === "All Colors") {
+			jq.fn.colorPicker.defaults.colors = allColors;
+		} else if(selectedCategory === "Red-based Colors") {
+			jq.fn.colorPicker.defaults.colors = redBasedColors;
+		} else if(selectedCategory === "Green-based Colors") {
+			jq.fn.colorPicker.defaults.colors = greenBasedColors;
+		} else if(selectedCategory === "Blue-based Colors") {
+			jq.fn.colorPicker.defaults.colors = blueBasedColors;
+		} else {
+			jq.fn.colorPicker.defaults.colors = defaultColors;
+		}
+		
+		jq('.colorPicker-picker').remove();
+		jq('#color1').colorPicker();
+	}
 </script>
 
-
+<% ui.includeJavascript("chartsearch", "jquery.colorPicker.js") %>
 
 <h1>Manage Preferences</h1>
 <div class="pref-summary-item" id="pref-summary-item-toggle">Enable/Disable Features</div>
@@ -158,7 +201,18 @@
 
 <div class="pref-summary-item" id="pref-summary-item-notescolors">Notes Background Colors</div>
 <div id="pref-summary-item-notescolors-details" class="pref-summary-item-details">
-	Details for notes colors
+	<br />
+	<div><label for="color1">Click and Select color to add</label>
+		<input id="color1" name="color1" type="text" value="#333399" />
+		<select id="choose-color-collection">
+				<option>Color Collection To choose from</option>
+				<option>Default Colors</option>
+				<option>Red-based Colors</option>
+				<option>Green-based Colors</option>
+				<option>Blue-based Colors</option>
+		</select><br />
+		Selected Colors: <textarea id="selectedColors" disabled></textarea>
+	</div>
 </div>
 
 <div id="submit-peferences-section">

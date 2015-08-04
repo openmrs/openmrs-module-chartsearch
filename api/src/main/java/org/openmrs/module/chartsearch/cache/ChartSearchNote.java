@@ -24,6 +24,8 @@ import javax.persistence.Table;
 
 import org.openmrs.Patient;
 import org.openmrs.User;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.chartsearch.api.ChartSearchService;
 
 /**
  * Represents a user's observation or comments on a specific set of results after a search
@@ -154,11 +156,27 @@ public class ChartSearchNote implements Serializable {
 		if ("orange".equals(displayColor) || "yellow".equals(displayColor) || "violet".equals(displayColor)
 		        || "lime".equals(displayColor) || "beige".equals(displayColor) || "cyan".equals(displayColor)
 		        || "lightgreen".equals(displayColor) || "deeppink".equals(displayColor) || "magenta".equals(displayColor)
-		        || "red".equals(displayColor)) {//don't persist the first option
+		        || "red".equals(displayColor) || checkIfColorExistsInPersonalColors(displayColor)) {//don't persist the first option
 			this.displayColor = displayColor;
 		} else {
 			this.displayColor = "white";
 		}
 	}
 	
+	private boolean checkIfColorExistsInPersonalColors(String color) {
+		ChartSearchPreference preference = Context.getService(ChartSearchService.class).getRightMatchedPreferences();
+		boolean exists = false;
+		
+		if (preference != null && preference.gePersonalNotesColorsArray() != null
+		        && preference.gePersonalNotesColorsArray().length > 0) {
+			String[] pColors = preference.gePersonalNotesColorsArray();
+			for (int i = 0; i < pColors.length; i++) {
+				if (pColors[i].equals(color)) {
+					exists = true;
+				}
+			}
+		}
+		
+		return exists;
+	}
 }

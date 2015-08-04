@@ -168,5 +168,4 @@ public class ChartSearchPreference implements Serializable {
 	public void setPreferenceOwner(User preferenceOwner) {
 		this.preferenceOwner = preferenceOwner;
 	}
-	
 }

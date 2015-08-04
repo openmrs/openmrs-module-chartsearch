@@ -128,6 +128,7 @@
     	updateBookmarksAndNotesUI();
     	displayQuickSearches();
     	applyPreferencesToUIDisplays();
+    	addPersonalColorsToSelectColorElement();
     
     	jq("#favorite-search-record").click(function(event) {
     		jq("#favorite-search-record").prop('disabled', true);
@@ -692,6 +693,17 @@
 			} else {
 				location.reload();
 			}
+    	}
+    	
+    	function addPersonalColorsToSelectColorElement() {
+    		//new-note-color
+    		var pColors = '${personalNotes}';
+    		
+    		if(pColors !== undefined) {
+    			for(i = 0; i < pColors.length; i++) {
+    				jq("#new-note-color").append("<option>" + pColors[i] + "</option>");
+    			}
+    		}
     	}
        
 </script>

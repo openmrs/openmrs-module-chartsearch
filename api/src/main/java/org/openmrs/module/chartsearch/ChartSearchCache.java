@@ -471,7 +471,8 @@ public class ChartSearchCache {
 	
 	public JSONObject saveOrUpdatePreferences(Boolean enableHistory, Boolean enableBookmarks, Boolean enableNotes,
 	                                          Boolean enableQuickSearches, Boolean enableDefaultSearch,
-	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering, String[] cats) {
+	                                          Boolean enableDuplicateResults, Boolean enableMultiFiltering, String[] cats,
+	                                          String selectedColors) {
 		List<ChartSearchPreference> allPrefs = chartSearchService.getAllChartSearchPreferences();
 		Boolean exists = false;
 		ChartSearchPreference preference = new ChartSearchPreference();
@@ -491,6 +492,7 @@ public class ChartSearchCache {
 		preference.setEnableMultipleFiltering(enableMultiFiltering);
 		preference.setEnableNotes(enableNotes);
 		preference.setEnableQuickSearches(enableQuickSearches);
+		preference.setPersonalNotesColors(selectedColors);
 		
 		if (exists) {
 			chartSearchService.updateChartSearchPreference(preference);
@@ -578,5 +580,17 @@ public class ChartSearchCache {
 		if (list == null || list.size() == 0)
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
+	}
+	
+	public String[] fetchPersonalNotesColors() {
+		ChartSearchPreference preference = Context.getService(ChartSearchService.class).getRightMatchedPreferences();
+		String[] pColors = null;
+		
+		if (preference != null && preference.gePersonalNotesColorsArray() != null
+		        && preference.gePersonalNotesColorsArray().length > 0) {
+			pColors = preference.gePersonalNotesColorsArray();
+		}
+		
+		return pColors;
 	}
 }

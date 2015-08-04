@@ -9,8 +9,12 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import net.sf.json.JSONObject;
 
+import org.openmrs.module.chartsearch.AllColors;
 import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.ui.framework.UiUtils;
@@ -21,10 +25,29 @@ public class ManagePreferencesFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void controller(FragmentModel model, UiUtils ui) {
+		AllColors allColors = new AllColors();
+		String[] allColorsArray = new String[allColors.ALLCOLORSLENGTH];
+		ArrayList list = new ArrayList(Arrays.asList(allColors));
+		
+		list.addAll(Arrays.asList(allColors.REDBASEDCOLORS));
+		list.addAll(Arrays.asList(allColors.GREENBASEDCOLORS));
+		list.addAll(Arrays.asList(allColors.BLUEBASEDCOLORS));
+		for (int i = 0; i < allColorsArray.length; i++) {
+			if (list.get(i) instanceof String) {
+				allColorsArray[i] = (String) list.get(i);
+			}
+		}
+		allColors.printAllColors(true);
+		
 		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
 		model.put("daemonPreferences", GeneratingJson.generateDaemonPreferencesJSON().toString());
 		model.put("categoryFilters", ui.escapeJs(GeneratingJson.generateAllCategoriesJSON().toString()));
+		model.put("allColors", allColorsArray);
+		model.put("redBasedColors", allColors.REDBASEDCOLORS);
+		model.put("greenBasedColors", allColors.GREENBASEDCOLORS);
+		model.put("blueBasedColors", allColors.BLUEBASEDCOLORS);
 	}
 	
 	public JSONObject saveOrUpdatePrefereces(@RequestParam("history") Boolean enableHistory,
@@ -34,10 +57,10 @@ public class ManagePreferencesFragmentController {
 	                                         @RequestParam("defaultSearch") Boolean enableDefaultSearch,
 	                                         @RequestParam("duplicateResults") Boolean enableDuplicateResults,
 	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering,
-	                                         @RequestParam("categories[]") String[] cats) {
-		
+	                                         @RequestParam("categories[]") String[] cats,
+	                                         @RequestParam("selectedColors") String selectedColors) {
 		return cache.saveOrUpdatePreferences(enableHistory, enableBookmarks, enableNotes, enableQuickSearches,
-		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats);
+		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats, selectedColors);
 	}
 	
 	public JSONObject restoreDefaultPrefereces() {

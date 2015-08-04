@@ -27,7 +27,7 @@ public class SearchSavingSectionFragmentController {
 	ChartSearchCache cache = new ChartSearchCache();
 	
 	public void controller(FragmentModel model) {
-		
+		model.put("personalNotes", cache.fetchPersonalNotesColors());
 	}
 	
 	public boolean checkIfPhraseExisitsInHistory(@RequestParam("searchPhrase") String searchPhrase,

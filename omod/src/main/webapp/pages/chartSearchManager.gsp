@@ -50,16 +50,6 @@ input[type="radio"], input[type="checkbox"] {
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#commands" >
-	             Commands
-	        </a>
-	    </li>
-	    <li class="ui-state-default ui-corner-top ui-state-active" >
-	        <a class="ui-tabs-anchor" href="#settings" >
-	             Settings
-	        </a>
-	    </li>
-	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#feedback" >
 	             Feedback
 	        </a>
@@ -74,12 +64,6 @@ input[type="radio"], input[type="checkbox"] {
     </div>
     <div id="history">
     	${ ui.includeFragment("chartsearch", "manageHistory") }
-    </div>
-    <div id="commands">
-    	${ ui.includeFragment("chartsearch", "manageCommands") }
-    </div>
-    <div id="settings">
-    	${ ui.includeFragment("chartsearch", "manageSettings") }
     </div>
     <div id="notes">
     	${ ui.includeFragment("chartsearch", "manageNotes") }

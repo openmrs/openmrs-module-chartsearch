@@ -262,14 +262,6 @@
     		window.open('../chartsearch/chartSearchManager.page#preferences', '_blank');
     	});
     	
-    	jq("#commands-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#commands', '_blank');
-    	});
-    	
-    	jq("#settings-task-list-item").click(function(event) {
-    		window.open('../chartsearch/chartSearchManager.page#settings', '_blank');
-    	});
-    	
     	jq("#notes-task-list-item").click(function(event) {
     		window.open('../chartsearch/chartSearchManager.page#notes', '_blank');
     	});
@@ -774,8 +766,6 @@
 	<div class="possible-task-list-item" id="history-task-list-item">History Manager</div>
 	<div class="possible-task-list-item" id="bookmark-task-list-item">Bookmarks</div>
 	<div class="possible-task-list-item" id="preferences-task-list-item">Preferences</div>
-	<div class="possible-task-list-item" id="commands-task-list-item">Commands</div>
-	<div class="possible-task-list-item" id="settings-task-list-item">Settings</div>
 	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
 	<div class="possible-task-list-item" id="feedback">Feedback</div>
 </div>

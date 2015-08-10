@@ -702,16 +702,16 @@
 
 <i id="favorite-search-record" class="icon-star-empty medium" title="Bookmark Search"></i>
 <div class="search-record-dialog-content" id="favorite-search-record-dialog">
-	<div id="bookmark-header">Edit This Bookmark</div>
+	<div id="bookmark-header">${ ui.message("chartsearch.searchSaving.editBookmark") }</div>
 	<div id="bookmark-info">
         <div id="bookmark-icon-and-remove">
-            <i class="icon-star medium"></i><a id="remove-current-bookmark" href="">Remove</a>
+            <i class="icon-star medium"></i><a id="remove-current-bookmark" href="">${ ui.message("chartsearch.searchSaving.remove") }</a>
     	</div>
         <div id="bookmark-name-and-cats">
         	<input type="hidden" id="current-bookmark-object" value="" />
-            <b>Name:</b>&nbsp&nbsp<input type="textbox" id="current-bookmark-name" value="" /><br /><br />
-            <b>Search Phrase:</b> <label id="bookmark-search-phrase"></label><br /><br />
-            <b>Categories:</b> <label id="bookmark-category-names"></label><br /><br />
+            <b>${ ui.message("chartsearch.searchSaving.name") }:</b>&nbsp&nbsp<input type="textbox" id="current-bookmark-name" value="" /><br /><br />
+            <b>${ ui.message("chartsearch.searchSaving.searchPhrase") }:</b> <label id="bookmark-search-phrase"></label><br /><br />
+            <b>${ ui.message("chartsearch.searchSaving.categories") }:</b> <label id="bookmark-category-names"></label><br /><br />
             <input type="button" id="cancel-edit-bookmark" value="Cancel" />
             <input type="button" id="submit-edit-bookmark" value="Done" /><br />
         </div>
@@ -720,13 +720,13 @@
 
 <i id="comment-on-search-record" class="icon-comment-alt medium" title="Comment on Search"></i>
 <div class="search-record-dialog-content" id="comment-on-search-record-dialog">
-	<b>Previous Notes:</b>
+	<b>${ ui.message("chartsearch.searchSaving.previousNotes") }:</b>
 	<div id="previous-notes-on-this-search">
 		
 	</div>
 	<div id="add-new-note-on-this-search">
-		<b>Add a new Note:</b><br />
-		Comment:
+		<b>${ ui.message("chartsearch.searchSaving.addNote") }:</b><br />
+		${ ui.message("chartsearch.searchSaving.comment") }:
 		<textarea id="new-comment-or-note" style="height: 80px; width: 512px;"></textarea>
 		<br />
 		<i class="icon-user-md medium"></i>&nbsp&nbsp&nbsp&nbsp&nbsp
@@ -763,9 +763,9 @@
 <div id="lauche-stored-bookmark"></div>
 
 <div id="lauche-other-chartsearch-features">
-	<div class="possible-task-list-item" id="history-task-list-item">History Manager</div>
-	<div class="possible-task-list-item" id="bookmark-task-list-item">Bookmarks</div>
-	<div class="possible-task-list-item" id="preferences-task-list-item">Preferences</div>
-	<div class="possible-task-list-item" id="notes-task-list-item">Notes Manager</div>
-	<div class="possible-task-list-item" id="feedback">Feedback</div>
+	<div class="possible-task-list-item" id="history-task-list-item">${ ui.message("chartsearch.searchSaving.history") }</div>
+	<div class="possible-task-list-item" id="bookmark-task-list-item">${ ui.message("chartsearch.searchSaving.bookmarks") }</div>
+	<div class="possible-task-list-item" id="preferences-task-list-item">${ ui.message("chartsearch.searchSaving.preferences") }</div>
+	<div class="possible-task-list-item" id="notes-task-list-item">${ ui.message("chartsearch.searchSaving.notes") }</div>
+	<div class="possible-task-list-item" id="feedback">${ ui.message("chartsearch.searchSaving.feedback") }</div>
 </div>

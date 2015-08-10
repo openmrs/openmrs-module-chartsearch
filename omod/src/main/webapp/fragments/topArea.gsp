@@ -722,11 +722,11 @@
                     	<div class="dropdown" id="category_dropdown">
 	                     	<div class="inside_categories_filter">
 								<span class="dropdown-name" id="categories_label">
-								<a class="filter_method" id="category-filter_method">All Categories</a>
+								<a class="filter_method" id="category-filter_method">${ ui.message("chartsearch.topArea.allCategories") }</a>
 								<i class="icon-sort-down"></i>
 								</span>
 								<div class="filter_categories" id="filter_categories_categories">
-									<a href="" id="selectAll_categories" class="disabled_link">Select All</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
+									<a href="" id="selectAll_categories" class="disabled_link">${ ui.message("chartsearch.topArea.selectAll") }</a>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="deselectAll_categories" class="disabled_link">Clear</a>
 									<br /><hr />
 									<div id="inside_filter_categories">
 										<script type="text/javascript">
@@ -734,26 +734,26 @@
 										</script>
 									</div>
 									<hr />
-									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">Cancel</a>
+									<input id="submit_selected_categories" type="submit" value="OK" />&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<a href="" id="hide_categories">${ ui.message("chartsearch.topArea.cancel") }</a>
 								</div>
 							</div>
 						</div>
                         <div class="dropdown" id="time_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="time_label">
-                                    <a class="filter_method" id="time_anchor">Any Time</a>
+                                    <a class="filter_method" id="time_anchor">${ ui.message("chartsearch.topArea.anyTime") }</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="filter_categories_time">
                                     <hr />
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('today')">Today</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('yesterday')">Yesterday</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisWeek')">This Week</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisMonth')">This Month</a>
-										<a class="single_filter_option" onclick="filterResultsUsingTime('last3Months')">Last 3 Months</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisYear')">This Year</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('custom')">Custom</a>
-                                        <a class="single_filter_option" onclick="filterResultsUsingTime('anyTime')">Any Time</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('today')">${ ui.message("chartsearch.topArea.today") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('yesterday')">${ ui.message("chartsearch.topArea.yesterday") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisWeek')">${ ui.message("chartsearch.topArea.week") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisMonth')">${ ui.message("chartsearch.topArea.month") }</a>
+										<a class="single_filter_option" onclick="filterResultsUsingTime('last3Months')">${ ui.message("chartsearch.topArea.threeMonths") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('thisYear')">${ ui.message("chartsearch.topArea.year") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('custom')">${ ui.message("chartsearch.topArea.custom") }</a>
+                                        <a class="single_filter_option" onclick="filterResultsUsingTime('anyTime')">${ ui.message("chartsearch.topArea.anyTime") }</a>
                                 </div>
                                 <div id="custom-date-dialog-content">
                                 	<p>Start: <input type="text" id="ui-datepicker-start"></p><br />
@@ -765,7 +765,7 @@
                         <div class="dropdown" id="location_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a class="filter_method" id="location_anchor">All Locations</a>
+                                    <a class="filter_method" id="location_anchor">${ ui.message("chartsearch.topArea.allLocations") }</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="locationOptions">
@@ -778,7 +778,7 @@
                         <div class="dropdown" id="provider_dropdown">
                             <div class="inside_categories_filter">
                                 <span class="dropdown-name" id="categories_label">
-                                    <a class="filter_method" id="provider_anchor">All Providers</a>
+                                    <a class="filter_method" id="provider_anchor">${ ui.message("chartsearch.topArea.allProviders") }</a>
                                     <i class="icon-sort-down"></i>
                                 </span>
                                 <div class="filter_categories" id="providersOptions">

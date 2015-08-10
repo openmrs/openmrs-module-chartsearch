@@ -186,7 +186,7 @@
 
 
 
-<h1>Manage Notes</h1>
+<h1>${ ui.message("chartsearch.refApp.manage.notes.title") }</h1>
 <div id="notes-grouped-functionality">
 	<input type="button" id="delete-selected-notes" value="Delete Selected"/>
 </div><br /><br />

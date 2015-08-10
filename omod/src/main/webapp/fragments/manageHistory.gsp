@@ -190,30 +190,30 @@
     	}
 </script>
 
-<h1>Manage History</h1>
+<h1>${ ui.message("chartsearch.refApp.manage.history.title") }</h1>
 <input type="button" id="delete-selected-history" value="Delete Selected"/><br /><br />
 <div id="manage-history">
-	<i class="icon-circle-arrow-down" id="today-hide-or-show"> Today</i><br />
+	<i class="icon-circle-arrow-down" id="today-hide-or-show"> ${ ui.message("chartsearch.refApp.manage.history.today") }</i><br />
 	<div id="todays-history-section">
 		<table id="todays-history"></table>
 	</div>
 	<br />
-	<i class="icon-circle-arrow-right" id="this-week-hide-or-show"> This Week Excluding Today</i><br />
+	<i class="icon-circle-arrow-right" id="this-week-hide-or-show"> ${ ui.message("chartsearch.refApp.manage.history.week") }</i><br />
 	<div id="this-weeks-history-section">
 		<table id="this-weeks-history"></table>
 	</div>
 	<br />
-	<i class="icon-circle-arrow-right" id="this-month-hide-or-show"> This Month Excluding This week</i><br />	
+	<i class="icon-circle-arrow-right" id="this-month-hide-or-show"> ${ ui.message("chartsearch.refApp.manage.history.month") }</i><br />	
 	<div id="this-month-history-section">
 		<table id="this-month-history"></table>
 	</div>
 	<br />
-	<i class="icon-circle-arrow-right" id="current-year-hide-or-show">This Year Excluding Current Month</i><br />	
+	<i class="icon-circle-arrow-right" id="current-year-hide-or-show">${ ui.message("chartsearch.refApp.manage.history.year") }</i><br />	
 	<div id="this-year-history-section">
 		<table id="this-year-history"></table>
 	</div>
 	<br />
-	<i class="icon-circle-arrow-right" id="others-hide-or-show"> Others Years</i><br />	
+	<i class="icon-circle-arrow-right" id="others-hide-or-show"> ${ ui.message("chartsearch.refApp.manage.history.otherYears") }</i><br />	
 	<div id="others-history-section">
 		<table id="other-history"></table>
 	</div>

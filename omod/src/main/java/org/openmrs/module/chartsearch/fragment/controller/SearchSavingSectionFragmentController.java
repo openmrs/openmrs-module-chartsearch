@@ -59,7 +59,7 @@ public class SearchSavingSectionFragmentController {
 			categories = "";
 		}
 		ChartSearchBookmark bookmark = cache.checkIfBookmarkExistsForPhrase(phrase, categories, patientId);
-		if (null != bookmark) {
+		if (bookmark != null) {
 			return bookmark.getUuid();
 		} else
 			return "";

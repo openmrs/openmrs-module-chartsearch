@@ -1,1 +1,1 @@
-<h1>Manage Commands</h1>
+<h1>${ ui.message("chartsearch.refApp.manage.commands.title") }</h1>

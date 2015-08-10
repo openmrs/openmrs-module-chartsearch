@@ -1,15 +1,11 @@
 /**
- * The contents of this file are subject to the OpenMRS Public License
- * Version 1.0 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://license.openmrs.org
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/. OpenMRS is also distributed under
+ * the terms of the Healthcare Disclaimer located at http://openmrs.org/license.
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations
- * under the License.
- *
- * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
+ * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
+ * graphic logo is a trademark of OpenMRS Inc.
  */
 package org.openmrs.module.chartsearch;
 
@@ -48,7 +44,7 @@ public class GeneratingJson {
 	
 	final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
 	
-	private static ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
+	private static ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
 	
 	public static ChartSearchService getChartSearchService() {
 		return chartSearchService;
@@ -140,7 +136,7 @@ public class GeneratingJson {
 			        && history.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
 				json = generateHistoryJSON(history);
 			}
-			if (null != json) {
+			if (json != null) {
 				histories.add(json);
 			}
 		}
@@ -157,7 +153,7 @@ public class GeneratingJson {
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
 				json = generateHistoryJSON(history);
 			}
-			if (null != json) {
+			if (json != null) {
 				histories.add(json);
 			}
 		}
@@ -261,7 +257,7 @@ public class GeneratingJson {
 				json = generateBookmarksJSON(curBookmark);
 			}
 			
-			if (null != json) {
+			if (json != null) {
 				bookmarks.add(json);
 			}
 		}
@@ -279,7 +275,7 @@ public class GeneratingJson {
 				json = generateBookmarksJSON(curBookmark);
 			}
 			
-			if (null != json) {
+			if (json != null) {
 				bookmarks.add(json);
 			}
 		}
@@ -747,12 +743,5 @@ public class GeneratingJson {
 		}
 		
 		return jsonArray;
-	}
-	
-	private static <T> T getComponent(Class<T> clazz) {
-		List<T> list = Context.getRegisteredComponents(clazz);
-		if (list == null || list.size() == 0)
-			throw new RuntimeException("Cannot find component of " + clazz);
-		return list.get(0);
 	}
 }

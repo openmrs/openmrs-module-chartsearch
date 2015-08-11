@@ -360,10 +360,8 @@ function enable_graph(obs_id) {
 	var minToBePlottedMilli = Math.min.apply(Math, allToBePlottedDates);
 	var maxToBePlottedVal = Math.max.apply(Math, allToBePlottedVals);
 	var minToBePlottedVal = Math.min.apply(Math, allToBePlottedVals);
-	var xaxisRange = (maxToBePlottedMilli - minToBePlottedMilli)
-			/ allToBePlottedDates.length;
-	var yaxisRange = (maxToBePlottedVal - minToBePlottedVal)
-			/ allToBePlottedVals.length;
+	var xaxisRange = maxToBePlottedMilli - minToBePlottedMilli;
+	var yaxisRange = maxToBePlottedVal - minToBePlottedVal;
 	var mark = {
 		enabled : true,
 		showMinMax : false,
@@ -403,8 +401,8 @@ function enable_graph(obs_id) {
 			axisLabelUseCanvas : true,
 			axisLabelFontSizePixels : 16,
 			axisLabelFontFamily : 'Arial',
-			zoomRange : false,
-			panRange : false
+			zoomRange : [ 0.1, 3600000000 ],
+			panRange : [ minToBePlottedVal, maxToBePlottedVal ]
 		},
 		xaxis : {
 			mode : "time",
@@ -416,12 +414,11 @@ function enable_graph(obs_id) {
 			axisLabelUseCanvas : true,
 			axisLabelFontSizePixels : 16,
 			axisLabelFontFamily : 'Arial',
-			zoomRange : [ minToBePlottedMilli, maxToBePlottedMilli ],
-			panRange : [ -maxToBePlottedMilli, maxToBePlottedMilli ]
+			zoomRange : [ 0.1, 3600000000 ],
+			panRange : [ minToBePlottedMilli, maxToBePlottedMilli ]
 		},
 		zoom : {
-			interactive : false,
-			amount : 0.5
+			interactive : false
 		},
 		pan : {
 			interactive : false

@@ -179,41 +179,41 @@
 
 <% ui.includeJavascript("chartsearch", "jquery.colorPicker.js") %>
 
-<h1>Manage Preferences</h1>
-<div class="pref-summary-item" id="pref-summary-item-toggle">Enable/Disable Features</div>
+<h1>${ ui.message("chartsearch.refApp.manage.preferences.title") }</h1>
+<div class="pref-summary-item" id="pref-summary-item-toggle">${ ui.message("chartsearch.refApp.manage.preferences.enableFeatures") }</div>
 <div id="pref-summary-item-toggle-details" class="pref-summary-item-details">
 	<br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_history" />Enable History Storage/Disable Safe Search</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_bookmarks" />Enable Bookmarking Searches</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_notes" />Enable Commenting/Noting on Searches</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_quicksearches" />Enable Quick Searches</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_defaultsearch" />Enable Default Searching</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_multiplefiltering" />Enable Multiple Results Filtering</label><br />
-	<label><input type="checkbox" class="enable-disable-check" id="enable_duplicateresults" />Include Duplicate Results</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_history" />${ ui.message("chartsearch.refApp.manage.preferences.enableHistory") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_bookmarks" />${ ui.message("chartsearch.refApp.manage.preferences.enableBookmarks") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_notes" />${ ui.message("chartsearch.refApp.manage.preferences.enableNotes") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_quicksearches" />${ ui.message("chartsearch.refApp.manage.preferences.enableQuickSearches") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_defaultsearch" />${ ui.message("chartsearch.refApp.manage.preferences.enableDefaultSearch") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_multiplefiltering" />${ ui.message("chartsearch.refApp.manage.preferences.enableMultiFilterings") }</label><br />
+	<label><input type="checkbox" class="enable-disable-check" id="enable_duplicateresults" />${ ui.message("chartsearch.refApp.manage.preferences.enableDuplicates") }</label><br />
 	<br />
 </div>
 
-<div class="pref-summary-item" id="pref-summary-item-categoryfilter">Category Filters</div>
+<div class="pref-summary-item" id="pref-summary-item-categoryfilter"> ${ ui.message("chartsearch.refApp.manage.preferences.categoryFilters") }</div>
 <div id="pref-summary-item-categoryfilter-details" class="pref-summary-item-details">
 	<br />
-		<b>NOTE:</b> Category Names are displayed by default, providing your preferred Display name will instead display your name than the default<br /><br />
+		<b>${ ui.message("chartsearch.note") }</b> ${ ui.message("chartsearch.refApp.manage.preferences.categoryNote") }<br /><br />
 		<table id="preferences-cats"></table>
 	<br /><br />
 </div>
 
-<div class="pref-summary-item" id="pref-summary-item-notescolors">Notes Background Colors</div>
+<div class="pref-summary-item" id="pref-summary-item-notescolors">${ ui.message("chartsearch.refApp.manage.preferences.notesColor") }</div>
 <div id="pref-summary-item-notescolors-details" class="pref-summary-item-details">
 	<br />
-	<div><label for="color1">Click and Select color to add</label>
+	<div><label for="color1">${ ui.message("chartsearch.refApp.manage.preferences.addColor") }</label>
 		<input id="color1" name="color1" type="text" value="#333399" />
 		<select id="choose-color-collection">
-				<option>Color Collection To choose from</option>
-				<option>Default Colors</option>
-				<option>Red-based Colors</option>
-				<option>Green-based Colors</option>
-				<option>Blue-based Colors</option>
+				<option>${ ui.message("chartsearch.refApp.manage.preferences.selectColor") }</option>
+				<option>${ ui.message("chartsearch.refApp.manage.preferences.defaultColors") }</option>
+				<option>${ ui.message("chartsearch.refApp.manage.preferences.redColors") }</option>
+				<option>${ ui.message("chartsearch.refApp.manage.preferences.greenColors") }</option>
+				<option>${ ui.message("chartsearch.refApp.manage.preferences.blueColors") }</option>
 		</select><br />
-		Selected Colors: <textarea id="selectedColors" disabled></textarea>
+		${ ui.message("chartsearch.refApp.manage.preferences.selectedColors") }: <textarea id="selectedColors" disabled></textarea>
 	</div>
 </div>
 

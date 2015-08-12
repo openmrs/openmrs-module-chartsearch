@@ -283,17 +283,16 @@
 </script>
 
 
-<h1>Manage Bookmarks</h1>
-<b>NOTE:</b>
-<p>A default search from here is what the module will search whenever any patient's chartsearch will be loaded,
-Please chose one that would be appropriate for all patients after it's category filters will be applied</p>
+<h1>${ ui.message("chartsearch.refApp.manage.bookmarks.title") }</h1>
+<b>${ ui.message("chartsearch.note") }</b>
+<p>${ ui.message("chartsearch.refApp.manage.bookmarks.searchNote") }</p>
 <div id="selected-bookmark-dialog-content">
 	<input type="hidden" id="dialog-bookmark-uuid" value="">
-	Bookmark Name: <input type="textbox" id="dialog-bookmark-name" value="" /><br /><br />
-	Search Phrase: <input type="textbox" id="dialog-bookmark-phrase" disabled value="" /><br /><br />
-	Categories: 
+	${ ui.message("chartsearch.refApp.manage.bookmarks.bookmarkName") }: <input type="textbox" id="dialog-bookmark-name" value="" /><br /><br />
+	${ ui.message("chartsearch.refApp.manage.bookmarks.searchPhrase") }: <input type="textbox" id="dialog-bookmark-phrase" disabled value="" /><br /><br />
+	${ ui.message("chartsearch.refApp.manage.bookmarks.categories") }: 
 		<select multiple id="dialog-bookmark-categories">
-		</select> <b>Tip:</b> Use Ctrl + Left Click<br /><br />
+		</select> <b>${ ui.message("chartsearch.tip") }</b> ${ ui.message("chartsearch.refApp.manage.bookmarks.shortcutTip") }<br /><br />
 	<input type="button" value="Save Changes" id="dialog-bookmark-save" />
 	<input type="button" value="Delete This Bookmark" id="dialog-bookmark-delete" />
 </div>

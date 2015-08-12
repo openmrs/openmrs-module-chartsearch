@@ -45,30 +45,30 @@ public class ChartSearchCache {
 	
 	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
-	private ChartSearchService chartSearchService = getComponent(ChartSearchService.class);
+	private ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
 	
 	public void saveOrUpdateSearchHistory(String searchText, Integer patientId) {
 		ChartSearchHistory history = new ChartSearchHistory();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
-		ChartSearchHistory exisitingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText, patientId);
+		ChartSearchHistory existingHistory = checkIfSearchIsAlreadyInHistory(allHistory, searchText, patientId);
 		
-		if (StringUtils.isNotBlank(searchText) && null != patientId && fetchRightMatchedPreferences().isEnableHistory()) {
+		if (StringUtils.isNotBlank(searchText) && patientId != null && fetchRightMatchedPreferences().isEnableHistory()) {
 			history.setLastSearchedAt(new Date());
 			
-			if (null != exisitingHistory) {
-				User user = Context.getUserService().getUser(exisitingHistory.getHistoryOwner().getUserId());
-				Patient patient = Context.getPatientService().getPatient(exisitingHistory.getPatient().getPatientId());
+			if (existingHistory != null) {
+				User user = Context.getUserService().getUser(existingHistory.getHistoryOwner().getUserId());
+				Patient patient = Context.getPatientService().getPatient(existingHistory.getPatient().getPatientId());
 				
 				if (patient.getPatientId().equals(patientId)
 				        && user.getUserId().equals(Context.getAuthenticatedUser().getUserId())) {
-					history.setSearchPhrase(exisitingHistory.getSearchPhrase());
-					history.setUuid(exisitingHistory.getUuid());
+					history.setSearchPhrase(existingHistory.getSearchPhrase());
+					history.setUuid(existingHistory.getUuid());
 					history.setHistoryOwner(user);
 					history.setPatient(patient);
 				} else {
 					setNewHistoryOwnerPatientAndPhrase(searchText, patientId, history);
 				}
-				chartSearchService.deleteSearchHistory(exisitingHistory);
+				chartSearchService.deleteSearchHistory(existingHistory);
 			} else {
 				setNewHistoryOwnerPatientAndPhrase(searchText, patientId, history);
 			}
@@ -131,13 +131,13 @@ public class ChartSearchCache {
 	                                       Integer patientId) {
 		JSONObject json = new JSONObject();
 		
-		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && null != patientId
+		if (StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(bookmarkName) && patientId != null
 		        && fetchRightMatchedPreferences().isEnableBookmarks()) {
 			ChartSearchBookmark bookmark = new ChartSearchBookmark();
 			ChartSearchBookmark existingBookmark = checkIfBookmarkExistsForPhrase(searchPhrase, selectedCategories,
 			    patientId);
 			
-			if (null != existingBookmark) {
+			if (existingBookmark != null) {
 				existingBookmark.setBookmarkName(bookmarkName);
 				chartSearchService.saveSearchBookmark(existingBookmark);
 				
@@ -195,7 +195,7 @@ public class ChartSearchCache {
 	public JSONArray deleteSearchBookmark(String uuid) {
 		ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
 		
-		if (StringUtils.isNotBlank(uuid) && null != bookmark) {
+		if (StringUtils.isNotBlank(uuid) && bookmark != null) {
 			chartSearchService.deleteSearchBookmark(bookmark);
 			return GeneratingJson.getAllSearchBookmarksToReturnToUI();
 		} else
@@ -244,14 +244,14 @@ public class ChartSearchCache {
 		List<ChartSearchHistory> rightHistory = new ArrayList<ChartSearchHistory>();
 		String rightHistoryLastSearchPhrase = null;
 		
-		if (null != allHistory && !allHistory.isEmpty() && null != patientId) {
+		if (allHistory != null && !allHistory.isEmpty() && patientId != null) {
 			for (ChartSearchHistory history : allHistory) {
 				if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
 				        && history.getPatient().getPatientId().equals(patientId)) {
 					rightHistory.add(history);
 				}
 			}
-			if (null != rightHistory && !rightHistory.isEmpty()) {
+			if (rightHistory != null && !rightHistory.isEmpty()) {
 				ChartSearchHistory lastRightHistory = rightHistory.get(rightHistory.size() - 1);
 				rightHistoryLastSearchPhrase = lastRightHistory.getSearchPhrase();
 			}
@@ -261,7 +261,7 @@ public class ChartSearchCache {
 	
 	public JSONObject saveANewNoteOrCommentOnToASearch(String searchPhrase, Integer patientId, String comment,
 	                                                   String priority, String backgroundColor) {
-		if (null != patientId && StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(comment)
+		if (patientId != null && StringUtils.isNotBlank(searchPhrase) && StringUtils.isNotBlank(comment)
 		        && fetchRightMatchedPreferences().isEnableNotes()) {
 			JSONObject json = new JSONObject();
 			ChartSearchNote note = new ChartSearchNote();
@@ -276,7 +276,7 @@ public class ChartSearchCache {
 			
 			chartSearchService.saveSearchNote(note);
 			
-			if (null != chartSearchService.getSearchNote(note.getNoteId())) {
+			if (chartSearchService.getSearchNote(note.getNoteId()) != null) {
 				GeneratingJson.addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, json);
 			} else {
 				json = null;
@@ -292,7 +292,7 @@ public class ChartSearchCache {
 		
 		if (StringUtils.isNotBlank(uuid)) {
 			ChartSearchNote note = chartSearchService.getSearchNoteByUuid(uuid);
-			if (null != note && Context.getAuthenticatedUser().getUserId().equals(note.getNoteOwner().getUserId())) {
+			if (note != null && Context.getAuthenticatedUser().getUserId().equals(note.getNoteOwner().getUserId())) {
 				chartSearchService.deleteSearchNote(note);
 			}
 		}
@@ -303,7 +303,7 @@ public class ChartSearchCache {
 	}
 	
 	public JSONArray deleteHistoryOfSelectedUuids(String[] uuids) {
-		if (null != uuids && uuids.length != 0) {
+		if (uuids != null && uuids.length != 0) {
 			for (int i = 0; i < uuids.length; i++) {
 				String uuid = uuids[i];
 				ChartSearchHistory history = chartSearchService.getSearchHistoryByUuid(uuid);
@@ -314,7 +314,7 @@ public class ChartSearchCache {
 	}
 	
 	public JSONArray deleteBookmarkOfSelectedUuids(String[] uuids) {
-		if (null != uuids && uuids.length != 0) {
+		if (uuids != null && uuids.length != 0) {
 			for (int i = 0; i < uuids.length; i++) {
 				String uuid = uuids[i];
 				ChartSearchBookmark bookmark = chartSearchService.getSearchBookmarkByUuid(uuid);
@@ -573,13 +573,6 @@ public class ChartSearchCache {
 	
 	public ChartSearchPreference fetchRightMatchedPreferences() {
 		return chartSearchService.getRightMatchedPreferences();
-	}
-	
-	private <T> T getComponent(Class<T> clazz) {
-		List<T> list = Context.getRegisteredComponents(clazz);
-		if (list == null || list.size() == 0)
-			throw new RuntimeException("Cannot find component of " + clazz);
-		return list.get(0);
 	}
 	
 	public String[] fetchPersonalNotesColors() {

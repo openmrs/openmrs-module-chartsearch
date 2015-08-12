@@ -31,27 +31,27 @@ input[type="radio"], input[type="checkbox"] {
 	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#history" >
-	             History
+	             ${ ui.message("chartsearch.refApp.manager.history") }
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top">
 	    	<a class="ui-tabs-anchor" href="#bookmarks">
-	        	Bookmarks
+	        	${ ui.message("chartsearch.refApp.manager.bookmarks") }
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#notes" >
-	             Notes
+	             ${ ui.message("chartsearch.refApp.manager.notes") }
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top">
 	    	<a class="ui-tabs-anchor" href="#preferences">
-	        	Preferences
+	        	 ${ ui.message("chartsearch.refApp.manager.preferences") }
 	        </a>
 	    </li>
 	    <li class="ui-state-default ui-corner-top ui-state-active" >
 	        <a class="ui-tabs-anchor" href="#feedback" >
-	             Feedback
+	              ${ ui.message("chartsearch.refApp.manager.feedback") }
 	        </a>
 	    </li>
     </ul>

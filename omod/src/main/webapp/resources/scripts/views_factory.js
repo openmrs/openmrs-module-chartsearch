@@ -600,7 +600,7 @@ function load_allergen(allergeId, clickedElement) {
 	resultText += '<tr><th>Allergen:</th><td>' + allergen + '</td></tr>';
 	resultText += '<tr><th>Type:</th><td>' + type + '</td></tr>';
 	resultText += '<tr><th>Severity:</th><td>' + severity + '</td></tr>';
-	resultText += '<tr><th>Reaction:</th><td>' + reaction + '</td></tr>';
+	resultText += '<tr><th>Reaction(s):</th><td>' + reaction + '</td></tr>';
 	resultText += '<tr><th>Comment:</th><td>' + comment + '</td></tr>';
 	resultText += '<tr><th>Last Updated:</th><td>' + date + '</td></tr>';
 	resultText += '</table>';

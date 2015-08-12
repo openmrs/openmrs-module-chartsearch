@@ -149,6 +149,7 @@
 			    dataType: "json",
 			    success: function(prefs) {
 			        updatePreferencesDisplay(prefs);
+			        preferences = prefs;
 			        alert("Successfully Updated Preferences");
 			    },
 			    error: function(e) {

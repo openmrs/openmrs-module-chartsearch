@@ -9,6 +9,12 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.apache.solr.common.SolrDocument;
+import org.openmrs.Form;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for {@link Form}
+ */
 public class FormItem extends ChartListItem {
 	
 	private Integer formId;

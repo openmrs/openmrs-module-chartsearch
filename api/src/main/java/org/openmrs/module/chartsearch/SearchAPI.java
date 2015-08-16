@@ -19,20 +19,38 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 import org.openmrs.module.chartsearch.synonyms.SynonymsAPI;
 
+/**
+ * Sort of a programming interface that handles background searching
+ */
 public class SearchAPI {
 	
 	private static SearchPhrase searchPhrase;
 	
+	/**
+	 * A List of Found Results returned from Solr
+	 */
 	private static List<ChartListItem> resultList;
 	
+	/**
+	 * A current working instance for this class
+	 */
 	private static SearchAPI instance;
 	
 	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
 	
+	/**
+	 * A collection of filtering category item chosen/selected from the user interface
+	 */
 	private static List<String> selectedCategoryNames;
 	
+	/**
+	 * Time it takes to return results from solr
+	 */
 	private static double retrievalTime;
 	
+	/**
+	 * Patient's unique numeric identifier whose data is searched for
+	 */
 	private static Integer patientId;
 	
 	public static SearchAPI getInstance() {

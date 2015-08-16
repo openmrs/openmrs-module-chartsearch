@@ -9,6 +9,11 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.apache.solr.common.SolrDocument;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for the indexed Patient Data
+ */
 public abstract class ChartListItem {
 	
 	private String uuid;

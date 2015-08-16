@@ -9,8 +9,11 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.openmrs.GlobalProperty;
+
 /**
- *
+ * Primary global properties for this Solr based ChartSearch module used as
+ * {@link GlobalProperty#getProperty()}
  */
 public class ChartSearchMainProperties {
 	

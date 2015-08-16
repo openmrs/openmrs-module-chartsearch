@@ -11,24 +11,58 @@ package org.openmrs.module.chartsearch;
 
 import java.util.Date;
 
+import org.apache.solr.common.SolrDocument;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for a Patient Allergen <br >
+ * An Allergen is any substance that can cause an Allergy (hyper-sensitivity reaction to a
+ * particular allergen)
+ */
 public class AllergyItem extends ChartListItem {
 	
+	/**
+	 * Patient Allergen ID
+	 */
 	private Integer allergyId;
 	
+	/**
+	 * Patient Allergen Name obtained/selected from the Concept Dictionary
+	 */
 	private String allergenCodedName;
 	
+	/**
+	 * Patient Allergen Name manually typed in from the User Interface
+	 */
 	private String allergenNonCodedName;
 	
+	/**
+	 * Patient Allergen Intensity; either Mild or Moderate or Severe
+	 */
 	private String allergenSeverity;
 	
+	/**
+	 * Patient allergen Category; either Drug, Food or Environment
+	 */
 	private String allergenType;
 	
+	/**
+	 * Body change/Response from an Allergen obtained/selected from the Concept Dictionary
+	 */
 	private String allergenCodedReaction;
 	
+	/**
+	 * Body change/Response from an Allergen typed in or entered from the User Interface
+	 */
 	private String allergenNonCodedReaction;
 	
+	/**
+	 * A providers Notice or comment on a patient allergen
+	 */
 	private String allergenComment;
 	
+	/**
+	 * An entry date for an allergen
+	 */
 	private Date allergenDate;
 	
 	public Integer getAllergyId() {

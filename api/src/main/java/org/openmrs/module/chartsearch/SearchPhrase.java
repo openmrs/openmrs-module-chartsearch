@@ -11,6 +11,9 @@ package org.openmrs.module.chartsearch;
 
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Phrase or Text to search a match for entered from the User Interface
+ */
 public class SearchPhrase {
 	
 	String phrase;

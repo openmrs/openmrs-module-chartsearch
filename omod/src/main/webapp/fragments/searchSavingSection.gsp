@@ -122,6 +122,7 @@
 <script type="text/javascript">
 	var jq = jQuery;
 	var pColors = '${personalColorsNotes}'.replace("[", "").replace("]", "").split(", ");
+    var preferences = JSON.parse(jq("#stored-preferences").val());
     
     jq(document).ready(function() {
     	displayExistingBookmarks();

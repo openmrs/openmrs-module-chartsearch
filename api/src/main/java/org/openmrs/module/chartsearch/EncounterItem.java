@@ -9,6 +9,12 @@
  */
 package org.openmrs.module.chartsearch;
 
+import org.apache.solr.common.SolrDocument;
+import org.openmrs.Encounter;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for an {@link Encounter}
+ */
 public class EncounterItem extends ChartListItem {
 	
 	private Integer encounterId;

@@ -11,26 +11,62 @@ package org.openmrs.module.chartsearch;
 
 import java.util.Date;
 
+import org.apache.solr.common.SolrDocument;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for a Patient placed Appointment for
+ * medical attention
+ */
 public class AppointmentItem extends ChartListItem {
 	
+	/**
+	 * Purpose for the appointment request
+	 */
 	private String reason;
 	
+	/**
+	 * Unique numeric Identify for an appointment
+	 */
 	private Integer appointmentId;
 	
+	/**
+	 * Current state of an appointment
+	 */
 	private String status;
 	
+	/**
+	 * Starting time for an appointment
+	 */
 	private Date start;
 	
+	/**
+	 * Ending time for an appointment
+	 */
 	private Date end;
 	
+	/**
+	 * Appointment Category
+	 */
 	private String type;
 	
+	/**
+	 * Description of an Appointment Category
+	 */
 	private String typeDesc;
 	
+	/**
+	 * A reason for an appointment whose status is Closed/Canceled
+	 */
 	private String cancelReason;
 	
+	/**
+	 * Provider with whom the patient is to encounter or meet during the appointment
+	 */
 	private String provider;
 	
+	/**
+	 * Place or Location of preference where to meet for an appointment
+	 */
 	private String location;
 	
 	public String getReason() {

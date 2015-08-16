@@ -12,6 +12,12 @@ package org.openmrs.module.chartsearch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.solr.common.SolrDocument;
+import org.openmrs.Obs;
+
+/**
+ * Represents this module's customized {@link SolrDocument} for an {@link Obs}
+ */
 public class ObsItem extends ChartListItem {
 	
 	private Integer obsId;

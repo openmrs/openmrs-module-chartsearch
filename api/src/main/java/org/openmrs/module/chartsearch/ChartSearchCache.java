@@ -18,7 +18,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.api.context.Context;
@@ -34,16 +33,14 @@ import com.google.common.collect.Lists;
 
 /**
  * This basically provides access to chart-search module stored records such as notes on searches,
- * bookmarked searches, search history, search suggestions among others from the database emulating
- * the normal cache/buffer
+ * bookmarked searches, search history, preferences, search suggestions among others from the
+ * database emulating the normal cache/buffer
  */
 public class ChartSearchCache {
 	
 	Random randomGenerator = new Random();
 	
 	private Integer uniqueNumber = randomGenerator.nextInt(100);
-	
-	private static final Logger logger = Logger.getLogger(ChartSearchCache.class);
 	
 	private ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
 	

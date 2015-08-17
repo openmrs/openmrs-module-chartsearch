@@ -27,6 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
+/**
+ * Bookmarked search java object, takes up searched phrase and attached/selected filter categories
+ */
 @Entity
 @Table(name = "chartsearch_bookmark")
 public class ChartSearchBookmark implements Serializable {
@@ -47,6 +50,12 @@ public class ChartSearchBookmark implements Serializable {
 	@Column(name = "search_phrase", nullable = false)
 	private String searchPhrase;
 	
+	/**
+	 * A default search if selected by the user, is what is automatically searched whenever a
+	 * specified user loads/opens the chartsearch page for any patient, otherwise the last
+	 * {@link ChartSearchHistory} is searched or a search for all data if no stored searches are
+	 * found in the database
+	 */
 	@Column(name = "default_search", nullable = false)
 	private Boolean defaultSearch = false;
 	
@@ -133,6 +142,9 @@ public class ChartSearchBookmark implements Serializable {
 		this.selectedCategories = selectedCategories;
 	}
 	
+	/**
+	 * @see #defaultSearch
+	 */
 	public Boolean isDefaultSearch() {
 		return defaultSearch;
 	}

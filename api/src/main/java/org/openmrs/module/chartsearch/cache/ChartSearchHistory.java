@@ -25,6 +25,9 @@ import javax.persistence.Table;
 import org.openmrs.Patient;
 import org.openmrs.User;
 
+/**
+ * Handles a (to be) stored search phrase that can later on be used for re-searching for it etc
+ */
 @Entity
 @Table(name = "chartsearch_history")
 public class ChartSearchHistory implements Serializable {

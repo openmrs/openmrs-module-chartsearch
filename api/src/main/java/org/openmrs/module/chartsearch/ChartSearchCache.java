@@ -326,6 +326,7 @@ public class ChartSearchCache {
 	 * recent search history and also bound to be overwritten if the user has set up a default
 	 * search from amoung his/her saved bookmarks
 	 * 
+	 * @see {@link ChartSearchBookmark#isDefaultSearch()}
 	 * @return searchPhrase and selectedCategories if bookmark is default
 	 */
 	public JSONObject returnDefaultSearchPhrase(String currentSPhrase, Integer patientId) {

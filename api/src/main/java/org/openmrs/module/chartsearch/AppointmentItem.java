@@ -12,9 +12,10 @@ package org.openmrs.module.chartsearch;
 import java.util.Date;
 
 import org.apache.solr.common.SolrDocument;
+import org.openmrs.module.appointmentscheduling.Appointment;
 
 /**
- * Represents this module's customized {@link SolrDocument} for a Patient placed Appointment for
+ * Represents this module's customized {@link SolrDocument} for a Patient placed {@link Appointment} for
  * medical attention
  */
 public class AppointmentItem extends ChartListItem {

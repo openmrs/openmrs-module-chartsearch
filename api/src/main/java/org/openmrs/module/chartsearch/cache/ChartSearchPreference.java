@@ -24,7 +24,8 @@ import javax.persistence.Table;
 import org.openmrs.User;
 
 /**
- * One row column (for each user) table which stores and updates preferences defined by a user
+ * One row DB entry (for each user) table which stores and updates chart-search module working
+ * instance's preferences defined by a user
  */
 @Entity
 @Table(name = "chartsearch_preference")

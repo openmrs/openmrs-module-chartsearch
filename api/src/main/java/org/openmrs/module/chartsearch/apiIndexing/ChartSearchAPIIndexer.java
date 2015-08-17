@@ -37,10 +37,11 @@ import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 public class ChartSearchAPIIndexer {
 	
 	/**
-	 * Solr Indexing process of patient's allergies
+	 * Solr Indexing process of patient's allergies using the OpenMRS Allergy API
+	 * (org.openmrs.module.allergyapi)
 	 * 
-	 * @param patientId
-	 * @param solrServer
+	 * @param patientId, Numeric unique identifier for the patient whose allergies are being indexed
+	 * @param solrServer, Solr server instance to handle the indexing
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void indexPatientAllergies(Integer patientId, SolrServer solrServer) {
@@ -62,6 +63,13 @@ public class ChartSearchAPIIndexer {
 		}
 	}
 	
+	/**
+	 * Receives a collection of obtained documents from the various APIs and hands it over to Solr
+	 * for indexing
+	 * 
+	 * @param solrServer, Solr server instance to handle the indexing
+	 * @param docs, a collection of patient data generated in form of solr documents
+	 */
 	private void indexDocumentsUsingSolr(SolrServer solrServer, Collection<SolrInputDocument> docs) {
 		if (!docs.isEmpty()) {
 			try {
@@ -147,10 +155,12 @@ public class ChartSearchAPIIndexer {
 	}
 	
 	/**
-	 * Solr Indexing process for patient's appointments
+	 * Solr Indexing process for patient's appointments using the OpenMRS Appointments API
+	 * (org.openmrs.module.appointmentscheduling)
 	 * 
-	 * @param patientId
-	 * @param solrServer
+	 * @param patientId, Numeric unique identifier for the patient whose appointments are being
+	 *            indexed
+	 * @param solrServer, Solr server instance to handle the indexing
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void indexPatientAppoinments(Integer patientId, SolrServer solrServer) {

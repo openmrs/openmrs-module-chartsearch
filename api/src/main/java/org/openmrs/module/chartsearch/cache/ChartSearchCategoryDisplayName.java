@@ -23,6 +23,10 @@ import javax.persistence.Table;
 
 import org.openmrs.module.chartsearch.categories.CategoryFilter;
 
+/**
+ * Category filter item display name that shows up on the user interface, each entry is attached
+ * onto {@link ChartSearchPreference}
+ */
 @Entity
 @Table(name = "chartsearch_category_displayname")
 public class ChartSearchCategoryDisplayName implements Serializable {

@@ -12,9 +12,10 @@ package org.openmrs.module.chartsearch;
 import java.util.Date;
 
 import org.apache.solr.common.SolrDocument;
+import org.openmrs.module.allergyapi.Allergy;
 
 /**
- * Represents this module's customized {@link SolrDocument} for a Patient Allergen <br >
+ * Represents this module's customized {@link SolrDocument} for a {@link Allergy}<br >
  * An Allergen is any substance that can cause an Allergy (hyper-sensitivity reaction to a
  * particular allergen)
  */

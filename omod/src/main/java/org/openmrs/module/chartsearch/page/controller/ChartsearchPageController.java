@@ -34,6 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Spring main controller for the chartsearch.gsp page
+ */
 public class ChartsearchPageController {
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartsearchPageController.class);

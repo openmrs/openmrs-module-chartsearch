@@ -22,6 +22,9 @@ import org.openmrs.module.chartsearch.page.controller.ChartsearchPageController;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Spring controller for the searchSavingSection.gsp fragment
+ */
 public class SearchSavingSectionFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();

@@ -16,6 +16,9 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 
 import java.util.ArrayList;
 
+/**
+ * Spring controller for the resultBox.gsp fragment
+ */
 public class ResultBoxFragmentController {
 	
 	public void controller(FragmentModel fragmentModel, UiUtils ui) {

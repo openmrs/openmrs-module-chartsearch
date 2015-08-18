@@ -16,7 +16,7 @@ import org.openmrs.module.Extension;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
- * This class defines the links that will appear on the administration page under the
+ * This class defines the links that will appear on the legacy administration page under the
  * "chartsearch.title" heading.
  */
 public class AdminList extends AdministrationSectionExt {

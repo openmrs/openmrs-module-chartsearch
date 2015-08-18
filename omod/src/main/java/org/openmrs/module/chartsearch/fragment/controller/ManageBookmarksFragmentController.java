@@ -18,6 +18,9 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Spring controller for the manageBookmarks.gsp fragment
+ */
 public class ManageBookmarksFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();

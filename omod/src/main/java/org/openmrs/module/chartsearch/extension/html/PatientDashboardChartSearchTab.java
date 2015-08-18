@@ -12,7 +12,7 @@ package org.openmrs.module.chartsearch.extension.html;
 import org.openmrs.module.web.extension.PatientDashboardTabExt;
 
 /**
- *
+ * Defines tabs to be added onto the legacy patient dashboard
  */
 public class PatientDashboardChartSearchTab extends PatientDashboardTabExt {
 	

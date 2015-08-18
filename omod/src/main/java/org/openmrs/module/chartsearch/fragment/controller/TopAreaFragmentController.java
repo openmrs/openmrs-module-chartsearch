@@ -20,6 +20,9 @@ import org.openmrs.module.chartsearch.page.controller.ChartsearchPageController;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Spring controller for the topArea.gsp fragment
+ */
 public class TopAreaFragmentController {
 	
 	public void controller(FragmentModel model, @RequestParam("patientId") Patient patient) {

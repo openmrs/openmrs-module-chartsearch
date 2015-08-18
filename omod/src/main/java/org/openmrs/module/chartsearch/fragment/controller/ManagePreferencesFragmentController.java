@@ -21,6 +21,9 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Spring controller for the managePreferences.gsp fragment
+ */
 public class ManagePreferencesFragmentController {
 	
 	ChartSearchCache cache = new ChartSearchCache();

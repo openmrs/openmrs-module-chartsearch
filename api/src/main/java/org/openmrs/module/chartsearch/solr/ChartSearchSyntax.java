@@ -131,7 +131,8 @@ public class ChartSearchSyntax {
 	}
 	
 	/**
-	 * Meant to handle all search syntax behavior at once and provide a final formatted phrase<br />
+	 * Meant to handle all search syntax behavior at once and provide a final formatted phrase,
+	 * designed by Cummins for Regenstrief's chartsearch<br />
 	 * <br />
 	 * NOT USED BY version 1.4 <br />
 	 * <br />
@@ -143,7 +144,7 @@ public class ChartSearchSyntax {
 	 * @param originalSearchText
 	 * @return finalSearchText
 	 */
-	public static String handleSeachSyntaxBehaviorUsingRegenstriefRegExpressio(String originalSearchText) {
+	public static String handleSeachSyntaxBehaviorUsingRegenstriefsRegex(String originalSearchText) {
 		//Steps to do:
 		//  1. Clean up the spaces in the query (trim and replace multiple spaces with a single space).
 		//  2. Replace all commas that aren't in parentheses with " OR ".

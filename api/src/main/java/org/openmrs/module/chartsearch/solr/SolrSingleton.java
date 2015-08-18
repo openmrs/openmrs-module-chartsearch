@@ -13,6 +13,9 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Solr solr instance maintained through the running instance as a single object
+ */
 public class SolrSingleton {
 	
 	private static final Logger log = LoggerFactory.getLogger(SolrSingleton.class);

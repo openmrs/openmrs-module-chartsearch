@@ -27,6 +27,10 @@ import org.openmrs.module.chartsearch.server.StatisticsInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Overall chart-search module's Solr indexing class that calls into all other classes handling sub
+ * tasks of the same
+ */
 public class ChartSearchIndexer {
 	
 	private static final Logger log = LoggerFactory.getLogger(ChartSearchIndexer.class);
@@ -55,9 +59,6 @@ public class ChartSearchIndexer {
 		}
 	}
 	
-	/* 
-	 * @return null if something going wrong
-	 */
 	public PatientInfo getPatientInfo(Integer patientId) {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		ModifiableSolrParams params = new ModifiableSolrParams();
@@ -80,9 +81,6 @@ public class ChartSearchIndexer {
 		}
 	}
 	
-	/* 
-	 * @return null if something going wrong
-	 */
 	@SuppressWarnings("unchecked")
 	public StatisticsInfo getStatistics() {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();

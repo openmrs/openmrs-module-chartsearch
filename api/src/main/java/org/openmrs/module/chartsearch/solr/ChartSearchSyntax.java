@@ -130,4 +130,80 @@ public class ChartSearchSyntax {
 		return true;
 	}
 	
+	/**
+	 * Meant to handle all search syntax behavior at once and provide a final formatted phrase<br />
+	 * <br />
+	 * NOT USED BY version 1.4 <br />
+	 * <br />
+	 * TODO Fix bug; {'fieldName:\"blood pressure\"' returns '(fieldName OR fieldName*):"blood
+	 * pressure"' instead of 'fieldName:"blood pressure"'} before using this Regex otherwise support
+	 * {'blood:pressure' to translate to '(blood:pressure OR blood:pressure*)'} for the currently
+	 * used algorithm
+	 * 
+	 * @param originalSearchText
+	 * @return finalSearchText
+	 */
+	public static String handleSeachSyntaxBehaviorUsingRegenstriefRegExpressio(String originalSearchText) {
+		//Steps to do:
+		//  1. Clean up the spaces in the query (trim and replace multiple spaces with a single space).
+		//  2. Replace all commas that aren't in parentheses with " OR ".
+		//	          This makes it so people can do "or'ed commas" where a search like bmp,cmp,cbc searches for bmp OR cmp OR cbc
+		//  3. Replace all "and"s, "or"s, and "not"s with their upper case versions.
+		//	          This makes it so people can search for cmp or cbc and we convert "or" to "OR" so we can be
+		//	          sure solr knows it's an operator and not a search term.
+		//  4. Replace all words that:
+		//	      1. Aren't "and", "or", or "not".
+		//	      2. Aren't inside quotes.
+		//	      3. Aren't followed by a *
+		//	     with "(word OR word*)".
+		//	          This makes it so a search for word1 word2 becomes (word1 OR word1*) AND (word2 OR word2*)
+		//	          The reasons it's done like this are:
+		//	              1. We need to be able to automatically search with a wildcard on the end so that a word like
+		//	                 "meta" matches "metabolic".
+		//	              2. We need to have the original word in there so that stemming works.  Words with wildcards on
+		//	                 the end in the query aren't stemmed but the words in the index are stemmed.  For example, 
+		//	                 the word "metabolic" becomes "metabol".  If we don't put the original word in the query,
+		//	                 and somebody searches for "metabolic", and search for "metabolic*" we won't find the match
+		//	                 because metabolic* doesn't match "metabol".  But, if we leave the original word in the query, it gets
+		//	                 stemmed to "metabol" and we get our match.
+		//	          So, basically, this lets us match on stemming and match on wildcards without the user having to do anything.
+		//  5. Replace all spaces that aren't directly preceded or followed by an "and", "or", or "not" and
+		//	     aren't in quotes with " AND ".
+		//	          This makes it so the "conjunction" between our words produced in step 3 is "AND".  So, if they
+		//	          search for word1 word2, we get out (word1 OR word1*) AND (word2 OR word2*).  After a lot of trial and error,
+		//	          I found that replacing the spaces that were between words (and not in the middle of a quote) with our conjuction 
+		//	          was the best way to do it.
+		
+		//Clean up the spaces and turn multiple spaces into one.
+		String preparedSearchQuery = originalSearchText.trim();
+		preparedSearchQuery = preparedSearchQuery.replaceAll("\\s+", " ");
+		
+		//Replace all commas that aren't in parentheses with " OR ".
+		preparedSearchQuery = preparedSearchQuery.replaceAll("\\s*,\\s*(?=([^\"]*\"[^\"]*\")*[^\"]*$)", " OR ");
+		
+		//There might be a smarter way to do this (with like back references) but this way is pretty straight forward.
+		preparedSearchQuery = preparedSearchQuery.replaceAll("\\s+and\\s+", " AND ");
+		preparedSearchQuery = preparedSearchQuery.replaceAll("\\s+or\\s+", " OR ");
+		preparedSearchQuery = preparedSearchQuery.replaceAll("\\s+not\\s+", " NOT ");
+		
+		//Replace all the "normal" words with (word1 OR word1*)
+		preparedSearchQuery = preparedSearchQuery.replaceAll(
+		    "(?i)(?!and\\b|or\\b|not\\b)(\\b[^\\s]+)\\b(?=([^\"]*\"[^\"]*\")*[^\"]*$)(?!\\*)", "($1 OR $1*)");
+		
+		//Replace all spaces that aren't:
+		//  1. preceded by and, or, or not
+		//  2. followed by and, or, or not
+		//  3. followed by an odd number of quotes
+		//With " AND "
+		//
+		//(?<!AND\b|OR\b|NOT\b)\s+?(?!AND\b|OR\b|NOT\b)(?=([^\"]*\"[^\"]*\")*[^\"]*$)
+		//
+		//If a word is preceded or followed by an "and", "or", or "not", then it's either from the previous step or something the user actually
+		//put there.  In both of those cases, we want to ignore that space.  If there's a space between two words and those words aren't in the middle
+		//of quotes, then we want to put "AND" in the middle of those words (or groups of words).
+		preparedSearchQuery = preparedSearchQuery.replaceAll(
+		    "(?i)(?<!and\\b|or\\b|not\\b)\\s+?(?!and\\b|or\\b|not\\b)(?=([^\"]*\"[^\"]*\")*[^\"]*$)", " AND ");
+		
+		return preparedSearchQuery;
+	}
 }

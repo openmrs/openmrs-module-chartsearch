@@ -14,6 +14,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 
+/**
+ * Customized Solr administration at a programming level. <br />
+ * <br />
+ * TODO support more functions if needed in the future
+ */
 public class SolrManagement {
 	
 	protected Log log = LogFactory.getLog(getClass());

@@ -16,7 +16,7 @@ import org.openmrs.module.chartsearch.server.EmbeddedSolrServerCreator;
 import org.openmrs.module.chartsearch.server.HttpSolrServerCreator;
 
 /**
- *
+ * An initializing class for the Solr server instance
  */
 public class SolrServerFactory {
 	

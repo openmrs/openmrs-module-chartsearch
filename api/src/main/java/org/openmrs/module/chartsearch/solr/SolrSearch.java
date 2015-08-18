@@ -17,6 +17,9 @@ import org.openmrs.module.chartsearch.ChartListItem;
 import org.openmrs.module.chartsearch.server.PatientInfo;
 import org.openmrs.module.chartsearch.server.StatisticsInfo;
 
+/**
+ * Calls into the real indexing and searching
+ */
 public class SolrSearch {
 	
 	private ChartSearchIndexer indexer = getComponent(ChartSearchIndexer.class);

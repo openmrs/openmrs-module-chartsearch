@@ -17,7 +17,7 @@ import org.openmrs.module.chartsearch.server.EmbeddedSolrProperties;
 import org.openmrs.util.OpenmrsUtil;
 
 /**
- *
+ * Solr Utilities class
  */
 public class SolrUtils {
 	

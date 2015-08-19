@@ -593,8 +593,6 @@
 	    		var priority = jq("#new-note-priority option:selected").text();
 	    		var backgroundColor = jq("#new-note-color option:selected").text();
 	    		
-	    		changeNotesBgColor("#new-comment-or-note", "white");
-	    	
 	    		if(searchPhrase && patientId && comment) {
 		    		jq.ajax({
 						type: "POST",

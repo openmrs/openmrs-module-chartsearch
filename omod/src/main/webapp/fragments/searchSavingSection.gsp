@@ -732,22 +732,22 @@
 		<br />
 		<i class="icon-user-md medium"></i>&nbsp&nbsp&nbsp&nbsp&nbsp
 		<select id="new-note-priority" title="Priority/Severity of this note">
-			<option>Priority</option>
-			<option>LOW</option>
-			<option>HIGH</option>
+			<option>${ ui.message("chartsearch.searchSaving.priority") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.priority.low") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.priority.high") }</option>
 		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<select id="new-note-color" title="Background color for this Note">
-			<option>Color</option>
-			<option>orange</option>
-			<option>yellow</option>
-			<option>violet</option>
-			<option>lime</option>
-			<option>beige</option>
-			<option>cyan</option>
-			<option>lightgreen</option>
-			<option>deeppink</option>
-			<option>magenta</option>
-			<option>red</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.color") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.orange") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.yellow") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.violet") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.lime") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.beige") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.cyan") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.lightgreen") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.deeppink") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.magenta") }</option>
+			<option>${ ui.message("chartsearch.searchSaving.note.red") }</option>
 		</select>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<i class="icon-refresh medium" id="refresh-notes-display"></i>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
 		<input type="button" id="save-a-new-note" value="Save Note" />

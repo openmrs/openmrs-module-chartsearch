@@ -692,7 +692,7 @@
     	function addPersonalColorsToSelectColorElement() {
     		if(pColors !== undefined && pColors !== "null") {
     			for(i = 0; i < pColors.length; i++) {
-    				if(pColors[i] !== null) {
+    				if(pColors[i] !== null && pColors[i] !== "") {
     					jq("#new-note-color").append("<option>" + pColors[i] + "</option>");
     				}
     			}

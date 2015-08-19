@@ -33,7 +33,7 @@
 </script>
 
 <div id="synonymDiv">
-    <h3> Add synonym group page </h3>
+    <h3><spring:message code="chartsearch.addSynonymGroupPage"/> </h3>
 
 
     <form id="ManageSynonymGroupForm" method="post">
@@ -41,14 +41,14 @@
         <br> <br>
         <input type="text" name="groupName" value="${synonymGroup.groupName}" placeholder="Group name">
 
-        <input type="checkbox" name="category" ${isCategory}>Is Category
+        <input type="checkbox" name="category" ${isCategory}><spring:message code="chartsearch.isCategory"/>
         <br>
 
         <c:forEach items="${synonymGroup.synonymSet}" var="synonym" varStatus="loop">
             <p class="inputRow" id="rowEdit${synonym.synonymId}">
                 <input type="text" name="synonymNameEdit${synonym.synonymId}" value="${synonym.synonymName}">
-                <button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">Delete
-                    Synonym
+                <button type="button" class="deleteBtn" onclick="deleteInput(rowEdit${synonym.synonymId})">
+                	<spring:message code="chartsearch.deleteSynonym"/>
                 </button>
             </p>
         </c:forEach>

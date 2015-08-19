@@ -4,7 +4,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>chartsearch</artifactId>
-	<version>1.4.1</version>
+	<version>1.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Chart Search Module</name>
 	<description>Chart Search Module for the OpenMRS Reference Application</description>

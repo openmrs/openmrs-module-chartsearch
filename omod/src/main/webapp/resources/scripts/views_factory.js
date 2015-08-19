@@ -728,14 +728,16 @@ function navigationIndicesUpdateLogic(i, numberOfResults) {
 }
 
 function load_single_obs_history(obs_id) {
-	resultText = '<h3>History</h3>';
 	var obs_obj = get_single_obs_by_id(obs_id);
 	var obs_name = obs_obj.concept_name;
 	var history_json = get_obs_history_json_by_name(obs_name);
 	var oRed = '';
 	var oAddition = '';
 	var time1 = new Date(parseInt(obs_obj.date));
-
+	var numberInHistory = history_json.length === 0 ? 1 : 1 + history_json.length;
+		
+	resultText = '<h3>History (' + numberInHistory + ')</h3>';
+	
 	if (obs_obj.value < obs_obj.normal_low) {
 		oRed = ' red ';
 		oAddition = ' less_then_normal ';

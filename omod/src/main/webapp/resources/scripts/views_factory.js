@@ -1399,6 +1399,13 @@ function displayQuickSearches() {
 	}
 }
 
+function getOrderByParam() {
+	var orderBy = "default";
+	// TODO: obtain the orderBy Parameter
+	//$("");
+	return orderBy;
+}
+
 function getAllCheckedCategoriesOrFacets() {
 	var categories = [];
 	$("input:checkbox[name=categories]:checked").each(function() {
@@ -1609,6 +1616,19 @@ function filterResultsUsingTime(selectedPeriod) {
 	}
 
 }
+
+function filterResultsByOrder(selectedOrder) {
+	
+	if (selectedOrder === "date") {
+		selectedOrderText = "Date";
+	} else if (selectedOrder === "bestMatch") {
+		selectedOrderText = "Best Match";
+	}
+	$("#order_anchor").text(selectedOrderText);
+
+	//submitChartSearchForWithAjax();
+}
+
 
 function setResultsJsonAndApplySelectedFilter(newResultsJson) {
 	document.getElementById('obsgroup_view').innerHTML = "";

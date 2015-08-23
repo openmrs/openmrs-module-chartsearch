@@ -81,7 +81,7 @@ public class SearchAPI {
 		SearchAPI.resultList.clear();
 	}
 	
-	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames) {
+	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames, String orderBy) {
 		SearchAPI.patientId = patientId;
 		List<String> categories = null;
 		ChartSearchCache cache = new ChartSearchCache();
@@ -119,7 +119,7 @@ public class SearchAPI {
 		
 		double startSearchingTime = new Date().getTime();
 		try {
-			items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames()); //searching for the phrase.
+			items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames(), orderBy); //searching for the phrase.
 			
 			//saving search record where necessary every after a search.
 			cache.saveOrUpdateSearchHistory(finalPhrase, patientId);

@@ -47,6 +47,20 @@
 		    return false;
 		});
 		
+		jq('.orderOption').click(function (event) {
+			var selectedOrder = jq(this).attr('value');
+			
+			submitChartSearchFormWithAjax(selectedOrder);
+			
+			if (selectedOrder === "date") {
+				selectedOrderText = "Date";
+			} else if (selectedOrder === "bestMatch") {
+				selectedOrderText = "Best Match";
+			}
+			jq("#order_anchor").text(selectedOrderText);
+			
+		});
+		
 		jq("body").on("click", "#inside_filter_categories", function (event) {
 			var currCatLinkId = event.target.id;
 			var currCatCheckId = currCatLinkId.replace("select_","");
@@ -136,6 +150,10 @@
 		
 		jq('#provider_dropdown, #provider_anchor').on('click', function(e){
 		    jq('#providersOptions').toggleClass('display_filter_onclick');
+		});
+			
+		jq('#order_dropdown, #order_anchor').on('click', function(e){
+		    jq('#filter_categories_order').toggleClass('display_filter_onclick');
 		});
 		
 		jq("#chart-previous-searches").click(function(event) {
@@ -300,6 +318,10 @@
     	}
     
 		function submitChartSearchFormWithAjax() {
+			submitChartSearchFormWithAjax("default");
+		}
+		
+		function submitChartSearchFormWithAjax(orderBy) {
 			if(isLoggedInSynchronousCheck()) {
 				var searchText = document.getElementById('searchText');
 				var searchHistory = jsonAfterParse.searchHistory;
@@ -320,7 +342,7 @@
 				jq.ajax({
 					type: "POST",
 					url: "${ ui.actionLink('getResultsFromTheServer') }",
-					data: { "patientId":patientId, "phrase":searchText.value, "categories":categories },
+					data: { "patientId":patientId, "phrase":searchText.value, "categories":categories, "order": orderBy },
 					dataType: "json",
 					success: function(results) {
 						jq("#obsgroups_results").html('');
@@ -785,6 +807,21 @@
 											displayProviders(jsonAfterParse);
 									</script>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Temp new dropdown -->
+                        <div class="dropdown" id="order_dropdown">
+                            <div class="inside_categories_filter">
+                                <span class="dropdown-name" id="order_label">
+                                    <a class="filter_method" id="order_anchor">${ ui.message("chartsearch.topArea.orderBy") }</a>
+                                    <i class="icon-sort-down"></i>
+                                </span>
+                                <div class="filter_categories" id="filter_categories_order">
+                                        <a class="single_filter_option orderOption" value="bestMatch">${ ui.message("chartsearch.topArea.bestMatch") }</a>
+                                        <a class="single_filter_option orderOption" value="date">${ ui.message("chartsearch.topArea.date") }</a>
+                                        <a class="single_filter_option orderOption" value="other">Other</a>                                        
+                                </div>
+                                
                             </div>
                         </div>
                     	<div id="search-saving-section">

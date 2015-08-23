@@ -14,7 +14,7 @@
 		jq("#ui-datepicker-start").datepicker();
 		jq("#ui-datepicker-stop").datepicker();
 		
-		showHistorySuggestionsOnLoad();
+		showHistorySuggestionsOnLoadTopArea();
 		displayBothPersonalAndGlobalNotes(jsonAfterParse);
 		updateCategeriesAtUIGlobally(jsonAfterParse.appliedCategories);
 		
@@ -232,7 +232,7 @@
 					if(wasGoingNext) {
 						if(navigationIndex != numberOfResults) {
 							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
-								increamentNavigation(single_obsJSON);
+								incrementNavigation(single_obsJSON);
 							}
 						}
 					} else {
@@ -242,7 +242,7 @@
 							navigationIndex = 1;
 						}
 						if(navigationIndex >= 0 && diffBtnIndecs == -1) {
-							increamentNavigation(single_obsJSON);
+							incrementNavigation(single_obsJSON);
 						}
 					}
 				}
@@ -254,11 +254,11 @@
 							navigationIndex  = navigationIndex - 2;
 							
 							if(navigationIndex >= 0 && diffBtnIndecs == 1) {
-								decreamentNavigation(single_obsJSON);
+								decrementNavigation(single_obsJSON);
 							}
 						} else {
 							if(navigationIndex >= 0 && diffBtnIndecs == -1) {
-								decreamentNavigation(single_obsJSON);
+								decrementNavigation(single_obsJSON);
 							}
 						}
 					}
@@ -335,7 +335,7 @@
 						jq(".results_table_wrap").fadeIn(500);
 						jq(".inside_filter_categories").fadeIn(500);
 								
-						showHistorySuggestionsOnLoad();
+						showHistorySuggestionsOnLoadTopArea();
 						hideSearchSuggestions();
 	    				displayBothPersonalAndGlobalNotes(jsonAfterParse);
 	    				displayQuickSearches();
@@ -351,37 +351,29 @@
 			}
 		}
 		
-		function increamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
-			var obsGroup = getResultsJson().obs_groups[navigationIndex];
-			var obsSingle = single_obsJSON[navigationIndex - getResultsJson().obs_groups.length];
-			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
-			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
-			
-			peviousIndex = navigationIndex;
-			navigationIndex++;
-			wasGoingNext = true;
-			
-			if(obsGroup && obsGroup.group_Id) {
-				focusOnNextObsGroupAndDisplayItsDetails(obsGroup.group_Id);
-			} else if(obsSingle && obsSingle.observation_id > 0) {
-				focusOnNextObsSingleAndDisplayItsDetails(obsSingle.observation_id);
-			} else if(allergy && allergy.allergenId > 0) {
-				focusOnNextAllergenAndDisplayItsDetails(allergy.allergenId);
-			} else if(appointment && appointment.id > 0) {
-				focusOnNextAppointmentAndDisplayItsDetails(appointment.id)
-			}
+		function incrementNavigation(single_obsJSON) {
+			updateNavigation("increment", single_obsJSON);
 		}
 		
-		function decreamentNavigation(single_obsJSON) {//TODO logic may not work for some instances
+		function decrementNavigation(single_obsJSON) {
+			updateNavigation("decrement", single_obsJSON);
+		}
+		
+		function updateNavigation(change, single_obsJSON) {//TODO logic may not work for some instances
 			var obsGroup = getResultsJson().obs_groups[navigationIndex];
 			var obsSingle = single_obsJSON[navigationIndex - getResultsJson().obs_groups.length];
 			var allergy = getResultsJson().patientAllergies[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length)];
 			var appointment = getResultsJson().patientAppointments[navigationIndex - (getResultsJson().obs_groups.length + getResultsJson().obs_singles.length + getResultsJson().patientAllergies.length)];
-							
+			
 			peviousIndex = navigationIndex;
-			navigationIndex--;
-			wasGoingNext = false;
-								
+			if (change === "increment") {
+				navigationIndex++;
+				wasGoingNext = true;
+			} else {
+				navigationIndex--;
+				wasGoingNext = false;
+			}
+			
 			if(obsGroup && obsGroup.group_Id) {
 				focusOnNextObsGroupAndDisplayItsDetails(obsGroup.group_Id);
 			} else if(obsSingle && obsSingle.observation_id > 0) {
@@ -476,7 +468,7 @@
 		    return str.indexOf(prefix) === 0;
 		}
 		
-		function showHistorySuggestionsOnLoad() {//TODO Rename this method to mention that it's for main page since we shall provide another for preference page
+		function showHistorySuggestionsOnLoadTopArea() {//TODO Rename this method to mention that it's for main page since we shall provide another for preference page
 			var historyToDisplay = "";
 			var history = jsonAfterParse.searchHistory.reverse();
 			
@@ -533,7 +525,7 @@
 							var history = updatedHistory.searchHistory;
 							
 							jsonAfterParse.searchHistory = history;
-							showHistorySuggestionsOnLoad();
+							showHistorySuggestionsOnLoadTopArea();
 						},
 						error: function(e) {
 							//DO Nothing

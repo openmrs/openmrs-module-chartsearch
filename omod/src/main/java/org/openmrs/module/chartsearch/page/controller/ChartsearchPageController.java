@@ -46,13 +46,14 @@ public class ChartsearchPageController {
 	public void controller(@RequestParam("patientId") Patient patient, PageModel model,
 	                       @BindParams SearchPhrase search_phrase, UiSessionContext sessionContext,
 	                       @InjectBeans PatientDomainWrapper patientDomainWrapper,
-	                       @RequestParam(value = "categories[]", required = false) String[] categories) {
+	                       @RequestParam(value = "categories[]", required = false) String[] categories,
+	                       @RequestParam(value = "orderBy", required = false) String orderBy) {
 		if (patient != null) {
 			patientDomainWrapper.setPatient(patient);
 			model.addAttribute("patient", patientDomainWrapper);
 			SearchAPI searchAPIInstance = SearchAPI.getInstance();
 			indexPatientData(patient);
-			searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+			searchAndReturnResults(search_phrase, patient, categories, orderBy, searchAPIInstance);
 		}
 	}
 	
@@ -65,7 +66,7 @@ public class ChartsearchPageController {
 		log.info("indexed patient");
 	}
 	
-	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, String[] categories,
+	public static void searchAndReturnResults(SearchPhrase search_phrase, Patient patient, String[] categories, String orderBy,
 	                                          SearchAPI searchAPIInstance) {
 		if (search_phrase == null) {
 			search_phrase = new SearchPhrase();
@@ -74,7 +75,7 @@ public class ChartsearchPageController {
 			categories = new String[0];
 		}
 		List<String> selectedCategories = Arrays.asList(categories);
-		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories);
+		List<ChartListItem> items = searchAPIInstance.search(patient.getPatientId(), search_phrase, selectedCategories, orderBy);
 		List<ChartListItem> updatedItems = new ArrayList<ChartListItem>();
 		
 		for (ChartListItem chartListItem : items) {

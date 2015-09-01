@@ -85,7 +85,7 @@ public class ChartSearchSearcher {
 	}
 	
 	public List<ChartListItem> getDocumentList(Integer patientId, String searchText, Integer start, Integer length,
-	                                           List<String> selectedCategories) throws Exception {
+	                                           List<String> selectedCategories, String orderBy) throws Exception {
 		SolrServer solrServer = SolrSingleton.getInstance().getServer();
 		SolrQuery query = new SolrQuery();
 		List<ChartListItem> list = new ArrayList<ChartListItem>();
@@ -117,6 +117,7 @@ public class ChartSearchSearcher {
 		query.setRows(length);
 		query.setHighlight(true).setHighlightSnippets(1).setHighlightSimplePre("<b>").setHighlightSimplePost("</b>");
 		query.setParam("hl.fl", "text");
+		query.setParam("sort", orderBy);
 		
 		query.remove(FacetParams.FACET_FIELD);
 		query.setFacet(true);

@@ -84,7 +84,7 @@ public class DWRChartSearchService {
 		List<Locale> searchLocales = Context.getAdministrationService().getAllowedLocales(); // getSearchLocales();
 		
 		try {
-			List<ChartListItem> items = searcher.getDocumentList(patientId, phrase, start, length, selectedCategories);
+			List<ChartListItem> items = searcher.getDocumentList(patientId, phrase, start, length, selectedCategories, "");
 			objectList.addAll(items);
 			
 			if (objectList.size() < 1) {

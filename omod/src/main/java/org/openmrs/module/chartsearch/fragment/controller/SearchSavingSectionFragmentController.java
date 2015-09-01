@@ -78,11 +78,12 @@ public class SearchSavingSectionFragmentController {
 	
 	public String getResultsFromTheServer(FragmentModel model, @RequestParam("phrase") SearchPhrase search_phrase,
 	                                      @RequestParam("patientId") Patient patient,
-	                                      @RequestParam(value = "categories[]", required = false) String[] categories) {
+	                                      @RequestParam(value = "categories[]", required = false) String[] categories,
+	                                      @RequestParam(value = "orderBy", required = false) String orderBy) {
 		SearchAPI searchAPIInstance = SearchAPI.getInstance();
 		searchAPIInstance.clearResults();
 		
-		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, searchAPIInstance);
+		ChartsearchPageController.searchAndReturnResults(search_phrase, patient, categories, orderBy, searchAPIInstance);
 		return GeneratingJson.generateJson();
 	}
 	

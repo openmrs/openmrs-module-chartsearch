@@ -142,9 +142,10 @@
     .dropdown {
         float: left;
         margin-top: -11px;
+        padding: 5px 0px;
         background-color: #ddd;
         height: 23px;
-        width: 140px;
+        width: 124px;
         text-align: center;
         cursor:pointer;
     }

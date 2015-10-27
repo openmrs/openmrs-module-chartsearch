@@ -49,7 +49,7 @@
 				
 				 <property name="dao">
                     <bean class="org.openmrs.module.chartsearch.api.db.hibernate.HibernateChartSearchDAO">
-                        <property name="sessionFactory"><ref bean="sessionFactory"/></property>
+                        <property name="sessionFactory"><ref bean="dbSessionFactory"/></property>
                     </bean>
                 </property>
 
@@ -57,7 +57,7 @@
                     <bean
                             class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymDAO">
                         <property name="sessionFactory">
-                            <ref bean="sessionFactory" />
+                            <ref bean="dbSessionFactory" />
                         </property>
                     </bean>
                 </property>
@@ -66,7 +66,7 @@
                     <bean
                             class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateSynonymGroupDAO">
                         <property name="sessionFactory">
-                            <ref bean="sessionFactory" />
+                            <ref bean="dbSessionFactory" />
                         </property>
                     </bean>
                 </property>
@@ -75,7 +75,7 @@
                     <bean
                             class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateCategoryFilterDAO">
                         <property name="sessionFactory">
-                            <ref bean="sessionFactory" />
+                            <ref bean="dbSessionFactory" />
                         </property>
                     </bean>
                 </property>

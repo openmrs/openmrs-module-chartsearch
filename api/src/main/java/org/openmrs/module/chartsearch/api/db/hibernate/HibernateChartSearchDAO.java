@@ -20,8 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.hibernate.SessionFactory;
 import org.openmrs.api.context.Context;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.chartsearch.api.db.ChartSearchDAO;
 import org.openmrs.module.chartsearch.cache.ChartSearchBookmark;
 import org.openmrs.module.chartsearch.cache.ChartSearchCategoryDisplayName;
@@ -37,19 +37,19 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	
 	protected final Log log = LogFactory.getLog(this.getClass());
 	
-	private SessionFactory sessionFactory;
+	private DbSessionFactory sessionFactory;
 	
 	/**
 	 * @param sessionFactory the sessionFactory to set
 	 */
-	public void setSessionFactory(SessionFactory sessionFactory) {
+	public void setSessionFactory(DbSessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 	
 	/**
 	 * @return the sessionFactory
 	 */
-	public SessionFactory getSessionFactory() {
+	public DbSessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
 	
@@ -113,7 +113,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	
 	@SuppressWarnings("unchecked")
 	private void setIndexingProgressInfo(Class showProgressToClass, String info) throws IllegalAccessException,
-	    InvocationTargetException, NoSuchMethodException {
+	        InvocationTargetException, NoSuchMethodException {
 		try {
 			showProgressToClass.getMethod("setIndexingProgressInfo", new Class[] { String.class }).invoke(
 			    showProgressToClass.newInstance(), info);
@@ -318,7 +318,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	public ChartSearchPreference getRightMatchedPreferences() {
 		ChartSearchPreference pref = getChartSearchPreferenceOfAUser(Context.getAuthenticatedUser().getUserId());
 		
-		if (pref == null) {//default preferences for daemon user
+		if (pref == null) {// default preferences for daemon user
 			if (Context.getUserService().getUser(2).getUsername().equals("daemon")) {
 				pref = getChartSearchPreferenceOfAUser(2);
 			} else {
@@ -340,7 +340,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-    @Override
+	@Override
 	public List<ChartSearchCategoryDisplayName> getAllCategoryDisplayNames() {
 		return sessionFactory.getCurrentSession().createCriteria(ChartSearchCategoryDisplayName.class).list();
 	}

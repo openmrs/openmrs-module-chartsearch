@@ -408,7 +408,7 @@ public class GeneratingJson {
 		jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
 		
 		jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
-		jsonObs.put("location", obs.getLocation().getDisplayString());
+		jsonObs.put("location", obs.getLocation() != null ? obs.getLocation().getDisplayString() : null);
 		jsonObs.put("creator", obs.getCreator().getDisplayString());
 		Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
 		
@@ -590,7 +590,7 @@ public class GeneratingJson {
 				int itemObsId = ((ObsItem) item).getObsId();
 				
 				Obs obs = Context.getObsService().getObs(itemObsId);
-				if (obs != null) {
+				if (obs != null && obs.getLocation() != null) {
 					res.add(obs.getLocation().getDisplayString());
 				}
 			}

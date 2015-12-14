@@ -45,7 +45,10 @@ public class ChartSearchNoteResource extends DelegatingCrudResource<ChartSearchN
 
     @Override
     public void purge(ChartSearchNote chartSearchNote, RequestContext requestContext) throws ResponseException {
-
+        if (chartSearchNote == null){
+            return;
+        }
+        Context.getService(ChartSearchService.class).deleteSearchNote(chartSearchNote);
     }
 
     @Override
@@ -67,8 +70,8 @@ public class ChartSearchNoteResource extends DelegatingCrudResource<ChartSearchN
             description.addProperty("uuid");
             description.addProperty("comment");
             description.addProperty("searchPhrase");
-            description.addProperty("patient", Representation.DEFAULT);
-            description.addProperty("noteOwner", Representation.DEFAULT);
+            description.addProperty("patient", Representation.REF);
+            description.addProperty("noteOwner", Representation.REF);
             description.addProperty("displayColor");
 
             description.addSelfLink();

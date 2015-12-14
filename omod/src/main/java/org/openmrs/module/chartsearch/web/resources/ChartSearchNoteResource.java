@@ -30,7 +30,7 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 /**
  * REST resource representing a {@link ChartSearchNote}.
  */
-@Resource(name = RestConstants.VERSION_1 + "/chartSearchNote", supportedClass = ChartSearchBookmark.class, supportedOpenmrsVersions = {"1.10.x", "1.11.*", "1.12.*", "2.0.*"})
+@Resource(name = RestConstants.VERSION_1 + "/chartsearchnote", supportedClass = ChartSearchBookmark.class, supportedOpenmrsVersions = {"1.10.x", "1.11.*", "1.12.*", "2.0.*"})
 
 public class ChartSearchNoteResource extends DelegatingCrudResource<ChartSearchNote> {
     @Override

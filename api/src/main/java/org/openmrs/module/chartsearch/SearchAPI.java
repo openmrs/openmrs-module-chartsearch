@@ -23,69 +23,69 @@ import org.openmrs.module.chartsearch.synonyms.SynonymsAPI;
  * Sort of a programming interface that handles background searching
  */
 public class SearchAPI {
-	
+
 	private static SearchPhrase searchPhrase;
-	
+
 	/**
 	 * A List of Found Results returned from Solr
 	 */
 	private static List<ChartListItem> resultList;
-	
+
 	/**
 	 * A current working instance for this class
 	 */
 	private static SearchAPI instance;
-	
+
 	private ChartSearchSearcher searcher = getComponent(ChartSearchSearcher.class);
-	
+
 	/**
 	 * A collection of filtering category item chosen/selected from the user interface
 	 */
 	private static List<String> selectedCategoryNames;
-	
+
 	/**
 	 * Time it takes to return results from solr
 	 */
 	private static double retrievalTime;
-	
+
 	/**
 	 * Patient's unique numeric identifier whose data is searched for
 	 */
 	private static Integer patientId;
-	
+
 	public static SearchAPI getInstance() {
 		if (instance == null) {
 			instance = new SearchAPI();
 		}
 		return instance;
 	}
-	
+
 	private SearchAPI() {
 		resultList = new ArrayList<ChartListItem>();
 	}
-	
+
 	public List<ChartListItem> showResults(List<ChartListItem> results) {
 		setResults(results);
 		return results;
 	}
-	
+
 	public List<ChartListItem> getResults() {
 		return resultList;
 	}
-	
+
 	public void setResults(List<ChartListItem> results) {
 		SearchAPI.resultList = results;
 	}
-	
+
 	public void clearResults() {
 		SearchAPI.resultList.clear();
 	}
-	
+
 	public List<ChartListItem> search(Integer patientId, SearchPhrase searchPhrase, List<String> selectedCategoryNames) {
 		SearchAPI.patientId = patientId;
 		List<String> categories = null;
 		ChartSearchCache cache = new ChartSearchCache();
-		
+
 		if (cache.fetchRightMatchedPreferences().isEnableDefaultSearch()
 		        && (searchPhrase.getPhrase().equals(",") || searchPhrase.getPhrase().equals(""))) {
 			JSONObject defaultSearchProps = cache.returnDefaultSearchPhrase(searchPhrase.getPhrase(),
@@ -93,7 +93,7 @@ public class SearchAPI {
 			String phrase = (String) defaultSearchProps.get("searchPhrase");
 			List<String> cats = (List<String>) defaultSearchProps.get("selectedCategories");
 			SearchAPI.searchPhrase = new SearchPhrase(phrase);
-			
+
 			searchPhrase.setPhrase(phrase);
 			if (cats != null && !cats.isEmpty()) {
 				categories = cats;
@@ -105,52 +105,52 @@ public class SearchAPI {
 			categories = selectedCategoryNames;
 		}
 		SearchAPI.selectedCategoryNames = categories;
-		
+
 		String searchPhraseStr = searchPhrase.getPhrase();
-		
+
 		Integer length = Integer.valueOf(999999999); //amount of obs we want - all of them
 		Integer start = Integer.valueOf(0);//starting from first obs.
 		List<ChartListItem> items = new ArrayList<ChartListItem>();
-		
+
 		String finalPhrase;
 		finalPhrase = SynonymsAPI.getSynonymsForSearch(searchPhraseStr);
-		
+
 		System.out.println("finalPhrase :" + finalPhrase);
-		
+
 		double startSearchingTime = new Date().getTime();
 		try {
 			items = searcher.getDocumentList(patientId, finalPhrase, start, length, getSelectedCategoryNames()); //searching for the phrase.
-			
+
 			//saving search record where necessary every after a search.
 			cache.saveOrUpdateSearchHistory(finalPhrase, patientId);
 		}
-		
+
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		double endSearchingTime = new Date().getTime();
-		
+
 		SearchAPI.retrievalTime = (endSearchingTime - startSearchingTime) / 1000.0;
-		
+
 		return items;
 	}
-	
+
 	public SearchPhrase getSearchPhrase() {
 		return searchPhrase;
 	}
-	
+
 	public void setSearchPhrase(SearchPhrase searchPhrase) {
 		SearchAPI.searchPhrase = searchPhrase;
 	}
-	
+
 	public static List<String> getSelectedCategoryNames() {
 		return selectedCategoryNames;
 	}
-	
+
 	public static void setSelectedCategoryNames(List<String> selectedCategoryNames) {
 		SearchAPI.selectedCategoryNames = selectedCategoryNames;
 	}
-	
+
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)
@@ -160,13 +160,14 @@ public class SearchAPI {
 	
 	/**
 	 * Time taken to retrieve results in seconds
+	 * @return time in seconds
 	 */
 	public static double getRetrievalTime() {
 		return retrievalTime;
 	}
-	
+
 	public static Integer getPatientId() {
 		return patientId;
 	}
-	
+
 }

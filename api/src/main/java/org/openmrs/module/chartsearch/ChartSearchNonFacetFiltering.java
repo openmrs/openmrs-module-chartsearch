@@ -22,11 +22,11 @@ import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
  * is not supported using solr faceting
  */
 public class ChartSearchNonFacetFiltering {
-	
+
 	/**
-	 * Checks if categories collection contains a specified categgory such as allergies and
+	 * Checks if categories collection contains a specified category such as allergies and
 	 * appointments
-	 * 
+	 *
 	 * @param categories
 	 * @param categoryName
 	 * @return
@@ -45,7 +45,7 @@ public class ChartSearchNonFacetFiltering {
 		}
 		return contains;
 	}
-	
+
 	private boolean checkifCategoriesContainsOnlyOneNonFacetCategory(List<String> categories, String categoryName) {
 		boolean contains = false;
 		if (categories != null && !categories.isEmpty() && StringUtils.isNotBlank(categoryName)) {
@@ -53,10 +53,10 @@ public class ChartSearchNonFacetFiltering {
 				contains = true;
 			}
 		}
-		
+
 		return contains;
 	}
-	
+
 	private boolean checkIfCategoriesContainBothAndOnlyAllergiesAndAppointments(List<String> categories) {
 		boolean contains = false;
 		if (categories != null && !categories.isEmpty()) {
@@ -66,15 +66,15 @@ public class ChartSearchNonFacetFiltering {
 				contains = true;
 			}
 		}
-		
+
 		return contains;
 	}
-	
+
 	public void applyNonFacetingLogicWhileSearching(Integer patientId, String searchText, List<String> selectedCategories,
 	                                                SolrServer solrServer, SolrQuery query, List<ChartListItem> list)
 	    throws SolrServerException {
 		ChartSearchSearcher searcher = new ChartSearchSearcher();
-		
+
 		if (checkifCategoriesContainsOnlyOneNonFacetCategory(selectedCategories, "allergies")) {
 			searcher.searchAllergiesAndGenerateSolrDoc(patientId, searchText, solrServer, list);
 		} else if (checkifCategoriesContainsOnlyOneNonFacetCategory(selectedCategories, "appointments")) {
@@ -108,5 +108,5 @@ public class ChartSearchNonFacetFiltering {
 			searcher.searchEFormsAndGenerateSolrDoc(searchText, solrServer, list);
 		}
 	}
-	
+
 }

@@ -19,50 +19,50 @@ import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped. *
+ * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class ChartSearchActivator extends BaseModuleActivator {
-	
+
 	protected Log log = LogFactory.getLog(getClass());
-	
+
 	/**
 	 * @see BaseModuleActivator#willRefreshContext()
 	 */
 	public void willRefreshContext() {
 		log.info("Refreshing Chart Search Module");
 	}
-	
+
 	/**
 	 * @see BaseModuleActivator#contextRefreshed()
 	 */
 	public void contextRefreshed() {
 		log.info("Chart Search Module refreshed");
 	}
-	
+
 	/**
 	 * @see BaseModuleActivator#willStart()
 	 */
 	public void willStart() {
 		log.info("Starting Chart Search Module");
 	}
-	
+
 	/**
 	 * @see BaseModuleActivator#started()
 	 */
 	public void started() {
 		log.info("Chart Search Module started");
-		
+
 		ChartSearchIndexer indexer = getComponent(ChartSearchIndexer.class);
 		indexer.getStatistics();
 	}
-	
+
 	/**
 	 * @see BaseModuleActivator#willStop()
 	 */
 	public void willStop() {
 		log.info("Stopping Chart Search Module");
 	}
-	
+
 	/**
 	 * @see BaseModuleActivator#stopped()
 	 */
@@ -71,12 +71,12 @@ public class ChartSearchActivator extends BaseModuleActivator {
 		SolrManagement solrManagement = getComponent(SolrManagement.class);
 		solrManagement.shutdown();
 	}
-	
+
 	private <T> T getComponent(Class<T> clazz) {
 		List<T> list = Context.getRegisteredComponents(clazz);
 		if (list == null || list.size() == 0)
 			throw new RuntimeException("Cannot find component of " + clazz);
 		return list.get(0);
 	}
-	
+
 }

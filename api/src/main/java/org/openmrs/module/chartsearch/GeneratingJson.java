@@ -41,25 +41,25 @@ import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
  * Responsible for generating the JSON object to be returned to the view(s)
  */
 public class GeneratingJson {
-	
+
 	final String DATEFORMAT = "dd/MM/yyyy HH:mm:ss";
-	
+
 	private static ChartSearchService chartSearchService = Context.getService(ChartSearchService.class);
-	
+
 	public static ChartSearchService getChartSearchService() {
 		return chartSearchService;
 	}
-	
+
 	public static String generateJson() {
-		
+
 		JSONObject jsonToReturn = new JSONObject();
 		List<ChartListItem> returnedResults = SearchAPI.getInstance().getResults();
 		boolean foundNoResults = false;
 		JSONObject noResults = new JSONObject();
 		String searchPhrase = SearchAPI.getInstance().getSearchPhrase().getPhrase();
-		
+
 		jsonToReturn.put("search_phrase", searchPhrase);
-		
+
 		if (returnedResults == null || returnedResults.isEmpty()) {
 			foundNoResults = true;
 			noResults.put("foundNoResults", foundNoResults);
@@ -67,30 +67,30 @@ public class GeneratingJson {
 			    Context.getMessageSourceService().getMessage("chartsearch.results.foundNoResults"));
 		} else {
 			JSONArray arr_of_groups = new JSONArray();
-			
+
 			JSONArray arr_of_locations = new JSONArray();
 			JSONArray arr_of_providers = new JSONArray();
 			JSONArray arr_of_datatypes = new JSONArray();
 			JSONObject failedPrivilegeMessages = new JSONObject();
-			
+
 			noResults.put("foundNoResults", foundNoResults);
 			addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(jsonToReturn, arr_of_groups, arr_of_locations,
 			    arr_of_providers, arr_of_datatypes, failedPrivilegeMessages);
-			
+
 			addFacetsToJSONObjectToReturn(jsonToReturn);
-			
+
 			//add failed privileges to json to be returned to the view
 			jsonToReturn.put("failedPrivileges", failedPrivilegeMessages);
 		}
 		String[] searchSuggestions = getAllPossibleSuggestionsAsArray();
 		Integer patientId = SearchAPI.getInstance().getPatientId();
-		
+
 		JSONArray history = getAllSearchHistoriesToSendToTheUI();
 		JSONArray bookmarks = getAllSearchBookmarksToReturnToUI();
 		List<String> catNms = SearchAPI.getSelectedCategoryNames();
 		JSONArray allergies = generateAllergiesJSONFromResults(returnedResults);
 		JSONArray appointments = generateAppointmentsJSONFromResults(returnedResults);
-		
+
 		jsonToReturn.put("noResults", noResults);
 		jsonToReturn.put("retrievalTime", SearchAPI.getInstance().getRetrievalTime());
 		jsonToReturn.put("searchSuggestions", searchSuggestions);
@@ -102,34 +102,34 @@ public class GeneratingJson {
 		jsonToReturn.put("allLocations", getChartSearchService().getAllLocationsFromTheDB());
 		jsonToReturn.put("allProviders", getChartSearchService().getAllProvidersFromTheDB());
 		jsonToReturn.put("categoryFilters", generateAllCategoriesJSON());
-		
+
 		addBothPersonalAndGlobalNotesToJSON(searchPhrase, patientId, jsonToReturn);
-		
+
 		return jsonToReturn.toString();
 	}
-	
+
 	public static void addBothPersonalAndGlobalNotesToJSON(String searchPhrase, Integer patientId, JSONObject json) {
 		JSONArray allPersonalNotes = GeneratingJson.getAllPersonalNotesOnASearch(searchPhrase, patientId);
 		JSONArray allGlobalNotes = GeneratingJson.getAllGlobalNotesOnASearch(searchPhrase, patientId);
 		String userName = Context.getAuthenticatedUser().getUsername();
 		String systemId = Context.getAuthenticatedUser().getSystemId();
-		
+
 		json.put("personalNotes", allPersonalNotes);
 		json.put("globalNotes", allGlobalNotes);
 		json.put("currentUser", null == userName ? systemId : userName);
 	}
-	
+
 	private static String[] getAllPossibleSuggestionsAsArray() {
 		List<String> allPossibleSuggestions = chartSearchService.getAllPossibleSearchSuggestions(SearchAPI.getPatientId());
 		String[] searchSuggestions = new String[allPossibleSuggestions.size()];
 		searchSuggestions = (String[]) allPossibleSuggestions.toArray(searchSuggestions);
 		return searchSuggestions;
 	}
-	
+
 	public static JSONArray getAllSearchHistoriesToSendToTheUI() {
 		JSONArray histories = new JSONArray();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
-		
+
 		for (ChartSearchHistory history : allHistory) {
 			JSONObject json = null;
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())
@@ -140,14 +140,14 @@ public class GeneratingJson {
 				histories.add(json);
 			}
 		}
-		
+
 		return histories;
 	}
-	
+
 	public static JSONArray getAllSearchHistoriesToSendToTheManageUI() {
 		JSONArray histories = new JSONArray();
 		List<ChartSearchHistory> allHistory = chartSearchService.getAllSearchHistory();
-		
+
 		for (ChartSearchHistory history : allHistory) {
 			JSONObject json = null;
 			if (Context.getAuthenticatedUser().getUserId().equals(history.getHistoryOwner().getUserId())) {
@@ -157,10 +157,10 @@ public class GeneratingJson {
 				histories.add(json);
 			}
 		}
-		
+
 		return histories;
 	}
-	
+
 	private static JSONObject generateHistoryJSON(ChartSearchHistory history) {
 		JSONObject json;
 		json = new JSONObject();
@@ -172,12 +172,12 @@ public class GeneratingJson {
 		json.put("patientFamilyName", history.getPatient().getPersonName().getFamilyName());
 		return json;
 	}
-	
+
 	public static JSONArray getAllPersonalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allPersonalNotes = new ArrayList<ChartSearchNote>();
-		
+
 		for (ChartSearchNote note : allNotes) {
 			if (note.getPatient().getPatientId().equals(patientId) && note.getSearchPhrase().equals(searchPhrase)
 			        && note.getPriority().equals("LOW")
@@ -185,13 +185,13 @@ public class GeneratingJson {
 				allPersonalNotes.add(note);
 			}
 		}
-		
+
 		if (!allPersonalNotes.isEmpty()) {
 			for (ChartSearchNote note : allPersonalNotes) {
 				JSONObject json = new JSONObject();
 				String userName = note.getNoteOwner().getUsername();
 				String systemId = note.getNoteOwner().getSystemId();
-				
+
 				json.put("uuid", note.getUuid());
 				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("backgroundColor", note.getDisplayColor());
@@ -199,93 +199,93 @@ public class GeneratingJson {
 				        .format(note.getCreatedOrLastModifiedAt()));
 				addPhraseAndCommentNotesAttributes(note, json);
 				json.put("noteOwner", null == userName ? systemId : userName);
-				
+
 				jsonArr.add(json);
 			}
 		}
 		return jsonArr;
 	}
-	
+
 	public static void addPhraseAndCommentNotesAttributes(ChartSearchNote note, JSONObject json) {
 		json.put("comment", note.getComment());
 		json.put("searchPhrase", note.getSearchPhrase());
 	}
-	
+
 	public static JSONArray getAllGlobalNotesOnASearch(String searchPhrase, Integer patientId) {
 		JSONArray jsonArr = new JSONArray();
 		List<ChartSearchNote> allNotes = chartSearchService.getAllSearchNotes();
 		List<ChartSearchNote> allGlobalNotes = new ArrayList<ChartSearchNote>();
-		
+
 		for (ChartSearchNote note : allNotes) {
 			if (note.getPatient().getPatientId().equals(patientId) && note.getSearchPhrase().equals(searchPhrase)
 			        && note.getPriority().equals("HIGH")) {
 				allGlobalNotes.add(note);
 			}
 		}
-		
+
 		if (!allGlobalNotes.isEmpty()) {
 			for (ChartSearchNote note : allGlobalNotes) {
 				JSONObject json = new JSONObject();
 				String userName = note.getNoteOwner().getUsername();
 				String systemId = note.getNoteOwner().getSystemId();
-				
+
 				json.put("uuid", note.getUuid());
 				json.put("createdOrLastModifiedAt", note.getCreatedOrLastModifiedAt().getTime());
 				json.put("formatedCreatedOrLastModifiedAt", Context.getDateFormat()
 				        .format(note.getCreatedOrLastModifiedAt()));
 				json.put("backgroundColor", note.getDisplayColor());
-				
+
 				addPhraseAndCommentNotesAttributes(note, json);
-				
+
 				json.put("noteOwner", null == userName ? systemId : userName);
-				
+
 				jsonArr.add(json);
 			}
 		}
 		return jsonArr;
 	}
-	
+
 	public static JSONArray getAllSearchBookmarksToReturnToUI() {
 		JSONArray bookmarks = new JSONArray();
 		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
-		
+
 		for (ChartSearchBookmark curBookmark : allBookmarks) {
 			JSONObject json = null;
-			
+
 			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())
 			        && curBookmark.getPatient().getPatientId().equals(SearchAPI.getInstance().getPatientId())) {
 				json = generateBookmarksJSON(curBookmark);
 			}
-			
+
 			if (json != null) {
 				bookmarks.add(json);
 			}
 		}
 		return bookmarks;
 	}
-	
+
 	public static JSONArray getAllSearchBookmarksToReturnTomanagerUI() {
 		JSONArray bookmarks = new JSONArray();
 		List<ChartSearchBookmark> allBookmarks = chartSearchService.getAllSearchBookmarks();
-		
+
 		for (ChartSearchBookmark curBookmark : allBookmarks) {
 			JSONObject json = null;
-			
+
 			if (Context.getAuthenticatedUser().getUserId().equals(curBookmark.getBookmarkOwner().getUserId())) {
 				json = generateBookmarksJSON(curBookmark);
 			}
-			
+
 			if (json != null) {
 				bookmarks.add(json);
 			}
 		}
 		return bookmarks;
 	}
-	
+
 	private static JSONObject generateBookmarksJSON(ChartSearchBookmark curBookmark) {
 		JSONObject json;
 		json = new JSONObject();
-		
+
 		json.put("bookmarkName", curBookmark.getBookmarkName());
 		json.put("searchPhrase", curBookmark.getSearchPhrase());
 		json.put("categories", curBookmark.getSelectedCategories());
@@ -293,10 +293,10 @@ public class GeneratingJson {
 		json.put("patientId", curBookmark.getPatient().getPatientId());
 		json.put("isDefaultSearch", curBookmark.isDefaultSearch());
 		json.put("patientFamilyName", curBookmark.getPatient().getPersonName().getFamilyName());
-		
+
 		return json;
 	}
-	
+
 	private static void addObjectsToJsonToReturnElseAddFailedPrivilegesMessages(JSONObject jsonToReturn,
 	                                                                            JSONArray arr_of_groups,
 	                                                                            JSONArray arr_of_locations,
@@ -310,7 +310,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noLocations"));
 		}
-		
+
 		try {
 			getChartSearchService().addProvidersToJSONToReturn(jsonToReturn, arr_of_providers);
 		}
@@ -318,7 +318,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noProviders"));
 		}
-		
+
 		try {
 			getChartSearchService().addDatatypesToJSONToReturn(jsonToReturn, arr_of_datatypes);
 		}
@@ -326,7 +326,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noDatatypes"));
 		}
-		
+
 		try {
 			getChartSearchService().addObsGroupsToJSONToReturn(jsonToReturn, arr_of_groups);
 		}
@@ -334,7 +334,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noObsGroups"));
 		}
-		
+
 		JSONObject jsonObs = null;
 		JSONArray arr_of_obs = new JSONArray();
 		try {
@@ -344,7 +344,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noSingleObs"));
 		}
-		
+
 		JSONObject jsonForms = null;
 		JSONArray arr_of_forms = new JSONArray();
 		try {
@@ -354,7 +354,7 @@ public class GeneratingJson {
 			failedPrivilegeMessages.put("message",
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noForms"));
 		}
-		
+
 		JSONObject jsonEncounters = null;
 		JSONArray arr_of_encounters = new JSONArray();
 		try {
@@ -365,12 +365,12 @@ public class GeneratingJson {
 			    Context.getMessageSourceService().getMessage("chartsearch.privileges.failedPrivileges.noEncounters"));
 		}
 	}
-	
+
 	private static void addFacetsToJSONObjectToReturn(JSONObject jsonToReturn) {
 		JSONArray arr_of_facets = new JSONArray();
 		JSONObject facet = new JSONObject();
 		LinkedList<Count> facets = new LinkedList<Count>();
-		
+
 		facets.addAll(ChartSearchSearcher.getFacetFieldValueNamesAndCounts());
 		if (!facets.isEmpty()) {
 			for (int i = facets.indexOf(facets.getFirst()); i <= facets.indexOf(facets.getLast()); i++) {
@@ -380,22 +380,22 @@ public class GeneratingJson {
 		}
 		jsonToReturn.put("facets", arr_of_facets);
 	}
-	
+
 	@SuppressWarnings("unused")
 	public static JSONObject createJsonObservation(Obs obs) {
 		JSONObject jsonObs = new JSONObject();
 		jsonObs.put("observation_id", obs.getObsId());
 		jsonObs.put("concept_name", obs.getConcept().getDisplayString());
-		
+
 		Date obsDate = obs.getObsDatetime() == null ? new Date() : obs.getObsDatetime();
-		
+
 		SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		String dateStr = obsDate.getTime() + "";
-		
+
 		jsonObs.put("date", dateStr);
-		
+
 		if (obs.getConcept().getDatatype().isNumeric()) { // ADD MORE DATATYPES
-		
+
 			ConceptNumeric conceptNumeric = Context.getConceptService().getConceptNumeric(obs.getConcept().getId());
 			jsonObs.put("units_of_measurement", conceptNumeric.getUnits());
 			jsonObs.put("absolute_high", conceptNumeric.getHiAbsolute());
@@ -406,19 +406,19 @@ public class GeneratingJson {
 			jsonObs.put("normal_low", conceptNumeric.getLowNormal());
 		}
 		jsonObs.put("value_type", obs.getConcept().getDatatype().getName());
-		
+
 		jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
 		jsonObs.put("location", obs.getLocation() != null ? obs.getLocation().getDisplayString() : null);
 		jsonObs.put("creator", obs.getCreator().getDisplayString());
 		Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
-		
+
 		if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
 			EncounterProvider provider = encounterProviders.iterator().next();
 			if (provider.getProvider() != null) {
 				jsonObs.put("provider", provider.getProvider().getName());
 			}
 		}
-		
+
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		if (!searchAPI.getSearchPhrase().getPhrase().equals("") && !searchAPI.getSearchPhrase().getPhrase().equals("*")) {
 			for (ChartListItem item : searchAPI.getResults()) {
@@ -429,42 +429,42 @@ public class GeneratingJson {
 				}
 			}
 		}
-		
+
 		return jsonObs;
 	}
-	
+
 	public static JSONObject createJsonForm(Form form) {
 		JSONObject jsonForm = new JSONObject();
 		jsonForm.put("form_id", form.getFormId());
-		
+
 		Date formDate = form.getDateCreated() == null ? new Date() : form.getDateCreated();
-		
+
 		SimpleDateFormat formatDateJava = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		String dateStr = formDate.getTime() + "";
 		jsonForm.put("date", dateStr);
 		jsonForm.put("encounter_type", form.getEncounterType().getName());
 		jsonForm.put("creator", form.getCreator().getName());
-		
+
 		formDate = form.getDateChanged() == null ? new Date() : form.getDateChanged();
 		dateStr = formatDateJava.format(formDate);
 		jsonForm.put("last_changed_date", dateStr);
-		
+
 		return jsonForm;
 	}
-	
+
 	public static JSONObject createJsonEncounter(Encounter encounter) {
 		JSONObject jsonEncounter = new JSONObject();
 		jsonEncounter.put("encounter_id", encounter.getEncounterId());
-		
+
 		return jsonEncounter;
 	}
-	
+
 	public static Set<Set<Obs>> generateObsGroupFromSearchResults() {
 		Set<Set<Obs>> obsGroups = new HashSet<Set<Obs>>();
-		
+
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		List<ChartListItem> searchResultsList = searchAPI.getResults();
-		for (ChartListItem item : searchResultsList) { //for each item in results we classify it by its obsGroup, and add all of the group.
+		for (ChartListItem item : searchResultsList) { //for each item in results we classify it by its obsGroup, and add the whole group.
 			if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
 				int itemObsId = ((ObsItem) item).getObsId();
 				Obs obsGrp = Context.getObsService().getObs(itemObsId).getObsGroup();
@@ -491,14 +491,14 @@ public class GeneratingJson {
 		}
 		return obsGroups;
 	}
-	
+
 	public static Set<Obs> generateObsSinglesFromSearchResults() {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		Set<Obs> obsSingles = new HashSet<Obs>();
 		for (ChartListItem item : searchAPI.getResults()) {
 			if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
 				int itemObsId = ((ObsItem) item).getObsId();
-				
+
 				Obs obs = Context.getObsService().getObs(itemObsId);
 				if (obs != null && obs.getObsGroup() == null && !obs.isObsGrouping()) {
 					obsSingles.add(Context.getObsService().getObs(itemObsId));
@@ -507,10 +507,10 @@ public class GeneratingJson {
 		}
 		return obsSingles;
 	}
-	
+
 	public static JSONArray generateAllergiesJSONFromResults(List<ChartListItem> returnedResults) {
 		JSONArray allergies = new JSONArray();
-		
+
 		for (ChartListItem item : returnedResults) {
 			if (item != null && item instanceof AllergyItem) {
 				AllergyItem allergy = (AllergyItem) item;
@@ -526,18 +526,18 @@ public class GeneratingJson {
 					json.put("allergenNonCodedReaction", allergy.getAllergenNonCodedReaction());
 					json.put("allergenComment", allergy.getAllergenComment());
 					json.put("allergenDate", allergy.getAllergenDate().getTime());
-					
+
 					allergies.add(json);
 				}
 			}
 		}
-		
+
 		return allergies;
 	}
-	
+
 	private static JSONArray generateAppointmentsJSONFromResults(List<ChartListItem> returnedResults) {
 		JSONArray appointments = new JSONArray();
-		
+
 		for (ChartListItem item : returnedResults) {
 			if (item != null && item instanceof AppointmentItem) {
 				AppointmentItem appointment = (AppointmentItem) item;
@@ -554,41 +554,41 @@ public class GeneratingJson {
 					json.put("cancelReason", appointment.getCancelReason());
 					json.put("provider", appointment.getProvider());
 					json.put("location", appointment.getLocation());
-					
+
 					appointments.add(json);
 				}
 			}
 		}
-		
+
 		return appointments;
 	}
-	
+
 	public static JSONObject generateLocationJson(String location) {
 		JSONObject jsonLocation = new JSONObject();
 		jsonLocation.put("location", location);
 		return jsonLocation;
 	}
-	
+
 	public static JSONObject generateProviderJson(String provider) {
 		JSONObject jsonProvider = new JSONObject();
 		jsonProvider.put("provider", provider);
 		return jsonProvider;
 	}
-	
+
 	public static JSONObject generateDatatypeJson(String datatype) {
 		JSONObject jsonDatatype = new JSONObject();
 		jsonDatatype.put("datatype", datatype);
 		return jsonDatatype;
 	}
-	
+
 	public static Set<String> generateLocationsFromResults() {
 		Set<String> res = new HashSet<String>();
 		SearchAPI searchAPI = SearchAPI.getInstance();
-		
+
 		for (ChartListItem item : searchAPI.getResults()) {
 			if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
 				int itemObsId = ((ObsItem) item).getObsId();
-				
+
 				Obs obs = Context.getObsService().getObs(itemObsId);
 				if (obs != null && obs.getLocation() != null) {
 					res.add(obs.getLocation().getDisplayString());
@@ -597,19 +597,19 @@ public class GeneratingJson {
 		}
 		return res;
 	}
-	
+
 	public static Set<String> generateProvidersFromResults() {
 		Set<String> res = new HashSet<String>();
 		SearchAPI searchAPI = SearchAPI.getInstance();
-		
+
 		for (ChartListItem item : searchAPI.getResults()) {
 			if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
 				int itemObsId = ((ObsItem) item).getObsId();
-				
+
 				Obs obs = Context.getObsService().getObs(itemObsId);
 				if (obs != null) {
 					Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
-					
+
 					if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
 						EncounterProvider provider = encounterProviders.iterator().next();
 						if (provider.getProvider() != null) {
@@ -621,15 +621,15 @@ public class GeneratingJson {
 		}
 		return res;
 	}
-	
+
 	public static Set<String> generateDatatypesFromResults() {
 		Set<String> res = new HashSet<String>();
 		SearchAPI searchAPI = SearchAPI.getInstance();
-		
+
 		for (ChartListItem item : searchAPI.getResults()) {
 			if (item != null && item instanceof ObsItem && ((ObsItem) item).getObsId() != null) {
 				int itemObsId = ((ObsItem) item).getObsId();
-				
+
 				Obs obs = Context.getObsService().getObs(itemObsId);
 				if (obs != null) {
 					res.add(obs.getConcept().getDatatype().getName());
@@ -638,16 +638,16 @@ public class GeneratingJson {
 		}
 		return res;
 	}
-	
+
 	public static Set<Form> generateFormsFromSearchResults() {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		Set<Form> forms = new HashSet<Form>();
 		List<ChartListItem> searchResultsList = searchAPI.getResults();
-		
+
 		for (ChartListItem item : searchResultsList) {
-			
+
 			if (item != null && item instanceof FormItem) {
-				
+
 				if (((FormItem) item).getFormId() != null) {
 					int itemFormId = ((FormItem) item).getFormId();
 					Form form = Context.getFormService().getForm(itemFormId);
@@ -659,7 +659,7 @@ public class GeneratingJson {
 		}
 		return forms;
 	}
-	
+
 	public static Set<Encounter> generateEncountersFromSearchResults() {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		Set<Encounter> encounters = new HashSet<Encounter>();
@@ -667,7 +667,7 @@ public class GeneratingJson {
 		for (ChartListItem item : searchResultsList) {
 			if (item != null && item instanceof EncounterItem && ((EncounterItem) item).getEncounterId() != null) {
 				int itemEncounterId = ((EncounterItem) item).getEncounterId();
-				
+
 				Encounter encounter = Context.getEncounterService().getEncounter(itemEncounterId);
 				if (encounter != null) {
 					encounters.add(Context.getEncounterService().getEncounter(itemEncounterId));
@@ -676,18 +676,18 @@ public class GeneratingJson {
 		}
 		return encounters;
 	}
-	
+
 	public static JSONObject generateFacetsJson(Count facet) {
 		JSONObject counts = new JSONObject();
 		counts.put("name", facet.getName());
 		counts.put("count", facet.getCount());
 		return counts;
 	}
-	
+
 	private static JSONObject generatePreferencesJSON(ChartSearchPreference pref) {
 		JSONObject json = new JSONObject();
 		//ChartSearchPreference pref = chartSearchService.getRightMatchedPreferences();
-		
+
 		if (pref != null) {
 			json.put("owner", pref.getPreferenceOwner().getUsername());
 			json.put("notesColors", pref.getPersonalNotesColors());
@@ -703,29 +703,29 @@ public class GeneratingJson {
 		}
 		return json;
 	}
-	
+
 	public static JSONObject generateDaemonPreferencesJSON() {
 		return generatePreferencesJSON(chartSearchService.getChartSearchPreferenceOfAUser(2));
 	}
-	
+
 	public static JSONObject generateRightMatchedPreferencesJSON() {
 		return generatePreferencesJSON(chartSearchService.getRightMatchedPreferences());
 	}
-	
+
 	public static JSONArray generateAllCategoriesJSON() {
 		JSONArray jsonArray = new JSONArray();
 		List<ChartSearchCategoryDisplayName> allDisplayNames = chartSearchService.getAllCategoryDisplayNames();
 		List<CategoryFilter> allCats = chartSearchService.getAllCategoryFilters();
-		
+
 		for (CategoryFilter cat : allCats) {
 			JSONObject json = new JSONObject();
 			String name = cat.getCategoryName();
 			String description = cat.getCategoryDescription();
 			String displayName = "";
 			String uuid = cat.getCategoryUuid();
-			
+
 			for (ChartSearchCategoryDisplayName catName : allDisplayNames) {
-				
+
 				if (Context.getAuthenticatedUser().getUserId()
 				        .equals(catName.getPreference().getPreferenceOwner().getUserId())
 				        && catName.getCategoryFilter().getCategoryName().equals(name)) {
@@ -733,15 +733,15 @@ public class GeneratingJson {
 					uuid = catName.getUuid();
 				}
 			}
-			
+
 			json.put("name", name);
 			json.put("uuid", uuid);
 			json.put("displayName", displayName);
 			json.put("description", description);
-			
+
 			jsonArray.add(json);
 		}
-		
+
 		return jsonArray;
 	}
 }

@@ -324,7 +324,7 @@ public class ChartSearchCache {
 	/**
 	 * Supports a search for everything as initial default search, which is overwritten by most
 	 * recent search history and also bound to be overwritten if the user has set up a default
-	 * search from amoung his/her saved bookmarks
+	 * search from among his/her saved bookmarks
 	 * 
 	 * @see {@link ChartSearchBookmark#isDefaultSearch()}
 	 * @return searchPhrase and selectedCategories if bookmark is default

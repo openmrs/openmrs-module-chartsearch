@@ -19,7 +19,7 @@ import org.openmrs.module.chartsearch.solr.ChartSearchIndexer;
 import org.openmrs.module.chartsearch.solr.SolrManagement;
 
 /**
- * This class contains the logic that is run every time this module is either started or stopped. *
+ * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class ChartSearchActivator extends BaseModuleActivator {
 	

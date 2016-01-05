@@ -24,7 +24,7 @@ import org.openmrs.module.chartsearch.solr.ChartSearchSearcher;
 public class ChartSearchNonFacetFiltering {
 	
 	/**
-	 * Checks if categories collection contains a specified categgory such as allergies and
+	 * Checks if categories collection contains a specified category such as allergies and
 	 * appointments
 	 * 
 	 * @param categories

@@ -38,10 +38,6 @@
 			org.openmrs.module.emrapi
 		</require_module>
 
-		<require_module version="${allergyapiVersion}">
-			org.openmrs.module.allergyapi
-		</require_module>
-
 		<require_module version="${appointmentschedulingVersion}">
 			org.openmrs.module.appointmentscheduling
 		</require_module>
@@ -51,6 +47,10 @@
 		</require_module>
 
 	</require_modules>
+	
+	<aware_of_modules>
+	    <aware_of_module>org.openmrs.module.allergyapi</aware_of_module>
+	</aware_of_modules>
 
 	<!-- Module Activator -->
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.ChartSearchActivator

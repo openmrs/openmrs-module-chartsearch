@@ -56,6 +56,7 @@
 		<emrapiVersion>1.1</emrapiVersion>
 		<appuiVersion>1.0</appuiVersion>
 		<uicommonsVersion>1.0</uicommonsVersion>
+		<webservices.rest>2.9</webservices.rest>
 		<allergyapiVersion>1.3</allergyapiVersion>
 		<appointmentschedulingVersion>1.3</appointmentschedulingVersion>
 		<htmlformentryuiVersion>1.2</htmlformentryuiVersion>
@@ -245,6 +246,13 @@
 				<groupId>net.sf.supercsv</groupId>
 				<artifactId>super-csv</artifactId>
 				<version>2.1.0</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>webservices.rest-omod</artifactId>
+				<version>${webservices.rest}</version>
+				<scope>provided</scope>
 			</dependency>
 
 		</dependencies>

@@ -85,7 +85,7 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		
 		log.info(String.format("solr.solr.home: %s", properties.getSolrHome()));
 		
-		CoreContainer.Initializer initializer = new CoreContainer.Initializer();
+		/*CoreContainer.Initializer initializer = new CoreContainer.Initializer();
 		CoreContainer coreContainer;
 		try {
 			coreContainer = initializer.initialize();
@@ -95,6 +95,17 @@ public class EmbeddedSolrServerCreator extends SolrServerCreator {
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return null;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}*/
+		
+		CoreContainer coreContainer = new CoreContainer();
+		try {
+			coreContainer.load();
+			solrServer = new EmbeddedSolrServer(coreContainer, "");
+			return solrServer;
 		}
 		catch (Exception e) {
 			e.printStackTrace();

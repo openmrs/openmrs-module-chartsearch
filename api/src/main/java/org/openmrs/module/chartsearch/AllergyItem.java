@@ -12,7 +12,7 @@ package org.openmrs.module.chartsearch;
 import java.util.Date;
 
 import org.apache.solr.common.SolrDocument;
-import org.openmrs.module.allergyapi.Allergy;
+import org.openmrs.Allergy;
 
 /**
  * Represents this module's customized {@link SolrDocument} for a {@link Allergy}<br >

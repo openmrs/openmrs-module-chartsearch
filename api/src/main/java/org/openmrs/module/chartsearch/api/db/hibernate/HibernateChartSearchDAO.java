@@ -10,6 +10,8 @@
 package org.openmrs.module.chartsearch.api.db.hibernate;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,6 +31,7 @@ import org.openmrs.module.chartsearch.cache.ChartSearchHistory;
 import org.openmrs.module.chartsearch.cache.ChartSearchNote;
 import org.openmrs.module.chartsearch.cache.ChartSearchPreference;
 import org.openmrs.module.chartsearch.solr.ChartSearchCustomIndexer;
+import org.springframework.util.ReflectionUtils;
 
 /**
  * It is a default implementation of {@link ChartSearchDAO}.
@@ -53,6 +56,17 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		return sessionFactory;
 	}
 	
+	public Connection getConnection() {
+        try {
+            // reflective lookup to bridge between Hibernate 3.x and 4.x
+            Method connectionMethod = sessionFactory.getCurrentSession().getClass().getMethod("connection");
+            return (Connection) ReflectionUtils.invokeMethod(connectionMethod, sessionFactory.getCurrentSession());
+        }
+        catch (NoSuchMethodException ex) {
+            throw new IllegalStateException("Cannot find connection() method on Hibernate session", ex);
+        }
+    }
+	
 	/**
 	 * SQL processing to get patient data to be indexed
 	 */
@@ -61,7 +75,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 	public void indexAllPatientData(Integer numberOfResults, SolrServer solrServer, Class showProgressToClass) {
 		PreparedStatement preparedStatement = null;
 		SolrInputDocument doc = new SolrInputDocument();
-		String sql = " SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name, cn2.name as coded, value_boolean,  value_datetime, value_numeric, value_text, cc.concept_class_name FROM openmrs.obs o "
+		String sql = " SELECT  o.uuid as id,  obs_id,	 person_id,  obs_datetime, obs_group_id, cn1.name as concept_name, cn2.name as coded,  value_datetime, value_numeric, value_text, cc.concept_class_name FROM openmrs.obs o "
 		        + "inner join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn1 on cn1.concept_id = o.concept_id "
 		        + "LEFT join (SELECT * FROM openmrs.concept_name c WHERE c.locale = 'en' AND concept_name_type = 'FULLY_SPECIFIED') as cn2 on cn2.concept_id = o.value_coded  "
 		        + "LEFT join (SELECT DISTINCT o.concept_id, class.name AS concept_class_name FROM concept_class class JOIN concept c ON c.class_id = class.concept_class_id JOIN obs o ON o.concept_id = c.concept_id) AS cc ON cc.concept_id = o.concept_id "
@@ -76,7 +90,7 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 			
 			log.info("SQL Query for indexing all data is: " + sql);
 			
-			preparedStatement = sessionFactory.getCurrentSession().connection().prepareStatement(sql);
+			preparedStatement = getConnection().prepareStatement(sql);
 			ResultSet rs = preparedStatement.executeQuery();
 			info = Context.getMessageSourceService().getMessage("chartsearch.indexing.patientData.finishedFetchingData");
 			setIndexingProgressInfo(showProgressToClass, info);
@@ -137,7 +151,6 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		ChartSearchCustomIndexer.setObsGroupId(rs.getInt("obs_group_id"));
 		ChartSearchCustomIndexer.setConceptName(rs.getString("concept_name"));
 		ChartSearchCustomIndexer.setCoded(rs.getString("coded"));
-		ChartSearchCustomIndexer.setValueBoolean(rs.getBoolean("value_boolean"));
 		ChartSearchCustomIndexer.setValueDatetime(rs.getDate("value_datetime"));
 		ChartSearchCustomIndexer.setValueNumeric(rs.getFloat("value_numeric"));
 		ChartSearchCustomIndexer.setValueText(rs.getString("value_text"));
@@ -152,7 +165,6 @@ public class HibernateChartSearchDAO implements ChartSearchDAO {
 		doc.addField("obs_group_id", ChartSearchCustomIndexer.getObsGroupId());
 		doc.addField("concept_name", ChartSearchCustomIndexer.getConceptName());
 		doc.addField("coded", ChartSearchCustomIndexer.getCoded());
-		doc.addField("value_boolean", ChartSearchCustomIndexer.isValueBoolean());
 		doc.addField("value_datetime", ChartSearchCustomIndexer.getValueDatetime());
 		doc.addField("value_numeric", ChartSearchCustomIndexer.getValueNumeric());
 		doc.addField("value_text", ChartSearchCustomIndexer.getValueText());

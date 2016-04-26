@@ -123,7 +123,7 @@ public class ChartSearchDataImportHandler extends RequestHandlerBase implements 
 				break;
 			}
 		}
-		RequestInfo requestParams = new RequestInfo(getParamsMap(params), contentStream);
+		RequestInfo requestParams = new RequestInfo(req, getParamsMap(params), contentStream);
 		String command = requestParams.getCommand();
 		NamedList defaultParams = (NamedList) initArgs.get("defaults");
 		

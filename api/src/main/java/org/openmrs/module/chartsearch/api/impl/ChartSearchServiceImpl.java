@@ -15,9 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,9 +29,9 @@ import org.openmrs.api.APIException;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
-import org.openmrs.module.allergyapi.Allergies;
-import org.openmrs.module.allergyapi.Allergy;
-import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.Allergies;
+import org.openmrs.Allergy;
+import org.openmrs.api.PatientService;
 import org.openmrs.module.appointmentscheduling.Appointment;
 import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 import org.openmrs.module.chartsearch.GeneratingJson;
@@ -53,6 +50,9 @@ import org.openmrs.module.chartsearch.synonyms.Synonym;
 import org.openmrs.module.chartsearch.synonyms.SynonymGroup;
 import org.openmrs.util.PrivilegeConstants;
 import org.springframework.transaction.annotation.Transactional;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 /**
  * It is a default implementation of {@link ChartSearchService}.
@@ -223,7 +223,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_ENCOUNTERS })
+	@Authorized(value = { PrivilegeConstants.GET_ENCOUNTERS })
 	public void addEncountersToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonEncounters, JSONArray arr_of_encounters) {
 		for (Encounter encounter : GeneratingJson.generateEncountersFromSearchResults()) {
 			if (encounter != null) {
@@ -235,7 +235,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_FORMS })
+	@Authorized(value = { PrivilegeConstants.GET_FORMS })
 	public void addFormsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonForms, JSONArray arr_of_forms) {
 		for (Form form : GeneratingJson.generateFormsFromSearchResults()) {
 			if (form != null) {
@@ -247,7 +247,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
+	@Authorized(value = { PrivilegeConstants.GET_OBS })
 	public void addSingleObsToJSONToReturn(JSONObject jsonToReturn, JSONObject jsonObs, JSONArray arr_of_obs) {
 		JSONArray duplicateJsonObs = new JSONArray();
 		boolean enableDupResults = getRightMatchedPreferences().isEnableDuplicateResults();
@@ -289,7 +289,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	
 	@SuppressWarnings("unused")
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_OBS })
+	@Authorized(value = { PrivilegeConstants.GET_OBS })
 	public void addObsGroupsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_groups) {
 		Set<Set<Obs>> setOfObsGroups = GeneratingJson.generateObsGroupFromSearchResults();
 		for (Set<Obs> obsGrpSet : setOfObsGroups) { //for each obs group we go through it's obs
@@ -325,7 +325,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_CONCEPT_DATATYPES })
+	@Authorized(value = { PrivilegeConstants.GET_CONCEPT_DATATYPES })
 	public void addDatatypesToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_datatypes) {
 		for (String datatype : GeneratingJson.generateDatatypesFromResults()) {
 			JSONObject jsonDatatype = GeneratingJson.generateDatatypeJson(datatype);
@@ -335,7 +335,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_PROVIDERS })
+	@Authorized(value = { PrivilegeConstants.GET_PROVIDERS })
 	public void addProvidersToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_providers) {
 		for (String provider : GeneratingJson.generateProvidersFromResults()) {
 			JSONObject jsonProvider = GeneratingJson.generateProviderJson(provider);
@@ -345,7 +345,7 @@ public class ChartSearchServiceImpl extends BaseOpenmrsService implements ChartS
 	}
 	
 	@Override
-	@Authorized(value = { PrivilegeConstants.VIEW_LOCATIONS })
+	@Authorized(value = { PrivilegeConstants.GET_LOCATIONS })
 	public void addLocationsToJSONToReturn(JSONObject jsonToReturn, JSONArray arr_of_locations) {
 		for (String location : GeneratingJson.generateLocationsFromResults()) {
 			JSONObject jsonLoc = GeneratingJson.generateLocationJson(location);

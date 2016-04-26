@@ -50,9 +50,6 @@ public class ChartSearchCustomIndexer {
 	//cn2.name as coded
 	private static String coded;
 	
-	//value_boolean
-	private static Boolean valueBoolean;
-	
 	//value_datetime
 	private static Date valueDatetime;
 	
@@ -105,10 +102,6 @@ public class ChartSearchCustomIndexer {
 		return coded;
 	}
 	
-	public static Boolean isValueBoolean() {
-		return valueBoolean;
-	}
-	
 	public static Date getValueDatetime() {
 		return valueDatetime;
 	}
@@ -123,14 +116,6 @@ public class ChartSearchCustomIndexer {
 	
 	public static String getConceptClassName() {
 		return conceptClassName;
-	}
-	
-	public static Boolean getValueBoolean() {
-		return valueBoolean;
-	}
-	
-	public static void setValueBoolean(Boolean valueBoolean) {
-		ChartSearchCustomIndexer.valueBoolean = valueBoolean;
 	}
 	
 	public static void setId(String id) {

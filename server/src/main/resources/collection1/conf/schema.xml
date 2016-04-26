@@ -890,8 +890,6 @@
 			required="false" />
 		<field name="obs_datetime" type="date" indexed="true" stored="true"
 			required="false" />
-		<field name="value_boolean" type="text_general" indexed="true"
-			stored="false" required="false" />
 		<field name="value_datetime" type="text_general" indexed="true"
 			stored="false" required="false" />
 		<field name="obs_group_id" type="int" indexed="true" stored="true"
@@ -1024,13 +1022,11 @@
 		is added to the index. It's used either to index the same field differently, 
 		or to add multiple fields to the same field for easier/faster searching. -->
 
-	<copyField source="value_boolean" dest="value" />
 	<copyField source="coded" dest="value" />
 	<copyField source="value_datetime" dest="value" />
 	<copyField source="value_numeric" dest="value" />
 	<copyField source="value_text" dest="value" />
 
-	<copyField source="value_boolean" dest="text" />
 	<copyField source="coded" dest="text" />
 	<copyField source="value_datetime" dest="text" />
 	<copyField source="value_numeric" dest="text" />

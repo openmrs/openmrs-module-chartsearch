@@ -23,10 +23,10 @@ import org.apache.solr.common.SolrInputDocument;
 import org.openmrs.ConceptName;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.allergyapi.Allergies;
-import org.openmrs.module.allergyapi.Allergy;
-import org.openmrs.module.allergyapi.AllergyReaction;
-import org.openmrs.module.allergyapi.api.PatientService;
+import org.openmrs.Allergies;
+import org.openmrs.Allergy;
+import org.openmrs.AllergyReaction;
+import org.openmrs.api.PatientService;
 import org.openmrs.module.appointmentscheduling.Appointment;
 import org.openmrs.module.appointmentscheduling.api.AppointmentService;
 

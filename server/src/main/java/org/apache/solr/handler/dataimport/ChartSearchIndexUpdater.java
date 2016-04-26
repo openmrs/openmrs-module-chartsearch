@@ -78,7 +78,7 @@ public class ChartSearchIndexUpdater {
 		}
 		Map<String, Object> paramsMap = getParamsMap(params);
 		
-		RequestInfo requestParams = new RequestInfo(paramsMap, contentStream);
+		RequestInfo requestParams = new RequestInfo(req, paramsMap, contentStream);
 		
 		NamedList defaultParams = (NamedList) initArgs.get("defaults");
 		

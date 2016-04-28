@@ -56,6 +56,10 @@
 					<artifactId>lucene-codecs</artifactId>
 					<groupId>org.apache.lucene</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>wstx-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -103,6 +107,10 @@
 					<artifactId>lucene-codecs</artifactId>
 					<groupId>org.apache.lucene</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>wstx-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -120,6 +128,16 @@
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>wstx-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>

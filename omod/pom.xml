@@ -160,6 +160,10 @@
 					<artifactId>lucene-codecs</artifactId>
 					<groupId>org.apache.lucene</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>wstx-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		
@@ -169,7 +173,17 @@
             <version>0.1</version>
             <scope>provided</scope>
         </dependency>
-        
+
+		<dependency>
+			<groupId>org.apache.solr</groupId>
+			<artifactId>solr-solrj</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>wstx-asl</artifactId>
+					<groupId>org.codehaus.woodstox</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 
 	<build>

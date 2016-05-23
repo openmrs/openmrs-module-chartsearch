@@ -22,7 +22,7 @@
 		Generally, you want to use the latest version to get all bug fixes and improvements. 
 		It is highly recommended that you fully re-index after changing this setting 
 		as it can affect both how text is indexed and queried. -->
-	<luceneMatchVersion>LUCENE_43</luceneMatchVersion>
+	<luceneMatchVersion>4.10.4</luceneMatchVersion>
 
 	<!-- <lib/> directives can be used to instruct Solr to load an Jars identified 
 		and use them to resolve any "plugins" specified in your solrconfig.xml or 
@@ -42,14 +42,12 @@
 		examples below can be used to load some solr-contribs along with their external 
 		dependencies. -->
 
+	<!-- 
 	 <lib dir="../../../dist/" regex="solr-dataimporthandler-.*\.jar" />
 	 <lib dir="../../../dist/" regex="mysql-connector-.*\.jar" />
 	 <lib dir="../../../dist/" regex="chartsearch-server-.*\.jar" />
 	 <lib dir="../../../dist/" regex="super-csv-.*\.jar" />
-
-	<!-- If a 'dir' option (with or without a regex) is used and nothing is 
-		found that matches, a warning will be logged. -->
-	<lib dir="/non/existent/dir/yields/warning" />
+    -->
 
 	<!-- an exact 'path' can be used instead of a 'dir' to specify a specific 
 		jar file. This will cause a serious error to be logged if it can't be loaded. -->

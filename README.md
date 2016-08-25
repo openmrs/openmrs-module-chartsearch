@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/openmrs/openmrs-module-chartsearch.svg?branch=master)](https://travis-ci.org/openmrs/openmrs-module-chartsearch)
+
 openmrs-module-chartsearch
 ==========================
 

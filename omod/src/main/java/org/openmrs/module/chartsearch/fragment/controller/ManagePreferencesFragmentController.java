@@ -12,8 +12,6 @@ package org.openmrs.module.chartsearch.fragment.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import net.sf.json.JSONObject;
-
 import org.openmrs.module.chartsearch.AllColors;
 import org.openmrs.module.chartsearch.ChartSearchCache;
 import org.openmrs.module.chartsearch.GeneratingJson;
@@ -21,19 +19,21 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import net.sf.json.JSONObject;
+
 /**
  * Spring controller for the managePreferences.gsp fragment
  */
 public class ManagePreferencesFragmentController {
-	
+
 	ChartSearchCache cache = new ChartSearchCache();
-	
+
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void controller(FragmentModel model, UiUtils ui) {
 		AllColors allColors = new AllColors();
 		String[] allColorsArray = new String[allColors.ALLCOLORSLENGTH];
 		ArrayList list = new ArrayList(Arrays.asList(allColors));
-		
+
 		list.addAll(Arrays.asList(allColors.REDBASEDCOLORS));
 		list.addAll(Arrays.asList(allColors.GREENBASEDCOLORS));
 		list.addAll(Arrays.asList(allColors.BLUEBASEDCOLORS));
@@ -43,7 +43,7 @@ public class ManagePreferencesFragmentController {
 			}
 		}
 		allColors.printAllColors(true);
-		
+
 		model.put("preferences", GeneratingJson.generateRightMatchedPreferencesJSON().toString());
 		model.put("daemonPreferences", GeneratingJson.generateDaemonPreferencesJSON().toString());
 		model.put("categoryFilters", ui.escapeJs(GeneratingJson.generateAllCategoriesJSON().toString()));
@@ -53,20 +53,18 @@ public class ManagePreferencesFragmentController {
 		model.put("blueBasedColors", allColors.BLUEBASEDCOLORS);
 		model.put("personalColorsNotes", cache.fetchPersonalNotesColors());
 	}
-	
+
 	public JSONObject saveOrUpdatePrefereces(@RequestParam("history") Boolean enableHistory,
-	                                         @RequestParam("bookmarks") Boolean enableBookmarks,
-	                                         @RequestParam("notes") Boolean enableNotes,
-	                                         @RequestParam("quickSearches") Boolean enableQuickSearches,
-	                                         @RequestParam("defaultSearch") Boolean enableDefaultSearch,
-	                                         @RequestParam("duplicateResults") Boolean enableDuplicateResults,
-	                                         @RequestParam("multiFiltering") Boolean enableMultiFiltering,
-	                                         @RequestParam("categories[]") String[] cats,
-	                                         @RequestParam("selectedColors") String selectedColors) {
+			@RequestParam("bookmarks") Boolean enableBookmarks, @RequestParam("notes") Boolean enableNotes,
+			@RequestParam("quickSearches") Boolean enableQuickSearches,
+			@RequestParam("defaultSearch") Boolean enableDefaultSearch,
+			@RequestParam("duplicateResults") Boolean enableDuplicateResults,
+			@RequestParam("multiFiltering") Boolean enableMultiFiltering, @RequestParam("categories[]") String[] cats,
+			@RequestParam(value = "selectedColors", required = false) String selectedColors) {
 		return cache.saveOrUpdatePreferences(enableHistory, enableBookmarks, enableNotes, enableQuickSearches,
-		    enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats, selectedColors);
+				enableDefaultSearch, enableDuplicateResults, enableMultiFiltering, cats, selectedColors);
 	}
-	
+
 	public JSONObject restoreDefaultPrefereces() {
 		return cache.restorePreferences();
 	}

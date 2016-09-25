@@ -153,7 +153,7 @@
 			        alert("Successfully Updated Preferences");
 			    },
 			    error: function(e) {
-			    	alert(e);
+			    	//alert(e);
 			    }
 			});
 		}

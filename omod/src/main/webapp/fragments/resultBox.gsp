@@ -1,5 +1,6 @@
 <script>
-    var resultJSON ='<% resultList.each{ %> ${ it } <% } %>';
+    // RA-452 encodeHtmlContent to prevent XSS
+    var resultJSON ='<% resultList.each{ %> ${ ui.encodeHtmlContent(it) } <% } %>';
     var jsonAfterParse = JSON.parse(resultJSON);
 
     jQuery( document ).ready(function() {

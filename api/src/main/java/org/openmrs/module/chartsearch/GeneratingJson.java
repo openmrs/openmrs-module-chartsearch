@@ -410,12 +410,15 @@ public class GeneratingJson {
 		jsonObs.put("value", obs.getValueAsString(Context.getLocale()));
 		jsonObs.put("location", obs.getLocation() != null ? obs.getLocation().getDisplayString() : null);
 		jsonObs.put("creator", obs.getCreator().getDisplayString());
-		Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
 		
-		if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
-			EncounterProvider provider = encounterProviders.iterator().next();
-			if (provider.getProvider() != null) {
-				jsonObs.put("provider", provider.getProvider().getName());
+		if (obs.getEncounter() != null) {
+			Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
+			
+			if (encounterProviders != null && encounterProviders.iterator().hasNext()) {
+				EncounterProvider provider = encounterProviders.iterator().next();
+				if (provider.getProvider() != null) {
+					jsonObs.put("provider", provider.getProvider().getName());
+				}
 			}
 		}
 		
@@ -607,7 +610,7 @@ public class GeneratingJson {
 				int itemObsId = ((ObsItem) item).getObsId();
 				
 				Obs obs = Context.getObsService().getObs(itemObsId);
-				if (obs != null) {
+				if (obs != null && obs.getEncounter() != null) {
 					Set<EncounterProvider> encounterProviders = obs.getEncounter().getEncounterProviders();
 					
 					if (encounterProviders != null && encounterProviders.iterator().hasNext()) {

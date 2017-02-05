@@ -697,7 +697,7 @@
             <form class="chart-search-form" id="chart-search-form-submit">
                 <div class="chart-search-input">
                     <div class="chart_search_form_inputs">
-                        <input type="text" name="patientId" id="patient_id" value=${patientId} hidden>
+                        <input type="text" name="patientId" id="patient_id" value="${patientId.id}" hidden>
                         <div id="chart_search_form_inputs-searchPhrase">
                         	<input type="text" id="searchText" name="phrase" class="chart_search_form_text_input inline ui-autocomplete-input" placeholder="${ ui.message("chartsearch.messageInSearchField") }" size="40">
                         	<i id="chart-previous-searches" class="icon-arrow-down medium" title="History"></i>

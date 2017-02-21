@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.chartsearch.fragment.controller;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.openmrs.module.chartsearch.GeneratingJson;
 import org.openmrs.module.chartsearch.SearchAPI;
 import org.openmrs.ui.framework.UiUtils;
@@ -24,7 +25,7 @@ public class ResultBoxFragmentController {
 	public void controller(FragmentModel fragmentModel, UiUtils ui) {
 		SearchAPI searchAPI = SearchAPI.getInstance();
 		ArrayList<String> resultList = new ArrayList<String>();
-		resultList.add(ui.escapeJs(GeneratingJson.generateJson()));
+		resultList.add(StringEscapeUtils.escapeEcmaScript((GeneratingJson.generateJson())));
 		searchAPI.clearResults();
 		fragmentModel.addAttribute("resultList", resultList);//bind the result list for the view
 	}

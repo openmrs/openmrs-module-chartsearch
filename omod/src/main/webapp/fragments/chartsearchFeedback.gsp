@@ -19,6 +19,7 @@ See previous feed-backs from: <a href="https://talk.openmrs.org/tags/chartsearch
 <a href="https://talk.openmrs.org/t/providing-chartsearch-module-feedback/2674" target="_blank"> Providing Feedback guide</a>
 
 <h1>Provide Online User's Feedback</h1>
-
-<iframe name='embed_readwrite' src='http://notes.openmrs.org/chartsearch-feedback' scrolling='yes' width=900 height=600></iframe>
+<div class="embed-responsive embed-responsive-16by9">
+    <iframe name='embed_readwrite' class="embed-responsive-item" src='http://notes.openmrs.org/chartsearch-feedback' scrolling='yes' height=600></iframe>
+</div>
 <br /><br />

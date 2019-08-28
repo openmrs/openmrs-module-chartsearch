@@ -4,7 +4,6 @@
 		color:black;
 		border: 1px solid white;
 		overflow:hidden;
-		height: 20px;
 		cursor: pointer;
 		padding: 10px 10px 10px 10px;
 		font-weight:bold;
@@ -197,7 +196,7 @@
 <div id="pref-summary-item-categoryfilter-details" class="pref-summary-item-details">
 	<br />
 		<b>${ ui.message("chartsearch.note") }</b> ${ ui.message("chartsearch.refApp.manage.preferences.categoryNote") }<br /><br />
-		<table id="preferences-cats"></table>
+		<table class="table table-sm table-responsive-sm table-responsive-md table-responsive-lg table-responsive-xl" id="preferences-cats"></table>
 	<br /><br />
 </div>
 
@@ -205,7 +204,7 @@
 <div id="pref-summary-item-notescolors-details" class="pref-summary-item-details">
 	<br />
 	<div><label for="color1">${ ui.message("chartsearch.refApp.manage.preferences.addColor") }</label>
-		<input id="color1" name="color1" type="text" value="#333399" />
+		<input  class="form-control form-control-sm form-control-lg form-control-md" id="color1" name="color1" type="text" value="#333399" />
 		<select id="choose-color-collection">
 				<option>${ ui.message("chartsearch.refApp.manage.preferences.selectColor") }</option>
 				<option>${ ui.message("chartsearch.refApp.manage.preferences.defaultColors") }</option>
@@ -213,7 +212,7 @@
 				<option>${ ui.message("chartsearch.refApp.manage.preferences.greenColors") }</option>
 				<option>${ ui.message("chartsearch.refApp.manage.preferences.blueColors") }</option>
 		</select><br />
-		${ ui.message("chartsearch.refApp.manage.preferences.selectedColors") }: <textarea id="selectedColors" disabled></textarea>
+		${ ui.message("chartsearch.refApp.manage.preferences.selectedColors") }: <textarea  class="form-control form-control-sm form-control-lg form-control-md" disabled></textarea>
 	</div>
 </div>
 

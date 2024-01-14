@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
-                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 	<!-- See http://www.liquibase.org/manual/home#available_database_refactorings 
 		for a list of supported elements and attributes -->
 
@@ -339,9 +340,9 @@
 
 	<changeSet id="CSM-98-23062015-0037" author="k-joseph">
 		<preConditions onFail="MARK_RAN">
-			<foreignKeyConstraintExists
+			<foreignKeyConstraintExists foreignKeyTableName="chartsearch_synonyms"
 				foreignKeyName="fk_synonymgroups_synonyms" />
-			<foreignKeyConstraintExists
+			<foreignKeyConstraintExists foreignKeyTableName="chartsearch_synonyms"
 				foreignKeyName="fk_synonymgroups_synonyms_cascade" />
 		</preConditions>
 		<comment>Dropping both fk_synonymgroups_synonyms and
